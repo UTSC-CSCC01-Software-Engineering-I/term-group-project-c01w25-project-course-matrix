@@ -7,3 +7,4 @@
  | Austin Xu | xuausti1 | 1008011688 | austin.xu@mail.utoronto.ca | Discord | Austin Xu | 
 
 
+Group Jira: https://cscc01-course-matrix.atlassian.net/jira/software/projects/SCRUM/boards/1/timeline

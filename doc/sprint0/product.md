@@ -17,7 +17,7 @@ Course Matrix primarily aims at providing UTSC undergraduate students with a 4-y
     - First-year students: Who need guidance in navigating the new environments, campus logistics, and course planning.
     - International Students: Who need to plan ahead to avoid prolonged academic journeys and fulfil permit requirements.
 
-[text](Personas.pdf)
+[User Personas](Personas.pdf)
 
 ## III. Why should User Choose This Product
 ### 1.Time Saving and Convenience

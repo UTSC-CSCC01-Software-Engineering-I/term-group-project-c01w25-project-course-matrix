@@ -1,6 +1,6 @@
 # Description
 
-_Insert link to Jira ticket here_ (e.g. [[SCRUM-2](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-2)])
+_Insert link to Jira ticket here_ (e.g. [SCRUM-2](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-2))
 
 Please include a summary of the changes and the related issue. Please also include relevant motivation and context.
 

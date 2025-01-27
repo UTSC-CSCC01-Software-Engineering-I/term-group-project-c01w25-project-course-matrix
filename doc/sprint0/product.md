@@ -26,8 +26,9 @@ Key features include:
 
 ## II. Target Users
 Course Matrix primarily aims at providing UTSC undergraduate students with a 4-year companion, particularly those who may feel overwhelmed by managing multiple platforms and balancing between coursework and daily life:
-- First-year Students:  Who are stepping into the university environment for the first time and need guidance in navigating the new environments, campus logistics and course planning.
+- First-year Students: Who are stepping into the university environment for the first time and need guidance in navigating the new environments, campus logistics and course planning.
 - International Students: Those who face numerous academic restrictions, and financial strains and must plan ahead to avoid prolonged academic journeys while fulfilling permit requirements.
+
 [User Personas](Personas.pdf)
 
 ## III. Why should User Choose This Product
@@ -63,7 +64,7 @@ A fully realized Course Matrix will include the following features and developme
 **Development Standards**:
 - **Rigorous Testing**: All code is thoroughly tested to address potential bugs and ensure functionality across all use cases.
 - **Feature Integration and Code Review**: New features are reviewed by at least two team members to ensure quality and consistency before being merged into the production environment, adhering to a structured code review process.
-  
+
 ## V. Product Discussion Highlight
 ### 1. Identifying the Problem
 Our team identified several key challenges UTSC students encounter when managing their academic schedules:

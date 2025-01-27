@@ -29,10 +29,10 @@ Course Matrix primarily aims at providing UTSC undergraduate students with a 4-y
 [User Personas](Personas.pdf)
 
 ## III. Why should User Choose This Product
-### 1.Time Saving and Convenience
+### 1. Time Saving and Convenience
 Currently, UTSC students must navigate multiple platforms (e.g., the UTSC timetable, course description pages, and ACORN) to plan courses and confirm their availability. Course Matric saves users time and streamlines the course research process by centralizing these functionalities into one location. Its AI assistant allows users to interact in normal English while still being able to fully utilise the help and tools provided with little to no instructions. Users can also manually customize their timetables and acquire academic information from a single location.
 
-### 2.Flexibility and Personalization
+### 2. Flexibility and Personalization
 Existing time management tools UTSC provides lack flexibility and options for customization and personalization. On the other hand, third-party timetable providers, while allowing for more customization and personalization, do not have access to the UTSC course database, leading to potential errors and inefficiencies. 
 Course Matrix will bridge this gap by allowing users to:
 - Provide critical information to the course-generating algorithm and receive suggested timetables before selecting the best options
@@ -60,7 +60,7 @@ A fully completed Course Matrix will include:
 Our team observed several challenges UTSC students face when organizing their academic lives:
 - **Inefficiency**: Students often spend hours especially at the beginning of each semester researching course information, availability, and suitability with their degree requirements across different websites. Current platforms such as ACORN do not support overlaid course visualization, students must switch between different tabs to change the course options before seeing it populated on their timetable.
 - **Course Selection/Academic Journey Planning**: UTSC provide a wide range of courses with different requirements thus making it difficult for students to find suitable courses or might miss courses that are aligned with their interests, needs or preferences.
-### 2.Brainstorming Solution
+### 2. Brainstorming Solution
 We discussed ways to reduce these stress points and identified the need for a centralized tool. After considering other potential ideas, like a sports tracking app, we chose to focus on a course planning platform that could significantly improve the academic experience for UTSC students.
 
 This platform offers immediate and practical benefits for students, addressing common pain points and simplifying the academic journey. Course Matrix was designed to be a reliable and intelligent companion for students throughout their time at UTSC.

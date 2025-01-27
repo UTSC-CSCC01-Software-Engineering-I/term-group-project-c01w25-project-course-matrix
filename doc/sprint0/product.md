@@ -2,7 +2,7 @@
 
 ## I. Product Features
 Course Matrix is a comprehensive platform designed to streamline academic and daily planning for UTSC undergraduate students. Combining a robust course database and an AI assistant, it provides a one-stop solution to simplify scheduling and decision-making. Key features include:
-- **AI-Powered Assitance**:
+- **AI-Powered Assistance**:
   - Retrieve comprehensive course information such as prerequisites, exclusion, offerings, and degree requirements.
   - Make course recommendations tailored to user questions, preferences and academic goals.
   - Automatically generate timetables based on user-provided constraints, preferences and needs.

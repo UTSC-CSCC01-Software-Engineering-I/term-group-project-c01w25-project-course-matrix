@@ -62,6 +62,7 @@ A fully realized Course Matrix will include the following features and developme
   - **Timetable Management Tools**: Allows users to create customizable schedules, share timetables, and access advanced visualization features for clarity and ease of use.
   - **Email Notification System**: Provides timely alerts for important academic events and deadlines.
   - **Intuitive User Interface**: A seamless and user-friendly design ensures users can easily navigate and utilize the platform without requiring extensive instructions.
+  
 **Development Standards**:
   - **Rigorous Testing**: All code is thoroughly tested to address potential bugs and ensure functionality across all use cases.
   - **Feature Integration and Code Review**: New features are reviewed by at least two team members to ensure quality and consistency before being merged into the production environment, adhering to a structured code review process.

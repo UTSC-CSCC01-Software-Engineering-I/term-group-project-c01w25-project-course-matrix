@@ -1,14 +1,12 @@
 # Course and Timetable Planner / c01w25-project-course-matrix
 
 ## I. Product Features
-Course Matrix is a centralized platform designed to simplify the academic and daily planning needs of UTSC undergraduate students. Acting as both a course database and an AI assistant, it consolidates various platforms into a single, user-friendly interface. Key features include:
-
-The platform provides the following features to UTSC undergraduates:
+Course Matrix is a comprehensive platform designed to streamline academic and daily planning for UTSC undergraduate students. Combining a robust course database and an AI assistant, it provides a one-stop solution to simplify scheduling and decision-making. Key features include:
 - **AI-Powered Assitance**:
   - Retrieve comprehensive course information such as prerequisites, exclusion, offerings, and degree requirements.
   - Make course recommendations tailored to user questions, preferences and academic goals.
   - Automatically generate timetables based on user-provided constraints, preferences and needs.
-  - Chatlogs could be created/saved separately based on the user's needs and edited, deleted or exported for better data control. 
+  - Organize AI chat logs by topic, and edit, delete, or export them for improved data control.
 - **Dynamic Scheduling**:
   - Create and customize timetables with colour-coded daily activity blocks such as lectures, assignments, leisure, etc.
   - Choose course options are overlaid onto current schedules for visual clarity when hovered.
@@ -32,18 +30,21 @@ Course Matrix primarily aims at providing UTSC undergraduate students with a 4-y
 
 ## III. Why should User Choose This Product
 ### 1.Time Saving and Convenience
-Course Matric saves time by combining the functionality of multiple platforms into one location. Its AI assistant allows users to interact in normal English while still being able to fully utilise the help and tools provided with little to no instructions. If needed users can also manually customize their timetables and acquire academic information from a single location.
+Currently, UTSC students must navigate multiple platforms (e.g., the UTSC timetable, course description pages, and ACORN) to plan courses and confirm their availability. Course Matric saves users time and streamlines the course research process by centralizing these functionalities into one location. Its AI assistant allows users to interact in normal English while still being able to fully utilise the help and tools provided with little to no instructions. Users can also manually customize their timetables and acquire academic information from a single location.
 
 ### 2.Flexibility and Personalization
-The platform allows users to:
-- Provide critical information to the course-generating algorithm and receive suggested timetables, manually adjust the schedule based on personal preferences or communicate with the AI assistant to automatically generate timetables.
-
+Existing time management tools UTSC provides lack flexibility and options for customization and personalization. On the other hand, third-party timetable providers, while allowing for more customization and personalization, do not have access to the UTSC course database, leading to potential errors and inefficiencies. 
+Course Matrix will bridge this gap by allowing users to:
+- Provide critical information to the course-generating algorithm and receive suggested timetables before selecting the best options
+- Manually adjust the schedule based on personal preferences
+- Communicate with the AI assistant to automatically generate timetables.
 ### 3. Error Reduction
-A centralized database could also help users avoid critical mistakes such as missing courses with low offering frequency or important academic information due to the volume of provided information from traditional pages.
+A centralized database could also help users avoid critical mistakes, such as missing courses with low offering frequency or important academic information due to the volume of provided information on traditional pages.
 
 ### 4. Enhanced Coordination
-- Sharing timetables with internal and external users due to the various sharing and exporting channels.
-- Scheduling group projects becomes easier as users' schedules can be compared side-by-side.
+Sharing and comparing schedules is often cumbersome with existing tools. Course Matrix simplifies this by offering:
+- Seamless timetables sharing via internal system or external links.
+- Easier group project coordination as users' schedules can be compared side-by-side.
 
 ## IV. Product Acceptance Criteria
 A fully completed Course Matrix will include: 
@@ -63,3 +64,5 @@ Our team observed several challenges UTSC students face when organizing their ac
 We discussed ways to reduce these stress points and identified the need for a centralized tool. After considering other potential ideas, like a sports tracking app, we chose to focus on a course planning platform that could significantly improve the academic experience for UTSC students.
 
 This platform offers immediate and practical benefits for students, addressing common pain points and simplifying the academic journey. Course Matrix was designed to be a reliable and intelligent companion for students throughout their time at UTSC.
+### 3. Team organization
+Effective communication is central to our team’s strategy for collaboration. We schedule meetings three times a week (Tuesday, Friday, and Sunday) to maintain momentum, discuss progress, and ensure alignment across tasks.

@@ -39,6 +39,7 @@ Course Matrix addresses these challenges by bridging the gap with features that 
 - Input key information into the course-generating algorithm to receive tailored timetable suggestions.
 - Manually adjust schedules to align with personal preferences.
 - Leverage an AI assistant for automated timetable creation.
+
 By centralizing these functions, Course Matrix eliminates the need for students to juggle multiple websites and information sources, enabling them to manage both their academic and personal lives through a single, cohesive timetable. Additionally, robust personalization options allow users to customize the visual layout of their schedules for clarity and practicality, making the platform more intuitive and user-friendly.
 ### 3. Error Reduction
 A centralized database helps users avoid critical errors, such as overlooking courses with limited availability or missing essential academic details often buried in traditional platforms. Consolidating information in one place eliminates the need to manually transfer data between pages, reducing the risk of human errors like incorrect lecture times or course codes.
@@ -51,17 +52,17 @@ Sharing and comparing schedules is often cumbersome with existing tools. Course 
 A fully realized Course Matrix will include the following features and development standards:
 
 **Functionalities & User Interface**:
-  - **Secure User Authorization**: Comprehensive account management and robust data privacy features that ensure users maintain full control over their accounts and information.
-  - **AI Personal Assistant**: Interactive and accurate, capable of providing detailed course information and generating tailored timetables.
-  - **Course Generating Algorithm**: Processes user inputs to produce optimized timetable suggestions customized to their needs.
-  - **Comprehensive Course Database**: Enables filtering by key criteria, such as prerequisites, exclusions, and department, for efficient course selection.
-  - **Timetable Management Tools**: Allows users to create customizable schedules, share timetables, and access advanced visualization features for clarity and ease of use.
-  - **Email Notification System**: Provides timely alerts for important academic events and deadlines.
-  - **Intuitive User Interface**: A seamless and user-friendly design ensures users can easily navigate and utilize the platform without requiring extensive instructions.
- 
+- **Secure User Authorization**: Comprehensive account management and robust data privacy features that ensure users maintain full control over their accounts and information.
+- **AI Personal Assistant**: Interactive and accurate, capable of providing detailed course information and generating tailored timetables.
+- **Course Generating Algorithm**: Processes user inputs to produce optimized timetable suggestions customized to their needs.
+- **Comprehensive Course Database**: Enables filtering by key criteria, such as prerequisites, exclusions, and department, for efficient course selection.
+- **Timetable Management Tools**: Allows users to create customizable schedules, share timetables, and access advanced visualization features for clarity and ease of use.
+- **Email Notification System**: Provides timely alerts for important academic events and deadlines.
+- **Intuitive User Interface**: A seamless and user-friendly design ensures users can easily navigate and utilize the platform without requiring extensive instructions.
+
 **Development Standards**:
-  - **Rigorous Testing**: All code is thoroughly tested to address potential bugs and ensure functionality across all use cases.
-  - **Feature Integration and Code Review**: New features are reviewed by at least two team members to ensure quality and consistency before being merged into the production environment, adhering to a structured code review process.
+- **Rigorous Testing**: All code is thoroughly tested to address potential bugs and ensure functionality across all use cases.
+- **Feature Integration and Code Review**: New features are reviewed by at least two team members to ensure quality and consistency before being merged into the production environment, adhering to a structured code review process.
   
 ## V. Product Discussion Highlight
 ### 1. Identifying the Problem

@@ -41,3 +41,5 @@ We use Jira as our ticketing website. Also, Course Matrix follows the git flow p
 
 4. Get a PR approval from at least one other team member.
 5. Merge the PR and mark the associated Jira ticket with a status of `Done`.
+
+   - _Just as a FYI, our GitHub repo is configured to strictly use the [Squash and merge option](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/about-pull-request-merges#squash-and-merge-your-commits) for PRs with the default commit message set as the PR title._

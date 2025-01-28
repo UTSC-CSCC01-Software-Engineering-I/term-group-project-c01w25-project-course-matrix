@@ -24,18 +24,20 @@ We use Jira as our ticketing website. Also, Course Matrix follows the git flow p
 
 ### Branch Naming Rules
 
-1. The `main` branch holds the production-ready code.
-2. The `develop` branch is the integration branch where new features and non-breaking fixes are added and tested.
-3. Feature branches and bugfix branches are created off the `develop` branch and are merged back into it when complete. Both feature branches and bugfix branches follow the naming convention `{initials}/{jira-ticket-number}-{descriptive-title}` (e.g. `ax/scrum-2-add-login-ui` could be an example of a feature branch name and `ax/scrum-3-fix-unresponsive-login-button` could be an example of a bugfix branch name).
-4. Release branches are created off the `develop` branch and are merged into the `develop` and `main` branches when complete. Release branches follow the naming convention `release/{version-number}` (e.g. `release/1.0`).
-5. Hotfix branches are created off the `main` branch and are merged into the `develop` and `main` branches when complete. Hotfix branches follow the naming convention `hotfix/{version-number}` (e.g. `hotfix/1.0.1`).
+- The `main` branch holds the production-ready code.
+- The `develop` branch is the integration branch where new features and non-breaking fixes are added and tested.
+- Feature branches and bugfix branches are created off the `develop` branch and are merged back into it when complete. Both feature branches and bugfix branches follow the naming convention `{initials}/{jira-ticket-number}-{descriptive-title}` (e.g. `ax/scrum-2-add-login-ui` could be an example of a feature branch name and `ax/scrum-3-fix-unresponsive-login-button` could be an example of a bugfix branch name).
+- Release branches are created off the `develop` branch and are merged into the `develop` and `main` branches when complete. Release branches follow the naming convention `release/{version-number}` (e.g. `release/1.0`).
+- Hotfix branches are created off the `main` branch and are merged into the `develop` and `main` branches when complete. Hotfix branches follow the naming convention `hotfix/{version-number}` (e.g. `hotfix/1.0.1`).
 
 ### Contribution Steps
 
-1. Create a Jira ticket detailing the task you plan to work on. Once you start working on it, set the status of the ticket to `In Progress` and create the associated branch on GitHub.
+1. Once you start working on a Jira ticket, set the status of that ticket to `In Progress` and create the associated branch for that ticket on GitHub.
 2. Commit and push the necessary changes for your branch.
 3. Create a pull request (PR) for your branch:
-   3.1. For hotfix or release branches, create one PR to merge it into the `main` branch and another one to merge it into the `develop` branch.
-   3.2. For feature branches, create one PR to merge it into the `develop` branch.
+
+   - For hotfix or release branches, create one PR to merge it into the `main` branch and another one to merge it into the `develop` branch.
+   - For feature branches, create one PR to merge it into the `develop` branch.
+
 4. Get a PR approval from at least one other team member.
-5. Merge the PR (the general guideline we follow is a `Squash and merge`) and mark the associated Jira ticket with a status of `Done`.
+5. Merge the PR and mark the associated Jira ticket with a status of `Done`.

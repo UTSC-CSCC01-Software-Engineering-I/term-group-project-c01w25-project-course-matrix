@@ -1,7 +1,7 @@
 # AI-Powered Course and Timetable Planner / c01w25-project-course-matrix
 
 ## I. Product Features
-Course Matrix is an innovative AI-powered agent designed to transform academic and daily planning for undergraduate students at UTSC. It combines an advanced course database with a dynamic AI assistant to provide students with a centralized, intuitive, and efficient scheduling tool. The platform's intelligent algorithm traverses the extensive course catalogue at UTSC and analyzes user preferences to generate personalized timetables. Instead of spending hours navigating various platforms, students can now input their requirements and preferences and receive tailored scheduling recommendations in minutes.
+Course Matrix is an innovative website-based AI-powered agent designed to transform academic and daily planning for undergraduate students at UTSC. It combines an advanced course database with a dynamic AI assistant to provide students with a centralized, intuitive, and efficient scheduling tool. The platform's intelligent algorithm traverses the extensive course catalogue at UTSC and analyzes user preferences to generate personalized timetables. Instead of spending hours navigating various platforms, students can now input their requirements and preferences and receive tailored scheduling recommendations in minutes.
 By consolidating the course database and AI features into a single tool, Course Matrix offers a one-stop solution that eliminates the inefficiencies of traditional planning methods.
 Key features include:
 - **AI-Powered Assistance**:

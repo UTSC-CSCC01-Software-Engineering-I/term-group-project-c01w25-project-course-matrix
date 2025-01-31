@@ -41,7 +41,7 @@ npm install
 ```
 NODE_ENV="development"
 PORT=8081
-CLIENT_APP_URL="http://localhost:3000"
+CLIENT_APP_URL="http://localhost:5173"
 DATABASE_URL=[Insert Supabase Project URL]
 DATABASE_KEY=[Insert Supabase Project API key]
 ```
@@ -61,7 +61,7 @@ npm run dev
 cd ../frontend
 npm run dev
 ```
-Navigate to the url given by the environment variable `CLIENT_APP_URL` in `.env` to access the frontend web page. This should be `http://localhost:3000` initially.
+Navigate to the url given by the environment variable `CLIENT_APP_URL` in `.env` to access the frontend web page. This should be `http://localhost:5173` initially.
 
 ## Contribution
 

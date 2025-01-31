@@ -109,12 +109,12 @@
 ### Acceptance Criteria
 - **Input Processing**  
   - [ ] **Given** that the user wants to generate a timetable,  
-    **When** the user provides details such as:
+  - [ ] **When** the user provides details such as:
       - A list of desired courses.
       - Time constraints (e.g., exclusions like "no classes after 5 PM" or inclusions like "prefer mornings").
       - Specific days to exclude or prioritize.
       - Maximum or minimum break times between classes.
-    - **Then** the assistant should:
+  - [ ]  **Then** the assistant should:
       - Parse and validate the input.
       - Ask clarifying questions if necessary.
       - Confirm that the gathered parameters are correct with a summary (e.g., "You’ve requested: Course A, B, C; no classes after 5 PM; and at least one-hour breaks between classes. Is this correct?").

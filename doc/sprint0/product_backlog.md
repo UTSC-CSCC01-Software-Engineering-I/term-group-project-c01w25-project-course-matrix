@@ -47,10 +47,10 @@
 - [ ] **Given** that the user wants to delete their account,  
   **When** the user presses the confirm button after reviewing a warning message about the consequences of account deletion,  
   **Then** the system should:
-  - Prompt the user to confirm their identity by entering their password
-  - Permanently delete the user's account and all associated data from the system
-  - Display a confirmation message indicating successful deletion
-  - Send an email notification to the user confirming the account has been deleted
+  - Prompt the user to confirm their identity by entering their password.
+  - Permanently delete the user's account and all associated data from the system.
+  - Display a confirmation message indicating successful deletion.
+  - Send an email notification to the user confirming the account has been deleted.
 
 ## User Story 5: AI Assistant - Retrieve Course Information
 
@@ -63,14 +63,14 @@
   **When** the user asks for details about the course,  
   **Then** the AI assistant should:
     - Retrieve and present all relevant course information, including:
-      - Prerequisites / Exclusions
-      - Semester offerings
-      - Recommendations (e.g., related courses or advice for success in the course)
-      - Course Description
+      - Prerequisites / Exclusions.
+      - Semester offerings.
+      - Recommendations (e.g., related courses or advice for success in the course).
+      - Course Description.
     - Present the information in an elegant, user-friendly format, such as:
       - Clear headings for each section (e.g., "Prerequisites," "Offered In," "Recommendations").
       - Bullet points or short paragraphs for easy readability.
-      - Conforming to user needs (e.g., “Tell me about CSCC01 in less than 50 words”)
+      - Conforming to user needs (e.g., “Tell me about CSCC01 in less than 50 words”).
     - Handle ambiguous course names or codes by asking clarifying questions to the user if needed (e.g., clarifying if the user is asking for MATC01 or CSCC01 if the user asks “Tell me about C01”).
 
 ---
@@ -91,9 +91,9 @@
       - Minimum grade thresholds for program-specific courses.
       - Any additional criteria, such as co-op work terms.
     - Format the response in a clear, organized layout with sections like:
-      - Program Entry Requirements
-      - Graduation Credit Breakdown
-      - Additional Criteria or Recommendations
+      - Program Entry Requirements.
+      - Graduation Credit Breakdown.
+      - Additional Criteria or Recommendations.
     - Handle ambiguous program names by prompting the user to clarify (e.g., "Did you mean Computer Science Specialist or Computer Science Major?").
     - Provide quick links to official resources for more detailed program policies, if applicable.
     - Notify the user if information is incomplete or unavailable and offer further assistance (e.g., "Would you like help navigating the official website?").

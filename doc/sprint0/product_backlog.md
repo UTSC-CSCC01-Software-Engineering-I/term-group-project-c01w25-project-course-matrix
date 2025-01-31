@@ -86,7 +86,7 @@
   **When** the user asks for details about the program,  
   **Then** the AI assistant should:
     - Retrieve and present all relevant graduation requirements, including:
-      - POST requirements (e.g., program entry prerequisites).
+      - POSt requirements (e.g., program entry prerequisites).
       - Credit requirements (e.g., total credits, required courses, elective options).
       - Minimum grade thresholds for program-specific courses.
       - Any additional criteria, such as co-op work terms.

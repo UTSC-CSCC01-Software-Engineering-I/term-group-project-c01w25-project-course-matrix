@@ -73,12 +73,13 @@ npm run dev
 
 Navigate to the url given by the environment variable `CLIENT_APP_URL` in `.env` to access the frontend web page. This should be `http://localhost:5173` initially.
 
-### Tech Stack and Software Architecture Pattern
+## Tech Stack and Software Architecture Pattern
 
-- Tech Stack: We utilize the PERN tech stack (PostgreSQL, Express, React, and Node) tech stack 
+- Tech Stack: We utilize the PERN (PostgreSQL, Express, React, and Node) tech stack 
    - The frontend and backend codebases both use Typescript as a common language, which provides type safety across both codebases
    - Additionally, we chose to utilize Supabase as a cloud-managed wrapper for our PostgreSQL database. There are many benefits of this for example: built-in authentication and authorization, managed hosting and scalability, as well as team based project management.
-- Software Architecture Pattern: 3 Tier architecture
+  - For the reasoning behind our tech stack and for more granular details about our tech stack, refer to this [Google Docs document](https://docs.google.com/document/d/1_1IzFID0PmKTuQVWqW7zK-3XHz6-uZcC5yZ2Ghcq10E/edit?usp=sharing)
+- Software Architecture Pattern: 3-Tier Architecture
 - We chose to use a relational database instead of NoSQL due to the structured nature of our data models (Users, Courses, Offerings, Timetables)
 
 ## Contribution

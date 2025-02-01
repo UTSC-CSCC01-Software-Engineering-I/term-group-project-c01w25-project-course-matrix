@@ -73,9 +73,10 @@ npm run dev
 
 Navigate to the url given by the environment variable `CLIENT_APP_URL` in `.env` to access the frontend web page. This should be `http://localhost:5173` initially.
 
-### Tech Stack and Software Architecture Pattern
+## Tech Stack and Software Architecture Pattern
 
 - Tech Stack: We utilize the PERN tech stack (PostgreSQL, Express, React, and Node) tech stack
+  - For the reasoning behind our tech stack, refer to this [Google Docs document](https://docs.google.com/document/d/1_1IzFID0PmKTuQVWqW7zK-3XHz6-uZcC5yZ2Ghcq10E/edit?usp=sharing)
 - Software Architecture Pattern: 3 Tier architecture
 
 ## Contribution

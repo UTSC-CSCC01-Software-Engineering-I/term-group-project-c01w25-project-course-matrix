@@ -26,10 +26,13 @@ You will need to install the following prerequisites to get started:
 Follow these steps to install this application
 
 1. Clone this repo:
+
 ```
 git clone https://github.com/UTSC-CSCC01-Software-Engineering-I/term-group-project-c01w25-project-course-matrix.git
 ```
+
 2. Install npm packages
+
 ```
 cd ./course-matrix
 cd ./frontend
@@ -37,7 +40,9 @@ npm install
 cd ../backend
 npm install
 ```
+
 3. Configure environment variables: Create a `.env` file in `/backend` and populate it with the following:
+
 ```
 NODE_ENV="development"
 PORT=8081
@@ -45,6 +50,7 @@ CLIENT_APP_URL="http://localhost:5173"
 DATABASE_URL=[Insert Supabase Project URL]
 DATABASE_KEY=[Insert Supabase Project API key]
 ```
+
 The `DATABASE_URL` variable should contain your Supabase project url and the `DATABASE_KEY` should contain your Supabase project’s API key. To learn how to create a new Supabase project: see [here](https://medium.com/@heshramsis/building-a-crud-app-with-supabase-and-express-a-step-by-step-guide-for-junior-developers-81456b850910). Note that for the purposes of this project, we will provide the grader with all necessary API keys and URLs.
 
 ### Running the Application
@@ -52,16 +58,25 @@ The `DATABASE_URL` variable should contain your Supabase project url and the `DA
 To run the application locally:
 
 1. Run backend:
+
 ```
 cd ./backend
 npm run dev
 ```
+
 2. Run frontend
+
 ```
 cd ../frontend
 npm run dev
 ```
+
 Navigate to the url given by the environment variable `CLIENT_APP_URL` in `.env` to access the frontend web page. This should be `http://localhost:5173` initially.
+
+### Tech Stack and Software Architecture Pattern
+
+- Tech Stack: We utilize the PERN tech stack (PostgreSQL, Express, React, and Node) tech stack
+- Software Architecture Pattern: 3 Tier architecture
 
 ## Contribution
 

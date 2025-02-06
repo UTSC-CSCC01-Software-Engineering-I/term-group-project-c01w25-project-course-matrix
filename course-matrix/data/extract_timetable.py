@@ -3,16 +3,27 @@ import csv
 import re
 
 pdf_path = "Timetable _ Office of the Registrar Winter 2024.pdf"
-csv_path = "offerings_winter_2026.csv"x
+csv_path = "offerings_winter_2026.csv"
 # NOTE: Change this to modify session column of mock data
 session = "Winter 2026"
 
 headers = [
-    "course_code", "meeting_section", "offering", "day", "start", "end", "location", "current", "max", "is_waitlisted", "delivery_mode", "instructor", "notes"
+    "code", "meeting_section", "offering", "day", "start", "end", "location", "current", "max", "is_waitlisted", "delivery_mode", "instructor", "notes"
 ]
 
+DAYS_OF_WEEK = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"]
 TABLE_START_INDICATORS = ["MeetingSection".upper(), "Meeting".upper()]
 data = []
+
+def is_day_of_week(s):
+    return s in DAYS_OF_WEEK
+
+def is_time(s):
+    pattern = r'\b([01]\d|2[0-3]):[0-5]\d\b'
+    return re.match(pattern, s)
+
+def is_num(s):
+    return s.isdigit()
 
 def is_table_start(line):
     for indicator in TABLE_START_INDICATORS:
@@ -77,7 +88,7 @@ def handle_invalid_table(table, current_course_code):
                 prev_meeting_section = ""
                 for start, end in zip(match_starts, match_ends):
                     row = content[start:end].replace("\n", " ").replace("\uf067", " ").split(" ")
-                    if row[0] in ["MO", "TU", "WE", "TH", "FR", "SA", "SU"]:
+                    if row[0] in DAYS_OF_WEEK:
                         row.insert(0, "")
                     # print(row)
                     if len(row) < 10:
@@ -89,12 +100,12 @@ def handle_invalid_table(table, current_course_code):
                     if len(row) >= 10:
                         meeting_section = (row[0] if len(row[0]) > 0 else prev_meeting_section).replace("\n", "")
                         prev_meeting_section = meeting_section
-                        day = row[1].replace("\n", "") if row[1] else None
-                        start = row[2].replace("\n", "") if row[2] else None
-                        end = row[3].replace("\n", "") if row[3] else None
+                        day = row[1].replace("\n", "") if (row[1] and is_day_of_week(row[1].replace("\n", ""))) else None
+                        start = row[2].replace("\n", "") if (row[2] and is_time(row[2].replace("\n", ""))) else None
+                        end = row[3].replace("\n", "") if (row[3] and is_time(row[3].replace("\n", ""))) else None
                         location = row[4].replace("\n", "") if row[4] else None
-                        current = row[5].replace("\n", "") if row[5] else None
-                        max_capacity = row[6].replace("\n", "") if row[6] else None
+                        current = row[5].replace("\n", "") if (row[5] and is_num(row[5].replace("\n", ""))) else None
+                        max_capacity = row[6].replace("\n", "") if (row[6] and is_num(row[6].replace("\n", ""))) else None
                         wait = (True if row[7].replace("\n", "") == 'Y' else False) if row[7] else None
                         delivery_mode = convert_to_delivery_mode_enum(row[8].replace("\n", "")) if row[8] else None
 
@@ -120,12 +131,12 @@ def process_table(table, course_code, prev_table):
                 continue
             if len(row) >= 10:  # Ensure it's a valid row
                 meeting_section = find_meeting_section(row[0], idx, table, prev_table).replace("\n", "")
-                day = row[1].replace("\n", "") if row[1] else None
-                start = row[2].replace("\n", "") if row[2] else None
-                end = row[3].replace("\n", "") if row[3] else None
+                day = row[1].replace("\n", "") if (row[1] and is_day_of_week(row[1].replace("\n", ""))) else None
+                start = row[2].replace("\n", "") if (row[2] and is_time(row[2].replace("\n", ""))) else None
+                end = row[3].replace("\n", "") if (row[3] and is_time(row[3].replace("\n", ""))) else None
                 location = row[4].replace("\n", "") if row[4] else None
-                current = row[5].replace("\n", "") if row[5] else None
-                max_capacity = row[6].replace("\n", "") if row[6] else None
+                current = row[5].replace("\n", "") if (row[5] and is_num(row[5].replace("\n", ""))) else None
+                max_capacity = row[6].replace("\n", "") if (row[6] and is_num(row[6].replace("\n", ""))) else None
                 wait = (True if row[7].replace("\n", "") == 'Y' else False) if row[7] else None
                 delivery_mode = convert_to_delivery_mode_enum(row[8].replace("\n", "")) if row[8] else None
                 instructor = row[9].replace("\n", "") if row[9] else None

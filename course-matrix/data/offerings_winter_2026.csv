@@ -1,4 +1,4 @@
-course_code,meeting_section,offering,day,start,end,location,current,max,is_waitlisted,delivery_mode,instructor,notes
+code,meeting_section,offering,day,start,end,location,current,max,is_waitlisted,delivery_mode,instructor,notes
 ACMB10H3S,LEC01,Winter 2026,FR,10:00,12:00,Available onACORN,58,60,True,IN_PERSON,"Aguilera-Moradipour,M.",
 ACMB10H3S,LEC01,Winter 2026,FR,10:00,12:00,Available onACORN,58,60,True,IN_PERSON,"Aguilera-Moradipour,M.",
 ACMC01H3S,LEC01,Winter 2026,,,,Available on ACORN,0,20,True,IN_PERSON,"Sicondolfo, C.",
@@ -474,11 +474,11 @@ CSCA08H3S,LEC01,Winter 2026,TU,15:00,17:00,Available on ACORN,130,175,True,IN_PE
 CSCA08H3S,LEC01,Winter 2026,FR,14:00,15:00,Available on ACORN,130,175,True,IN_PERSON,"Gawde, P.",
 CSCA08H3S,LEC02,Winter 2026,TU,09:00,11:00,Available on ACORN,153,175,True,IN_PERSON,"Gawde, P.",
 CSCA08H3S,LEC02,Winter 2026,FR,10:00,11:00,Available on ACORN,153,175,True,IN_PERSON,"Gawde, P.",
-CSCA48H3S,LEC01,Winter 2026,MO,13:00,14:00,Available on ACORN,175,Y,False,,"Castro, ",
-CSCA48H3S,LEC01,Winter 2026,TH,10:00,12:00,Available on ACORN,175,Y,False,,"Castro, ",
-CSCA48H3S,LEC02,Winter 2026,MO,12:00,13:00,Available on ACORN,175,Y,False,,Y. ,
-CSCA48H3S,LEC02,Winter 2026,WE,11:00,13:00,Available on ACORN,175,Y,False,,Y. ,
-CSCA48H3S,LEC03,Winter 2026,TU,12:00,14:00,Available on ACORN,175,Y,False,,Y. ,
+CSCA48H3S,LEC01,Winter 2026,MO,13:00,14:00,Available on ACORN,175,,False,,"Castro, ",
+CSCA48H3S,LEC01,Winter 2026,TH,10:00,12:00,Available on ACORN,175,,False,,"Castro, ",
+CSCA48H3S,LEC02,Winter 2026,MO,12:00,13:00,Available on ACORN,175,,False,,Y. ,
+CSCA48H3S,LEC02,Winter 2026,WE,11:00,13:00,Available on ACORN,175,,False,,Y. ,
+CSCA48H3S,LEC03,Winter 2026,TU,12:00,14:00,Available on ACORN,175,,False,,Y. ,
 CSCA48H3S,LEC03,Winter 2026,TH,13:00,14:00,Available onACORN,103,175,True,IN_PERSON,"Huang, Y.",
 CSCA48H3S,LEC04,Winter 2026,TU,10:00,12:00,Available onACORN,34,175,True,IN_PERSON,"Huang, Y.",
 CSCA48H3S,LEC04,Winter 2026,TH,12:00,13:00,Available onACORN,34,175,True,IN_PERSON,"Huang, Y.",
@@ -1936,8 +1936,8 @@ STAC51H3S,TUT0001,Winter 2026,FR,13:00,14:00,Available on ACORN,39,50,False,IN_P
 STAC51H3S,TUT0002,Winter 2026,MO,12:00,13:00,Available on ACORN,23,50,False,IN_PERSON,,
 STAC58H3S,LEC01,Winter 2026,MO,11:00,13:00,Available on ACORN,67,135,True,IN_PERSON,"Wong, T.",
 STAC58H3S,LEC01,Winter 2026,WE,10:00,11:00,Available on ACORN,67,135,True,IN_PERSON,"Wong, T.",
-STAC63H3S,LEC01,Winter 2026,MO,13:00,15:00,Available on ACORN,40,Y,False,,M. Monday,room
-STAC63H3S,LEC01,Winter 2026,WE,11:00,12:00,Available on ACORN,40,Y,False,,M. Monday,room
+STAC63H3S,LEC01,Winter 2026,MO,13:00,15:00,Available on ACORN,40,,False,,M. Monday,room
+STAC63H3S,LEC01,Winter 2026,WE,11:00,12:00,Available on ACORN,40,,False,,M. Monday,room
 STAC67H3S,LEC01,Winter 2026,MO,13:00,15:00,Available onACORN,18,40,True,IN_PERSON,"Evans, M.",Monday room change01/09/24
 STAC67H3S,LEC01,Winter 2026,WE,11:00,12:00,Available onACORN,18,40,True,IN_PERSON,"Evans, M.",Monday room change01/09/24
 STAC67H3S,LEC01,Winter 2026,WE,09:00,10:00,Available on ACORN,75,135,True,IN_PERSON,"Kang, S.",
@@ -1976,6 +1976,8 @@ THRC40H3S,LEC01,Winter 2026,WE,09:00,12:00,Available on ACORN,26,25,True,IN_PERS
 THRC41H3S,LEC01,Winter 2026,TU,10:00,13:00,Available on ACORN,33,30,True,IN_PERSON,"Freeman, B.",
 THRC55H3S,LEC01,Winter 2026,TU,17:00,19:00,Available onACORN,4,8,True,IN_PERSON,"deChamplain-Leverenz,D.",
 THRC55H3S,LEC01,Winter 2026,TU,19:00,21:00,Available onACORN,4,8,True,IN_PERSON,"deChamplain-Leverenz,D.",
+THRC55H3S,LEC01,Winter 2026,TH,17:00,19:00,Available onACORN,4,8,True,IN_PERSON,"deChamplain-Leverenz,D.",
+THRC55H3S,LEC01,Winter 2026,TH,19:00,21:00,Available onACORN,4,8,True,IN_PERSON,"deChamplain-Leverenz,D.",
 THRC56H3S,LEC01,Winter 2026,TU,15:00,17:00,Available onACORN,5,8,True,IN_PERSON,"deChamplain-Leverenz,D.",
 THRC56H3S,LEC01,Winter 2026,TH,15:00,17:00,Available onACORN,5,8,True,IN_PERSON,"deChamplain-Leverenz,D.",
 THRC56H3S,LEC01,Winter 2026,TU,19:00,21:00,Available onACORN,5,8,True,IN_PERSON,"deChamplain-Leverenz,D.",

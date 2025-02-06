@@ -1,4 +1,4 @@
-course_code,meeting_section,offering,day,start,end,location,current,max,is_waitlisted,delivery_mode,instructor,notes
+code,meeting_section,offering,day,start,end,location,current,max,is_waitlisted,delivery_mode,instructor,notes
 ACMC01H3Y,LEC01,Summer 2025,,,,Available on ACORN,2,20,True,IN_PERSON,"Klimek, C./ Sicondolfo, C.",
 ACMD01H3Y,LEC01,Summer 2025,,,,Available on ACORN,1,20,True,IN_PERSON,"Klimek, C./ Sicondolfo, C.",
 ACMD02H3Y,LEC01,Summer 2025,,,,Available on ACORN,0,20,True,IN_PERSON,,
@@ -144,8 +144,8 @@ COPB10Y3S,LEC01,Summer 2025,TH,12:00,14:00,Available on ACORN,24,120,True,IN_PER
 COPB50H3S,LEC01,Summer 2025,,,,Available on ACORN,47,120,True,ONLINE_ASYNCHRONOUS,"Lott, A.",
 COPB50H3Y,LEC01,Summer 2025,,,,Available onACORN,55,250,True,,"Heer, K./ Jeremiah, C./Kowalchuk, A.",
 COPB50H3Y,PRA0002,Summer 2025,TU,14:00,16:00,Available onACORN,50,150,False,,,
-COPB51H3Y,LEC02,Summer 2025,-,Computer,Science,"Co-op,",Mathematics,"Co-op,",False,,Computer &,Mathematical
-COPB51H3Y,LEC01,Summer 2025,Available,on,198,240,Y,Online,False,,"K./ Jeremiah,",C./
+COPB51H3Y,LEC02,Summer 2025,,,,"Co-op,",,,False,,Computer &,Mathematical
+COPB51H3Y,LEC01,Summer 2025,,,,240,,,False,,"K./ Jeremiah,",C./
 COPB51H3Y,PRA0003,Summer 2025,FR,09:00,11:00,Available onACORN,29,80,False,IN_PERSON,"Kowalchuk, A.",
 COPB51H3Y,PRA0004,Summer 2025,TH,09:00,11:00,Available onACORN,106,120,False,,"Jeremiah, C./ Li, K.",
 COPB51H3Y,PRA0005,Summer 2025,TU,10:00,12:00,Available onACORN,31,40,False,IN_PERSON,"Li, K.",

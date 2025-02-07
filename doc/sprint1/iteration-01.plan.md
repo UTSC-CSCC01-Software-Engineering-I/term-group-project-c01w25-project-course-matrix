@@ -28,19 +28,30 @@
 - Our team will track the progress through Jira
   - Each user stories will be uploaded to Jira as a ticket:
     - Categorized in the backlog by its epic, and execution sprint
-    ![JIRA Backlog](JIRA_Backlog.png) 
+    
+    [JIRA Backlog](JIRA_Backlog.png) 
+    
     - Tickets details includes: estimated story point to determine its priority, assignees
+    
     ![Ticket Detail](Ticket_Detail.png) 
+    
     - Tickets of large user stories will be broken down to smaller chile issues
+    
     ![Ticket Description and Child Issue](Ticket_Description_and_Child_Issue.png)
+    
     - Each ticket will also show:
       - Other tickets blocked by it
+      
       ![Blocked tickets](Blocked_ticket.png)
+      
       - Other tickets blocking it
+      
       ![Blocking tickets](Blocking_tickets.png)
+  
   - Additional tasks required during the development process will also be submitted as a task ticket on JIRA for tracking.
   - Students or groups of student will be assigned first to epic and then to the specific user story.
   - Workflow
+  
     ![Ticket Workflow](Ticket_Workflow.png)
 
 ## Product

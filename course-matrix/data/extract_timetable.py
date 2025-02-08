@@ -31,7 +31,7 @@ def is_table_start(line):
             return True
     return False
 
-def find_match(line):
+def find_course_code_match(line):
     # Match course code: eg. ABCD01H3Y
     return re.search(r"(\d+)\.\s+([A-Z]{4}\d{2,3}[A-Z]?\d?[A-Z]?)", line)
 
@@ -39,7 +39,7 @@ def page_has_overflow_table(lines):
     # if course code shows up BEFORE a table start, then this means this page has no overflow
     # table. Otherwise, it does have an overflow table.
     for line in lines:
-        if find_match(line): 
+        if find_course_code_match(line): 
             return False
         if is_table_start(line.replace("\n", "").replace(" ", "").upper()):
             return True
@@ -168,7 +168,7 @@ with pdfplumber.open(pdf_path) as pdf:
                 process_table(tables[0], current_course_code, prev_page_table)
                 tables_read_this_page += 1
             for line in lines:
-                match = find_match(line) # match a course code
+                match = find_course_code_match(line) # match a course code
                 if match:
                     current_course_code = match.group(2) 
                     # print(current_course_code)

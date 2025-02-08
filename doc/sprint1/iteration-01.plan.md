@@ -6,42 +6,42 @@
 ## 1. Process
 #### 1.1 Roles & Responsibilities
 - **Epic 1: Registration/Login**: Thomas and Masa
-  - Create account database schema to store and protect users' account information
-  - Develop software backend API and frontend UI to handle users' account registrations, authentications and account deletions to ensure secured access to different pages
+  - Create account database schema to store and protect users' account information
+  - Develop software backend API and frontend UI to handle users' account registrations, authentications and account deletions to ensure secured access to different pages
 
 - **Epic 2: Course Database**: Kevin and Austin
-  - Create a course database schema to store all course offerings and course information
-  - Develop software backend API and frontend UI to display all courses and course offerings information
+  - Create a course database schema to store all course offerings and course information
+  - Develop software backend API and frontend UI to display all courses and course offerings information
 
 - **Epic 3: Scheduler & Note taking**: Minh
-  - Develop a calendar timetable that allows users to add, update and delete events
-  - Taking notes during stand-ups
-  - Create sprint 1 documentation: iteration-plan-01, RPM, and sprint-01 review
+  - Develop a calendar timetable that allows users to add, update and delete events
+  - Taking notes during stand-ups
+  - Create sprint 1 documentation: iteration-plan-01, RPM, and sprint-01 review
 
 In addition to their specific roles, all team members have a collective responsibility to support and assist other team members to ensure that the goals (listed in section 2.1 ) are achieved and develop a working prototype.
 
 #### 1.2 Events
 - **Initial planning meeting**:
-  - Location: In person, computer lab BV498
-  - Time: 2/4/2025
-  - Purposes:
-    - Go over the sprint 1 requirements
-    - Define tasks and responsibilities for each team member\
+  - Location: In person, computer lab BV498
+  - Time: 2/4/2025
+  - Purposes:
+    - Go over the sprint 1 requirements
+    - Define tasks and responsibilities for each team member
 
 - **Stand up meeting**:
-  - Location: Online or in-person depending on members availability
-  - Time: Every Tuesday, Friday and Sunday from 9 pm to 10 pm
-  - Purposes
-    - Progress updates: What has each member done since the last stand-up
-    - Determine the next steps and deadlines
-    - Discuss current blockers and possible solutions
+  - Location: Online or in-person depending on members availability
+  - Time: Every Tuesday, Friday and Sunday from 9 pm to 10 pm
+  - Purposes
+    - Progress updates: What has each member done since the last stand-up
+    - Determine the next steps and deadlines
+    - Discuss current blockers and possible solutions
 
 - **Final review meeting**
-  - Location: Online
-  - Time: 2/13/2025
-  - Purposes:
-    - Review features and deliverables implemented in sprint 1 
-    - Determine changes that need to be made in sprint 2
+  - Location: Online
+  - Time: 2/13/2025
+  - Purposes:
+    - Review features and deliverables implemented in sprint 1 
+    - Determine changes that need to be made in sprint 2
 
 #### 1.3 Artifacts
 - Our team will track the progress through Jira
@@ -75,49 +75,48 @@ In addition to their specific roles, all team members have a collective responsi
 
 ## 2. Product
 #### 2.1 Goal and Tasks
-1. Create database schemas that will be the foundation for future feature developments
-- **Account database schema**: [SCRUM-67](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-67?atlOrigin=eyJpIjoiNGVjOGU4ZGZkZWMzNDVlYzljZjgxMzNhMGI1Y2MyOGEiLCJwIjoiaiJ9)
-- **Course database schema**: [SCRUM-68](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-68?atlOrigin=eyJpIjoiYjg1ZjkxN2IwMzE4NGVlNmE2YmU3YjZlM2ZjNThjZGMiLCJwIjoiaiJ9)
+**1. Create database schemas that will be the foundation for future feature developments**
+  - *Account database schema*: [SCRUM-67](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-67?atlOrigin=eyJpIjoiNGVjOGU4ZGZkZWMzNDVlYzljZjgxMzNhMGI1Y2MyOGEiLCJwIjoiaiJ9)
+  - *Course database schema*: [SCRUM-68](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-68?atlOrigin=eyJpIjoiYjg1ZjkxN2IwMzE4NGVlNmE2YmU3YjZlM2ZjNThjZGMiLCJwIjoiaiJ9)
 
-2. Develop product features for the product demo
-- **Epic 1: Registration and Login**
-  - Account Creation: [SCRUM-25](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-25?atlOrigin=eyJpIjoiNTU0NWE3OTQ3MjgwNDYwNzgzNTM5MjI2NmFjMDc4ZWMiLCJwIjoiaiJ9)
-  - Account Login: [SCRUM-26](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-26?atlOrigin=eyJpIjoiMmRkZWQyMjQzMDhlNDQ5MGEwNTRjYjBhMDM2ZDE5YjUiLCJwIjoiaiJ9)
-  - Account Logout: [SCRUM-27](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-27?atlOrigin=eyJpIjoiYmY4ZmExZTZmN2VkNGViZTkzNDA4ZjZhZTJlMWE0YTciLCJwIjoiaiJ9)
-  - Account Deletion: [SCRUM-28](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-28?atlOrigin=eyJpIjoiODc0ZjQ3MTE3ZGViNGFhZWJiMmYzMTdlZjM0MWM2NjUiLCJwIjoiaiJ9)
+**2. Develop product features for the product demo:**
+  - *Epic 1: Registration and Login*
+    - Account Creation: [SCRUM-25](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-25?atlOrigin=eyJpIjoiNTU0NWE3OTQ3MjgwNDYwNzgzNTM5MjI2NmFjMDc4ZWMiLCJwIjoiaiJ9)
+    - Account Login: [SCRUM-26](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-26?atlOrigin=eyJpIjoiMmRkZWQyMjQzMDhlNDQ5MGEwNTRjYjBhMDM2ZDE5YjUiLCJwIjoiaiJ9)
+    - Account Logout: [SCRUM-27](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-27?atlOrigin=eyJpIjoiYmY4ZmExZTZmN2VkNGViZTkzNDA4ZjZhZTJlMWE0YTciLCJwIjoiaiJ9)
+    - Account Deletion: [SCRUM-28](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-28?atlOrigin=eyJpIjoiODc0ZjQ3MTE3ZGViNGFhZWJiMmYzMTdlZjM0MWM2NjUiLCJwIjoiaiJ9)
+  
+  - *Epic 2: Course DB*
+    - Courses List Display: [SCRUM-42](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-42?atlOrigin=eyJpIjoiYTMzZWI2OGQxYmUyNDc2MmE4MTM5ZjA2M2I3NWFmYWUiLCJwIjoiaiJ9)
+    - Courses Entries Display: [SCRUM-43](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-43?atlOrigin=eyJpIjoiYzIxMTdkN2ZkYjc3NGU1NWJhNTAxZDE3ODA4NTM2ZmIiLCJwIjoiaiJ9)
+    
+  - *Epic 3: Scheduler*
+    - Timetable Basic/Insertion: [SCRUM-46](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-46?atlOrigin=eyJpIjoiN2Y1NTgzNzQ2MGZjNGYyZjgwOTdhNDM0ZjE5MjIzOWIiLCJwIjoiaiJ9)
+    - Entries Update/Delete: [SCRUM-47](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-47?atlOrigin=eyJpIjoiN2JiYmY1NTdjNDNlNGE2MzhlM2NkODhiYjFiOGYwYmEiLCJwIjoiaiJ9)
 
-- **Epic 2: Course DB**
-  - Courses List Display: [SCRUM-42](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-42?atlOrigin=eyJpIjoiYTMzZWI2OGQxYmUyNDc2MmE4MTM5ZjA2M2I3NWFmYWUiLCJwIjoiaiJ9)
-  - Courses Entries Display: [SCRUM-43](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-43?atlOrigin=eyJpIjoiYzIxMTdkN2ZkYjc3NGU1NWJhNTAxZDE3ODA4NTM2ZmIiLCJwIjoiaiJ9)
-
-- **Epic 3: Scheduler**
-  - Timetable Basic/Insertion: [SCRUM-46](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-46?atlOrigin=eyJpIjoiN2Y1NTgzNzQ2MGZjNGYyZjgwOTdhNDM0ZjE5MjIzOWIiLCJwIjoiaiJ9)
-  - Entries Update/Delete: [SCRUM-47](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-47?atlOrigin=eyJpIjoiN2JiYmY1NTdjNDNlNGE2MzhlM2NkODhiYjFiOGYwYmEiLCJwIjoiaiJ9)
-
-3. Create sprint1 documentation: [SCRUM-70](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-70?atlOrigin=eyJpIjoiNGE5YWQ3MzU5YTg3NGI1ODgyNjk2YTBlOWY4ZDgzMDkiLCJwIjoiaiJ9)
+**3. Create sprint1 documentation:** [SCRUM-70](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-70?atlOrigin=eyJpIjoiNGE5YWQ3MzU5YTg3NGI1ODgyNjk2YTBlOWY4ZDgzMDkiLCJwIjoiaiJ9)
 
 #### 2.2 Artifacts
-1. Database Schemas
-- Courses schema:
-  - Course table: Course information
-  - Offerings table: Lecture sections available for each course in a semester
+**1. Database Schemas**
+  - Courses schema:
+    - Course table: Course information
+    - Offerings table: Lecture sections available for each course in a semester
+    
+  - Account schema
+    - Users
+    - Event
 
-- Account schema
-  - Users
-  - Event
-
-2. Pages/Features
-- Registration and login
-  - Static welcome page for users to create an account
-  - Static welcome page for users to log in to their account
-  - Drop-down button for users to log off their account
-  - Static page for users to delete their account
-
-- Course DB
-  - Static page that displays all the courses available, with filter options for users to narrow it down
-  - Static course page that displays detailed course information
-
-- Scheduler
-  - Dynamic page containing a calendar that allows users to add, edit and delete event entries
+**2. Pages/Features**
+  - Registration and login
+    - Static welcome page for users to create an account
+    - Static welcome page for users to log in to their account
+    - Drop-down button for users to log off their account
+    - Static page for users to delete their account
   
-  ![Dynamic Calendar](image.png)
+  - Course DB
+    - Static page that displays all the courses available, with filter options for users to narrow it down
+    - Static course page that displays detailed course information
+    
+  - Scheduler
+    - Dynamic page containing a calendar that allows users to add, edit and delete event entries
+    ![Dynamic Calendar](image.png)

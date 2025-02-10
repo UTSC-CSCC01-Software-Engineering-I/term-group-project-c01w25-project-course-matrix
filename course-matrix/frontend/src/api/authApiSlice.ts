@@ -1,0 +1,24 @@
+import {apiSlice} from './baseApiSlice'
+import {AUTH_URL} from "./config"
+
+// Endpoints for /api/auth
+export const authApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+      login: builder.mutation({
+          query: (data) => ({
+              url: `${AUTH_URL}/login`,
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json, text/plain, */*'
+              },
+              body: data,
+              credentials: 'include',
+          }),
+      }),
+  })
+})
+
+export const {
+  useLoginMutation,
+} = authApiSlice;

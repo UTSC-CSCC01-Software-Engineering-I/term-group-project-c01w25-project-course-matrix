@@ -30,7 +30,6 @@
     - Users' passwords must be hash-protected in the database
   - Login/Logout
     - Users must be able to login to their account using their username and password
-    - Each session has a limited time of ... hour to maintain security
     - User must be logged in a valid session to browse through different web pages
     - When a user is logged in or logged out of the system there will be a clear message on the screen
 

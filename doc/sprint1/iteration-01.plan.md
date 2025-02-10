@@ -7,7 +7,7 @@
 #### 1.1 Roles & Responsibilities
 - **Epic 1: Registration/Login**: Thomas and Masa
   - Create account database schema to store and protect users' account information
-  - Develop software backend API and frontend UI to handle users' account registrations, authentications and account deletions to ensure secured access to different pages
+  - Develop software backend API and frontend UI to handle users' account registrations and authentications to ensure secured access to different pages
 
 - **Epic 2: Course Database**: Kevin and Austin
   - Create a course database schema to store all course offerings and course information
@@ -84,8 +84,7 @@ In addition to their specific roles, all team members have a collective responsi
     - Account Creation: [SCRUM-25](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-25?atlOrigin=eyJpIjoiNTU0NWE3OTQ3MjgwNDYwNzgzNTM5MjI2NmFjMDc4ZWMiLCJwIjoiaiJ9)
     - Account Login: [SCRUM-26](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-26?atlOrigin=eyJpIjoiMmRkZWQyMjQzMDhlNDQ5MGEwNTRjYjBhMDM2ZDE5YjUiLCJwIjoiaiJ9)
     - Account Logout: [SCRUM-27](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-27?atlOrigin=eyJpIjoiYmY4ZmExZTZmN2VkNGViZTkzNDA4ZjZhZTJlMWE0YTciLCJwIjoiaiJ9)
-    - Account Deletion: [SCRUM-28](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-28?atlOrigin=eyJpIjoiODc0ZjQ3MTE3ZGViNGFhZWJiMmYzMTdlZjM0MWM2NjUiLCJwIjoiaiJ9)
-  
+
   - *Epic 2: Course DB*
     - Courses List Display: [SCRUM-42](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-42?atlOrigin=eyJpIjoiYTMzZWI2OGQxYmUyNDc2MmE4MTM5ZjA2M2I3NWFmYWUiLCJwIjoiaiJ9)
     - Courses Entries Display: [SCRUM-43](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-43?atlOrigin=eyJpIjoiYzIxMTdkN2ZkYjc3NGU1NWJhNTAxZDE3ODA4NTM2ZmIiLCJwIjoiaiJ9)
@@ -107,7 +106,6 @@ In addition to their specific roles, all team members have a collective responsi
     - Static welcome page for users to create an account
     - Static welcome page for users to log in to their account
     - Drop-down button for users to log off their account
-    - Static page for users to delete their account
   
   - Course DB
     - Static page that displays all the courses available, with filter options for users to narrow it down

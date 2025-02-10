@@ -14,10 +14,9 @@
 
 - Import course information and course offerings for the Winter, Summer and Fall semesters of 2024 from the UTSC timetable archive by Feb 9th 2025
 - Build basic software features for the first TA demo by Feb 13th 2025 including: 
-  - Account registration, login, logout and deletion
+  - Account registration, login, logout
   - Display all available courses with filtering options: Department(s), Course Code, Session(s), Course Level(s), Time(s), Day(s) of Week, Course Title, Course Section, Breadth Requirements, Prerequisites, Exclusions
   - Display courses and course offerings information: Course Description, Meeting Section, Offering, Days of Week, Time, Location
-  - Basic calendar table that allows students to add, update and delete events
 
 ### 1.2 Metrics for Measurement
 - Database schema
@@ -37,24 +36,16 @@
   - A general course display table will be showcased on a webpage containing all the critical offering information (listed in section 1.1)
   - Each course entry contains a link to the course information page (listed in section 1.1)
 
-- Calendar
-  - Users can freely add, update or delete as many events per timeslot per day as needed
-
 ## 2. Release Scope
 ### 2.1 Included Features
 - Account management: Allows users to create and manage their personal events and program requirements
   - Registration
   - Login
   - Logout
-  - Deletion
 
 - Course Display: Allows users to access up-to-date courses and course offerings information for timetable generation
   - Course offering information
   - Course description information
-
-
-- Calendar/Timetable: Allows users to customize their timetable with both academic and non-academic events freely
-  - Users can add, update or delete events on a calendar table
 
 ### 2.2 Excluded Features
 - Automatic timetable generating algorithm
@@ -64,12 +55,15 @@
   - Retrieve program requirements
   - Generate timetable
 
-- Customize the personal calendar with colour-coding
-- Overlay course options over the user's current calendar
+- Calendar customization features:
+  - Add, update, delete personal events from user's personal calendar
+  - Customize the personal calendar with colour-coding
+  - Overlay course options over the user's current calendar
+
 - Email notification
 - Timetable comparison, exportation and sharing
 
-These features will be developed in future sprints.
+Due to conflicts with other assignments and midterm test, our team did not have enough time to develop these features. They will be developed in future sprints.
 
 ### 2.3 Bug Fixes
 None

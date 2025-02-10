@@ -96,6 +96,9 @@ In addition to their specific roles, all team members have a collective responsi
   - Courses schema:
     - Course table: Course information
     - Offerings table: Lecture sections available for each course in a semester
+    - Prerequisite table: Records prerequisite relationships
+    - Corequisite table: Records corequisite relationships 
+
     
   - Account schema
     - Users
@@ -110,3 +113,6 @@ In addition to their specific roles, all team members have a collective responsi
   - Course DB
     - Static page that displays all the courses available, with filter options for users to narrow it down
     - Static course page that displays detailed course information
+
+**3. Mock data**
+  - Mock data for courses & offerings extracted from UTSC course timetable archive for Winter, Summer, Fall 2024.

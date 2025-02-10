@@ -63,7 +63,7 @@
 - Email notification
 - Timetable comparison, exportation and sharing
 
-Due to conflicts with other assignments and midterm test, our team did not have enough time to develop these features. They will be developed in future sprints.
+Due to conflicts with other assignments and midterm tests, our team did not have enough time to develop these features. They will be developed in future sprints.
 
 ### 2.3 Bug Fixes
 None

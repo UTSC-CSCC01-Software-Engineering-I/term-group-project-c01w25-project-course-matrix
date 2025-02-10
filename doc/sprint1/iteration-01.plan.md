@@ -13,10 +13,10 @@
   - Create a course database schema to store all course offerings and course information
   - Develop software backend API and frontend UI to display all courses and course offerings information
 
-- **Epic 3: Scheduler & Note taking**: Minh
-  - Develop a calendar timetable that allows users to add, update and delete events
+- **Note taking & Documentation**: Minh
   - Taking notes during stand-ups
   - Create sprint 1 documentation: iteration-plan-01, RPM, and sprint-01 review
+  - Create System Design Document
 
 In addition to their specific roles, all team members have a collective responsibility to support and assist other team members to ensure that the goals (listed in section 2.1 ) are achieved and develop a working prototype.
 
@@ -89,10 +89,6 @@ In addition to their specific roles, all team members have a collective responsi
   - *Epic 2: Course DB*
     - Courses List Display: [SCRUM-42](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-42?atlOrigin=eyJpIjoiYTMzZWI2OGQxYmUyNDc2MmE4MTM5ZjA2M2I3NWFmYWUiLCJwIjoiaiJ9)
     - Courses Entries Display: [SCRUM-43](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-43?atlOrigin=eyJpIjoiYzIxMTdkN2ZkYjc3NGU1NWJhNTAxZDE3ODA4NTM2ZmIiLCJwIjoiaiJ9)
-    
-  - *Epic 3: Scheduler*
-    - Timetable Basic/Insertion: [SCRUM-46](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-46?atlOrigin=eyJpIjoiN2Y1NTgzNzQ2MGZjNGYyZjgwOTdhNDM0ZjE5MjIzOWIiLCJwIjoiaiJ9)
-    - Entries Update/Delete: [SCRUM-47](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-47?atlOrigin=eyJpIjoiN2JiYmY1NTdjNDNlNGE2MzhlM2NkODhiYjFiOGYwYmEiLCJwIjoiaiJ9)
 
 **3. Create sprint1 documentation:** [SCRUM-70](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-70?atlOrigin=eyJpIjoiNGE5YWQ3MzU5YTg3NGI1ODgyNjk2YTBlOWY4ZDgzMDkiLCJwIjoiaiJ9)
 
@@ -116,7 +112,3 @@ In addition to their specific roles, all team members have a collective responsi
   - Course DB
     - Static page that displays all the courses available, with filter options for users to narrow it down
     - Static course page that displays detailed course information
-    
-  - Scheduler
-    - Dynamic page containing a calendar that allows users to add, edit and delete event entries
-    ![Dynamic Calendar](image.png)

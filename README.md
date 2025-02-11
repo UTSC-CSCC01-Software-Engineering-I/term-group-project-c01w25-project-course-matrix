@@ -56,7 +56,7 @@ The `DATABASE_URL` variable should contain your Supabase project url and the `DA
 4. Configure environment variables for frontend. Create a `.env` file in `/frontend` and populate it with the following:
 
 ```
-VITE_SERVER_URL="https://localhost:8081"
+VITE_SERVER_URL="http://localhost:8081"
 ```
 
 

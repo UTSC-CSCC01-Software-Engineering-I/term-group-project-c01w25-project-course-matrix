@@ -7,7 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { RestrictionSchema, TimetableFormSchema, baseTimetableForm } from "@/models/timetable-form"
+import { RestrictionSchema, SemesterEnum, TimetableFormSchema, baseTimetableForm } from "@/models/timetable-form"
 import { Edit, X } from "lucide-react"
 import { createContext, useEffect, useState } from "react"
 import { useForm, UseFormReturn } from "react-hook-form"
@@ -127,9 +127,11 @@ const TimetableBuilder = () => {
                               <SelectValue placeholder="Select a semester" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Summer 2025">Summer 2025</SelectItem>
-                              <SelectItem value="Fall 2025">Fall 2025</SelectItem>
-                              <SelectItem value="Winter 2026">Winter 2026</SelectItem>
+                              {Object.values(SemesterEnum.Values).map((value) => (
+                                <SelectItem key={value} value={value}>
+                                  {value}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </FormControl>

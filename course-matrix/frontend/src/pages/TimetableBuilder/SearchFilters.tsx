@@ -9,10 +9,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { FilterForm, FilterFormSchema } from "@/models/filter-form";
+import { BreadthRequirementEnum, FilterForm, FilterFormSchema } from "@/models/filter-form";
 import { z } from "zod";
 import { UseFormReturn } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { convertBreadthRequirement } from "@/utils/convert-breadth-requirement";
+import { SemesterEnum } from "@/models/timetable-form";
 
 interface SearchFiltersProps {
   closeHandler: () => void;
@@ -59,9 +61,11 @@ const SearchFilters = ({
                             <SelectValue placeholder="Select a semester" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Summer 2025">Summer 2025</SelectItem>
-                            <SelectItem value="Fall 2025">Fall 2025</SelectItem>
-                            <SelectItem value="Winter 2026">Winter 2026</SelectItem>
+                            {Object.values(SemesterEnum.Values).map((value) => (
+                              <SelectItem key={value} value={value}>
+                                {value}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -82,11 +86,11 @@ const SearchFilters = ({
                             <SelectValue placeholder="Select a breadth requirement" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="ART_LIT_LANG">Arts, Literature and Language</SelectItem>
-                            <SelectItem value="HIS_PHIL_CUL">History, Philosophy and Cultural Studies</SelectItem>
-                            <SelectItem value="SOCIAL_SCI">Social and Behavioral Sciences</SelectItem>
-                            <SelectItem value="NAT_SCI">Natural Sciences</SelectItem>
-                            <SelectItem value="QUANT">Quantitative Reasoning</SelectItem>
+                            {Object.values(BreadthRequirementEnum.Values).map((value) => (
+                              <SelectItem key={value} value={value}>
+                                {convertBreadthRequirement(value)}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </FormControl>

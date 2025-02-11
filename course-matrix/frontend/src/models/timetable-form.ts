@@ -121,9 +121,19 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z.object({
   date: z.date(),
   semester: SemesterEnum,
   search: z.string(),
-  courses: z.array(CourseSchema).min(1, "At least 1 course is required"),
+  courses: z.array(CourseSchema),
   restrictions: z.array(RestrictionSchema)
-})
+}).refine((data) => {
+  return !(data.courses.length < 1)
+}, {
+  message: "Must pick at least 1 course",
+  path: ["search"]
+}).refine((data) => {
+  return !(data.courses.length > 8)
+}, {
+  message: "Cannot pick more than 8 courses",
+  path: ["search"]
+});
 
 export const baseTimetableForm: TimetableForm = {
   name: "New Timetable",

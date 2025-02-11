@@ -3,7 +3,7 @@ import { useContext, useState } from "react"
 import { FormContext } from "./TimetableBuilder"
 import { X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { baseRestrictionForm, RestrictionSchema } from "@/models/timetable-form";
+import { baseRestrictionForm, daysOfWeek, RestrictionSchema } from "@/models/timetable-form";
 import {
   Form,
   FormControl,
@@ -16,6 +16,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn } from "react-hook-form"
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TimePickerHr } from "@/components/time-picker-hr";
+import { Input } from "@/components/ui/input";
 
 interface CreateCustomSettingProps {
   closeHandler: () => void;
@@ -32,14 +35,16 @@ const CreateCustomSetting = ({
     defaultValues: baseRestrictionForm,
   })
 
+  const restrictionType = restrictionForm.watch("type")
+
   const createRestriction = (values: z.infer<typeof RestrictionSchema>) => {
-    console.log("e")
+    console.log(values)
     submitHandler(values)
     closeHandler()
   }
 
   const getRestrictionType = (value: string) => {
-    if (value === "Restrict Before" || value === "Restrict After" || "Restrict Between") {
+    if (value === "Restrict Before" || value === "Restrict After" || value === "Restrict Between") {
       return "time"
     }
     else if (value === "Restrict Day") {
@@ -63,7 +68,7 @@ const CreateCustomSetting = ({
         <CardContent>
           <Form {...restrictionForm}>
             <form onSubmit={restrictionForm.handleSubmit(createRestriction, (errors) => console.log(errors) )} className="space-y-8">
-              <div className="flex gap-8 w-full">
+              <div className="flex gap-8 w-full flex-wrap">
                 <FormField
                     control={restrictionForm.control}
                     name="type"
@@ -88,23 +93,120 @@ const CreateCustomSetting = ({
                       </FormItem>
                     )}
                   />
-                  {getRestrictionType(restrictionForm.getValues("type")) === "day" || getRestrictionType(restrictionForm.getValues("type")) === "time" ? (
-                    <FormField
-                      control={restrictionForm.control}
-                      name="days"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Restriction Type</FormLabel>
-                          <FormControl>
-                            
-                            
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                  {restrictionType && 
+                  (getRestrictionType(restrictionType) === "day" ||
+                   getRestrictionType(restrictionType) === "time") ? (
+                    <>
+                      <FormField
+                        control={restrictionForm.control}
+                        name="days"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Days</FormLabel>
+                            <div className="flex flex-wrap gap-4">
+                            {daysOfWeek.map((item) => (
+                              <FormField
+                                key={item.id}
+                                control={restrictionForm.control}
+                                name="days"
+                                render={({ field }) => {
+                                  return (
+                                    <FormItem
+                                      key={item.id}
+                                      className="flex flex-row items-start space-x-3 space-y-0"
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(item.id)}
+                                          onCheckedChange={(checked) => {
+                                            return checked
+                                              ? field.onChange([...(field?.value || []), item.id])
+                                              : field.onChange(
+                                                  field.value?.filter(
+                                                    (value) => value !== item.id
+                                                  )
+                                                )
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        {item.label}
+                                      </FormLabel>
+                                    </FormItem>
+                                  )
+                                }}
+                              />
+                            ))}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      {restrictionType && (restrictionType === "Restrict After" || restrictionType === "Restrict Between") && (
+
+                        <FormField
+                          control={restrictionForm.control}
+                          name="startTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>From</FormLabel>
+                              <FormControl>
+                                <div className="p-3 border-t border-border">
+                                  <TimePickerHr
+                                    setDate={field.onChange}
+                                    date={field.value}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                            )}
+                        />
                       )}
-                    />
-                  ) : (
-                    <></>
+
+                      {restrictionType && (restrictionType === "Restrict Before" || restrictionType === "Restrict Between") && (
+
+                        <FormField
+                          control={restrictionForm.control}
+                          name="endTime"
+                          render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>To</FormLabel>
+                            <FormControl>
+                              <div className="p-3 border-t border-border">
+                                <TimePickerHr
+                                  setDate={field.onChange}
+                                  date={field.value}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                          )}
+                        />
+                      )}
+
+                    </>
+                  ) : restrictionType && getRestrictionType(restrictionType) === "days off" && ( 
+                    <>
+                        <FormField
+                          control={restrictionForm.control}
+                          name="numDays"
+                          render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Minimum no. days off per week</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                value={field.value ?? ""}
+                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                          )}
+                        />
+                    </>
                   )}
               </div>
 

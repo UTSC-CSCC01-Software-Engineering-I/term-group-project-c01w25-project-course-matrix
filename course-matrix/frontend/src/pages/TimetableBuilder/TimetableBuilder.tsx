@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form"
 import { RestrictionSchema, TimetableFormSchema, baseTimetableForm } from "@/models/timetable-form"
 import { Edit, X } from "lucide-react"
-import { createContext, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 import { useForm, UseFormReturn } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -18,6 +18,11 @@ import CourseSearch from "@/pages/TimetableBuilder/CourseSearch"
 import { mockSearchData } from "./mockSearchData"
 import { CourseModel } from "@/models/models"
 import CreateCustomSetting from "./CreateCustomSetting"
+import { formatTime } from "@/utils/format-date-time"
+import { FilterForm, FilterFormSchema } from "@/models/filter-form"
+import { useGetCoursesQuery } from "@/api/coursesApiSlice"
+import { useDebounceValue } from "@/utils/useDebounce"
+import SearchFilters from "./SearchFilters"
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null)
@@ -28,14 +33,35 @@ const TimetableBuilder = () => {
     defaultValues: baseTimetableForm,
   })
 
+  const filterForm = useForm<z.infer<typeof FilterFormSchema>>({
+    resolver: zodResolver(FilterFormSchema),
+  })
+
   const selectedCourses = form.watch("courses") || []
+  const enabledRestrictions = form.watch("restrictions") || []
+  const searchQuery = form.watch("search")
+  const debouncedSearchQuery = useDebounceValue(searchQuery, 500)
 
   const [isEditNameOpen, setIsEditNameOpen] = useState(false)
   const [isCustomSettingsOpen, setIsCustomSettingsOpen] = useState(false)
   const [searchData, setSearchData] = useState<CourseModel[]>(mockSearchData.courses) // TODO replace with real query
+  const [filters, setFilters] = useState<FilterForm | null>(null)
+  const [showFilters, setShowFilters] = useState(false)
+  const { data, isLoading, error, refetch } = useGetCoursesQuery(filters)
+
+  useEffect(() => {
+    if (searchQuery) {
+      refetch();
+    }
+  }, [debouncedSearchQuery])
  
   const createTimetable = (values: z.infer<typeof TimetableFormSchema>) => {
-    console.log('f')
+    console.log(values)
+    // TODO Send request to /api/timetable/create
+  }
+
+  const handleReset = () => {
+    form.reset()
   }
 
   const handleRemoveCourse = (course: {id: number, code: string, name: string}) => {
@@ -50,8 +76,19 @@ const TimetableBuilder = () => {
     form.setValue("restrictions", newList)
   }
 
+  const handleRemoveRestriction = (index: number) => {
+    const currentList = form.getValues("restrictions")
+    const newList = currentList.filter((_, i) => i !== index)
+    form.setValue('restrictions', newList);
+  }
+
+  const applyFilters = (values: z.infer<typeof FilterFormSchema>) => {
+    setFilters(values)
+    console.log("Apply filters", values)
+  }
+
   const onSearchChange = (searchQuery: string) => {
-    // TODO call query refetch to update data
+    
   }
 
   return <>
@@ -69,7 +106,7 @@ const TimetableBuilder = () => {
             </div>
           </div>
           <div className="flex gap-4 ">
-            <Button size="sm" variant="outline">Reset</Button>
+            <Button size="sm" variant="outline" onClick={handleReset}>Reset</Button>
             <Button size="sm">Share</Button>
           </div>
         </div>
@@ -112,10 +149,14 @@ const TimetableBuilder = () => {
                       <FormItem className="w-1/2">
                         <FormLabel>Pick a few courses you'd like to take</FormLabel>
                         <FormControl>
-                          <CourseSearch value={field.value} onChange={(value) => {
-                            field.onChange(value)
-                            onSearchChange(value)
-                          }} data={searchData}/>
+                          <CourseSearch value={field.value} 
+                            onChange={(value) => {
+                              field.onChange(value)
+                              onSearchChange(value)
+                            }} 
+                            data={searchData} // TODO: Replace with variable data
+                            showFilter={() => setShowFilters(true)}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -123,7 +164,7 @@ const TimetableBuilder = () => {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <p className="text-sm font-bold pb-2">Selected courses: {selectedCourses.length}</p>
+                  <p className="text-sm pb-2">Selected courses: {selectedCourses.length}</p>
                   <div className="flex gap-2 flex-col">
                     {selectedCourses.map((course, index) => (
                       <div key={index} className="flex p-2 justify-between bg-green-100/50 text-xs rounded-md w-[64%]">
@@ -142,6 +183,23 @@ const TimetableBuilder = () => {
                   <Button size="sm" variant="secondary" onClick={() => setIsCustomSettingsOpen(true)}>+ Add new</Button>
                 </div>
 
+                <div className="flex flex-col">
+                  <p className="text-sm pb-2">Enabled Restrictions: {enabledRestrictions.length}</p>
+                  <div className="flex gap-2 flex-col">
+                    {enabledRestrictions.map((restric, index) => (
+                      <div key={index} className="flex p-2 justify-between bg-red-100/50 text-xs rounded-md w-[64%]">
+                        {restric.type.startsWith("Restrict") ? (
+                          <p><strong>{restric.type}:</strong> {restric.startTime ? formatTime(restric.startTime) : ""} {restric.type === "Restrict Between" ? " - " : ""} {restric.endTime ? formatTime(restric.endTime) : ""} {restric.days?.join(" ")}</p> 
+                        ) : (
+                          <p><strong>{restric.type}:</strong> At least {restric.numDays} days off</p>
+                        )}
+                        
+                        <X size={16} className="hover:text-red-500 cursor-pointer" onClick={() => handleRemoveRestriction(index)}/>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <Button type="submit">Generate</Button>
               </form>
             </FormContext.Provider>
@@ -152,6 +210,19 @@ const TimetableBuilder = () => {
         </div>
         {isCustomSettingsOpen && (
           <CreateCustomSetting submitHandler={handleAddRestriction} closeHandler={() => setIsCustomSettingsOpen(false)}/>
+        )}
+
+        {showFilters && (
+          <SearchFilters
+            submitHandler={applyFilters}
+            closeHandler={() => setShowFilters(false)}
+            resetHandler={() => {
+              setFilters(null)
+              setShowFilters(false)
+              console.log("reset filters")
+            }}
+            filterForm={filterForm}
+          />
         )}
       </div>
     </div>

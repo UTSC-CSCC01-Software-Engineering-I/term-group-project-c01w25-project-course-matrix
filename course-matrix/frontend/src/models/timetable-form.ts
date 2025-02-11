@@ -12,26 +12,40 @@ export type TimetableForm = {
     code: string,
     name: string,
   }[],
-  restrictions: {
-    type: string,
-    days?: DayOfWeek[],
-    numDays?: number,
-    startTime?: string,
-    endTime?: string,
-    disabled?: boolean,
-  }[]
+  restrictions: RestrictionForm[]
 }
 
 export type RestrictionForm = {
   type: string,
-  days?: DayOfWeek[],
+  days?: string[],
   numDays?: number,
-  startTime?: string,
-  endTime?: string,
+  startTime?: Date,
+  endTime?: Date,
   disabled?: boolean,
 }
 
-export type DayOfWeek = "MO" | "TU" | "WE" | "TH" | "FR" | "SA" | "SU"
+export const daysOfWeek = [
+  {
+    id: "MO",
+    label: "Monday",
+  },
+  {
+    id: "TU",
+    label: "Tuesday",
+  },
+  {
+    id: "WE",
+    label: "Wednesday",
+  },
+  {
+    id: "TH",
+    label: "Thursday",
+  },
+  {
+    id: "FR",
+    label: "Friday",
+  },
+] as const
 
 export const SemesterEnum = z.enum(["Summer 2025", "Fall 2025", "Winter 2026"])
 
@@ -43,12 +57,64 @@ export const CourseSchema = z.object({
 
 export const RestrictionSchema = z.object({
   type: z.string().min(1, "Restriction type is required"),
-  days: z.array(z.enum(["MO" , "TU" , "WE" , "TH" , "FR" ,"SA" , "SU"])).optional(),
-  numDays: z.number().positive().optional(),
-  startTime: z.string().regex(timeRegex, "Invalid time format (HH:MM)").optional(),
-  endTime: z.string().regex(timeRegex, "Invalid time format (HH:MM)").optional(),
+  days: z.array(z.string()).optional(),
+  numDays: z.number().positive().max(4, "Cannot block all days of the week").optional(),
+  // startTime: z.string().regex(timeRegex, "Invalid time format (HH:MM)").optional(),
+  // endTime: z.string().regex(timeRegex, "Invalid time format (HH:MM)").optional(),
+  startTime: z.date().optional(),
+  endTime: z.date().optional(),
   disabled: z.boolean().optional(),
-})
+}).refine((data) => {
+  if (data.startTime && data.endTime) {
+    return data.startTime < data.endTime;
+  }
+  return true; // Allow if either undefined
+}, {
+  message: "Start time must be before end time",
+  path: ["startTime"],
+}).refine((data) => {
+    if (data.type && (data.type === "Restrict Before" || data.type === "Restrict Between") && !data.endTime)
+      return false
+    return true
+}, {
+  message: "Must choose time",
+  path: ["endTime"]
+}).refine((data) => {
+  if (data.type && (data.type === "Restrict After" || data.type === "Restrict Between") && !data.startTime)
+    return false
+  return true
+}, {
+  message: "Must choose time",
+  path: ["startTime"]
+}).refine((data) => {
+  if (data.type && (data.type === "Restrict Day") && data.days && data.days.length > 4)
+    return false
+  return true
+}, {
+  message: "Cannot block all days",
+  path: ["days"]
+}).refine((data) => {
+  if (data.type && (data.type.startsWith("Restrict")) && data.days && data.days.length < 1)
+    return false
+  return true
+}, {
+  message: "Must choose at least 1 day",
+  path: ["days"]
+}).refine((data) => {
+  if (data.type && (data.type === "Days Off") && data.numDays && data.numDays > 4)
+    return false
+  return true
+}, {
+  message: "Cannot block all days",
+  path: ["numDays"]
+}).refine((data) => {
+  if (data.type && (data.type === "Days Off") && (!data.numDays || data.numDays < 1))
+    return false
+  return true
+}, {
+  message: "Number must be at least 1",
+  path: ["numDays"]
+});
 
 export const TimetableFormSchema: ZodType<TimetableForm> = z.object({
   name: z.string().max(100, "Name cannot exceed 100 characters").min(1, "Name cannot be empty"),

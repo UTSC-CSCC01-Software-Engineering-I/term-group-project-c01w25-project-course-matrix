@@ -1,6 +1,6 @@
-import { Info, Search as SearchIcon, X } from "lucide-react"
+import { FilterIcon, Info, Search as SearchIcon } from "lucide-react"
 import { Input } from "../../components/ui/input"
-import { useContext, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { CourseModel } from "@/models/models"
 import { useClickOutside } from "@/utils/useClickOutside"
 import {
@@ -8,17 +8,19 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import { convertBreadthRequirement } from "@/utils/convertBreadthRequirement"
+import { convertBreadthRequirement } from "@/utils/convert-breadth-requirement"
 import { FormContext } from "./TimetableBuilder"
 
 interface CourseSearchProps {
   value: string,
+  showFilter: () => void;
   onChange: (_: string) => void,
   data: CourseModel[],
 }
 
 const CourseSearch = ({
   value,
+  showFilter,
   onChange,
   data,
 }: CourseSearchProps) => {
@@ -50,14 +52,15 @@ const CourseSearch = ({
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setShowPanel(true)}
       />
+      <FilterIcon size={16} onClick={showFilter} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-800 transition cursor-pointer"/>
       {showPanel && (
-        <div ref={panelRef} className="absolute top-full left-0 w-full bg-white shadow-md border rounded-md mt-2 p-2">
+        <div ref={panelRef} className="absolute top-full left-0 w-full bg-white shadow-md border rounded-md mt-2 p-2 z-[100]">
           {data.length > 0 ? (
             data.map((item, index) => (
               <div 
                 key={index} 
                 onClick={() => handleAddCourse(item)} 
-                className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                className="p-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center gap-1"
               >
                 <div>
                   <p className="text-sm font-bold">{item.code}</p>
@@ -70,7 +73,12 @@ const CourseSearch = ({
                       className="hover:text-green-500 transition duration-1"
                     />
                   </HoverCardTrigger>
-                  <HoverCardContent side="right" className="w-[25%]" onClick={(e) => e.stopPropagation()}>
+                  <HoverCardContent 
+                    side="right" 
+                    className="w-[280px] sm:w-[350px] md:w-[450px] lg:w-[500px] max-w-[90vw]"
+                    sideOffset={10}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <div className="text-sm flex flex-col gap-2">
                       <p className="text-lg font-bold">{item.code}: {item.name}</p>
                       <p>{item.description}</p>

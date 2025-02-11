@@ -87,10 +87,6 @@ const TimetableBuilder = () => {
     console.log("Apply filters", values)
   }
 
-  const onSearchChange = (searchQuery: string) => {
-    
-  }
-
   return <>
     <div className="w-full">
       <div className="m-8">
@@ -152,7 +148,6 @@ const TimetableBuilder = () => {
                           <CourseSearch value={field.value} 
                             onChange={(value) => {
                               field.onChange(value)
-                              onSearchChange(value)
                             }} 
                             data={searchData} // TODO: Replace with variable data
                             showFilter={() => setShowFilters(true)}

@@ -7,18 +7,14 @@ export default {
 		try {
 			const { semester, creditWeight, breadthRequirement } = req.query;
 
-			// Query the courses table for courses that match the given breadth requirement.
-			let coursesQuery = supabaseCourseClient
-				.from("courses")
-				.select()
-				.eq("breadth_requirement", breadthRequirement);
+			// Query the courses from the database
+			let coursesQuery = supabaseCourseClient.from("courses").select();
 			const { data, error } = await coursesQuery;
 
 			// Create a map of course codes to semesters.
 			const courseCodesToSemestersMap: { [key: string]: string[] } = {};
 			let offeringsQuery = supabaseCourseClient.from("offerings").select();
-			const { data: offeringsData, error: offeringsError } =
-				await offeringsQuery;
+			const { data: offeringsData, error: offeringsError } = await offeringsQuery;
 			const offerings = offeringsData || [];
 			offerings.forEach((offering) => {
 				const courseCode = offering.code;
@@ -30,13 +26,32 @@ export default {
 				}
 			});
 
+			let filteredCourses = data || [];
+
+			// Filter the courses based on the breadth requirement
+			if (breadthRequirement) {
+				filteredCourses = filteredCourses.filter((course) => {
+					return course.breadth_requirement === breadthRequirement;
+				});
+			}
+
+			// Filter the courses based on the credit weight
+			if (creditWeight) {
+				filteredCourses = filteredCourses.filter((course) => {
+					const courseCreditWeight =
+						course.code[course.code.length - 2] === "H" ? 0.5 : 1;
+					return courseCreditWeight === Number(creditWeight);
+				});
+			}
+
 			// Filter the courses based on the semester
-			const courses = data || [];
-			const filteredCourses = courses.filter((course) => {
-				const courseCode = course.code;
-				const semesters = courseCodesToSemestersMap[courseCode] || [];
-				return semester && semesters.includes(semester as string);
-			});
+			if (semester) {
+				filteredCourses = filteredCourses.filter((course) => {
+					return courseCodesToSemestersMap[course.code].includes(
+						semester as string
+					);
+				});
+			}
 
 			// Debugging logs (WILL BE REMOVED)
 			console.log("courseCodesToSemestersMap: ", courseCodesToSemestersMap);

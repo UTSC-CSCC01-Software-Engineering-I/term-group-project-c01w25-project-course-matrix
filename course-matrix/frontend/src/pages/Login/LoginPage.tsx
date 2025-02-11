@@ -7,13 +7,16 @@ const LoginPage = () => {
   return <>
     <Card className="w-[350px] p-8">
       <div className="flex flex-col gap-4">
-        <h1 className="text-xl font-bold">Test</h1>
-        <h2 className="text-sm text-slate-500">Subtext</h2>
-        <Label htmlFor="name">Name</Label>
-        <Input placeholder="input text"/>
+        <h1 className="text-xl font-bold">Please Login or Signup</h1>
+        <h2 className="text-sm text-slate-500">If you have an account please log in, if you do not have an account please sign up.</h2>
+        <Label htmlFor="name">Username</Label>
+        <Input placeholder="Input user name"/>
+        <h2 className="text-sm text-slate-500">Password</h2>
+        <Input placeholder="input user password"/>
         <div className="w-full flex flex-row justify-between">
-          <Button variant="outline">Click me</Button>
-          <Button>Click me</Button>
+          <Button variant="outline">Login</Button>
+          <h2 className="text-xl font-bold">Or</h2>
+          <Button variant="outline">Sign Up</Button>
         </div>
       </div>
     </Card>

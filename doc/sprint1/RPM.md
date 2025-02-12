@@ -15,7 +15,13 @@
 - Import course information and course offerings for the Winter, Summer and Fall semesters of 2024 from the UTSC timetable archive by Feb 9th 2025
 - Build basic software features for the first TA demo by Feb 13th 2025 including: 
   - Account registration, login, logout
-  - Display all available courses with filtering options: Department(s), Course Code, Session(s), Course Level(s), Time(s), Day(s) of Week, Course Title, Course Section, Breadth Requirements, Prerequisites, Exclusions
+  - Display all available courses with filtering options:
+    - Semester
+    - Breadth Requirement
+    - Creadit Weight
+    - Department
+    - COurse Level
+    
   - Display courses and course offerings information: Course Description, Meeting Section, Offering, Days of Week, Time, Location
 
 ### 1.2 Metrics for Measurement

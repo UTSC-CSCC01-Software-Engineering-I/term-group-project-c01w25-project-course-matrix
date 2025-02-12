@@ -55,7 +55,7 @@ const CourseSearch = ({
       <FilterIcon size={16} onClick={showFilter} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-800 transition cursor-pointer"/>
       {showPanel && (
         <div ref={panelRef} className="absolute top-full left-0 w-full bg-white shadow-md border rounded-md mt-2 p-2 z-[100]">
-          {data.length > 0 ? (
+          {(data && data.length > 0) ? (
             data.map((item, index) => (
               <div 
                 key={index} 

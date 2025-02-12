@@ -8,6 +8,7 @@ export const apiSlice = createApi({
     tagTypes: [
         'Auth',
         'Course',
+        'Department',
         'Offering',
         'Timetable',
     ],

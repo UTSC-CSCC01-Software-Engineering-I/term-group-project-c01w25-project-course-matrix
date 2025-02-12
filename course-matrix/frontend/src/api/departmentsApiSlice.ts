@@ -1,19 +1,18 @@
 import {apiSlice} from './baseApiSlice'
 import {COURSES_URL} from "./config"
 
-// Endpoints for /api/courses
-export const coursesApiSlice = apiSlice.injectEndpoints({
+// Endpoints for /api/departments
+export const departmentApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-      getCourses: builder.query({
-          query: (filters) => ({
+      getDepartments: builder.query<any, void>({
+          query: () => ({
               url: `${COURSES_URL}`,
               method: 'GET',
-              params: filters,
               headers: {
                   'Content-Type': 'application/json',
                   'Accept': 'application/json, text/plain, */*'
               },
-              providesTags: ["Course"],
+              providesTags: ["Department"],
               credentials: 'include',
           }),
       }),
@@ -21,5 +20,5 @@ export const coursesApiSlice = apiSlice.injectEndpoints({
 })
 
 export const {
-  useGetCoursesQuery,
-} = coursesApiSlice;
+  useGetDepartmentsQuery,
+} = departmentApiSlice;

@@ -14,3 +14,11 @@ export type CourseModel = {
   corequisiteDescription?: string,
   note?: string,
 }
+
+export type DepartmentModel = {
+  id: number,
+  createdAt: string,
+  updatedAt: string,
+  code: string,
+  name: string,
+}

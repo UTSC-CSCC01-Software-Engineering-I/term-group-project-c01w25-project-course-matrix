@@ -3,3 +3,4 @@ export const BASE_URL = ''
 
 export const AUTH_URL = `${SERVER_URL}/api/auth`
 export const COURSES_URL = `${SERVER_URL}/api/courses`
+export const DEPARTMENT_URL = `${SERVER_URL}/api/department`

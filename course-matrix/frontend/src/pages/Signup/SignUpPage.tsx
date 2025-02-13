@@ -1,68 +1,67 @@
-import { useLoginMutation } from "@/api/authApiSlice"
+import { useLoginMutation, useSignupMutation } from "@/api/authApiSlice"
 import Logo from "@/components/logo"
+import PasswordInput from "@/components/password-input"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { LoginFormSchema } from "@/models/login-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { Link, useLocation, useNavigate } from "react-router-dom"
-import { z } from "zod"
+import { SignupFormSchema } from "@/models/signup-form"
 import { setCredentials } from "@/stores/authslice"
-import { useDispatch } from "react-redux"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import PasswordInput from "@/components/password-input"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { useDispatch } from "react-redux"
+import { useNavigate, useLocation, Link } from "react-router-dom"
+import { z } from "zod"
 
-const LoginPage = () => {
+const SignupPage = () => {
 
-  const loginForm = useForm<z.infer<typeof LoginFormSchema>>({
-    resolver: zodResolver(LoginFormSchema),
+  const signupForm = useForm<z.infer<typeof SignupFormSchema>>({
+    resolver: zodResolver(SignupFormSchema),
     defaultValues: {
       email: "",
-      password: ""
+      password: "",
+      confirmPassword: ""
     }
   })
 
-  const [ login ] = useLoginMutation()
+  const [ signup ] = useSignupMutation()
   const dispatch = useDispatch()
 
   const navigate = useNavigate();
   const { search } = useLocation();
   const sp = new URLSearchParams(search);
-  const redirect = sp.get('redirect') || '/dashboard/home';
+  const redirect = sp.get('redirect') || '/login';
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const onSubmit = async (values: z.infer<typeof LoginFormSchema>) => {
+  const onSubmit = async (values: z.infer<typeof SignupFormSchema>) => {
     if(isSubmitting) return;
     setIsSubmitting(true)
     try {
-      const { data, error } = await login(loginForm.getValues())
+      const { data, error } = await signup(signupForm.getValues())
       console.log(data)
 
-      // Set user details to localstorage
-      dispatch(setCredentials(data))
-
-      // Go to dashboard
+      // Go to /login
       navigate(redirect)
     } catch (err) {
       console.error(err)
     }
     setIsSubmitting(false)
+    
   }
 
   return <div className="w-screen flex flex-col gap-4 justify-center -translate-y-12 items-center h-screen bg-gray-100">
     <Logo />
     <Card className="flex flex-col items-center text-center p-8">
       <div className="flex flex-col gap-4">
-        <h1 className="text-xl font-semibold">Login</h1>
-        <h2 className="text-sm text-slate-500">Login with your email and password</h2>
-        <Form {...loginForm}>
-          <form onSubmit={loginForm.handleSubmit(onSubmit)} className="space-y-4">
+        <h1 className="text-xl font-semibold">Sign up</h1>
+        <h2 className="text-sm text-slate-500">Sign up to Course Matrix with your email</h2>
+        <Form {...signupForm}>
+          <form onSubmit={signupForm.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
-              control={loginForm.control}
+              control={signupForm.control}
               name="email"
               render={({ field }) => (
                 <FormItem className="text-left w-[400px]">
@@ -75,26 +74,33 @@ const LoginPage = () => {
               )}
             />
             <PasswordInput 
-              form={loginForm} 
+              form={signupForm} 
               name="password"
-              label="Password"
+              label="Create Password"
               placeholder="Enter password" 
+              className="w-full" 
+            />
+            <PasswordInput 
+              form={signupForm} 
+              name="confirmPassword"
+              label="Confirm Password"
+              placeholder="Confirm password" 
               className="w-full" 
             />
             
             <div className="w-full flex flex-row justify-center">
-              <Button id="LoginBtn" className="w-full" variant={isSubmitting ? "ghost" : "default"} type="submit">Login</Button>
+              <Button id="LoginBtn" className="w-full" type="submit" variant={isSubmitting ? "ghost" : "default"}>Sign up</Button>
             </div>
           </form>
         </Form>
 
         <Label id="GogtoSignup" htmlFor="go to Signup" className="flex flex-row justify-center gap-1 m-2">
-          <p>Don't have an account?</p>
-          <Link to="/signup"><p className="underline">Sign up!</p></Link>
+          <p>Have an account?</p>
+          <Link to="/login"><p className="underline">Log in!</p></Link>
         </Label>
       </div>
     </Card>
   </div>
 }
 
-export default LoginPage
+export default SignupPage

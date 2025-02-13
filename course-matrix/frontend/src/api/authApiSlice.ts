@@ -27,11 +27,23 @@ export const authApiSlice = apiSlice.injectEndpoints({
             body: data,
             credentials: 'include',
         }),
-    }),
+      }),
+      me: builder.query<any, void>({
+        query: () => ({
+            url: `${AUTH_URL}/me`,
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*'
+            },
+            credentials: 'include',
+        }),
+      }),
   })
 })
 
 export const {
   useLoginMutation,
   useSignupMutation,
+  useMeQuery,
 } = authApiSlice;

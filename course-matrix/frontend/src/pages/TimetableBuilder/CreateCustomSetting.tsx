@@ -147,6 +147,7 @@ const CreateCustomSetting = ({
                         <FormField
                           control={restrictionForm.control}
                           name="startTime"
+                          defaultValue={new Date(new Date().setHours(0, 0, 0, 0))} // 12 AM
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>From</FormLabel>
@@ -169,6 +170,7 @@ const CreateCustomSetting = ({
                         <FormField
                           control={restrictionForm.control}
                           name="endTime"
+                          defaultValue={new Date(new Date().setHours(0, 0, 0, 0))} // 12 AM
                           render={({ field }) => (
                           <FormItem>
                             <FormLabel>To</FormLabel>

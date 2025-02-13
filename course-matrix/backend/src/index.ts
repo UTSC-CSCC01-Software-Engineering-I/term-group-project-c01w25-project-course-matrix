@@ -8,7 +8,7 @@ import {errorConverter, errorHandler} from "./middleware/errorHandler";
 import asyncHandler from "./middleware/asyncHandler";
 import cors from 'cors';
 import { supabase } from "./db/setupDb";
-import { coursesRouter, departmentsRouter } from "./routes/courseRouter";
+import { coursesRouter, departmentsRouter, offeringsRouter } from "./routes/courseRouter";
 
 const app: Express = express();
 const HOST = "localhost";
@@ -28,6 +28,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // Routes
 app.use("/api/courses", coursesRouter);
 app.use("/api/departments", departmentsRouter);
+app.use("/api/offerings", offeringsRouter);
 
 app.get("/", asyncHandler( async (_, response) =>
   response.json({ info: "Testing course matrix backend server" })

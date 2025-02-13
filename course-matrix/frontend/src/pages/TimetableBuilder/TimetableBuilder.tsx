@@ -72,6 +72,8 @@ const TimetableBuilder = () => {
 
   const handleReset = () => {
     form.reset()
+    filterForm.reset()
+    setFilters(null)
   }
 
   const handleRemoveCourse = (course: {id: number, code: string, name: string}) => {

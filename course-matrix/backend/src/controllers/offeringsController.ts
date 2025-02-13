@@ -16,9 +16,9 @@ export default {
             // Get the data and errors from the query
             const { data: offeringsData, error: offeringsError } = await offeringsQuery;
 
-            const departments = offeringsData || [];
+            const offerings = offeringsData || [];
 
-            res.status(200).json(departments);
+            res.status(200).json(offerings);
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: "Internal Server Error" });

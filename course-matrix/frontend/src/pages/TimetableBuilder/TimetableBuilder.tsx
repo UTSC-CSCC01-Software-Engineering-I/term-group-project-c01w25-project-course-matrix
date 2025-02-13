@@ -188,7 +188,7 @@ const TimetableBuilder = () => {
                     <h2 className="text-lg">Custom Settings</h2>
                     <p className="text-sm text-gray-500">Add additional restrictions to your timetable to personalize it to your needs.</p>
                   </div>
-                  <Button size="sm" variant="secondary" onClick={() => setIsCustomSettingsOpen(true)}>+ Add new</Button>
+                  <Button size="sm" variant="secondary" type="button" onClick={() => setIsCustomSettingsOpen(true)}>+ Add new</Button>
                 </div>
 
                 <div className="flex flex-col">

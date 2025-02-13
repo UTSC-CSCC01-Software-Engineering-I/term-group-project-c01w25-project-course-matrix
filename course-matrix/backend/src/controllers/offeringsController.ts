@@ -7,16 +7,16 @@ export default {
         try {
             const { course_code, semester } = req.query;
             
-            let departmentsQuery = supabaseCourseClient
+            let offeringsQuery = supabaseCourseClient
                 .from("offerings")
                 .select()
                 .eq("code", course_code)
                 .eq("offering", semester);
 
             // Get the data and errors from the query
-            const { data: departmentsData, error: departmentsError } = await departmentsQuery;
+            const { data: offeringsData, error: offeringsError } = await offeringsQuery;
 
-            const departments = departmentsData || [];
+            const departments = offeringsData || [];
 
             res.status(200).json(departments);
         } catch (error) {

@@ -91,7 +91,6 @@ const SearchFilters = ({
                             <SelectValue placeholder="Select a credit weight" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={""}></SelectItem>
                             <SelectItem value="1">1 credit</SelectItem>
                             <SelectItem value="0.5">0.5 credit</SelectItem>
                           </SelectContent>

@@ -2,7 +2,7 @@ import {apiSlice} from './baseApiSlice'
 import {OFFERINGS_URL} from "./config"
 
 // Endpoints for /api/offerings
-export const departmentApiSlice = apiSlice.injectEndpoints({
+export const offeringsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
       getOfferings: builder.query({
           query: (params) => ({
@@ -22,4 +22,4 @@ export const departmentApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetOfferingsQuery,
-} = departmentApiSlice;
+} = offeringsApiSlice;

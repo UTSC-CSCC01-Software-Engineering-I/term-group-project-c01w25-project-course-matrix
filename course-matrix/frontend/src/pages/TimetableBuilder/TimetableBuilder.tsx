@@ -26,6 +26,7 @@ import SearchFilters from "./SearchFilters"
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null)
+const SEARCH_LIMIT = 1000
 
 const TimetableBuilder = () => {
   const form = useForm<z.infer<typeof TimetableFormSchema>>({
@@ -40,14 +41,23 @@ const TimetableBuilder = () => {
   const selectedCourses = form.watch("courses") || []
   const enabledRestrictions = form.watch("restrictions") || []
   const searchQuery = form.watch("search")
-  const debouncedSearchQuery = useDebounceValue(searchQuery, 500)
+  const debouncedSearchQuery = useDebounceValue(searchQuery, 250)
 
   const [isEditNameOpen, setIsEditNameOpen] = useState(false)
   const [isCustomSettingsOpen, setIsCustomSettingsOpen] = useState(false)
-  const [searchData, setSearchData] = useState<CourseModel[]>(mockSearchData.courses) // TODO replace with real query
   const [filters, setFilters] = useState<FilterForm | null>(null)
   const [showFilters, setShowFilters] = useState(false)
-  const { data, isLoading, error, refetch } = useGetCoursesQuery(filters)
+
+  const noSearchAndFilter = () => {
+    return !searchQuery && !filters
+  }
+
+  const { data, isLoading, error, refetch } = useGetCoursesQuery({
+    limit: noSearchAndFilter() ? SEARCH_LIMIT : 10000, // limit search number if no search query or filters for performance
+    search: debouncedSearchQuery || undefined, 
+    semester: form.getValues("semester"), 
+    ...filters
+  })
 
   useEffect(() => {
     if (searchQuery) {
@@ -123,7 +133,7 @@ const TimetableBuilder = () => {
                         <FormLabel>Semester</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
-                            <SelectTrigger className="w-[180px]">
+                            <SelectTrigger className="w-[140px]">
                               <SelectValue placeholder="Select a semester" />
                             </SelectTrigger>
                             <SelectContent>
@@ -144,14 +154,15 @@ const TimetableBuilder = () => {
                     control={form.control}
                     name="search"
                     render={({ field }) => (
-                      <FormItem className="w-1/2">
+                      <FormItem className="w-full">
                         <FormLabel>Pick a few courses you'd like to take</FormLabel>
                         <FormControl>
                           <CourseSearch value={field.value} 
                             onChange={(value) => {
                               field.onChange(value)
                             }} 
-                            data={searchData} // TODO: Replace with variable data
+                            data={data} // TODO: Replace with variable data
+                            isLoading={isLoading}
                             showFilter={() => setShowFilters(true)}
                           />
                         </FormControl>

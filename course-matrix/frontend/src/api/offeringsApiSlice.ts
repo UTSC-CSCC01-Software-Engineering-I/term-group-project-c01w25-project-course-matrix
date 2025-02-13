@@ -1,18 +1,19 @@
 import {apiSlice} from './baseApiSlice'
-import {DEPARTMENT_URL} from "./config"
+import {OFFERINGS_URL} from "./config"
 
-// Endpoints for /api/departments
+// Endpoints for /api/offerings
 export const departmentApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-      getDepartments: builder.query<any, void>({
-          query: () => ({
-              url: `${DEPARTMENT_URL}`,
+      getOfferings: builder.query({
+          query: (params) => ({
+              url: `${OFFERINGS_URL}`,
               method: 'GET',
+              params: params,
               headers: {
                   'Content-Type': 'application/json',
                   'Accept': 'application/json, text/plain, */*'
               },
-              providesTags: ["Department"],
+              providesTags: ["Offerings"],
               credentials: 'include',
           }),
       }),
@@ -20,5 +21,5 @@ export const departmentApiSlice = apiSlice.injectEndpoints({
 })
 
 export const {
-  useGetDepartmentsQuery,
+  useGetOfferingsQuery,
 } = departmentApiSlice;

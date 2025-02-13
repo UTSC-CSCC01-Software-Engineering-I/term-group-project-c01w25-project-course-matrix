@@ -53,30 +53,6 @@ const SearchFilters = ({
           <Form {...filterForm}>
             <form onSubmit={filterForm.handleSubmit(handleApply, (errors) => console.log(errors) )} className="space-y-8">
               <div className="flex flex-col gap-8 w-full flex-wrap items-center">
-                <FormField
-                  control={filterForm.control}
-                  name="semester"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Semester</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value} defaultValue={""}>
-                          <SelectTrigger className="w-[320px]">
-                            <SelectValue placeholder="Select a semester" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.values(SemesterEnum.Values).map((value) => (
-                              <SelectItem key={value} value={value}>
-                                {value}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                   
                 <FormField
                   control={filterForm.control}
@@ -115,6 +91,7 @@ const SearchFilters = ({
                             <SelectValue placeholder="Select a credit weight" />
                           </SelectTrigger>
                           <SelectContent>
+                            <SelectItem value={""}></SelectItem>
                             <SelectItem value="1">1 credit</SelectItem>
                             <SelectItem value="0.5">0.5 credit</SelectItem>
                           </SelectContent>
@@ -138,9 +115,8 @@ const SearchFilters = ({
                           </SelectTrigger>
                           <SelectContent>
                             {(data && data.length > 0) && data.map((item: DepartmentModel) => (
-                              <SelectItem key={item.code} value={item.code}>{item.name}</SelectItem>
+                              <SelectItem key={item.code[0]} value={item.code[0]}>{item.name}</SelectItem>
                             ))}
-                            <SelectItem value="MAT">Mathematics</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>

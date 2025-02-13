@@ -5,12 +5,15 @@
 ## 1. Release Objectives for Sprint 1
 ### 1.1 Goals
 - Build database schemas to store course information, course offerings and user accounts by Feb 9th 2025
-  - **Course schema**:
-    - Offering information: Meeting Section, Session Offering, Day of Week, Start-End time, location, Number of current enrollments, Max number of enrollments
-    - Course information: Course code, name, breadth requirements, description, prerequisite, exclusion
-  - **Account schema**:
-    - User information: userId, email, password
-    - Event: Title, Description, Date, Month, Year, Days of Week, Time 
+  - **`course` schema**:
+    - The `offerings` table should have columns for the Meeting Section, Session Offering, Day of Week, Start-End time, Location, Number of current enrollments, Max number of enrollments
+    - The `courses` table should have columns for the course code, name, breadth requirements, description, prerequisites, corequisites, and exclusions
+    - The `corequisites` table should have columns to map each course_id with their corresponding corequisite course_ids
+    - The `prerequisites` table should have columns to map each course_id with their corresponding prerequisite course_ids
+    - The `departments` table should have columns to map each department to their code name as shown in the course codes
+  - **`account` schema**:
+    - The `users` table should have columns to store user account information: username, password, user_id
+    - The `events` table should have columns to store event titles, descriptions, days and times and connect them to their user_id from the Users table
 
 - Import course information and course offerings for the Winter, Summer and Fall semesters of 2024 from the UTSC timetable archive by Feb 9th 2025
 - Build basic software features for the first TA demo by Feb 13th 2025 including: 
@@ -18,15 +21,15 @@
   - Display all available courses with filtering options:
     - Semester
     - Breadth Requirement
-    - Creadit Weight
+    - Credit Weight
     - Department
-    - COurse Level
+    - Course Level
     
   - Display courses and course offerings information: Course Description, Meeting Section, Offering, Days of Week, Time, Location
 
 ### 1.2 Metrics for Measurement
 - Database schema
-  - Include all offerings offered in Winter, Summer, and Fall semesters of 2024 as listed on UTSC Course Timetable Archive
+  - Include all offerings offered in the Winter, Summer, and Fall semesters of 2024 as listed on the UTSC Course Timetable Archive
   - Include all the critical fields listed above (section 1.1) for user accounts, courses and course offerings information
   
 - User account management
@@ -62,7 +65,7 @@
   - Generate timetable
 
 - Calendar customization features:
-  - Add, update, delete personal events from user's personal calendar
+  - Add, update, and delete personal events from the user's calendar
   - Customize the personal calendar with colour-coding
   - Overlay course options over the user's current calendar
 
@@ -75,12 +78,12 @@ Due to conflicts with other assignments and midterm tests, our team did not have
 None
 
 ### 2.4 Non-Functional Requirements
-- User sensitive accounts information must be codified to ensure security
-  - Users' password must be hash-protected
+- User-sensitive account information must be codified to ensure security
+  - Users' passwords must be hash-protected
   - Users' events information (title, content) must be hash-protected
 
 - Fast course query time
-  - When users finish filling out the filtering options and click on the search button, the website should not take over 5 second to display all courses that fit the description
+  - When users finish filling out the filtering options and click on the search button, the website should not take over 5 seconds to display all courses that fit the description
 
-#### 2.5 Dependencies and Limitations
+### 2.5 Dependencies and Limitations
 - None

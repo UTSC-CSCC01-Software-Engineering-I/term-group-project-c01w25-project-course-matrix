@@ -18,7 +18,7 @@
   - Create sprint 1 documentation: iteration-plan-01, RPM, and sprint-01 review
   - Create System Design Document
 
-In addition to their specific roles, all team members have a collective responsibility to support and assist other team members to ensure that the goals (listed in section 2.1 ) are achieved and develop a working prototype.
+In addition to their specific roles, all team members have a collective responsibility to support and assist other team members to ensure that the goals (listed in section 2.1) are achieved and develop a working prototype.
 
 #### 1.2 Events
 - **Initial planning meeting**:
@@ -30,7 +30,7 @@ In addition to their specific roles, all team members have a collective responsi
 
 - **Stand up meeting**:
   - Location: Online or in-person depending on members availability
-  - Time: Every Tuesday 12 pm to 1 pm, Friday and Sunday from 9 pm to 10 pm
+  - Time: Every Tuesday from 12 pm to 1 pm, Friday and Sunday from 9 pm to 10 pm
   - Purposes
     - Progress updates: What has each member done since the last stand-up
     - Determine the next steps and deadlines
@@ -93,16 +93,17 @@ In addition to their specific roles, all team members have a collective responsi
 
 #### 2.2 Artifacts
 **1. Database Schemas**
-  - Courses schema:
-    - Course table: Course information
-    - Offerings table: Lecture sections available for each course in a semester
-    - Prerequisite table: Records prerequisite relationships
-    - Corequisite table: Records corequisite relationships 
+  - `course` schema:
+    - `courses` table: Course information
+    - `offering` table: Lecture sections available for each course in a semester
+    - `prerequisites` table: Records prerequisite relationships
+    - `corequisites` table: Records corequisite relationships 
+    - `departments` table: Records all department codes and their associated names
 
     
-  - Account schema
-    - Users
-    - Event
+  - `account` schema
+    - `users`
+    - `event`
 
 **2. Pages/Features**
   - Registration and login
@@ -115,4 +116,4 @@ In addition to their specific roles, all team members have a collective responsi
     - Static course page that displays detailed course information
 
 **3. Mock data**
-  - Mock data for courses & offerings extracted from UTSC course timetable archive for Winter, Summer, Fall 2024.
+  - Mock data for courses & offerings extracted from the UTSC course timetable archive for Winter, Summer, and Fall 2024.

@@ -5,24 +5,32 @@ import asyncHandler from '../middleware/asyncHandler';
 
 export const handleAuthCode =
     asyncHandler(async (req: Request, res: Response) => {
-      const token_hash = req.query.token_hash as string;
-      const type = req.query.type as string;
-      const next = (req.query.next as string) ?? '/';
+      try {
+        const token_hash = req.query.token_hash as string;
+        const type = req.query.type as string;
+        const next = (req.query.next as string) ?? '/';
 
-      if (token_hash && type) {
-        const {error} = await supabase.auth.verifyOtp({
-          type: 'email',
-          token_hash,
-        });
-
-        if (!error) {
-          console.log(next);
-          console.log('auth success');
-          res.redirect(303, `/${next.slice(1)}`);
-          return;
+        if (!token_hash || !type) {
+          return res.status(400).json({error: 'Missing token or type'});
         }
+
+        if (token_hash && type) {
+          const {error} = await supabase.auth.verifyOtp({
+            type: 'email',
+            token_hash,
+          });
+
+          if (!error) {
+            console.log(next);
+            console.log('auth success');
+            res.redirect(303, decodeURIComponent(next));
+            return;
+          }
+        }
+        // Redirect to an error page if verification fails or parameters are
+        // missing
+        res.redirect(303, '/auth/auth-code-error');
+      } catch (error) {
+        return res.status(500).json({error: 'Internal Server Error'});
       }
-      // Redirect to an error page if verification fails or parameters are
-      // missing
-      res.redirect(303, '/auth/auth-code-error');
     });

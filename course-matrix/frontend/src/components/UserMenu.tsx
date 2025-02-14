@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function UserMenu() {
 	return (
@@ -43,29 +44,24 @@ export function UserMenu() {
 						<DialogTrigger asChild>
 							<button className="w-full text-left">Edit Account</button>
 						</DialogTrigger>
-						<DialogContent>
+						<DialogContent className="gap-5">
 							<DialogHeader>
 								<DialogTitle>Edit Account</DialogTitle>
 								<DialogDescription>
 									Edit your account details.
 								</DialogDescription>
 							</DialogHeader>
-							<div className="p-4">
-								<label
-									htmlFor="email"
-									className="block text-sm font-medium text-gray-700"
-								>
-									New Email
-								</label>
-								{/* Disable this email input box for now until we have the backend for accounts set up */}
-								<Input
-									id="email"
-									type="email"
-									placeholder="john.doe@gmail.com"
-									className="mt-1 block w-full"
-									disabled={true}
-								/>
-							</div>
+							<Label htmlFor="email">New Email</Label>
+							{/* Disable this email input box for now until we have the backend for accounts set up */}
+							<Input
+								id="email"
+								type="email"
+								placeholder="john.doe@gmail.com"
+								disabled
+							/>
+							<Label htmlFor="email">New Password</Label>
+							{/* Disable this password input box for now until we have the backend for accounts set up */}
+							<Input id="password" disabled={true} />
 							<DialogFooter>
 								<DialogClose asChild>
 									<Button variant="secondary">Cancel</Button>

@@ -19,8 +19,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
+import { useLogoutMutation } from "@/api/authApiSlice";
+import { useDispatch } from "react-redux";
+import { clearCredentials } from "@/stores/authslice";
 
 export function UserMenu() {
+	const dispatch = useDispatch();
+	const [logout] = useLogoutMutation();
+
+	const handleLogout = async () => {
+		try {
+			await logout({}).unwrap();
+			dispatch(clearCredentials());
+		} catch (err) {
+			console.error('Logout failed:', err);
+		}
+	};
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger>
@@ -76,7 +91,7 @@ export function UserMenu() {
 					</Dialog>
 				</DropdownMenuItem>
 				<DropdownMenuItem>
-					<button className="w-full text-left">Logout</button>
+					<button className="w-full text-left" onClick={handleLogout}>Logout</button>
 				</DropdownMenuItem>
 				<DropdownMenuItem onSelect={(e) => e.preventDefault()}>
 					<Dialog>

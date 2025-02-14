@@ -78,12 +78,12 @@ Although we had well-defined goals and met our final deadline, intermediate dead
 For the next iteration, development efforts will focus on:
 
 1. Course Calendar Customization
-  - Adding, updating and deleting personal events
-  - Adding and removing courses
-  - Color-coding events
+    - Adding, updating and deleting personal events
+    - Adding and removing courses
+    - Color-coding events
 2. AI Assistant Integration
 3. Timetable Builder Algorithm Development
 4. Process Enhancements
-  - Improving intermediate check0ins
-  - Strengthening coding conventions
-  - Enhancing code documentation with comments
+    - Improving intermediate check0ins
+    - Strengthening coding conventions
+    - Enhancing code documentation with comments

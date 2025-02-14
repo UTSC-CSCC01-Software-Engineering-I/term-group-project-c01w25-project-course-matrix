@@ -22,15 +22,18 @@ import { Mail } from "lucide-react";
 import { useLogoutMutation } from "@/api/authApiSlice";
 import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
+import { useNavigate } from "react-router-dom";
 
 export function UserMenu() {
 	const dispatch = useDispatch();
 	const [logout] = useLogoutMutation();
+	const navigate = useNavigate();
 
 	const handleLogout = async () => {
 		try {
 			await logout({}).unwrap();
 			dispatch(clearCredentials());
+			navigate('/');
 		} catch (err) {
 			console.error('Logout failed:', err);
 		}

@@ -25,10 +25,10 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
 
     if (data.user?.identities?.length === 0) {
       console.error('User already exists', error);
-      return res.status(500).json({
+      return res.status(400).json({
         error: {
           message: 'User already exists',
-          status: 500
+          status: 400
         }
       });
     }

@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
-import { UserMenu } from "@/components/user-menu"
+import { UserMenu } from "@/components/UserMenu"
 import { Separator } from "@radix-ui/react-separator"
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom"
 import TimetableBuilder from "../TimetableBuilder/TimetableBuilder"

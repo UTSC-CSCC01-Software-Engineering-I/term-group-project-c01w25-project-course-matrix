@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Mail } from "lucide-react";
 
 export function UserMenu() {
 	return (
@@ -36,7 +37,8 @@ export function UserMenu() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
 				{/* Placeholder email of john.doe@gmail.com for now */}
-				<div className="p-4">
+				<div className="p-4 flex gap-4 items-center">
+					<Mail size={16}/>
 					<p className="text-sm font-medium">john.doe@gmail.com</p>
 				</div>
 				<DropdownMenuItem onSelect={(e) => e.preventDefault()}>

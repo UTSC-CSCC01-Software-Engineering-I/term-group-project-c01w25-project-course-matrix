@@ -122,3 +122,18 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+/*Custom styles to override browser autofill styling*/
+input:-webkit-autofill {
+  -webkit-text-fill-color: #000 !important; 
+  background-color: #f8f9fa !important; 
+  -webkit-box-shadow: 0 0 0px 1000px #f8f9fa inset !important; /* Prevent browser override */
+  caret-color: black !important; /* Restore typing indicator */
+}
+
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #000 !important;
+  background-color: white !important; 
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  caret-color: black !important; /* Ensures the cursor is visible */
+}

@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import {CookieOptions, Request, Response} from 'express';
 
 import config from '../config/config';
@@ -8,6 +9,7 @@ const COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,  // Prevents JavaScript access (XSS protection)
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'strict',
+  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
 };
 
 export const signUp = asyncHandler(async (req: Request, res: Response) => {
@@ -18,8 +20,18 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
     const {data, error} = await supabase.auth.signUp({
       email,
       password,
-      options: {emailRedirectTo: `${config.CLIENT_APP_URL}/dashboard`},
+      options: {emailRedirectTo: `${config.CLIENT_APP_URL}/signup-success`},
     });
+
+    if (data.user?.identities?.length === 0) {
+      console.error('User already exists', error);
+      return res.status(400).json({
+        error: {
+          message: 'User already exists',
+          status: 400
+        }
+      });
+    }
 
     if (error) {
       return res.status(400).json(error);

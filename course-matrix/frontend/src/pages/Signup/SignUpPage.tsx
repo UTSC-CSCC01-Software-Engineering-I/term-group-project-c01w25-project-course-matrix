@@ -30,16 +30,30 @@ const SignupPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showCheckEmail, setShowCheckEmail] = useState(false)
+  const [showUserExists, setShowUserExists] = useState(false)
+  const [showSignupError, setShowSignupError] = useState(false)
 
   const onSubmit = async (values: z.infer<typeof SignupFormSchema>) => {
     if(isSubmitting) return;
     setIsSubmitting(true)
     setShowCheckEmail(false)
+    setShowUserExists(false)
+    setShowSignupError(false)
     try {
       const { data, error } = await signup(signupForm.getValues())
       console.log(data)
-      setShowCheckEmail(true)
+      if (error) {
+        if ((error as any)?.data?.error?.message === "User already exists") {
+          setShowUserExists(true)
+        }
+        else {
+          setShowSignupError(true)
+        }
+      } else {
+        setShowCheckEmail(true)
+      }
     } catch (err) {
+      setShowSignupError(true)
       console.error(err)
     }
     setIsSubmitting(false)
@@ -81,8 +95,9 @@ const SignupPage = () => {
               placeholder="Confirm password" 
               className="w-full" 
             />
-            {showCheckEmail && <p className="text-sm text-slate-500">Please check {signupForm.getValues("email")} for a confirmation link</p>}
-            
+            {showCheckEmail && <p className="text-sm text-slate-500 w-[400px]">Registration successful! Please check {signupForm.getValues("email")} for a confirmation link</p>}
+            {showUserExists && <p className="text-sm text-red-500 w-[400px]">User with email {signupForm.getValues("email")} already exists!</p>}
+            {showSignupError && <p className="text-sm text-red-500 w-[400px]">An unknown error occured. Please try again.</p>}
             <div className="w-full flex flex-row justify-center">
               <Button id="LoginBtn" className="w-full" type="submit" variant={isSubmitting ? "ghost" : "default"}>Sign up</Button>
             </div>

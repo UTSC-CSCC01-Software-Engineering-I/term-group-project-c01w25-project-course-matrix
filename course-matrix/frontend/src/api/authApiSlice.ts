@@ -28,9 +28,9 @@ export const authApiSlice = apiSlice.injectEndpoints({
             credentials: 'include',
         }),
       }),
-      me: builder.query<any, void>({
+      getSession: builder.query<any, void>({
         query: () => ({
-            url: `${AUTH_URL}/me`,
+            url: `${AUTH_URL}/session`,
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -45,5 +45,5 @@ export const authApiSlice = apiSlice.injectEndpoints({
 export const {
   useLoginMutation,
   useSignupMutation,
-  useMeQuery,
+  useGetSessionQuery,
 } = authApiSlice;

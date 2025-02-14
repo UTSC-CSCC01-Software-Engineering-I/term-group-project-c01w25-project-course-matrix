@@ -27,24 +27,18 @@ const SignupPage = () => {
   })
 
   const [ signup ] = useSignupMutation()
-  const dispatch = useDispatch()
-
-  const navigate = useNavigate();
-  const { search } = useLocation();
-  const sp = new URLSearchParams(search);
-  const redirect = sp.get('redirect') || '/login';
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showCheckEmail, setShowCheckEmail] = useState(false)
 
   const onSubmit = async (values: z.infer<typeof SignupFormSchema>) => {
     if(isSubmitting) return;
     setIsSubmitting(true)
+    setShowCheckEmail(false)
     try {
       const { data, error } = await signup(signupForm.getValues())
       console.log(data)
-
-      // Go to /login
-      navigate(redirect)
+      setShowCheckEmail(true)
     } catch (err) {
       console.error(err)
     }
@@ -87,6 +81,7 @@ const SignupPage = () => {
               placeholder="Confirm password" 
               className="w-full" 
             />
+            {showCheckEmail && <p className="text-sm text-slate-500">Please check {signupForm.getValues("email")} for a confirmation link</p>}
             
             <div className="w-full flex flex-row justify-center">
               <Button id="LoginBtn" className="w-full" type="submit" variant={isSubmitting ? "ghost" : "default"}>Sign up</Button>

@@ -19,7 +19,7 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
       email,
       password,
       options: {
-        emailRedirectTo: 'http://localhost:5173/dashboard',
+        emailRedirectTo: 'http://localhost:5173/signup-success',
       },
     });
 

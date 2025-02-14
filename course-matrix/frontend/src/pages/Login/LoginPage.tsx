@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import PasswordInput from "@/components/password-input"
 import { useState } from "react"
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 
 const LoginPage = () => {
 
@@ -34,19 +35,28 @@ const LoginPage = () => {
   const redirect = sp.get('redirect') || '/dashboard/home';
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [invalidCredentials, setInvalidCredentials] = useState(false)
 
   const onSubmit = async (values: z.infer<typeof LoginFormSchema>) => {
     if(isSubmitting) return;
     setIsSubmitting(true)
+    setInvalidCredentials(false)
     try {
       const { data, error } = await login(loginForm.getValues())
-      console.log(data)
+      console.log("Login", data, error)
 
-      // Set user details to localstorage
-      dispatch(setCredentials(data))
+      if(!error) {
+        // Set user details to localstorage
+        dispatch(setCredentials(data))
 
-      // Go to dashboard
-      navigate(redirect)
+        // Go to dashboard
+        navigate(redirect)
+      }
+      else {
+        if ((error as any).status === 401 && (error as any)?.data?.code === "invalid_credentials") {
+          setInvalidCredentials(true)
+        }
+      }
     } catch (err) {
       console.error(err)
     }
@@ -81,6 +91,12 @@ const LoginPage = () => {
               placeholder="Enter password" 
               className="w-full" 
             />
+
+            {invalidCredentials && 
+              <div>
+                <p className="text-sm font-medium text-destructive">Login invalid. Please check your email or password.</p>
+              </div>
+            }
             
             <div className="w-full flex flex-row justify-center">
               <Button id="LoginBtn" className="w-full" variant={isSubmitting ? "ghost" : "default"} type="submit">Login</Button>

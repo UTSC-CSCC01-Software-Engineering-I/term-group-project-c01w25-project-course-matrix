@@ -1,6 +1,5 @@
-import { useMeQuery } from '@/api/authApiSlice';
+import { useGetSessionQuery } from '@/api/authApiSlice';
 import {Navigate} from 'react-router-dom'
-import { Spinner } from './ui/spinner';
 import LoadingPage from '@/pages/Loading/LoadingPage';
 
 interface AuthRouteProps {
@@ -8,7 +7,7 @@ interface AuthRouteProps {
 }
 
 const AuthRoute: React.FC<AuthRouteProps> = ({component: Component}) => {
-    const {data, isLoading, error} = useMeQuery()
+    const {data, isLoading, error} = useGetSessionQuery()
 
     if (isLoading) {
         return <LoadingPage />

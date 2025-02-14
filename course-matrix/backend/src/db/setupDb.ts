@@ -1,8 +1,11 @@
-import { createClient } from '@supabase/supabase-js'
-import config from "../config/config";
+import {createClient} from '@supabase/supabase-js'
 
-export const supabase = createClient(config.DATABASE_URL!, config.DATABASE_KEY!);
+import config from '../config/config';
 
-export const supabaseCourseClient = createClient(config.DATABASE_URL!, config.DATABASE_KEY!, { db: { schema: "course" } });
+export const supabase =
+    createClient(config.DATABASE_URL!, config.DATABASE_KEY!);
 
-console.log("Connected to Supabase Client!")
+export const supabaseCourseClient = createClient(
+    config.DATABASE_URL!, config.DATABASE_KEY!, {db: {schema: 'course'}});
+
+console.log('Connected to Supabase Client!')

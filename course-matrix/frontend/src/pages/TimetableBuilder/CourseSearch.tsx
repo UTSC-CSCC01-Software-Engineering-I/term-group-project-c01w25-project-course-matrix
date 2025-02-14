@@ -8,14 +8,22 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import { convertBreadthRequirement } from "@/utils/convert-breadth-requirement"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { FormContext } from "./TimetableBuilder"
+import OfferingContent from "./OfferingContent"
+import { convertBreadthRequirement } from "@/utils/convert-breadth-requirement"
 
 interface CourseSearchProps {
   value: string,
   showFilter: () => void;
   onChange: (_: string) => void,
   data: CourseModel[],
+  isLoading: boolean,
 }
 
 const CourseSearch = ({
@@ -23,6 +31,7 @@ const CourseSearch = ({
   showFilter,
   onChange,
   data,
+  isLoading,
 }: CourseSearchProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -54,8 +63,8 @@ const CourseSearch = ({
       />
       <FilterIcon size={16} onClick={showFilter} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-800 transition cursor-pointer"/>
       {showPanel && (
-        <div ref={panelRef} className="absolute top-full left-0 w-full bg-white shadow-md border rounded-md mt-2 p-2 z-[100]">
-          {data.length > 0 ? (
+        <div ref={panelRef} className="absolute top-full left-0 w-full bg-white shadow-md border rounded-md mt-2 p-2 z-[100] max-h-[500px] overflow-y-auto">
+          {(data && data.length > 0) ? (
             data.map((item, index) => (
               <div 
                 key={index} 
@@ -75,7 +84,7 @@ const CourseSearch = ({
                   </HoverCardTrigger>
                   <HoverCardContent 
                     side="right" 
-                    className="w-[280px] sm:w-[350px] md:w-[450px] lg:w-[500px] max-w-[90vw]"
+                    className="w-[380px] sm:w-[450px] md:w-[600px] lg:w-[700px] max-w-[90vw]"
                     sideOffset={10}
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -83,12 +92,12 @@ const CourseSearch = ({
                       <p className="text-lg font-bold">{item.code}: {item.name}</p>
                       <p>{item.description}</p>
                       <div>
-                        <p><strong>Breadth Requirement: </strong> {convertBreadthRequirement(item.breadthRequirement ?? "")}</p>
-                        {item.courseExperience && <p><strong>Course Experience: </strong> {item.courseExperience}</p>}
-                        {item.prerequisiteDescription && <p><strong>Prerequisites: </strong> {item.prerequisiteDescription}</p>}
-                        {item.corequisiteDescription && <p><strong>Corequisites: </strong> {item.corequisiteDescription}</p>}
-                        {item.exclusionDescription && <p><strong>Course Experience: </strong> {item.exclusionDescription}</p>}
-                        {item.recommendedPreperation && <p><strong>Recommended Preperation: </strong> {item.recommendedPreperation}</p>}
+                        <p><strong>Breadth Requirement: </strong> {convertBreadthRequirement(item.breadth_requirement ?? "")}</p>
+                        {item.course_experience && <p><strong>Course Experience: </strong> {item.course_experience}</p>}
+                        {item.prerequisite_description && <p><strong>Prerequisites: </strong> {item.prerequisite_description}</p>}
+                        {item.corequisite_description && <p><strong>Corequisites: </strong> {item.corequisite_description}</p>}
+                        {item.exclusion_description && <p><strong>Course Experience: </strong> {item.exclusion_description}</p>}
+                        {item.recommended_preperation && <p><strong>Recommended Preperation: </strong> {item.recommended_preperation}</p>}
                         {item.note && <p><strong>Note: </strong> {item.note}</p>}
                         <a 
                           target="_blank" 
@@ -96,12 +105,30 @@ const CourseSearch = ({
                           className="text-blue-500 underline"
                           href={`https://utsc.calendar.utoronto.ca/course/${item.code.toLowerCase()}`}
                         >Link to UTSC Course Calendar</a>
+                        <div>
+                          
+                            <Accordion type="single" collapsible>
+                              <AccordionItem value="item-1">
+                                <AccordionTrigger>Section Times Info</AccordionTrigger>
+                                <AccordionContent>
+                                  <OfferingContent 
+                                    item={item}
+                                    semester={form?.getValues("semester") || ""}
+                                  />
+                                </AccordionContent>
+                              </AccordionItem>
+                            </Accordion>
+                          
+                        </div>
                       </div>
                     </div>
+                    
                   </HoverCardContent>
                 </HoverCard>
               </div>
             ))
+          ) : isLoading ? (
+            <p className="text-sm text-muted-foreground">Loading...</p>
           ) : (
             <p className="text-sm text-muted-foreground">No results found</p>
           )}

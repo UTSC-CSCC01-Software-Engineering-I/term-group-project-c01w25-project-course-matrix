@@ -10,7 +10,7 @@ import {swaggerOptions} from './config/swaggerOptions';
 import {supabase} from './db/setupDb';
 import asyncHandler from './middleware/asyncHandler';
 import {errorConverter, errorHandler} from './middleware/errorHandler';
-import {coursesRouter, departmentsRouter} from './routes/courseRouter';
+import {coursesRouter, departmentsRouter, offeringsRouter} from './routes/courseRouter';
 import {usersRouter} from './routes/userRouter';
 
 const app: Express = express();
@@ -29,6 +29,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // Routes
 app.use('/api/courses', coursesRouter);
 app.use('/api/departments', departmentsRouter);
+app.use("/api/offerings", offeringsRouter);
 app.use('/auth', usersRouter);
 
 app.get('/', asyncHandler(async (_, response) => response.json({

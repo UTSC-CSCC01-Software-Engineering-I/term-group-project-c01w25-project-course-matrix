@@ -48,30 +48,30 @@ In addition to their specific roles, all team members have a collective responsi
   - Each user story will be uploaded to Jira as a ticket:
     - Categorized in the backlog by its epic, and execution sprint
     
-    ![JIRA Backlog](JIRA_Backlog.png)
+    ![JIRA Backlog](./images/JIRA_Backlog.png)
     
     - Ticket details include: estimated story point to determine its priority, assignees
     
-    ![Ticket Detail](Ticket_Detail.png)
+    ![Ticket Detail](./images/Ticket_Detail.png)
     
     - Tickets of large user stories will be broken down into smaller child issues
     
-    ![Ticket Description and Child Issue](Ticket_Description_and_Child_Issue.png)
+    ![Ticket Description and Child Issue](./images/Ticket_Description_and_Child_Issue.png)
     
     - Each ticket will also show:
       - Other tickets blocked by it
       
-      ![Blocked tickets](Blocked_ticket.png)
+      ![Blocked tickets](./images/Blocked_ticket.png)
       
       - Other tickets blocking it
       
-      ![Blocking tickets](Blocking_tickets.png)
+      ![Blocking tickets](./images/Blocking_tickets.png)
       
   - Additional tasks required during the development process will also be submitted as a task ticket on JIRA for tracking.
   - Students or groups of students will be assigned first to epic and then to the specific user story.
   - Workflow
   
-  ![Ticket Workflow](Ticket_Workflow.png)
+  ![Ticket Workflow](./images/Ticket_Workflow.png)
 
 ## 2. Product
 #### 2.1 Goal and Tasks
@@ -103,7 +103,6 @@ In addition to their specific roles, all team members have a collective responsi
     
   - `account` schema
     - `users`
-    - `event`
 
 **2. Pages/Features**
   - Registration and login

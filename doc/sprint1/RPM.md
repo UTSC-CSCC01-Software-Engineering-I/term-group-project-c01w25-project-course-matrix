@@ -13,7 +13,6 @@
     - The `departments` table should have columns to map each department to their code name as shown in the course codes
   - **`account` schema**:
     - The `users` table should have columns to store user account information: username, password, user_id
-    - The `events` table should have columns to store event titles, descriptions, days and times and connect them to their user_id from the Users table
 
 - Import course information and course offerings for the Winter, Summer and Fall semesters of 2024 from the UTSC timetable archive by Feb 9th 2025
 - Build basic software features for the first TA demo by Feb 13th 2025 including: 

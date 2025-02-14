@@ -7,14 +7,13 @@ import { Label } from "@/components/ui/label"
 import { LoginFormSchema } from "@/models/login-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { z } from "zod"
 import { setCredentials } from "@/stores/authslice"
 import { useDispatch } from "react-redux"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import PasswordInput from "@/components/password-input"
 import { useState } from "react"
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query"
 
 const LoginPage = () => {
 
@@ -30,9 +29,6 @@ const LoginPage = () => {
   const dispatch = useDispatch()
 
   const navigate = useNavigate();
-  const { search } = useLocation();
-  const sp = new URLSearchParams(search);
-  const redirect = sp.get('redirect') || '/dashboard/home';
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [invalidCredentials, setInvalidCredentials] = useState(false)
@@ -50,7 +46,7 @@ const LoginPage = () => {
         dispatch(setCredentials(data))
 
         // Go to dashboard
-        navigate(redirect)
+        navigate('/dashboard/home')
       }
       else {
         if ((error as any).status === 401 && (error as any)?.data?.code === "invalid_credentials") {

@@ -6,12 +6,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 const SignupSuccessfulPage = () => {
 
   const navigate = useNavigate();
-  const { search } = useLocation();
-  const sp = new URLSearchParams(search);
-  const redirect = sp.get('redirect') || '/login';
 
   const handleRedirect = () => {
-    navigate(redirect)
+    navigate('/login')
   }
   
   return <div className="w-screen flex flex-col gap-4 justify-center -translate-y-12 items-center h-screen bg-gray-100">

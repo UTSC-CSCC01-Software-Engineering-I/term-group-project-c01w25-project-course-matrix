@@ -33,36 +33,35 @@ app.use("/api/offerings", offeringsRouter);
 app.use('/auth', usersRouter);
 
 app.get('/', asyncHandler(async (_, response) => response.json({
-          info: 'Testing course matrix backend server'
-        })));
+  info: 'Testing course matrix backend server'
+})));
 
 // Test get data from db
 app.get('/post', asyncHandler(async (_, res) => {
-          try {
-            const {data, error} = await supabase.from('posts').select();
-            console.log('Got posts', data);
-            return res.status(200).send(data);
-          } catch (err) {
-            return res.status(500).send({err})
-          }
-        }))
+  try {
+    const {data, error} = await supabase.from('posts').select();
+    console.log('Got posts', data);
+    return res.status(200).send(data);
+  } catch (err) {
+    return res.status(500).send({err})
+  }
+}))
 
 server = app.listen(config.PORT, () => {
   console.log(`Server is running at http://${HOST}:${config.PORT}`);
 });
 
 // graceful shutdown
-const exitHandler =
-    () => {
-      if (server) {
-        server.close(() => {
-          console.info('Server closed');
-          process.exit(1);
-        })
-      } else {
-        process.exit(1);
-      }
-    }
+const exitHandler = () => {
+  if (server) {
+    server.close(() => {
+      console.info('Server closed');
+      process.exit(1);
+    })
+  } else {
+    process.exit(1);
+  }
+}
 
 const unexpectedErrorHandler = (error: unknown) => {
   console.error(error);

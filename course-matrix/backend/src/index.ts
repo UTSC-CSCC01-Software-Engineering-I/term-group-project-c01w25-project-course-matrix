@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, {Express} from 'express';
 import {Server} from 'http';
@@ -19,6 +20,7 @@ const swaggerDocs = swaggerjsdoc(swaggerOptions);
 
 app.use(cors({origin: config.CLIENT_APP_URL, credentials: true}));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 app.use(errorConverter);
 app.use(errorHandler);

@@ -15,16 +15,19 @@ export const handleAuthCode =
         }
 
         if (token_hash && type) {
-          const {error} = await supabase.auth.verifyOtp({
+          const {data, error} = await supabase.auth.verifyOtp({
             type: 'email',
             token_hash,
           });
 
+
+
           if (!error) {
-            console.log(next);
-            console.log('auth success');
+            console.log('Authetification successful');
+
             res.redirect(303, decodeURIComponent(next));
-            return;
+            return res.status(200).json(
+                {message: 'Authetification successful', user: data.user});
           }
         }
         // Redirect to an error page if verification fails or parameters are

@@ -1,16 +1,20 @@
-import {Request, Response} from 'express';
+import cookieParser from 'cookie-parser';
+import {CookieOptions, Request, Response} from 'express';
 
 import {supabase} from '../db/setupDb';
 import asyncHandler from '../middleware/asyncHandler';
 
-
+const COOKIE_OPTIONS: CookieOptions = {
+  httpOnly: true,  // Prevents JavaScript access (XSS protection)
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+};
 
 export const signUp = asyncHandler(async (req: Request, res: Response) => {
-  const {email, password} = req.body;
-
   try {
-    // calling supabase for user registeration
+    const {email, password} = req.body;
 
+    // calling supabase for user registeration
     const {data, error} = await supabase.auth.signUp({
       email,
       password,
@@ -20,11 +24,12 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
     });
 
     if (error) {
-      return res.status(400).send({error});
+      return res.status(400).json(error);
     }
 
-    res.status(200).json({message: 'Success'});
-    console.log(data);
+    res.status(201).json(
+        {message: 'User registered successfully!', user: data.user});
+
   } catch (error) {
     res.status(500).json({message: 'Internal Server Error'});
   }
@@ -40,26 +45,49 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
         await supabase.auth.signInWithPassword({email, password});
 
     if (error) {
-      return res.status(400).send({error});
+      return res.status(401).json(error);
     }
 
-    res.status(200).json({message: 'Success', user: data.user});
+    res.cookie('refresh_token', data.session?.refresh_token, COOKIE_OPTIONS);
+
+    res.status(200).json({
+      message: 'Login Success!',
+      access_token: data.session?.access_token,
+      user: data.user
+    });
   } catch (error) {
     res.status(500).json({message: 'Internal Server Error'});
   }
 });
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
-  const {refresh_token} = req.body;
-
   try {
     const {error} = await supabase.auth.signOut();
     if (error) {
-      return res.status(400).send({error});
+      return res.status(400).json(error);
     }
 
-    res.status(200).json({message: 'Success'});
+    res.clearCookie('refresh_token', COOKIE_OPTIONS);
+
+    res.status(200).json({message: 'User logged out'});
   } catch (error) {
     res.status(500).json({message: 'Internal Server Error'});
+  }
+});
+
+export const session = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const refresh_token = req.cookies.refresh_token;
+    if (!refresh_token) return res.status(401).json({error: 'Not Authorized'});
+
+    const {data, error} = await supabase.auth.refreshSession({refresh_token});
+
+    if (error) return res.status(401).json({error: error.message});
+
+    res.status(200).json(
+        {message: 'User fetched successfully', user: data.user});
+  } catch (error: any) {
+    console.error('Session Error:', error);
+    res.status(500).json({error: error.message});
   }
 });

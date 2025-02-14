@@ -2,11 +2,23 @@ import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabaseCourseClient } from "../db/setupDb";
 
+const DEFAULT_COURSE_LIMIT = 1000
+
 export default {
 	getCourses: asyncHandler(async (req: Request, res: Response) => {
 		try {
-			// Query the courses, offerings, and departments tables from the database
-			let coursesQuery = supabaseCourseClient.from("courses").select();
+			// Get the query parameters
+			const { limit, search, semester, breadthRequirement, creditWeight, department, yearLevel } = req.query;
+
+			// Query the courses, offerings tables from the database
+			let coursesQuery = supabaseCourseClient
+				.from("courses")
+				.select()
+				.limit(Number(limit || DEFAULT_COURSE_LIMIT));
+		
+			if ((search as string)?.trim()) {
+				coursesQuery = coursesQuery.or(`code.ilike.%${search}%,name.ilike.%${search}%`);
+			}
 			let offeringsQuery = supabaseCourseClient.from("offerings").select();
 
 			// Get the data and errors from the queries
@@ -28,9 +40,6 @@ export default {
 					courseCodesToSemestersMap[courseCode] = [semester];
 				}
 			});
-
-			// Get the query parameters
-			const { breadthRequirement, creditWeight, semester, department, yearLevel } = req.query;
 			
 			// Filter the courses based on the breadth requirement, credit weight, semester, department, and year level
 			let filteredCourses = courses;

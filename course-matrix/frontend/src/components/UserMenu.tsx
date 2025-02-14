@@ -24,7 +24,7 @@ export function UserMenu() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger>
-				<div className="flex flex-row items-center gap-4 px-4">
+				<div className="flex flex-row items-center gap-4 px-4 text-sm">
 					{/* John Doe is just a placeholder name for now */}
 					John Doe
 					<Avatar>

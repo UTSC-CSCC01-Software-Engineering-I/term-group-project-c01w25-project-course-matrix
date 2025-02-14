@@ -12,7 +12,8 @@ Our team successfully generated two database schemas:
 - A `course` schema for storing course and course-offering information
 - A `auth` schema for storing user account information
 
-Both schemas were populated with data from previous semesters, serving as mock data. Additionally, we implemented account registration, login, and logout functionality to ensure that only authorized users can access Course Matrix features and protected database content.
+The course schema was populated with data from previous semesters, serving as mock data. Additionally, we implemented account registration, login, and logout functionality to ensure that only authorized users can access Course Matrix features and protected database content.
+
 Furthermore, we laid the foundation for a timetable generator by enabling users to browse and filter the course database to find relevant courses and lectures. We also introduced options for users to apply specific restrictions to their schedules.
 ### Decision that turned out well
 1. **Pair Programming & Peer Evaluation**
@@ -35,10 +36,10 @@ Although we had well-defined goals and met our final deadline, intermediate dead
 
 **Standardizing Code Formating**: Aligning coding conventions across the project to ensure consistency (to be documented in the README.md)
 
-## Produce - Review
+## Product - Review
 ### Goals and/or tasks that were met/completed
 - Build database schemas to store course information, course offerings and user accounts by Feb 9th 2025
-  - `courseschema`:
+  - `course` schema:
     - The `offerings` table should have columns for the Meeting Section, Session Offering, Day of Week, Start-End time, Location, Number of current enrollments, Max number of enrollments, Instructor
     - The `courses` table should have columns for the course code, name, breadth requirements, description, prerequisites, corequisites, and exclusions
     - The `corequisites` table should have columns to map each course_id with their corresponding corequisite course_ids
@@ -50,10 +51,10 @@ Although we had well-defined goals and met our final deadline, intermediate dead
   - `account` schema (renamed: `auth` schema) :
     - The `users` table should have columns to store user account information: email, encrypted password, user_id
   
-  ![alt text](./images/account_schema.png)
+  ![account schema](./images/account_schema.png)
    
 - Import course information and course offerings for the Winter, Summer and Fall semesters of 2024 from the UTSC timetable archive by Feb 9th 2025 as a mock database for courses offered in the Fall, Summer semester of 2025 and Winter of 2026.
-![alt text](./images/courses.png)
+![courses](./images/courses.png)
 
 
 - Build basic software features for the first TA demo by Feb 13th 2025 including:

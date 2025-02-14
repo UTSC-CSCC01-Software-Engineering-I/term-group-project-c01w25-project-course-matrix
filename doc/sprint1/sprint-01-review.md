@@ -3,6 +3,7 @@
 
 ## Iteration 01 - Review & Retrospect
 When: 2/13/2025 at 9:00 pm 
+
 Where: Online
 
 
@@ -85,6 +86,6 @@ For the next iteration, development efforts will focus on:
 2. AI Assistant Integration
 3. Timetable Builder Algorithm Development
 4. Process Enhancements
-    - Improving intermediate check0ins
+    - Improving intermediate check-ins
     - Strengthening coding conventions
     - Enhancing code documentation with comments

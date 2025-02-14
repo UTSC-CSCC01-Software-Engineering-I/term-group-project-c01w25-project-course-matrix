@@ -95,20 +95,20 @@ In addition to their specific roles, all team members have a collective responsi
 **1. Database Schemas**
   - `course` schema:
     - `courses` table: Course information
-    - `offering` table: Lecture sections available for each course in a semester
+    - `offerings` table: Lecture sections available for each course in a semester
     - `prerequisites` table: Records prerequisite relationships
     - `corequisites` table: Records corequisite relationships 
     - `departments` table: Records all department codes and their associated names
 
     
   - `account` schema
-    - `users`
+    - `users` table: Records the email, encrypted password, and other login info for users
 
 **2. Pages/Features**
   - Registration and login
     - Static welcome page for users to create an account
     - Static welcome page for users to log in to their account
-    - Drop-down button for users to log off their account
+    - Drop-down menu for users to log off their account
   
   - Course DB
     - Static page that displays all the courses available, with filter options for users to narrow it down

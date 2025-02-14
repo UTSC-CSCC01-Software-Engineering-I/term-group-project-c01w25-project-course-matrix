@@ -1,6 +1,7 @@
 import cookieParser from 'cookie-parser';
 import {CookieOptions, Request, Response} from 'express';
 
+import config from '../config/config';
 import {supabase} from '../db/setupDb';
 import asyncHandler from '../middleware/asyncHandler';
 
@@ -19,9 +20,7 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
     const {data, error} = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        emailRedirectTo: 'http://localhost:5173/signup-success',
-      },
+      options: {emailRedirectTo: `${config.CLIENT_APP_URL}/signup-success`},
     });
 
     if (error) {

@@ -10,8 +10,8 @@ import {swaggerOptions} from './config/swaggerOptions';
 import {supabase} from './db/setupDb';
 import asyncHandler from './middleware/asyncHandler';
 import {errorConverter, errorHandler} from './middleware/errorHandler';
+import {authRouter} from './routes/authRouter';
 import {coursesRouter, departmentsRouter, offeringsRouter} from './routes/courseRouter';
-import {usersRouter} from './routes/userRouter';
 
 const app: Express = express();
 const HOST = 'localhost';
@@ -27,10 +27,11 @@ app.use(errorHandler);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Routes
+app.use('/auth', authRouter);
+
 app.use('/api/courses', coursesRouter);
 app.use('/api/departments', departmentsRouter);
-app.use("/api/offerings", offeringsRouter);
-app.use('/auth', usersRouter);
+app.use('/api/offerings', offeringsRouter);
 
 app.get('/', asyncHandler(async (_, response) => response.json({
           info: 'Testing course matrix backend server'

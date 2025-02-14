@@ -67,7 +67,7 @@ Although we had well-defined goals and met our final deadline, intermediate dead
 ![course filter](./images/course_filter.png)
 
 - Display courses and course offerings information: Course Description, Meeting Section, Offering, Days of Week, Time, Location
-![course information](course_information.png)
+![course information](./images/course_information.png)
 
 
 ### Goals and/or tasks that were planned but not met/completed

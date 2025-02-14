@@ -15,6 +15,8 @@ import { UseFormReturn } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { convertBreadthRequirement } from "@/utils/convert-breadth-requirement";
 import { SemesterEnum } from "@/models/timetable-form";
+import { useGetDepartmentsQuery } from "@/api/departmentsApiSlice";
+import { DepartmentModel } from "@/models/models";
 
 interface SearchFiltersProps {
   closeHandler: () => void;
@@ -35,6 +37,8 @@ const SearchFilters = ({
     closeHandler()
   }
 
+  const { data, isLoading, error, refetch } = useGetDepartmentsQuery()
+
   return (
     <div className="fixed -top-8 inset-0 z-[50] bg-black/50 flex items-center justify-center">
       <Card className="w-[600px]">
@@ -49,30 +53,6 @@ const SearchFilters = ({
           <Form {...filterForm}>
             <form onSubmit={filterForm.handleSubmit(handleApply, (errors) => console.log(errors) )} className="space-y-8">
               <div className="flex flex-col gap-8 w-full flex-wrap items-center">
-                <FormField
-                  control={filterForm.control}
-                  name="semester"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Semester</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value} defaultValue={""}>
-                          <SelectTrigger className="w-[320px]">
-                            <SelectValue placeholder="Select a semester" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.values(SemesterEnum.Values).map((value) => (
-                              <SelectItem key={value} value={value}>
-                                {value}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                   
                 <FormField
                   control={filterForm.control}
@@ -120,6 +100,54 @@ const SearchFilters = ({
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={filterForm.control}
+                  name="department"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value} defaultValue={""}>
+                          <SelectTrigger className="w-[320px]">
+                            <SelectValue placeholder="Select a department" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(data && data.length > 0) && data.map((item: DepartmentModel) => (
+                              <SelectItem key={item.code[0]} value={item.code[0]}>{item.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={filterForm.control}
+                  name="yearLevel"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Year Level</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={(e) => field.onChange(Number(e))} value={field.value?.toString()} defaultValue={""}>
+                          <SelectTrigger className="w-[320px]">
+                            <SelectValue placeholder="Select a year level" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">Year 1</SelectItem>
+                            <SelectItem value="2">Year 2</SelectItem>
+                            <SelectItem value="3">Year 3</SelectItem>
+                            <SelectItem value="4">Year 4</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="space-x-4">
                   <Button variant="secondary" type="button" onClick={() => {
                     filterForm.reset()

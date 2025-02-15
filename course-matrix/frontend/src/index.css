@@ -15,6 +15,8 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  width: 100%;
 }
 
 @media (prefers-color-scheme: light) {
@@ -25,14 +27,15 @@
 }
 
 body {
-  margin: 0 auto;
-  display: flex;
-  width: 100vw;
+  margin: 0;
+  padding: 0;
+  width: 100%;
   min-width: 320px;
   min-height: 100vh;
 }
 
 html {
+  width: 100%;
   scroll-behavior: smooth;
 }
 
@@ -64,6 +67,14 @@ html {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -91,6 +102,14 @@ html {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -102,4 +121,19 @@ html {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/*Custom styles to override browser autofill styling*/
+input:-webkit-autofill {
+  -webkit-text-fill-color: #000 !important; 
+  background-color: #f8f9fa !important; 
+  -webkit-box-shadow: 0 0 0px 1000px #f8f9fa inset !important; /* Prevent browser override */
+  caret-color: black !important; /* Restore typing indicator */
+}
+
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #000 !important;
+  background-color: white !important; 
+  -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+  caret-color: black !important; /* Ensures the cursor is visible */
 }

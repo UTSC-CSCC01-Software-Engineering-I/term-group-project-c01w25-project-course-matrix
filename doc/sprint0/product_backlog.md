@@ -7,8 +7,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** the user provides a valid email address and a password meeting complexity requirements,  
-      **When** they submit the account creation form,  
-      **Then** the system should send a verification email with a unique link to activate the account.
+       **When** they submit the account creation form,  
+       **Then** the system should send a verification email with a unique link to activate the account.
 
 ---
 
@@ -21,8 +21,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** the user has an activated account with a valid email address and password,  
-      **When** they submit the login form with their credentials,  
-      **Then** the system should authenticate the user and grant access to their account.
+       **When** they submit the login form with their credentials,  
+       **Then** the system should authenticate the user and grant access to their account.
 
 ---
 
@@ -35,8 +35,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** the user is logged into their account,  
-      **When** they click the “logout” button,  
-      **Then** the system should log the user out and redirect them to the login page or a public view.
+       **When** they click the “logout” button,  
+       **Then** the system should log the user out and redirect them to the login page or a public view.
 
 ---
 
@@ -49,8 +49,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that the user wants to delete their account,  
-      **When** the user presses the confirm button after reviewing a warning message about the consequences of account deletion,  
-      **Then** the system should:
+       **When** the user presses the confirm button after reviewing a warning message about the consequences of account deletion,  
+       **Then** the system should:
   - Prompt the user to confirm their identity by entering their password.
   - Permanently delete the user's account and all associated data from the system.
   - Display a confirmation message indicating successful deletion.
@@ -65,8 +65,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that the user wants to retrieve information for a specific course,  
-      **When** the user asks for details about the course,  
-      **Then** the AI assistant should:
+       **When** the user asks for details about the course,  
+       **Then** the AI assistant should:
   - Retrieve and present all relevant course information, including:
     - Prerequisites / Exclusions.
     - Semester offerings.
@@ -89,8 +89,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that the user wants to retrieve graduation requirements for a specific program,  
-      **When** the user asks for details about the program,  
-      **Then** the AI assistant should:
+       **When** the user asks for details about the program,  
+       **Then** the AI assistant should:
   - Retrieve and present all relevant graduation requirements, including:
     - POSt requirements (e.g., program entry prerequisites).
     - Credit requirements (e.g., total credits, required courses, elective options).
@@ -130,22 +130,22 @@
 - **Timetable Generation**
 
   - [ ] **Given** that the parameters are validated and confirmed by the user,  
-        **When** the assistant processes the information,  
-        **Then** it should:
+         **When** the assistant processes the information,  
+         **Then** it should:
     - Pass the parameters to the timetable generation function (via a custom programmed algorithm).
     - Display a loading message (e.g., "Generating your timetable...").
 
 - **Timetable Presentation**
 
   - [ ] **Given** the function successfully generates the timetable,  
-        **When** the assistant receives the response,  
-        **Then** it should:
+         **When** the assistant receives the response,  
+         **Then** it should:
     - Present a link to the list of generated timetables.
 
 - **Error Handling**
   - [ ] **Given** that the user’s constraints cannot be met,  
-        **When** no suitable schedules can be generated,  
-        **Then** the assistant should:
+         **When** no suitable schedules can be generated,  
+         **Then** the assistant should:
     - Notify the user (e.g., "Based on your constraints, no feasible timetable could be generated. Would you like to modify some conditions?").
     - Suggest modifications (e.g., "Consider extending your availability or reducing course preferences.").
 
@@ -160,8 +160,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that the user wants to create a new chat log,  
-      **When** the “create new chat” button is pressed,  
-      **Then** the system should:
+       **When** the “create new chat” button is pressed,  
+       **Then** the system should:
   - Open a new chat window or session, allowing the user to start a fresh conversation.
   - Automatically assign a new session identifier or title (e.g., "Chat 1," "Chat with Assistant - 01/28/2025").
 
@@ -178,8 +178,8 @@
 - **Export**
 
   - [ ] **Given** that the user wants to export the chat log,  
-        **When** the “export” button is pressed,  
-        **Then** a formatted .txt file will be downloaded containing all messages of the chat log.
+         **When** the “export” button is pressed,  
+         **Then** a formatted .txt file will be downloaded containing all messages of the chat log.
     - Prompt the user to select a file format (e.g., .txt, .pdf, or .json).
     - Generate a file containing all messages from the selected chat log in the chosen format.
     - Ensure the file includes:
@@ -190,16 +190,16 @@
 - **Rename**
 
   - [ ] **Given** that the user wants to rename a chat log,  
-        **When** the “rename” button is pressed,  
-        **Then** the system should:
+         **When** the “rename” button is pressed,  
+         **Then** the system should:
     - Provide an editable text field to input the new name.
     - Validate the new name to ensure it’s not empty or overly long.
     - Save and display the updated chat name immediately.
 
 - **Delete**
   - [ ] **Given** that the user wants to delete a chat log,  
-        **When** the “delete” button is pressed,  
-        **Then** the system should:
+         **When** the “delete” button is pressed,  
+         **Then** the system should:
     - Prompt the user with a confirmation message (e.g., “Are you sure you want to delete this chat log? This action cannot be undone.”).
     - Permanently delete the chat log upon confirmation.
     - Notify the user of successful deletion (e.g., “Chat log deleted successfully”).
@@ -213,8 +213,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that the student is building their timetable,  
-      **When** they open the course browsing feature,  
-      **Then** the system should:
+       **When** they open the course browsing feature,  
+       **Then** the system should:
   - Display a comprehensive list of all available courses, organized by:
     - Department or program.
     - Year level (e.g., 1st-year, 2nd-year).
@@ -235,8 +235,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that the student selects a course from the list,  
-      **When** they click on the course,  
-      **Then** the system should display detailed information regarding the course.
+       **When** they click on the course,  
+       **Then** the system should display detailed information regarding the course.
 
 ## User Story 12: Course Scheduler - Build Timetable
 
@@ -247,8 +247,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that the student wants to build a timetable,  
-      **When** they add new entries to the timetable,  
-      **Then** the system should display a timetable reflecting the student’s entries.
+       **When** they add new entries to the timetable,  
+       **Then** the system should display a timetable reflecting the student’s entries.
 
 ---
 
@@ -263,22 +263,22 @@
 #### Edit
 
 - [ ] **Given** that the student wants to modify an existing timetable entry,  
-      **When** they select an entry and choose the "Edit" option,  
-      **Then** the system should allow them to update details such as time, duration, or notes.
+       **When** they select an entry and choose the "Edit" option,  
+       **Then** the system should allow them to update details such as time, duration, or notes.
 
 - [ ] **Given** that the student modifies a course entry,  
-      **When** they save the changes,  
-      **Then** the system should immediately reflect the changes in the timetable.
+       **When** they save the changes,  
+       **Then** the system should immediately reflect the changes in the timetable.
 
 #### Delete
 
 - [ ] **Given** that the student wants to remove a course or custom entry,  
-      **When** they select the entry and choose the "Delete" option,  
-      **Then** the system should prompt them for confirmation before proceeding.
+       **When** they select the entry and choose the "Delete" option,  
+       **Then** the system should prompt them for confirmation before proceeding.
 
 - [ ] **Given** that the student confirms the deletion,  
-      **When** the system processes the request,  
-      **Then** the entry should be permanently removed from the timetable.
+       **When** the system processes the request,  
+       **Then** the entry should be permanently removed from the timetable.
 
 ---
 
@@ -291,20 +291,20 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I am adding courses to my schedule,  
-      **When** I hover over a course’s lecture, tutorial, or lab section,  
-      **Then** a semi-transparent preview of the entry should be displayed on the timetable, indicating where it would be placed.
+       **When** I hover over a course’s lecture, tutorial, or lab section,  
+       **Then** a semi-transparent preview of the entry should be displayed on the timetable, indicating where it would be placed.
 
 - [ ] **Given** that a course section conflicts with an existing entry,  
-      **When** I hover over that section,  
-      **Then** the preview should highlight the conflict with a red outline indicator, signifying the conflict.
+       **When** I hover over that section,  
+       **Then** the preview should highlight the conflict with a red outline indicator, signifying the conflict.
 
 - [ ] **Given** that I stop hovering over the course section,  
-      **When** I move my cursor away,  
-      **Then** the preview should disappear without affecting the existing schedule.
+       **When** I move my cursor away,  
+       **Then** the preview should disappear without affecting the existing schedule.
 
 - [ ] **Given** that I select a course section after hovering,  
-      **When** I click to add it to my schedule,  
-      **Then** the section should be permanently placed on the timetable.
+       **When** I click to add it to my schedule,  
+       **Then** the section should be permanently placed on the timetable.
 
 ---
 
@@ -317,12 +317,12 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I want to change the colour of a calendar entry,  
-      **When** I select an entry and open the colour customization option,  
-      **Then** a colour palette should be displayed, allowing me to choose a new colour.
+       **When** I select an entry and open the colour customization option,  
+       **Then** a colour palette should be displayed, allowing me to choose a new colour.
 
 - [ ] **Given** that I select a new colour for an entry,  
-      **When** I confirm the selection,  
-      **Then** the updated colour should immediately apply to the calendar entry and be saved automatically.
+       **When** I confirm the selection,  
+       **Then** the updated colour should immediately apply to the calendar entry and be saved automatically.
 
 ---
 
@@ -335,12 +335,12 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I want to include specific courses,  
-      **When** I press the course selection button,  
-      **Then** the scheduler should display the selected course and consider it in the timetable generation algorithm.
+       **When** I press the course selection button,  
+       **Then** the scheduler should display the selected course and consider it in the timetable generation algorithm.
 
 - [ ] **Given** that I have selected multiple courses,  
-      **When** I finalize my course selection,  
-      **Then** the scheduler should generate a timetable that includes all the chosen courses while avoiding conflicts.
+       **When** I finalize my course selection,  
+       **Then** the scheduler should generate a timetable that includes all the chosen courses while avoiding conflicts.
 
 ---
 
@@ -353,12 +353,12 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I want to add rules and restrictions to my schedule,  
-      **When** I input specific constraints (e.g., no classes before 10 AM, no classes on Fridays, or a maximum of three days per week),  
-      **Then** the algorithm should incorporate these restrictions when generating my timetable.
+       **When** I input specific constraints (e.g., no classes before 10 AM, no classes on Fridays, or a maximum of three days per week),  
+       **Then** the algorithm should incorporate these restrictions when generating my timetable.
 
 - [ ] **Given** that my selected courses and restrictions make it impossible to generate a valid schedule,  
-      **When** I attempt to generate a timetable,  
-      **Then** the system should notify me and provide suggestions (e.g., relaxing certain constraints or prioritizing specific courses).
+       **When** I attempt to generate a timetable,  
+       **Then** the system should notify me and provide suggestions (e.g., relaxing certain constraints or prioritizing specific courses).
 
 ---
 
@@ -371,12 +371,12 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I have generated course schedules,  
-      **When** I navigate to another page on the website,  
-      **Then** my generated timetables should still be accessible unless I have explicitly deleted them.
+       **When** I navigate to another page on the website,  
+       **Then** my generated timetables should still be accessible unless I have explicitly deleted them.
 
 - [ ] **Given** that I want to delete a generated timetable,  
-      **When** I click the delete option for a specific timetable,  
-      **Then** that timetable should be permanently removed from the system.
+       **When** I click the delete option for a specific timetable,  
+       **Then** that timetable should be permanently removed from the system.
 
 ---
 
@@ -389,8 +389,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I want to opt in or opt out of email notifications,  
-      **When** I toggle the email notification option in my settings,  
-      **Then** my preference (opt-in or opt-out) should be saved, and I will start receiving or stop receiving email notifications accordingly.
+       **When** I toggle the email notification option in my settings,  
+       **Then** my preference (opt-in or opt-out) should be saved, and I will start receiving or stop receiving email notifications accordingly.
 
 ---
 
@@ -403,12 +403,12 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I want to favourite a timetable,  
-      **When** I click the "Favourite" button next to the schedule,  
-      **Then** the schedule will be marked as a favorite and displayed prominently at the top of the timetable list.
+       **When** I click the "Favourite" button next to the schedule,  
+       **Then** the schedule will be marked as a favorite and displayed prominently at the top of the timetable list.
 
 - [ ] **Given** that I want to remove a favorited timetable,  
-      **When** I click the "Unfavourite" button next to the schedule,  
-      **Then** the schedule will be unfavorited and displayed prominently at the top of the timetable list.
+       **When** I click the "Unfavourite" button next to the schedule,  
+       **Then** the schedule will be unfavorited and displayed prominently at the top of the timetable list.
 
 ---
 
@@ -421,8 +421,8 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I want to export my schedule,  
-      **When** I click the export button,  
-      **Then** a prompt should show up about the export options, either in PDF or .ics file format.
+       **When** I click the export button,  
+       **Then** a prompt should show up about the export options, either in PDF or .ics file format.
 
 ---
 
@@ -435,12 +435,12 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I want to compare 2 of my schedules,  
-      **When** I select the 2 schedules to compare,  
-      **Then** the window should be split into 2 halves, one for each schedule, allowing easy side-by-side comparison.
+       **When** I select the 2 schedules to compare,  
+       **Then** the window should be split into 2 halves, one for each schedule, allowing easy side-by-side comparison.
 
 - [ ] **Given** that I am comparing schedules,  
-      **When** I hover over a course or event in one schedule,  
-      **Then** the corresponding time slot in the other schedule should be highlighted if there is a conflict or overlap.
+       **When** I hover over a course or event in one schedule,  
+       **Then** the corresponding time slot in the other schedule should be highlighted if there is a conflict or overlap.
 
 ---
 
@@ -453,12 +453,12 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I am a registered user with a completed schedule on the platform,  
-      **When** I choose to share my schedule,  
-      **Then** the platform should provide an option to generate a shareable link or directly compare schedules with selected users.
+       **When** I choose to share my schedule,  
+       **Then** the platform should provide an option to generate a shareable link or directly compare schedules with selected users.
 
 - [ ] **Given** that another user has shared their schedule with me,  
-      **When** I open the shared schedule,  
-      **Then** I should be able to view their schedule in a readable format and compare it with mine.
+       **When** I open the shared schedule,  
+       **Then** I should be able to view their schedule in a readable format and compare it with mine.
 
 ---
 
@@ -471,5 +471,5 @@
 ### Acceptance Criteria
 
 - [ ] **Given** that I want to share my schedule via a link,  
-      **When** I click the “Generate Link” button,  
-      **Then** a unique, shareable link should be created, granting view-only access to my schedule.
+       **When** I click the “Generate Link” button,  
+       **Then** a unique, shareable link should be created, granting view-only access to my schedule.

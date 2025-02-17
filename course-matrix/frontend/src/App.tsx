@@ -12,11 +12,11 @@ function App() {
       <Routes>
         <Route path="*" element={<Navigate to="/login" />} />
         <Route path="/" element={<Navigate to="/login" />} />
-                  <Route path="signup-success" element={<SignupSuccessfulPage />} />
+        <Route path="signup-success" element={<SignupSuccessfulPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route
-          path='/dashboard/*'
+          path="/dashboard/*"
           element={<AuthRoute component={Dashboard} />}
         />
       </Routes>

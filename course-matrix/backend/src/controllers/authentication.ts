@@ -11,7 +11,7 @@ export const handleAuthCode = asyncHandler(
       const next = (req.query.next as string) ?? "/";
 
       if (!token_hash || !type) {
-        return res.status(400).json({ error: 'Missing token or type' });
+        return res.status(400).json({ error: "Missing token or type" });
       }
 
       if (token_hash && type) {
@@ -23,12 +23,12 @@ export const handleAuthCode = asyncHandler(
         if (!error) {
           console.log("Authentication successful");
 
-                  return res.redirect(303, decodeURIComponent(next));
+          return res.redirect(303, decodeURIComponent(next));
         }
       }
       // Redirect to an error page if verification fails or parameters are
       // missing
-                return res.redirect(303, "/auth/auth-code-error");
+      return res.redirect(303, "/auth/auth-code-error");
     } catch (error) {
       return res.status(500).json({ error: "Internal Server Error" });
     }

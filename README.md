@@ -12,7 +12,7 @@ By taking user preferences into consideration, Course Matrix is able to leverage
 
 At UTSC, students face challenges when it comes to managing their academic and personal schedules. The process of selecting the optimal courses and ensuring that course prerequisites are met can be time-consuming and overwhelming, especially for international and first-year students. The current systems for dealing with this problem are fragmented as they require students to check multiple websites. This leads to inefficiencies and potential errors in course selection.
 
-Course Matrix addresses these problems by providing a centralized, user-friendly platform that integrates the course database with advanced AI features. Our goal is to help students reduce scheduling errors, save valuable time, and provide a flexible, personalized approach to course planning.
+      Course Matrix addresses these problems by providing a centralized, user-friendly platform that integrates the course database with advanced AI features. Our goal is to help students reduce scheduling errors, save valuable time, and provide a flexible, personalized approach to course planning.
 
 ## Installation
 

@@ -37,9 +37,9 @@ import SearchFilters from "./SearchFilters";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
-const SEARCH_LIMIT = 1000;
+            const SEARCH_LIMIT = 1000;
 
-const TimetableBuilder = () => {
+      const TimetableBuilder = () => {
   const form = useForm<z.infer<typeof TimetableFormSchema>>({
     resolver: zodResolver(TimetableFormSchema),
     defaultValues: baseTimetableForm,
@@ -49,7 +49,7 @@ const TimetableBuilder = () => {
     resolver: zodResolver(FilterFormSchema),
   });
 
-  const selectedCourses = form.watch("courses") || [];
+  const selectedCourses = form.watch('courses') || [];
   const enabledRestrictions = form.watch("restrictions") || [];
   const searchQuery = form.watch("search");
   const debouncedSearchQuery = useDebounceValue(searchQuery, 250);

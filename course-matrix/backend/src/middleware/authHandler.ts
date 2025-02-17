@@ -12,31 +12,33 @@ interface AuthenticatedRequest extends Request {
   session?: Session;
 }
 
-export const authHandler = asyncHandler( async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  // Check refresh token in cookies to determine if authorized
-  const refreshToken = req.cookies.refresh_token;
-  
-  if (!refreshToken) {
-    return res.status(401).json({ message: 'No refresh token found' });
-  }
+export const authHandler = asyncHandler(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    // Check refresh token in cookies to determine if authorized
+    const refreshToken = req.cookies.refresh_token;
 
-  try {
-    // Verify the session
-    const { data, error } = await supabase.auth.refreshSession({
-      refresh_token: refreshToken
-    });
-
-    if (error) {
-      res.clearCookie('refresh_token');
-      return res.status(401).json({ message: 'Invalid or expired session' });
+    if (!refreshToken) {
+      return res.status(401).json({ message: "No refresh token found" });
     }
 
-    // Attach user and session to request for route handlers to access later
-    (req as AuthenticatedRequest).user = data?.user ?? undefined;
-    (req as AuthenticatedRequest).session = data?.session ?? undefined;
+    try {
+      // Verify the session
+      const { data, error } = await supabase.auth.refreshSession({
+        refresh_token: refreshToken,
+      });
 
-    next();
-  } catch (error) {
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-})
+      if (error) {
+        res.clearCookie("refresh_token");
+        return res.status(401).json({ message: "Invalid or expired session" });
+      }
+
+      // Attach user and session to request for route handlers to access later
+      (req as AuthenticatedRequest).user = data?.user ?? undefined;
+      (req as AuthenticatedRequest).session = data?.session ?? undefined;
+
+      next();
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  },
+);

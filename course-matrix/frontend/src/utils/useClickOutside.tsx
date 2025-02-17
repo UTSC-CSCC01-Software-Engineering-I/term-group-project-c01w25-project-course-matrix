@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-
+import { useEffect } from "react";
 
 /* Handles closing of UI element when user clicks off the component. 
    - isActive is the useState state representing the component's show/hide state.
@@ -10,7 +9,7 @@ export const useClickOutside = (
   ref: React.RefObject<HTMLElement>,
   onClickOutside: () => void,
   isActive: boolean,
-  excludeRef?:  React.RefObject<HTMLElement>
+  excludeRef?: React.RefObject<HTMLElement>,
 ) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -25,14 +24,13 @@ export const useClickOutside = (
     /* Add event listener only if the element is being shown. This ensures that
        we are not polluting the page with many global event listeners at the same time. */
     if (isActive) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } 
-    else {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [ref, onClickOutside, isActive]);
 };

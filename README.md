@@ -59,7 +59,6 @@ The `DATABASE_URL` variable should contain your Supabase project url and the `DA
 VITE_SERVER_URL="http://localhost:8081"
 ```
 
-
 ### Running the Application
 
 To run the application locally:

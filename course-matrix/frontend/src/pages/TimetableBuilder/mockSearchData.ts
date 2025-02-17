@@ -1,4 +1,4 @@
-import { OfferingModel } from "@/models/models"
+import { OfferingModel } from "@/models/models";
 
 export const mockSearchData = {
   courses: [
@@ -8,7 +8,8 @@ export const mockSearchData = {
       updatedAt: "2025-02-07 23:14:00.54424+00",
       code: "ACMA01H3",
       breadthRequirement: "ART_LIT_LANG",
-      description: "ACMA01H3 surveys the cultural achievements of the humanities in visual art, language, music, theatre, and film within their historical, material, and philosophical contexts. Students gain understanding of the meanings of cultural works and an appreciation of their importance in helping define what it means to be human.",
+      description:
+        "ACMA01H3 surveys the cultural achievements of the humanities in visual art, language, music, theatre, and film within their historical, material, and philosophical contexts. Students gain understanding of the meanings of cultural works and an appreciation of their importance in helping define what it means to be human.",
       exclusionDescription: "(HUMA01H3)",
       name: "Exploring Key Questions in the Arts, Culture and Media",
     },
@@ -18,7 +19,8 @@ export const mockSearchData = {
       updatedAt: "2025-02-07 23:14:00.54424+00",
       code: "ACMB10H3",
       breadthRequirement: "SOCIAL_SCI",
-      description: "Equity and diversity in the arts promotes diversity of all kinds, including those of race, gender, socio-economic status, sexual orientation or identity, age, ability or disability, religion, and aesthetics, tradition or practice. This course examines issues of equity and diversity and how they apply across all disciplines of arts, culture and media through critical readings and analysis of cultural policy.",
+      description:
+        "Equity and diversity in the arts promotes diversity of all kinds, including those of race, gender, socio-economic status, sexual orientation or identity, age, ability or disability, religion, and aesthetics, tradition or practice. This course examines issues of equity and diversity and how they apply across all disciplines of arts, culture and media through critical readings and analysis of cultural policy.",
       prerequisiteDescription: "Any 4.0 Credits",
       exclusionDescription: "(VPAB07H3)",
       recommendedPreperation: "Do stuff",
@@ -31,15 +33,18 @@ export const mockSearchData = {
       code: "ACMC01H3",
       breadthRequirement: "ART_LIT_LANG",
       courseExperience: "University-Based Experience",
-      description: "A study of the arts, culture and/or media sector through reflective practice. Students will synthesize their classroom and work place / learning laboratory experiences in a highly focused, collaborative, and facilitated way through a series of assignments and discussions.",
-      prerequisiteDescription: "9.0 credits including VPAB16H3 and VPAB17H3 (or its equivalent with instructor permission) and successful completion of required Field Placement Preparation Activities",
+      description:
+        "A study of the arts, culture and/or media sector through reflective practice. Students will synthesize their classroom and work place / learning laboratory experiences in a highly focused, collaborative, and facilitated way through a series of assignments and discussions.",
+      prerequisiteDescription:
+        "9.0 credits including VPAB16H3 and VPAB17H3 (or its equivalent with instructor permission) and successful completion of required Field Placement Preparation Activities",
       exclusionDescription: "(HUMA01H3)",
       name: "ACMEE Applied Practice I",
-      corequisiteDescription: "Field Placement I (may be taken as a prerequisite with Program Director's permission)",
+      corequisiteDescription:
+        "Field Placement I (may be taken as a prerequisite with Program Director's permission)",
       note: "This course will be graded as a CR if a student successfully completes their internship; and as NCR is the placement was unsuccessful. The NCR will impact the CGPA and count as a 0.0 CGPA value on a transcript.",
-    }
-  ]
-}
+    },
+  ],
+};
 
 export const mockOffering: OfferingModel[] = [
   {
@@ -212,5 +217,5 @@ export const mockOffering: OfferingModel[] = [
     delivery_mode: "In-person",
     instructor: "Prof John Doe",
     notes: "This course offers no credits",
-  }
-]
+  },
+];

@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="w-full">
       <Routes>
-        <Route path="*" element={<Navigate to="/login" />} />
+            <Route path="*" element={<Navigate to="/login" />} />
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="signup-success" element={<SignupSuccessfulPage />} />
         <Route path="/login" element={<LoginPage />} />

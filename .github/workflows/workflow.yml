@@ -1,7 +1,6 @@
 name: Format the code
 
 on:
-  push:
   pull_request:
 
 jobs:

@@ -1,10 +1,21 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "@/components/ui/breadcrumb"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
-import { UserMenu } from "@/components/UserMenu"
-import { Separator } from "@radix-ui/react-separator"
-import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom"
-import TimetableBuilder from "../TimetableBuilder/TimetableBuilder"
+import { AppSidebar } from "@/components/app-sidebar";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { UserMenu } from "@/components/UserMenu";
+import { Separator } from "@radix-ui/react-separator";
+import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import TimetableBuilder from "../TimetableBuilder/TimetableBuilder";
 
 /**
  * Dashboard Component
@@ -56,25 +67,26 @@ const Dashboard = () => {
                     {/* <BreadcrumbItem>
                       <BreadcrumbPage>Data Fetching</BreadcrumbPage>
                     </BreadcrumbItem> */}
-                  </BreadcrumbList>
-                </Breadcrumb>
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                </div>
+                <UserMenu />
+              </header>
+              <div>
+                <Routes>
+                  <Route path="*" element={<Navigate to="/not-found" />} />
+                  <Route path="/" element={<Navigate to="home" replace />} />
+                  <Route path="/home" element={<>Home</>} />
+                  <Route path="/timetable" element={<TimetableBuilder />} />
+                  <Route path="/assistant" element={<>Assistant</>} />
+                </Routes>
               </div>
-              <UserMenu />
-            </header>
-            <div>
-              <Routes>
-                <Route path="*" element={<Navigate to="/not-found"/>} />  
-                <Route path="/" element={<Navigate to="home" replace />} />
-                <Route path="/home" element={<>Home</>} />
-                <Route path="/timetable" element={<TimetableBuilder />} />
-                <Route path="/assistant" element={<>Assistant</>}/>
-              </Routes>       
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+            </SidebarInset>
+          </SidebarProvider>
+        </div>
       </div>
-    </div>
-  </>
-}
+    </>
+  );
+};
 
-export default Dashboard
+export default Dashboard;

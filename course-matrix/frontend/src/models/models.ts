@@ -111,6 +111,12 @@ export interface CorequisiteModel {
   course_code: string;
   
   /** Course code for the corequisite course */
+  id: number;
+  created_at: string;
+  updated_at: string;
+  course_id: number;
+  corequisite_id: number;
+  course_code: string;
   corequisite_code: string;
 }
 

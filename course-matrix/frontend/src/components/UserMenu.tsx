@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
-import { useLogoutMutation } from "@/api/authApiSlice";
+import { useLogoutMutation, useGetSessionQuery } from "@/api/authApiSlice";
 import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +28,7 @@ export function UserMenu() {
 	const dispatch = useDispatch();
 	const [logout] = useLogoutMutation();
 	const navigate = useNavigate();
+	const username = "Test123";
 
 	const handleLogout = async () => {
 		try {
@@ -43,8 +44,7 @@ export function UserMenu() {
 		<DropdownMenu>
 			<DropdownMenuTrigger>
 				<div className="flex flex-row items-center gap-4 px-4 text-sm">
-					{/* John Doe is just a placeholder name for now */}
-					John Doe
+					<span>{username}</span>
 					<Avatar>
 						{/* Avatar Image is the profile picture of the user. The default avatar is used as a placeholder for now. */}
 						<AvatarImage src="../../public/img/default-avatar.png" />

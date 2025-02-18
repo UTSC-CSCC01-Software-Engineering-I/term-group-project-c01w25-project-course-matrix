@@ -14,7 +14,7 @@ const COOKIE_OPTIONS: CookieOptions = {
 
 export const signUp = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const {email, password} = req.body;
+    const {username, email, password} = req.body;
 
     // calling supabase for user registeration
     const {data, error} = await supabase.auth.signUp({
@@ -32,10 +32,26 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
         }
       });
     }
+    //This part adds username to the table
+    const user = data.user;
+
+    if (user) {
+      // Insert the username into the profiles table
+      const { error: profileError } = await supabase.from('profiles').insert([
+        { id: user.id, username }
+      ]);
+  
+      if (profileError) {
+        console.error('Error saving username:', profileError.message);
+      } else {
+        console.log('User signed up and profile created!');
+      }
+    }
 
     if (error) {
       return res.status(400).json(error);
     }
+    //
 
     res.status(201).json(
         {message: 'User registered successfully!', user: data.user});
@@ -83,6 +99,40 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({message: 'Internal Server Error'});
   }
+});
+
+export const getUserProfile = asyncHandler(async(req: Request, res: Response) => {
+  // Get the authenticated user
+  const { data: userData, error: authError } = await supabase.auth.getUser();
+
+  if (authError) {
+    console.error('Error fetching user:', authError.message);
+    return null;
+  }
+
+  const user = userData?.user;
+  if (!user || !user.id) {
+    console.error('No authenticated user found');
+    return null;
+  }
+
+  console.log('User ID:', user.id); // Debugging
+
+  // Fetch the username from the profiles table
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError) {
+    console.error('Error fetching profile:', profileError.message);
+    return null;
+  }
+
+  console.log('Username:', profile.username);
+
+  return profile.username;
 });
 
 export const session = asyncHandler(async (req: Request, res: Response) => {

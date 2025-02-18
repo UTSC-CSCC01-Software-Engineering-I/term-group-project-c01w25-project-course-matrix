@@ -68,6 +68,19 @@ const SignupPage = () => {
         <h2 className="text-sm text-slate-500">Sign up to Course Matrix with your email</h2>
         <Form {...signupForm}>
           <form onSubmit={signupForm.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+              control={signupForm.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem className="text-left w-[400px]">
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input {...field} id="UsernameInput" placeholder="User123"/>
+                  </FormControl>
+                  <FormMessage/>
+                </FormItem>
+              )}
+            />
             <FormField
               control={signupForm.control}
               name="email"

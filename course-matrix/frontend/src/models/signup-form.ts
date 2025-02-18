@@ -1,12 +1,14 @@
 import { z, ZodType } from "zod"
 
 export type SignupForm = {
+  username: string,
   email: string,
   password: string,
   confirmPassword: string,
 }
 
 export const SignupFormSchema: ZodType<SignupForm> = z.object({
+  username: z.string(),
   email: z.string().min(1, "Please enter an email").email("Invalid email"),
   password: z.string()  
     .min(8, "Password must be at least 8 characters")

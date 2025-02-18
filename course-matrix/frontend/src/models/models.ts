@@ -1,4 +1,5 @@
-// Types for database models
+// This module contains types for database models
+
 export interface CourseModel {
   id: number,
   created_at: string,

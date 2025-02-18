@@ -24,6 +24,36 @@ import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * UserMenu Component
+ *
+ * Provides a dropdown menu for the user to manage their account settings.
+ * Includes options for viewing account information, editing account details,
+ * logging out, and deleting the account (currently non-functional).
+ *
+ * Features:
+ * - **User Information**: Displays the user's name, email (placeholder), and avatar.
+ * - **Account Actions**: 
+ *   - **Edit Account**: Opens a dialog to edit account details (currently disabled for email and password).
+ *   - **Logout**: Logs out the user, clears credentials, and redirects to the homepage.
+ *   - **Delete Account**: Opens a confirmation dialog for account deletion (currently non-functional).
+ * - **Dialog Components**: Uses the `Dialog` component for editing account details and confirming account deletion.
+ * - **Avatar**: Displays a default user avatar with initials fallback.
+ *
+ * Hooks:
+ * - `useLogoutMutation` for handling user logout.
+ * - `useDispatch` and `useNavigate` for Redux actions and navigation after logout.
+ *
+ * UI Components:
+ * - `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` for dropdown menu functionality.
+ * - `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogFooter` for modal dialogs.
+ * - `Avatar`, `AvatarFallback`, `AvatarImage` for displaying the user's avatar.
+ * - `Button`, `Input`, `Label` for form inputs and actions.
+ *
+ * @returns {JSX.Element} The rendered user menu dropdown with account options.
+ */
+
+
 export function UserMenu() {
 	const dispatch = useDispatch();
 	const [logout] = useLogoutMutation();

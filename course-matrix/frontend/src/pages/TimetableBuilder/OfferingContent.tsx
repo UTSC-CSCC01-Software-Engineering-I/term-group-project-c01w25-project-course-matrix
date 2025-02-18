@@ -16,6 +16,34 @@ interface OfferingContentProps {
   semester: string,
 }
 
+/**
+ * OfferingContent Component
+ *
+ * Displays the available course offerings for a selected course and semester.
+ * It fetches offering data from the backend using RTK Query (`useGetOfferingsQuery`) and 
+ * renders a table with section details.
+ *
+ * Features:
+ * - **Data Fetching**: Calls `useGetOfferingsQuery` to retrieve course offerings based on `course_code` and `semester`.
+ * - **Loading State**: Displays a loading message while fetching data.
+ * - **Table Display**:
+ *   - Shows section details including time, location, instructor, capacity, and delivery mode.
+ *   - Handles optional fields gracefully (e.g., empty values).
+ * - **Waitlist Handling**: Indicates whether a section has a waitlist (`Y` or `N`).
+ *
+ * Props:
+ * - `item` (`CourseModel`): The selected course whose offerings are displayed.
+ * - `semester` (`string`): The semester for which course offerings are fetched.
+ *
+ * Hooks:
+ * - `useGetOfferingsQuery` for fetching offerings.
+ *
+ * UI Components:
+ * - `Table`, `TableRow`, `TableCell` for structured tabular display.
+ *
+ * @returns {JSX.Element} The rendered table of course offerings.
+ */
+
 const OfferingContent = ({
   item,
   semester,

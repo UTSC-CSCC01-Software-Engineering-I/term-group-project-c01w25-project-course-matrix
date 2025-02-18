@@ -3,6 +3,10 @@ import {setupListeners} from "@reduxjs/toolkit/query/react";
 import {apiSlice} from "../api/baseApiSlice";
 import authReducer from "./authslice"
 
+/**
+ * Sets up a store using Redux Toolkit to store application state information. 
+ */
+
 const store = configureStore({
     reducer: {
         [apiSlice.reducerPath]: apiSlice.reducer,

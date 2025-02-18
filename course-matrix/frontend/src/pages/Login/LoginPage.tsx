@@ -15,6 +15,33 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import PasswordInput from "@/components/password-input"
 import { useState } from "react"
 
+/**
+ * LoginPage Component
+ *
+ * Provides a login form for users to authenticate using their email and password.
+ * It utilizes React Hook Form with Zod form validation and uses Redux Toolkit to access localstorage
+ *  for authentication state management.
+ *
+ * Features:
+ * - **Form Validation**: Uses `react-hook-form` with `zodResolver` to validate user input based on `LoginFormSchema`.
+ * - **API Integration**: Calls `useLoginMutation` from `authApiSlice` to login users.
+ * - **State Management**: Uses Redux to store user credentials in localstorage upon successful login.
+ * - **Error Handling**: Displays an error message if the login credentials are invalid.
+ * - **Navigation**: Redirects users to `/dashboard/home` upon successful login.
+ *
+ * Hooks:
+ * - `useForm` for form handling.
+ * - `useLoginMutation` for login API call.
+ * - `useDispatch` for Redux actions.
+ * - `useNavigate` for client-side navigation.
+ * - `useState` to manage form submission state and invalid credentials.
+ *
+ * UI Components:
+ * - `Logo`, `Card`, `Button`, `Input`, `PasswordInput` for form UI.
+ * - `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormMessage` for structured form handling.
+ *
+ * @returns {JSX.Element} The rendered login page.
+ */
 const LoginPage = () => {
 
   const loginForm = useForm<z.infer<typeof LoginFormSchema>>({

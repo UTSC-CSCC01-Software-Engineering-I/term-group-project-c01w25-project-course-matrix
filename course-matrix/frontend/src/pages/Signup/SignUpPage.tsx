@@ -15,6 +15,38 @@ import { useDispatch } from "react-redux"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { z } from "zod"
 
+/**
+ * SignupPage Component
+ *
+ * Provides a signup form for new users to register an account.
+ * It uses React Hook Form with Zod validation and integrates with Redux Toolkit for querying.
+ *
+ * Features:
+ * - **Form Validation**: Utilizes `react-hook-form` with `zodResolver` to validate input based on `SignupFormSchema`.
+ * - **API Integration**: Calls `useSignupMutation` from `authApiSlice` to register users.
+ * - **Error Handling**: Displays relevant messages for:
+ *   - Existing user (`User already exists`).
+ *   - Successful registration (`Check your email for a confirmation link`).
+ *   - Generic signup failures (`An unknown error occurred`).
+ * - **State Management**:
+ *   - `isSubmitting`: Prevents multiple submissions.
+ *   - `showCheckEmail`: Displays a confirmation message after successful registration.
+ *   - `showUserExists`: Alerts if the user already exists.
+ *   - `showSignupError`: Handles unexpected signup failures.
+ * - **Navigation**: Provides a link to the login page for existing users.
+ *
+ * Hooks:
+ * - `useForm` for form handling.
+ * - `useSignupMutation` for signup API calls.
+ * - `useState` for managing UI state.
+ *
+ * UI Components:
+ * - `Logo`, `Card`, `Button`, `Input`, `PasswordInput` for form UI.
+ * - `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormMessage` for structured form handling.
+ *
+ * @returns {JSX.Element} The rendered signup page.
+ */
+
 const SignupPage = () => {
 
   const signupForm = useForm<z.infer<typeof SignupFormSchema>>({

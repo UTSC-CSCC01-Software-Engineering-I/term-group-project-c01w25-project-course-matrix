@@ -1,16 +1,16 @@
-import React from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { UseFormReturn } from "react-hook-form";
 
 interface PasswordInputProps {
   form: UseFormReturn<any>;
@@ -20,12 +20,12 @@ interface PasswordInputProps {
   className?: string;
 }
 
-const PasswordInput = ({ 
-  form, 
-  name, 
-  label, 
+const PasswordInput = ({
+  form,
+  name,
+  label,
   placeholder = "Password",
-  className 
+  className,
 }: PasswordInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -35,12 +35,12 @@ const PasswordInput = ({
       name={name}
       render={({ field }) => (
         <FormItem className="text-left">
-          <FormLabel>{label || 'Password'}</FormLabel>
+          <FormLabel>{label || "Password"}</FormLabel>
           <div className="relative">
             <FormControl>
               <Input
                 {...field}
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 className="pr-10"
               />

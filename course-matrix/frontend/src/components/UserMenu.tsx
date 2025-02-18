@@ -19,16 +19,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
-import { useLogoutMutation, useGetSessionQuery } from "@/api/authApiSlice";
+import { useLogoutMutation } from "@/api/authApiSlice";
 import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export function UserMenu() {
 	const dispatch = useDispatch();
 	const [logout] = useLogoutMutation();
 	const navigate = useNavigate();
-	const username = "Test123";
+	const user_metadata = JSON.parse(localStorage.getItem("userInfo"));
 
 	const handleLogout = async () => {
 		try {
@@ -44,7 +45,7 @@ export function UserMenu() {
 		<DropdownMenu>
 			<DropdownMenuTrigger>
 				<div className="flex flex-row items-center gap-4 px-4 text-sm">
-					<span>{username}</span>
+					{user_metadata.user.user_metadata.username}
 					<Avatar>
 						{/* Avatar Image is the profile picture of the user. The default avatar is used as a placeholder for now. */}
 						<AvatarImage src="../../public/img/default-avatar.png" />
@@ -54,10 +55,10 @@ export function UserMenu() {
 				</div>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
-				{/* Placeholder email of john.doe@gmail.com for now */}
+				{user_metadata.user.user_metadata.email}
 				<div className="p-4 flex gap-4 items-center">
 					<Mail size={16}/>
-					<p className="text-sm font-medium">john.doe@gmail.com</p>
+					<p className="text-sm font-medium">{}</p>
 				</div>
 				<DropdownMenuItem onSelect={(e) => e.preventDefault()}>
 					<Dialog>

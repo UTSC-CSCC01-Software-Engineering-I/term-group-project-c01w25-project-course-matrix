@@ -20,7 +20,12 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
     const {data, error} = await supabase.auth.signUp({
       email,
       password,
-      options: {emailRedirectTo: `${config.CLIENT_APP_URL}/signup-success`},
+      options: {
+        emailRedirectTo: `${config.CLIENT_APP_URL}/signup-success`,
+        data: {
+          username: username
+        }
+      },
     });
 
     if (data.user?.identities?.length === 0) {

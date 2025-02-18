@@ -23,23 +23,17 @@ const Dashboard = () => {
                   <BreadcrumbList>
                     <BreadcrumbItem className="hidden md:block">
                       {location.pathname === "/dashboard/home" ? 
-                      <BreadcrumbLink href="/dashboard/home">
                         <Link to="/dashboard/home" >
                           Home
                         </Link>
-                      </BreadcrumbLink> : 
-                      location.pathname === "/dashboard/timetable" ?
-                      <BreadcrumbLink href="/dashboard/timetable">
+                      : location.pathname === "/dashboard/timetable" ?
                         <Link to="/dashboard/timetable" >
                           Timetable Builder
                         </Link>
-                      </BreadcrumbLink> :
-                      location.pathname === "/dashboard/assistant" ?
-                      <BreadcrumbLink href="/dashboard/assistant">
+                      : location.pathname === "/dashboard/assistant" ?
                         <Link to="/dashboard/assistant" >
                           AI Assistant
                         </Link>
-                      </BreadcrumbLink>
                       : <></>
                       }
                     </BreadcrumbItem>

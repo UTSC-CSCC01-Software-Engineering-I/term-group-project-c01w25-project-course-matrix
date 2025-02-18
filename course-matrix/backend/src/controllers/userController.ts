@@ -15,7 +15,7 @@ const COOKIE_OPTIONS: CookieOptions = {
 /**
  * @route POST /auth/signup
  * @description Registers a new user by creating an account with Supabase.
- * 
+ *
  * This endpoint:
  * - Accepts user details (email and password) from the request body.
  * - Calls Supabase's `signUp()` method to create a new user account.
@@ -54,11 +54,10 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-
 /**
  * @route POST /auth/login
  * @description Authenticates a user using Supabase and starts a session.
- * 
+ *
  * This endpoint:
  * - Accepts user credentials (email and password) from the request body.
  * - Calls Supabase's `signInWithPassword()` method to verify the credentials.
@@ -94,7 +93,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 /**
  * @route POST /auth/logout
  * @description Logs out the authenticated user by signing them out of Supabase.
- * 
+ *
  * This endpoint:
  * - Calls Supabase's `signOut()` method to end the user's session.
  * - Clears the user's refresh token Cookie
@@ -140,53 +139,56 @@ export const session = asyncHandler(async (req: Request, res: Response) => {
  * @route POST /auth/request-password-reset
  * @desc Sends a password reset email to the user.
  */
-export const requestPasswordReset = asyncHandler(async (req: Request, res: Response) => {
-  try {
-    const {email} = req.body;
+export const requestPasswordReset = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
 
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${config.CLIENT_APP_URL}/reset-password`,
+      });
+
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.json({
+        message: "Password reset email sent. Check your inbox.",
+      });
+    } catch (error: any) {
+      console.error("Error requesting reset:", error);
+      res.status(500).json({ error: error.message });
     }
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${config.CLIENT_APP_URL}/reset-password`
-    });
-
-    if (error) {
-      return res.status(400).json({ error: error.message });
-    }
-
-    return res.json({ message: 'Password reset email sent. Check your inbox.' });
-
-  } catch (error: any) {
-    console.error('Error requesting reset:', error);
-    res.status(500).json({error: error.message});
-  }
-});
-
+  },
+);
 
 /**
  * @route POST /auth/reset-password
  * @desc Updates the user's password after verifying the token.
  */
-export const resetPassword = asyncHandler(async (req: Request, res: Response) => {
-  try {
-    const {password} = req.body;
+export const resetPassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { password } = req.body;
 
-    if (!password) {
-      return res.status(400).json({ error: 'New password is required' });
+      if (!password) {
+        return res.status(400).json({ error: "New password is required" });
+      }
+
+      const { data, error } = await supabase.auth.updateUser({ password });
+
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.json({ message: "Password successfully updated." });
+    } catch (error: any) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ error: error.message });
     }
-
-    const {data ,error } = await supabase.auth.updateUser({password});
-
-    if (error) {
-      return res.status(400).json({ error: error.message });
-    }
-
-    return res.json({ message: 'Password successfully updated.' });
-
-  } catch (error: any) {
-    console.error('Error resetting password:', error);
-    res.status(500).json({error: error.message});
-  }
-});
+  },
+);

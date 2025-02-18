@@ -1,7 +1,14 @@
 import express from "express";
 
 import { handleAuthCode } from "../controllers/authentication";
-import { login, logout, session, signUp, requestPasswordReset, resetPassword } from "../controllers/userController";
+import {
+  login,
+  logout,
+  session,
+  signUp,
+  requestPasswordReset,
+  resetPassword,
+} from "../controllers/userController";
 
 export const authRouter = express.Router();
 

@@ -30,6 +30,11 @@ export function UserMenu() {
 	const [logout] = useLogoutMutation();
 	const navigate = useNavigate();
 	const user_metadata = JSON.parse(localStorage.getItem("userInfo"));
+	const initials = user_metadata.user.user_metadata.username
+		.split(" ")          // Split the string by spaces
+		.map(word => word[0]) // Take the first letter of each word
+		.join("")            // Join them back into a string
+		.toUpperCase();      // Convert to uppercase;
 
 	const handleLogout = async () => {
 		try {
@@ -50,7 +55,7 @@ export function UserMenu() {
 						{/* Avatar Image is the profile picture of the user. The default avatar is used as a placeholder for now. */}
 						<AvatarImage src="../../public/img/default-avatar.png" />
 						{/* Avatar Fallback is the initials of the user. Avatar Fallback will be used if Avatar Image fails to load */}
-						<AvatarFallback>JD</AvatarFallback>
+						<AvatarFallback>{initials}</AvatarFallback>
 					</Avatar>
 				</div>
 			</DropdownMenuTrigger>
@@ -72,6 +77,14 @@ export function UserMenu() {
 									Edit your account details.
 								</DialogDescription>
 							</DialogHeader>
+							<Label htmlFor="username">New User Name</Label>
+							{/* Disable this email input box for now until we have the backend for accounts set up */}
+							<Input
+								id="username"
+								type="username"
+								placeholder="User"
+								disabled
+							/>
 							<Label htmlFor="email">New Email</Label>
 							{/* Disable this email input box for now until we have the backend for accounts set up */}
 							<Input

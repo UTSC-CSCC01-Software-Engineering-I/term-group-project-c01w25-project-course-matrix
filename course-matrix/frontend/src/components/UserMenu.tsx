@@ -29,8 +29,8 @@ export function UserMenu() {
 	const dispatch = useDispatch();
 	const [logout] = useLogoutMutation();
 	const navigate = useNavigate();
-	const user_metadata = JSON.parse(localStorage.getItem("userInfo"));
-	const initials = user_metadata.user.user_metadata.username
+	const user_metadata = JSON.parse(localStorage.getItem("userInfo")); //User Data
+	const initials = user_metadata.user.user_metadata.username //Gets User Initials
 		.split(" ")          // Split the string by spaces
 		.map(word => word[0]) // Take the first letter of each word
 		.join("")            // Join them back into a string
@@ -60,10 +60,9 @@ export function UserMenu() {
 				</div>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent>
-				{user_metadata.user.user_metadata.email}
 				<div className="p-4 flex gap-4 items-center">
 					<Mail size={16}/>
-					<p className="text-sm font-medium">{}</p>
+					<p className="text-sm font-medium">{user_metadata.user.user_metadata.email}</p>
 				</div>
 				<DropdownMenuItem onSelect={(e) => e.preventDefault()}>
 					<Dialog>

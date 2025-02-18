@@ -1,7 +1,7 @@
-import * as React from "react"
+import * as React from "react";
 
-import { SearchForm } from "@/components/search-form"
-import { VersionSwitcher } from "@/components/version-switcher"
+import { SearchForm } from "@/components/search-form";
+import { VersionSwitcher } from "@/components/version-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -13,25 +13,21 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import Logo from "./logo"
-import { Link, useLocation } from "react-router-dom"
-import { Home, Calendar, Bot } from 'lucide-react';
-
-
+} from "@/components/ui/sidebar";
+import Logo from "./logo";
+import { Link, useLocation } from "react-router-dom";
+import { Home, Calendar, Bot } from "lucide-react";
 
 const checkIfActive = (url: string, current: string) => {
-  return url === current
-}
-
-
+  return url === current;
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const location = useLocation()
+  const location = useLocation();
 
   // Information for sidebar
   const data = {
-    versions: ["1.0.1",],
+    versions: ["1.0.1"],
     navMain: [
       {
         title: "You",
@@ -64,7 +60,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ],
       },
     ],
-  }
+  };
 
   return (
     <Sidebar {...props}>
@@ -83,7 +79,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={item.isActive}>
                       <Link to={item.url}>
-                        <item.icon className="h-4 w-4"/>
+                        <item.icon className="h-4 w-4" />
                         <div>{item.title}</div>
                       </Link>
                     </SidebarMenuButton>
@@ -96,5 +92,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

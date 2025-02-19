@@ -10,4 +10,4 @@ export const offeringsRouter = express.Router();
 
 coursesRouter.get("/", authHandler, coursesController.getCourses);
 departmentsRouter.get("/", authHandler, departmentsController.getDepartments);
-offeringsRouter.get("/", authHandler, offeringsController.getOfferings)
+offeringsRouter.get("/", authHandler, offeringsController.getOfferings);

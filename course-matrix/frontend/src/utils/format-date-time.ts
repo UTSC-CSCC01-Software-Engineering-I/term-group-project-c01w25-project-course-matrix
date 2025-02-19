@@ -4,4 +4,4 @@ export const formatTime = (date: Date) => {
     minute: "2-digit",
     hour12: true,
   });
-}
+};

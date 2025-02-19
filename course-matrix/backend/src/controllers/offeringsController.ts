@@ -3,6 +3,13 @@ import asyncHandler from "../middleware/asyncHandler";
 import { supabaseCourseClient } from "../db/setupDb";
 
 export default {
+  /**
+   * Get a list of offerings based on course code and semester.
+   * 
+   * @param {Request} req - The request object containing query parameters.
+   * @param {Response} res - The response object to send the offerings data.
+   * @returns {Promise<Response>} - The response object with the offerings data.
+   */
   getOfferings: asyncHandler(async (req: Request, res: Response) => {
     try {
       const { course_code, semester } = req.query;

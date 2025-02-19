@@ -1,6 +1,14 @@
 import { ErrorRequestHandler } from "express";
 import ApiError from "../utils/utils";
 
+/**
+ * Middleware to convert errors to ApiError instances if they are not already.
+ * 
+ * @param {Error} err - The error object.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ */
 export const errorConverter: ErrorRequestHandler = (err, req, res, next) => {
   let error = err;
   if (!(error instanceof ApiError)) {
@@ -17,6 +25,14 @@ export const errorConverter: ErrorRequestHandler = (err, req, res, next) => {
   next(error);
 };
 
+/**
+ * Middleware to handle errors and send appropriate responses.
+ * 
+ * @param {Error} err - The error object.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ */
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let { statusCode, message } = err;
   if (process.env.NODE_ENV === "production" && !err.isOperational) {

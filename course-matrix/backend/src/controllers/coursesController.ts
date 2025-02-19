@@ -5,6 +5,13 @@ import { supabaseCourseClient } from "../db/setupDb";
 const DEFAULT_COURSE_LIMIT = 1000;
 
 export default {
+  /**
+   * Get a list of courses based on various query parameters.
+   * 
+   * @param {Request} req - The request object containing query parameters.
+   * @param {Response} res - The response object to send the filtered courses.
+   * @returns {Promise<Response>} - The response object with the filtered courses.
+   */
   getCourses: asyncHandler(async (req: Request, res: Response) => {
     try {
       // Get the query parameters

@@ -3,6 +3,16 @@ import { Request, Response } from "express";
 import { supabase } from "../db/setupDb";
 import asyncHandler from "../middleware/asyncHandler";
 
+/**
+ * @route GET /auth/handle-auth-code
+ * @description Handles the authentication code received from Supabase.
+ *
+ * This endpoint:
+ * - Accepts the token_hash and type from the query parameters.
+ * - Calls Supabase's `verifyOtp()` method to verify the token.
+ * - Redirects the user to the next URL if verification is successful.
+ * - Redirects to an error page if verification fails or parameters are missing.
+ */
 export const handleAuthCode = asyncHandler(
   async (req: Request, res: Response) => {
     try {

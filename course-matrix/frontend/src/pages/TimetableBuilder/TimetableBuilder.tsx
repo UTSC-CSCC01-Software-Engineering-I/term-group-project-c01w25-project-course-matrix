@@ -99,14 +99,14 @@ const TimetableBuilder = () => {
     return !searchQuery && !filters;
   };
 
-  // limit search number if no search query or filters for performance purposes. 
+  // limit search number if no search query or filters for performance purposes.
   // Otherwise, limit is 10k, which effectively gets all results.
   const { data, isLoading, error, refetch } = useGetCoursesQuery({
-    limit: noSearchAndFilter() ? SEARCH_LIMIT : 10000, 
-    search: debouncedSearchQuery || undefined, 
-    semester: form.getValues("semester"), 
-    ...filters
-  })
+    limit: noSearchAndFilter() ? SEARCH_LIMIT : 10000,
+    search: debouncedSearchQuery || undefined,
+    semester: form.getValues("semester"),
+    ...filters,
+  });
 
   useEffect(() => {
     if (searchQuery) {

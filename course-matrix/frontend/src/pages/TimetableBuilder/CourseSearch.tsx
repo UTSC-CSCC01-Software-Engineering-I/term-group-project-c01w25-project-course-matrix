@@ -56,7 +56,6 @@ import { convertBreadthRequirement } from "@/utils/convert-breadth-requirement";
  * @returns {JSX.Element} The rendered course search component.
  */
 
-
 interface CourseSearchProps {
   value: string;
   showFilter: () => void;

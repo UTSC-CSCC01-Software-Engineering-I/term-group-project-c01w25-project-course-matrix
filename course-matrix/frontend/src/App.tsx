@@ -20,7 +20,7 @@ import SignupSuccessfulPage from "./pages/Signup/SignupSuccessfulPage";
  *   - `/signup-success`: Confirmation page shown after successful account creation.
  *   - `/dashboard/*`: The protected dashboard route that requires authentication.
  * - **Redirects**: Redirects all unknown routes (`*`) and the root route `/` to the login page.
- * 
+ *
  * Components:
  * - `Routes`, `Route`, `Navigate` for routing and redirection.
  * - `AuthRoute` to protect the dashboard route and ensure the user is authenticated before accessing it.

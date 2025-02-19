@@ -6,9 +6,9 @@ import { supabase } from "../db/setupDb";
 import asyncHandler from "../middleware/asyncHandler";
 
 const COOKIE_OPTIONS: CookieOptions = {
-  httpOnly: true,  // Prevents JavaScript access (XSS protection)
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict',
+  httpOnly: true, // Prevents JavaScript access (XSS protection)
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
 };
 
 export const signUp = asyncHandler(async (req: Request, res: Response) => {

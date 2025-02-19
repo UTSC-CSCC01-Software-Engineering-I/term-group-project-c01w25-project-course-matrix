@@ -44,7 +44,7 @@ interface SearchFiltersProps {
 /**
  * SearchFilters Component
  *
- * Provides filtering options for refining course search results. Users can filter courses 
+ * Provides filtering options for refining course search results. Users can filter courses
  * based on breadth requirement, credit weight, department, and year level.
  *
  * Features:

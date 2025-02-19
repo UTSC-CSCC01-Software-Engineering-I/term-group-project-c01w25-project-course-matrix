@@ -20,7 +20,7 @@ interface OfferingContentProps {
  * OfferingContent Component
  *
  * Displays the available course offerings for a selected course and semester.
- * It fetches offering data from the backend using RTK Query (`useGetOfferingsQuery`) and 
+ * It fetches offering data from the backend using RTK Query (`useGetOfferingsQuery`) and
  * renders a table with section details.
  *
  * Features:

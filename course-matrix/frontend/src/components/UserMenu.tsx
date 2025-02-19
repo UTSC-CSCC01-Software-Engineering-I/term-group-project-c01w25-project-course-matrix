@@ -33,7 +33,7 @@ import { useNavigate } from "react-router-dom";
  *
  * Features:
  * - **User Information**: Displays the user's name, email (placeholder), and avatar.
- * - **Account Actions**: 
+ * - **Account Actions**:
  *   - **Edit Account**: Opens a dialog to edit account details (currently disabled for email and password).
  *   - **Logout**: Logs out the user, clears credentials, and redirects to the homepage.
  *   - **Delete Account**: Opens a confirmation dialog for account deletion (currently non-functional).
@@ -52,7 +52,6 @@ import { useNavigate } from "react-router-dom";
  *
  * @returns {JSX.Element} The rendered user menu dropdown with account options.
  */
-
 
 export function UserMenu() {
   const dispatch = useDispatch();

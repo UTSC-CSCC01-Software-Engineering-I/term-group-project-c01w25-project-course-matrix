@@ -6,6 +6,11 @@ interface AuthRouteProps {
   component: React.ComponentType; // Type for the component prop
 }
 
+/**
+ * Login Route
+ * 
+ * Checks if a user is logged in (session exists). If not then redirect to login.
+ */
 const AuthRoute: React.FC<AuthRouteProps> = ({ component: Component }) => {
   const { data, isLoading, error } = useGetSessionQuery();
 
@@ -13,7 +18,6 @@ const AuthRoute: React.FC<AuthRouteProps> = ({ component: Component }) => {
     return <LoadingPage />;
   }
 
-  // TODO modify check based on return type of data
   return data?.user ? <Component /> : <Navigate to="/login" replace />;
 };
 

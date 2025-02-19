@@ -80,8 +80,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
     await supabase.auth.setSession({
       access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token
-    })
+      refresh_token: data.session.refresh_token,
+    });
 
     res.status(200).json({
       message: "Login Success!",

@@ -15,7 +15,7 @@ export default {
     try {
       // Query the departments table from the database
       let departmentsQuery = supabase
-        .schema('course')
+        .schema("course")
         .from("departments")
         .select();
 

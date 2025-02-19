@@ -27,7 +27,7 @@ export default {
 
       // Query the courses, offerings tables from the database
       let coursesQuery = supabase
-        .schema('course')
+        .schema("course")
         .from("courses")
         .select()
         .limit(Number(limit || DEFAULT_COURSE_LIMIT));
@@ -37,14 +37,12 @@ export default {
           `code.ilike.%${search}%,name.ilike.%${search}%`,
         );
       }
-      let offeringsQuery = supabase
-        .schema('course')
-        .from("offerings")
-        .select();
+      let offeringsQuery = supabase.schema("course").from("offerings").select();
 
       // Get the data and errors from the queries
       const { data: coursesData, error: coursesError } = await coursesQuery;
-      const { data: offeringsData, error: offeringsError } = await offeringsQuery;
+      const { data: offeringsData, error: offeringsError } =
+        await offeringsQuery;
 
       // Set the courses and offerings data
       const courses = coursesData || [];

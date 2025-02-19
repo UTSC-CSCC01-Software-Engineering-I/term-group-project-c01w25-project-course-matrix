@@ -15,7 +15,7 @@ export default {
       const { course_code, semester } = req.query;
 
       let offeringsQuery = supabase
-        .schema('course')
+        .schema("course")
         .from("offerings")
         .select()
         .eq("code", course_code)

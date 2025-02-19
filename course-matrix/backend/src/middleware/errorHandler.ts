@@ -3,7 +3,7 @@ import ApiError from "../utils/utils";
 
 /**
  * Middleware to convert errors to ApiError instances if they are not already.
- * 
+ *
  * @param {Error} err - The error object.
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
@@ -27,7 +27,7 @@ export const errorConverter: ErrorRequestHandler = (err, req, res, next) => {
 
 /**
  * Middleware to handle errors and send appropriate responses.
- * 
+ *
  * @param {Error} err - The error object.
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.

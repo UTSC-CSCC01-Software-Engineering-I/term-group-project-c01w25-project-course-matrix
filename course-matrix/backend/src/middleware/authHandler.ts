@@ -13,7 +13,7 @@ interface AuthenticatedRequest extends Request {
 
 /**
  * Middleware to check if the user is authenticated using a refresh token.
- * 
+ *
  * @param {AuthenticatedRequest} req - The request object with optional user and session properties.
  * @param {Response} res - The response object to send error messages if authentication fails.
  * @param {NextFunction} next - The next middleware function to call if authentication succeeds.

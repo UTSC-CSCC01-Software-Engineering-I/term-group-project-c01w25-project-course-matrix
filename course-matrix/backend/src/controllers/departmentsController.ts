@@ -6,7 +6,7 @@ import asyncHandler from "../middleware/asyncHandler";
 export default {
   /**
    * Get a list of departments from the database.
-   * 
+   *
    * @param {Request} req - The request object.
    * @param {Response} res - The response object to send the departments data.
    * @returns {Promise<Response>} - The response object with the departments data.

@@ -154,30 +154,32 @@ export const session = asyncHandler(async (req: Request, res: Response) => {
  * - Responds with a success message if the email is sent.
  * - Responds with an error if the email sending fails.
  */
-export const requestPasswordReset = asyncHandler(async (req: Request, res: Response) => {
-  try {
-    const { email } = req.body;
+export const requestPasswordReset = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
 
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${config.CLIENT_APP_URL}/reset-password`,
+      });
+
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.json({
+        message: "Password reset email sent. Check your inbox.",
+      });
+    } catch (error: any) {
+      console.error("Error requesting reset:", error);
+      res.status(500).json({ error: error.message });
     }
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${config.CLIENT_APP_URL}/reset-password`,
-    });
-
-    if (error) {
-      return res.status(400).json({ error: error.message });
-    }
-
-    return res.json({
-      message: "Password reset email sent. Check your inbox.",
-    });
-  } catch (error: any) {
-    console.error("Error requesting reset:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
+  },
+);
 
 /**
  * @route POST /auth/reset-password
@@ -189,23 +191,25 @@ export const requestPasswordReset = asyncHandler(async (req: Request, res: Respo
  * - Responds with a success message if the password is updated.
  * - Responds with an error if the password update fails.
  */
-export const resetPassword = asyncHandler(async (req: Request, res: Response) => {
-  try {
-    const { password } = req.body;
+export const resetPassword = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const { password } = req.body;
 
-    if (!password) {
-      return res.status(400).json({ error: "New password is required" });
+      if (!password) {
+        return res.status(400).json({ error: "New password is required" });
+      }
+
+      const { data, error } = await supabase.auth.updateUser({ password });
+
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.json({ message: "Password successfully updated." });
+    } catch (error: any) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ error: error.message });
     }
-
-    const { data, error } = await supabase.auth.updateUser({ password });
-
-    if (error) {
-      return res.status(400).json({ error: error.message });
-    }
-
-    return res.json({ message: "Password successfully updated." });
-  } catch (error: any) {
-    console.error("Error resetting password:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
+  },
+);

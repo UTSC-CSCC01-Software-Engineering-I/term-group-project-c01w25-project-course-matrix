@@ -11,6 +11,14 @@ interface AuthenticatedRequest extends Request {
   session?: Session;
 }
 
+/**
+ * Middleware to check if the user is authenticated using a refresh token.
+ *
+ * @param {AuthenticatedRequest} req - The request object with optional user and session properties.
+ * @param {Response} res - The response object to send error messages if authentication fails.
+ * @param {NextFunction} next - The next middleware function to call if authentication succeeds.
+ * @returns {Promise<void>} - The next middleware function or an error response.
+ */
 export const authHandler = asyncHandler(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     // Check refresh token in cookies to determine if authorized

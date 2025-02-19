@@ -37,6 +37,10 @@ app.use("/api/courses", coursesRouter);
 app.use("/api/departments", departmentsRouter);
 app.use("/api/offerings", offeringsRouter);
 
+/**
+ * Root route to test the backend server.
+ * @route GET /
+ */
 app.get(
   "/",
   asyncHandler(async (_, response) =>
@@ -46,7 +50,10 @@ app.get(
   ),
 );
 
-// Test get data from db
+/**
+ * Test route to get data from the database.
+ * @route GET /post
+ */
 app.get(
   "/post",
   asyncHandler(async (_, res) => {

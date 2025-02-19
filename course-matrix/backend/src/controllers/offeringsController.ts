@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
-import { supabaseCourseClient } from "../db/setupDb";
+import { supabase } from "../db/setupDb";
 
 export default {
   /**
@@ -14,7 +14,8 @@ export default {
     try {
       const { course_code, semester } = req.query;
 
-      let offeringsQuery = supabaseCourseClient
+      let offeringsQuery = supabase
+        .schema('course')
         .from("offerings")
         .select()
         .eq("code", course_code)

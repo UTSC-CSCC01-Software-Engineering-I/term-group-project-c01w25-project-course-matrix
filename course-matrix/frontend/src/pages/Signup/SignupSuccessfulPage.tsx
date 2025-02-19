@@ -3,6 +3,27 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate, useLocation } from "react-router-dom";
 
+/**
+ * SignupSuccessfulPage Component
+ *
+ * Displays a confirmation message after a user successfully creates an account.
+ * Provides a button to navigate to the login page.
+ *
+ * Features:
+ * - **Success Message**: Confirms account creation.
+ * - **Navigation**: Redirects users to the login page via `useNavigate()`.
+ *
+ * Hooks:
+ * - `useNavigate` for handling navigation.
+ *
+ * UI Components:
+ * - `Logo` for branding.
+ * - `Card` for structuring the confirmation message.
+ * - `Button` for redirecting to login.
+ *
+ * @returns {JSX.Element} The signup success confirmation page.
+ */
+
 const SignupSuccessfulPage = () => {
   const navigate = useNavigate();
 

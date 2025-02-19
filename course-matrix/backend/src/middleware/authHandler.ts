@@ -6,7 +6,6 @@ import asyncHandler from "./asyncHandler";
 import { supabase } from "../db/setupDb";
 import { Session, User } from "@supabase/supabase-js";
 
-// Or a simpler approach directly in your middleware file:
 interface AuthenticatedRequest extends Request {
   user?: User;
   session?: Session;

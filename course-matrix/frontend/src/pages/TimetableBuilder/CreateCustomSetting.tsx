@@ -42,6 +42,43 @@ interface CreateCustomSettingProps {
   submitHandler: (values: z.infer<typeof RestrictionSchema>) => void;
 }
 
+/**
+ * CreateCustomSetting Component
+ *
+ * Allows users to define custom scheduling restrictions for their timetable. Users can restrict courses
+ * based on specific times, days, or enforce a minimum number of days off per week.
+ *
+ * Features:
+ * - **Restriction Types**:
+ *   - Restrict times before/after/between specific hours.
+ *   - Restrict entire days from scheduling.
+ *   - Enforce a minimum number of days off per week.
+ * - **Form Handling**:
+ *   - Uses `react-hook-form` with `zodResolver` for validation.
+ *   - Dynamically updates input fields based on selected restriction type.
+ * - **Time Selection**:
+ *   - Uses `TimePickerHr` to select start and end times.
+ * - **Day Selection**:
+ *   - Uses checkboxes for selecting restricted days.
+ * - **Submission Handling**:
+ *   - Calls `submitHandler` with validated restriction data.
+ *   - Closes modal on successful submission.
+ *
+ * Props:
+ * - `closeHandler` (`() => void`): Function to close the restriction modal.
+ * - `submitHandler` (`(values: z.infer<typeof RestrictionSchema>) => void`): Callback to apply the restriction.
+ *
+ * Hooks:
+ * - `useForm` for form state management.
+ * - `useState` for managing UI behavior.
+ *
+ * UI Components:
+ * - `Card`, `Form`, `Input`, `Checkbox`, `Select`, `Button` for structured form inputs.
+ * - `TimePickerHr` for time selection.
+ *
+ * @returns {JSX.Element} The restriction creation form.
+ */
+
 const CreateCustomSetting = ({
   closeHandler,
   submitHandler,

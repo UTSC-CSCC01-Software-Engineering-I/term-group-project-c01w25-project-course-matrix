@@ -18,6 +18,44 @@ import { FormContext } from "./TimetableBuilder";
 import OfferingContent from "./OfferingContent";
 import { convertBreadthRequirement } from "@/utils/convert-breadth-requirement";
 
+/**
+ * CourseSearch Component
+ *
+ * Provides a search bar for users to find and select courses.
+ * It integrates with a filtering system and displays search results dynamically.
+ *
+ * Features:
+ * - **Live Search**: Filters courses based on user input and displays results in a dropdown panel.
+ * - **Form Integration**: Uses `useContext(FormContext)` to update the selected courses in the parent form.
+ * - **Click Outside Handling**: Uses `useClickOutside` to close the search panel specifically when clicking outside the panel.
+ * - **Course Selection**: Allows users to add a course to their timetable while preventing duplicates.
+ * - **Course Details Preview**:
+ *   - Displays a hover card (`HoverCard`) with additional course information.
+ *   - Includes prerequisites, exclusions, recommended preparation, and links to UTSC's course calendar.
+ * - **Expandable Section Information**:
+ *   - Uses `Accordion` to show section times info via the `OfferingContent` component.
+ *
+ * Props:
+ * - `value` (`string`): The current search input value.
+ * - `showFilter` (`() => void`): Function to toggle filter options.
+ * - `onChange` (`(value: string) => void`): Callback for updating the search value.
+ * - `data` (`CourseModel[]`): List of available courses to display.
+ * - `isLoading` (`boolean`): Indicates whether course data is loading.
+ *
+ * Hooks:
+ * - `useState` for managing UI states like `showPanel`.
+ * - `useRef` for managing input focus and click outside detection.
+ * - `useContext(FormContext)` to update the selected courses in the form.
+ *
+ * UI Components:
+ * - `Input` for search input.
+ * - `HoverCard` for additional course details.
+ * - `Accordion` for expandable section info.
+ * - `FilterIcon` to trigger filtering options.
+ *
+ * @returns {JSX.Element} The rendered course search component.
+ */
+
 interface CourseSearchProps {
   value: string;
   showFilter: () => void;

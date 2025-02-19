@@ -41,6 +41,37 @@ interface SearchFiltersProps {
   filterForm: UseFormReturn<FilterForm, any, undefined>;
 }
 
+/**
+ * SearchFilters Component
+ *
+ * Provides filtering options for refining course search results. Users can filter courses
+ * based on breadth requirement, credit weight, department, and year level.
+ *
+ * Features:
+ * - **Breadth Requirement Filtering**: Users can filter courses by breadth category.
+ * - **Credit Weight Selection**: Allows users to filter courses based on credit weight (1.0 or 0.5).
+ * - **Department Filtering**: Fetches department data dynamically using `useGetDepartmentsQuery`.
+ * - **Year Level Selection**: Enables filtering by course year level (1 to 4).
+ * - **Form Handling**:
+ *   - Uses `react-hook-form` with `zodResolver` for validation.
+ *   - Resets filters with a `Reset` button.
+ *   - Submits selected filters using `Apply`.
+ *
+ * Props:
+ * - `closeHandler` (`() => void`): Closes the filter modal.
+ * - `submitHandler` (`(values: z.infer<typeof FilterFormSchema>) => void`): Applies the selected filters.
+ * - `resetHandler` (`() => void`): Resets all filters.
+ * - `filterForm` (`UseFormReturn<FilterForm>`): React Hook Form instance for managing filter values.
+ *
+ * Hooks:
+ * - `useGetDepartmentsQuery` for retrieving department data.
+ *
+ * UI Components:
+ * - `Card`, `Form`, `Select`, `Button` for structured input handling.
+ *
+ * @returns {JSX.Element} The search filters modal.
+ */
+
 const SearchFilters = ({
   closeHandler,
   submitHandler,

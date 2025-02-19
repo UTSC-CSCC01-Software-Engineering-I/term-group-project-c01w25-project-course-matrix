@@ -17,6 +17,21 @@ import { Separator } from "@radix-ui/react-separator";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import TimetableBuilder from "../TimetableBuilder/TimetableBuilder";
 
+/**
+ * Dashboard Component
+ *
+ * This component serves as the main layout for the dashboard, handling:
+ * - **Sidebar Navigation**:  Manage sidebar state.
+ * - **Breadcrumb Navigation**: Displays the current page path dynamically based on `useLocation()`.
+ * - **User Menu**: Includes `UserMenu` for user-related actions.
+ * - **Routing**: Manages dashboard routes with React Router, supporting:
+ *   - `/dashboard/home`: Displays the home page.
+ *   - `/dashboard/timetable`: Renders the `TimetableBuilder` page component.
+ *   - `/dashboard/assistant`: Renders the chatbot AI Assistant page.
+ *   - Any unknown path (`*`): Redirects to `/not-found`.
+ *
+ * @returns {JSX.Element} The rendered dashboard layout.
+ */
 const Dashboard = () => {
   const location = useLocation();
 
@@ -35,19 +50,13 @@ const Dashboard = () => {
                     <BreadcrumbList>
                       <BreadcrumbItem className="hidden md:block">
                         {location.pathname === "/dashboard/home" ? (
-                          <BreadcrumbLink href="/dashboard/home">
-                            <Link to="/dashboard/home">Home</Link>
-                          </BreadcrumbLink>
+                          <Link to="/dashboard/home">Home</Link>
                         ) : location.pathname === "/dashboard/timetable" ? (
-                          <BreadcrumbLink href="/dashboard/timetable">
-                            <Link to="/dashboard/timetable">
-                              Timetable Builder
-                            </Link>
-                          </BreadcrumbLink>
+                          <Link to="/dashboard/timetable">
+                            Timetable Builder
+                          </Link>
                         ) : location.pathname === "/dashboard/assistant" ? (
-                          <BreadcrumbLink href="/dashboard/assistant">
-                            <Link to="/dashboard/assistant">AI Assistant</Link>
-                          </BreadcrumbLink>
+                          <Link to="/dashboard/assistant">AI Assistant</Link>
                         ) : (
                           <></>
                         )}

@@ -39,6 +39,42 @@ type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
 const SEARCH_LIMIT = 1000;
 
+/**
+ * TimetableBuilder Component
+ *
+ * Allows users to build a personalized timetable by selecting courses, applying filters,
+ * and setting restrictions. It integrates with `react-hook-form` for form management and fetches course data
+ * dynamically using RTK Query.
+ *
+ * Features:
+ * - **Course Selection**: Users can search for and select courses, ensuring no duplicates.
+ * - **Semester Selection**: Dropdown selection for choosing the semester.
+ * - **Custom Restrictions**: Allows users to define time-based restrictions for scheduling preferences.
+ * - **Filters**: Users can apply advanced search filters to refine course selection.
+ * - **Live Search**: Implements debounced search for optimized performance.
+ * - **State Management**:
+ *   - `isEditNameOpen`, `isCustomSettingsOpen`, `showFilters` for modal management.
+ *   - `filters` for search filters.
+ *   - `selectedCourses` and `enabledRestrictions` to track user selections.
+ *
+ * Hooks:
+ * - `useForm` for managing form states (`form`, `filterForm`).
+ * - `useEffect` to trigger API refetch on search input changes.
+ * - `useDebounceValue` to prevent excessive API calls when searching.
+ *
+ * API Calls:
+ * - Fetches course data using `useGetCoursesQuery`.
+ * - Sends timetable creation request to `/api/timetable/create` (TODO).
+ *
+ * UI Components:
+ * - `Form`, `Select`, `Input`, `Button` for structured form inputs.
+ * - `CourseSearch` for searching and selecting courses.
+ * - `CreateCustomSetting` for adding personalized restrictions.
+ * - `SearchFilters` for filtering course results.
+ *
+ * @returns {JSX.Element} The rendered timetable builder.
+ */
+
 const TimetableBuilder = () => {
   const form = useForm<z.infer<typeof TimetableFormSchema>>({
     resolver: zodResolver(TimetableFormSchema),
@@ -63,8 +99,10 @@ const TimetableBuilder = () => {
     return !searchQuery && !filters;
   };
 
+  // limit search number if no search query or filters for performance purposes.
+  // Otherwise, limit is 10k, which effectively gets all results.
   const { data, isLoading, error, refetch } = useGetCoursesQuery({
-    limit: noSearchAndFilter() ? SEARCH_LIMIT : 10000, // limit search number if no search query or filters for performance
+    limit: noSearchAndFilter() ? SEARCH_LIMIT : 10000,
     search: debouncedSearchQuery || undefined,
     semester: form.getValues("semester"),
     ...filters,

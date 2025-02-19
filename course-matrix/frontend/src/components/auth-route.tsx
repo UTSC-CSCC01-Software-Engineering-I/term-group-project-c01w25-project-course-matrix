@@ -8,7 +8,7 @@ interface AuthRouteProps {
 
 /**
  * Login Route
- * 
+ *
  * Checks if a user is logged in (session exists). If not then redirect to login.
  */
 const AuthRoute: React.FC<AuthRouteProps> = ({ component: Component }) => {

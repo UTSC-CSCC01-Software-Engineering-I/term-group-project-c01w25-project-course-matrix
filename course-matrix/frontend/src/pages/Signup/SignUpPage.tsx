@@ -99,61 +99,91 @@ const SignupPage = () => {
 
   return (
     <div className="w-screen flex flex-col gap-4 justify-center -translate-y-12 items-center h-screen bg-gray-100">
-    <Logo />
-    <Card className="flex flex-col items-center text-center p-8">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-xl font-semibold">Sign up</h1>
-        <h2 className="text-sm text-slate-500">Sign up to Course Matrix with your email</h2>
-        <Form {...signupForm}>
-          <form onSubmit={signupForm.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={signupForm.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem className="text-left w-[400px]">
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input {...field} id="UsernameInput"/>
-                  </FormControl>
-                  <FormMessage/>
-                </FormItem>
+      <Logo />
+      <Card className="flex flex-col items-center text-center p-8">
+        <div className="flex flex-col gap-4">
+          <h1 className="text-xl font-semibold">Sign up</h1>
+          <h2 className="text-sm text-slate-500">
+            Sign up to Course Matrix with your email
+          </h2>
+          <Form {...signupForm}>
+            <form
+              onSubmit={signupForm.handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                control={signupForm.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem className="text-left w-[400px]">
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input {...field} id="UsernameInput" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={signupForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="text-left w-[400px]">
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        id="EmailInput"
+                        placeholder="someone@test.com"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <PasswordInput
+                form={signupForm}
+                name="password"
+                label="Create Password"
+                placeholder="Enter password"
+                className="w-full"
+              />
+              <PasswordInput
+                form={signupForm}
+                name="confirmPassword"
+                label="Confirm Password"
+                placeholder="Confirm password"
+                className="w-full"
+              />
+              {showCheckEmail && (
+                <p className="text-sm text-slate-500 w-[400px]">
+                  Registration successful! Please check{" "}
+                  {signupForm.getValues("email")} for a confirmation link
+                </p>
               )}
-            />
-            <FormField
-              control={signupForm.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="text-left w-[400px]">
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input {...field} id="EmailInput" placeholder="someone@test.com"/>
-                  </FormControl>
-                  <FormMessage/>
-                </FormItem>
+              {showUserExists && (
+                <p className="text-sm text-red-500 w-[400px]">
+                  User with email {signupForm.getValues("email")} already
+                  exists!
+                </p>
               )}
-            />
-            <PasswordInput 
-              form={signupForm} 
-              name="password"
-              label="Create Password"
-              placeholder="Enter password" 
-              className="w-full" 
-            />
-            <PasswordInput 
-              form={signupForm} 
-              name="confirmPassword"
-              label="Confirm Password"
-              placeholder="Confirm password" 
-              className="w-full" 
-            />
-            {showCheckEmail && <p className="text-sm text-slate-500 w-[400px]">Registration successful! Please check {signupForm.getValues("email")} for a confirmation link</p>}
-            {showUserExists && <p className="text-sm text-red-500 w-[400px]">User with email {signupForm.getValues("email")} already exists!</p>}
-            {showSignupError && <p className="text-sm text-red-500 w-[400px]">An unknown error occured. Please try again.</p>}
-            <div className="w-full flex flex-row justify-center">
-              <Button id="LoginBtn" className="w-full" type="submit" variant={isSubmitting ? "ghost" : "default"}>Sign up</Button>
-            </div>
-          </form>
-        </Form>
+              {showSignupError && (
+                <p className="text-sm text-red-500 w-[400px]">
+                  An unknown error occured. Please try again.
+                </p>
+              )}
+              <div className="w-full flex flex-row justify-center">
+                <Button
+                  id="LoginBtn"
+                  className="w-full"
+                  type="submit"
+                  variant={isSubmitting ? "ghost" : "default"}
+                >
+                  Sign up
+                </Button>
+              </div>
+            </form>
+          </Form>
 
           <Label
             id="GogtoSignup"

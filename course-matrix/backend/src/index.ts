@@ -88,6 +88,5 @@ const unexpectedErrorHandler = (error: unknown) => {
   exitHandler();
 };
 
-
 process.on("uncaughtException", unexpectedErrorHandler);
 process.on("unhandledRejection", unexpectedErrorHandler);

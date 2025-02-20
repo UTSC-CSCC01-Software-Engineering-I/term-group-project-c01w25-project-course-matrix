@@ -21,7 +21,7 @@ const COOKIE_OPTIONS: CookieOptions = {
  */
 export const signUp = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const {username, email, password} = req.body;
+    const { username, email, password } = req.body;
 
     // calling supabase for user registeration
     const { data, error } = await supabase.auth.signUp({
@@ -30,8 +30,8 @@ export const signUp = asyncHandler(async (req: Request, res: Response) => {
       options: {
         emailRedirectTo: `${config.CLIENT_APP_URL}/signup-success`,
         data: {
-          username: username
-        }
+          username: username,
+        },
       },
     });
 

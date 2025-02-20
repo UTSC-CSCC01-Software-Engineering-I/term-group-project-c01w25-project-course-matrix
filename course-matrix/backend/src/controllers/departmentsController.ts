@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { supabaseCourseClient } from "../db/setupDb";
+import { supabase } from "../db/setupDb";
 import asyncHandler from "../middleware/asyncHandler";
 
 export default {
@@ -14,7 +14,10 @@ export default {
   getDepartments: asyncHandler(async (req: Request, res: Response) => {
     try {
       // Query the departments table from the database
-      let departmentsQuery = supabaseCourseClient.from("departments").select();
+      let departmentsQuery = supabase
+        .schema("course")
+        .from("departments")
+        .select();
 
       // Get the data and errors from the query
       const { data: departmentsData, error: departmentsError } =

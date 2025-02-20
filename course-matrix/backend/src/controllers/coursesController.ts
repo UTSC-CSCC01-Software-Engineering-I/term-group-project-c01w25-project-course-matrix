@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
-import { supabaseCourseClient } from "../db/setupDb";
+import { supabase } from "../db/setupDb";
 
 const DEFAULT_COURSE_LIMIT = 1000;
 
@@ -26,7 +26,8 @@ export default {
       } = req.query;
 
       // Query the courses, offerings tables from the database
-      let coursesQuery = supabaseCourseClient
+      let coursesQuery = supabase
+        .schema("course")
         .from("courses")
         .select()
         .limit(Number(limit || DEFAULT_COURSE_LIMIT));
@@ -36,7 +37,7 @@ export default {
           `code.ilike.%${search}%,name.ilike.%${search}%`,
         );
       }
-      let offeringsQuery = supabaseCourseClient.from("offerings").select();
+      let offeringsQuery = supabase.schema("course").from("offerings").select();
 
       // Get the data and errors from the queries
       const { data: coursesData, error: coursesError } = await coursesQuery;

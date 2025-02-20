@@ -58,8 +58,9 @@ export function UserMenu() {
 	const dispatch = useDispatch();
 	const [logout] = useLogoutMutation();
 	const navigate = useNavigate();
-	const user_metadata = JSON.parse(localStorage.getItem("userInfo")); //User Data
-	const initials = user_metadata.user.user_metadata.username //Gets User Initials
+	const user_metadata = JSON.parse(localStorage.getItem("userInfo") ?? "{}"); //User Data
+	const username = (user_metadata?.user?.user_metadata?.username as string) ?? "John Doe"
+	const initials = username//Gets User Initials
 		.split(" ")          // Split the string by spaces
 		.map(word => word[0]) // Take the first letter of each word
 		.join("")            // Join them back into a string
@@ -79,7 +80,7 @@ export function UserMenu() {
 		<DropdownMenu>
 			<DropdownMenuTrigger>
 				<div className="flex flex-row items-center gap-4 px-4 text-sm">
-					{user_metadata.user.user_metadata.username}
+					{initials}
 					<Avatar>
 						{/* Avatar Image is the profile picture of the user. The default avatar is used as a placeholder for now. */}
 						<AvatarImage src="../../public/img/default-avatar.png" />

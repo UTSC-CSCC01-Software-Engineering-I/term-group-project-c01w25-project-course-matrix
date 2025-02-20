@@ -8,7 +8,7 @@ export type SignupForm = {
 }
 
 export const SignupFormSchema: ZodType<SignupForm> = z.object({
-  username: z.string().min(1, "Please enter a Username"),
+  username: z.string().min(1, "Please enter a Username").max(50, "Username must be 50 characters or less"),
   email: z.string().min(1, "Please enter an email").email("Invalid email"),
   password: z.string()  
     .min(8, "Password must be at least 8 characters")

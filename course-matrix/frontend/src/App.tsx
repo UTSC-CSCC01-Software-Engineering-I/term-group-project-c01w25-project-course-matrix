@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import SignupPage from "./pages/Signup/SignUpPage";
 import AuthRoute from "./components/auth-route";
 import SignupSuccessfulPage from "./pages/Signup/SignupSuccessfulPage";
+import LoginRoute from "./components/login-route";
 
 /**
  * App Component
@@ -36,7 +37,7 @@ function App() {
         <Route path="*" element={<Navigate to="/login" />} />
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="signup-success" element={<SignupSuccessfulPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<LoginRoute component={LoginPage} />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route
           path="/dashboard/*"

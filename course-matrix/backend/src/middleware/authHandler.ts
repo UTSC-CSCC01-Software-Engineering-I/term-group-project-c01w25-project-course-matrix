@@ -30,18 +30,15 @@ export const authHandler = asyncHandler(
 
     try {
       // Verify the session
-      const { data, error } = await supabase.auth.refreshSession({
-        refresh_token: refreshToken,
-      });
+      const { data, error } = await supabase.auth.getUser()
 
       if (error) {
         res.clearCookie("refresh_token");
         return res.status(401).json({ message: "Invalid or expired session" });
       }
 
-      // Attach user and session to request for route handlers to access later
+      // Attach user to request for route handlers to access later
       (req as AuthenticatedRequest).user = data?.user ?? undefined;
-      (req as AuthenticatedRequest).session = data?.session ?? undefined;
 
       next();
     } catch (error) {

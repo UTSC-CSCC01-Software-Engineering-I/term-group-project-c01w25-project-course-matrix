@@ -1,19 +1,19 @@
 import {
-	DropdownMenu,
-	DropdownMenuTrigger,
-	DropdownMenuContent,
-	DropdownMenuItem,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-	Dialog,
-	DialogTrigger,
-	DialogContent,
-	DialogHeader,
-	DialogFooter,
-	DialogTitle,
-	DialogDescription,
-	DialogClose,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,35 @@ import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+
+/**
+ * UserMenu Component
+ *
+ * Provides a dropdown menu for the user to manage their account settings.
+ * Includes options for viewing account information, editing account details,
+ * logging out, and deleting the account (currently non-functional).
+ *
+ * Features:
+ * - **User Information**: Displays the user's name, email (placeholder), and avatar.
+ * - **Account Actions**:
+ *   - **Edit Account**: Opens a dialog to edit account details (currently disabled for email and password).
+ *   - **Logout**: Logs out the user, clears credentials, and redirects to the homepage.
+ *   - **Delete Account**: Opens a confirmation dialog for account deletion (currently non-functional).
+ * - **Dialog Components**: Uses the `Dialog` component for editing account details and confirming account deletion.
+ * - **Avatar**: Displays a default user avatar with initials fallback.
+ *
+ * Hooks:
+ * - `useLogoutMutation` for handling user logout.
+ * - `useDispatch` and `useNavigate` for Redux actions and navigation after logout.
+ *
+ * UI Components:
+ * - `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` for dropdown menu functionality.
+ * - `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogFooter` for modal dialogs.
+ * - `Avatar`, `AvatarFallback`, `AvatarImage` for displaying the user's avatar.
+ * - `Button`, `Input`, `Label` for form inputs and actions.
+ *
+ * @returns {JSX.Element} The rendered user menu dropdown with account options.
+ */
 
 export function UserMenu() {
 	const dispatch = useDispatch();
@@ -36,15 +65,15 @@ export function UserMenu() {
 		.join("")            // Join them back into a string
 		.toUpperCase();      // Convert to uppercase;
 
-	const handleLogout = async () => {
-		try {
-			await logout({}).unwrap();
-			dispatch(clearCredentials());
-			navigate('/');
-		} catch (err) {
-			console.error('Logout failed:', err);
-		}
-	};
+  const handleLogout = async () => {
+    try {
+      await logout({}).unwrap();
+      dispatch(clearCredentials());
+      navigate("/");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
 	return (
 		<DropdownMenu>

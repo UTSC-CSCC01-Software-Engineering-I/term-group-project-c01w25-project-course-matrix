@@ -30,7 +30,7 @@ export const authHandler = asyncHandler(
 
     try {
       // Verify the session
-      const { data, error } = await supabase.auth.getUser()
+      const { data, error } = await supabase.auth.getUser();
 
       if (error) {
         res.clearCookie("refresh_token");

@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ai-sdk/openai": "^1.1.13",
     "@supabase/supabase-js": "^2.48.1",
     "@types/express": "^5.0.0",
+    "ai": "^4.1.45",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

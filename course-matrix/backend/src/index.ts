@@ -16,13 +16,19 @@ import {
   departmentsRouter,
   offeringsRouter,
 } from "./routes/courseRouter";
+import { aiRouter } from "./routes/aiRouter";
 
 const app: Express = express();
 const HOST = "localhost";
 let server: Server;
 const swaggerDocs = swaggerjsdoc(swaggerOptions);
 
-app.use(cors({ origin: config.CLIENT_APP_URL, credentials: true }));
+app.use(cors({
+  origin: config.CLIENT_APP_URL,
+  methods: ['POST'],
+  credentials: true,
+  allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -36,6 +42,7 @@ app.use("/auth", authRouter);
 app.use("/api/courses", coursesRouter);
 app.use("/api/departments", departmentsRouter);
 app.use("/api/offerings", offeringsRouter);
+app.use("/api/ai", aiRouter)
 
 /**
  * Root route to test the backend server.

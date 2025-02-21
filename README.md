@@ -49,9 +49,11 @@ PORT=8081
 CLIENT_APP_URL="http://localhost:5173"
 DATABASE_URL=[Insert Supabase Project URL]
 DATABASE_KEY=[Insert Supabase Project API key]
+
+OPENAI_API_KEY=[Insert OpenAI API Key]
 ```
 
-The `DATABASE_URL` variable should contain your Supabase project url and the `DATABASE_KEY` should contain your Supabase project’s API key. To learn how to create a new Supabase project: see [here](https://medium.com/@heshramsis/building-a-crud-app-with-supabase-and-express-a-step-by-step-guide-for-junior-developers-81456b850910). Note that for the purposes of this project, we will provide the grader with all necessary API keys and URLs.
+The `DATABASE_URL` variable should contain your Supabase project url and the `DATABASE_KEY` should contain your Supabase project’s API key. To learn how to create a new Supabase project: see [here](https://medium.com/@heshramsis/building-a-crud-app-with-supabase-and-express-a-step-by-step-guide-for-junior-developers-81456b850910). Likewise, the `OPENAI_API_KEY` variable should contain your OpenAI Project API Key. Note that for the purposes of this project, **we will provide the grader with all necessary API keys and URLs**.
 
 4. Configure environment variables for frontend. Create a `.env` file in `/frontend` and populate it with the following:
 

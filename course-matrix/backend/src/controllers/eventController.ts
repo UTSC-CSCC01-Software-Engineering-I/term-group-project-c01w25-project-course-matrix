@@ -54,7 +54,7 @@ function generateWeeklyCourseEvents(
   calendar_id: string,
   offering_id: string,
   semester_start_date: string,
-  semester_end_date: string
+  semester_end_date: string,
 ): any[] {
   //Map weekday code to JS day number
   const weekdayMap: { [key: string]: number } = {
@@ -199,7 +199,7 @@ export default {
             calendar_id,
             offering_id,
             semester_start_date,
-            semester_end_date
+            semester_end_date,
           );
         } else {
           //If no semester dates provided, insert a single event using the provided event_day
@@ -416,7 +416,7 @@ export default {
             calendar_id,
             new_offering_id,
             semester_start_date,
-            semester_end_date
+            semester_end_date,
           );
         } else {
           let eventDate = getNextWeekDayOccurance(courseDay);

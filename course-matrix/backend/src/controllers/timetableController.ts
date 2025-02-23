@@ -98,6 +98,24 @@ export default {
       }
       const user_id = authData.user.id;
 
+      //Retrieve users allowed to access the timetable
+      const { data: timetableUserData, error: timetableUserError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("*")
+          .eq("id", id)
+          .maybeSingle();
+
+      const timetable_user_id = timetableUserData?.user_id;
+
+      //Validate user access
+      if (user_id !== timetable_user_id) {
+        return res
+          .status(401)
+          .json({ message: "Unauthorized access to timetable events" });
+      }
+
       //Update timetable title, for authenticated user only
       let updateTimetableQuery = supabase
         .schema("timetable")
@@ -140,6 +158,24 @@ export default {
         return res.status(401).json({ message: "Unauthorized" });
       }
       const user_id = authData.user.id;
+
+      //Retrieve users allowed to access the timetable
+      const { data: timetableUserData, error: timetableUserError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("*")
+          .eq("id", id)
+          .maybeSingle();
+
+      const timetable_user_id = timetableUserData?.user_id;
+
+      //Validate user access
+      if (user_id !== timetable_user_id) {
+        return res
+          .status(401)
+          .json({ message: "Unauthorized access to timetable events" });
+      }
 
       // Delete only if the timetable belongs to the authenticated user
       let deleteTimetableQuery = supabase

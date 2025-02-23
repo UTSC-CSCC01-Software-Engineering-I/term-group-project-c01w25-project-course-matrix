@@ -137,6 +137,30 @@ export default {
         semester_end_date,
       } = req.body;
 
+      // Retrieve the authenticated user
+      const { data: authData, error: authError } =
+        await supabase.auth.getUser();
+      if (authError || !authData.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const user_id = authData.user.id;
+
+      //Retrieve users allowed to access the timetable
+      const { data: timetableData, error: timetableError } = await supabase
+        .schema("timetable")
+        .from("timetables")
+        .select("*")
+        .eq("id", calendar_id)
+        .maybeSingle();
+      const timetable_user_id = timetableData.user_id;
+
+      //Validate user access
+      if (user_id !== timetable_user_id) {
+        return res
+          .status(401)
+          .json({ message: "Unauthorized access to timetable events" });
+      }
+
       if (offering_id) {
         //This is a course event
 
@@ -246,6 +270,32 @@ export default {
   getEvent: asyncHandler(async (req: Request, res: Response) => {
     try {
       const { calendar_id } = req.query;
+
+      // Retrieve the authenticated user
+      const { data: authData, error: authError } =
+        await supabase.auth.getUser();
+      if (authError || !authData.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const user_id = authData.user.id;
+
+      //Retrieve users allowed to access the timetable
+      const { data: timetableData, error: timetableError } = await supabase
+        .schema("timetable")
+        .from("timetables")
+        .select("*")
+        .eq("id", calendar_id)
+        .maybeSingle();
+
+      const timetable_user_id = timetableData?.user_id;
+
+      //Validate user access
+      if (user_id !== timetable_user_id) {
+        return res
+          .status(401)
+          .json({ message: "Unauthorized access to timetable events" });
+      }
+
       if (!calendar_id) {
         return res.status(400).json({ error: "calendar id is required" });
       }
@@ -297,8 +347,47 @@ export default {
         semester_end_date,
       } = req.body;
 
+      // Retrieve the authenticated user
+      const { data: authData, error: authError } =
+        await supabase.auth.getUser();
+      if (authError || !authData.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const user_id = authData.user.id;
+
+      //Retrieve users allowed to access the timetable
+      const { data: timetableData, error: timetableError } = await supabase
+        .schema("timetable")
+        .from("timetables")
+        .select("*")
+        .eq("id", calendar_id)
+        .maybeSingle();
+      const timetable_user_id = timetableData.user_id;
+
+      //Validate user access
+      if (user_id !== timetable_user_id) {
+        return res
+          .status(401)
+          .json({ message: "Unauthorized access to timetable events" });
+      }
+
       if (new_offering_id) {
         //If an offering_id is provided: Updating a courseEvent
+        //If old_offering_id does not match throw an error
+        const { data: oldofferingData, error: oldofferingError } =
+          await supabase
+            .schema("timetable")
+            .from("course_events")
+            .select("*")
+            .eq("offering_id", old_offering_id)
+            .maybeSingle();
+        if (oldofferingError || !oldofferingData) {
+          return res.status(400).json({
+            error:
+              "Invalid current offering_id or current offering id not found.",
+          });
+        }
+
         const { data: newofferingData, error: newofferingError } =
           await supabase
             .schema("course")
@@ -400,7 +489,31 @@ export default {
   deleteEvent: asyncHandler(async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const { event_type, offering_id } = req.query;
+      const { calendar_id, event_type, offering_id } = req.query;
+
+      // Retrieve the authenticated user
+      const { data: authData, error: authError } =
+        await supabase.auth.getUser();
+      if (authError || !authData.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const user_id = authData.user.id;
+
+      //Retrieve users allowed to access the timetable
+      const { data: timetableData, error: timetableError } = await supabase
+        .schema("timetable")
+        .from("timetables")
+        .select("*")
+        .eq("id", calendar_id)
+        .maybeSingle();
+      const timetable_user_id = timetableData.user_id;
+
+      //Validate user access
+      if (user_id !== timetable_user_id) {
+        return res
+          .status(401)
+          .json({ message: "Unauthorized access to timetable events" });
+      }
 
       if (!event_type) {
         return res.status(400).json({ error: "event type is required" });

@@ -16,6 +16,7 @@ import {
   departmentsRouter,
   offeringsRouter,
 } from "./routes/courseRouter";
+import { timetableRouter } from "./routes/timetableRouter";
 
 const app: Express = express();
 const HOST = "localhost";
@@ -36,6 +37,7 @@ app.use("/auth", authRouter);
 app.use("/api/courses", coursesRouter);
 app.use("/api/departments", departmentsRouter);
 app.use("/api/offerings", offeringsRouter);
+app.use("/api/timetables", timetableRouter);
 
 /**
  * Root route to test the backend server.
@@ -46,8 +48,8 @@ app.get(
   asyncHandler(async (_, response) =>
     response.json({
       info: "Testing course matrix backend server",
-    }),
-  ),
+    })
+  )
 );
 
 /**
@@ -64,7 +66,7 @@ app.get(
     } catch (err) {
       return res.status(500).send({ err });
     }
-  }),
+  })
 );
 
 server = app.listen(config.PORT, () => {

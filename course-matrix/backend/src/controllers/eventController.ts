@@ -54,7 +54,7 @@ function generateWeeklyCourseEvents(
   calendar_id: string,
   offering_id: string,
   semester_start_date: string,
-  semester_end_date: string,
+  semester_end_date: string
 ): any[] {
   //Map weekday code to JS day number
   const weekdayMap: { [key: string]: number } = {
@@ -199,7 +199,7 @@ export default {
             calendar_id,
             offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
           //If no semester dates provided, insert a single event using the provided event_day
@@ -347,6 +347,10 @@ export default {
         semester_end_date,
       } = req.body;
 
+      if (!calendar_id) {
+        return res.status(400).json({ error: "calendar id is required" });
+      }
+
       // Retrieve the authenticated user
       const { data: authData, error: authError } =
         await supabase.auth.getUser();
@@ -372,6 +376,7 @@ export default {
       }
 
       if (new_offering_id) {
+        console.log(old_offering_id);
         //If an offering_id is provided: Updating a courseEvent
         //If old_offering_id does not match throw an error
         const { data: oldofferingData, error: oldofferingError } =
@@ -380,13 +385,17 @@ export default {
             .from("course_events")
             .select("*")
             .eq("offering_id", old_offering_id)
-            .maybeSingle();
+            .eq("calendar_id", calendar_id);
+
+        console.log(oldofferingData);
+        console.log(oldofferingError);
         if (oldofferingError || !oldofferingData) {
           return res.status(400).json({
             error:
               "Invalid current offering_id or current offering id not found.",
           });
         }
+        console.log(old_offering_id);
 
         const { data: newofferingData, error: newofferingError } =
           await supabase
@@ -400,6 +409,7 @@ export default {
             error: "Invalid offering_id or course offering not found.",
           });
         }
+        console.log(new_offering_id);
 
         const courseEventName = `${newofferingData.code} - ${newofferingData.meeting_section}`;
         const courseDay = newofferingData.day;
@@ -416,7 +426,7 @@ export default {
             calendar_id,
             new_offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
           let eventDate = getNextWeekDayOccurance(courseDay);
@@ -491,6 +501,10 @@ export default {
       const { id } = req.params;
       const { calendar_id, event_type, offering_id } = req.query;
 
+      if (!calendar_id) {
+        return res.status(400).json({ error: "calendar id is required" });
+      }
+
       // Retrieve the authenticated user
       const { data: authData, error: authError } =
         await supabase.auth.getUser();
@@ -535,7 +549,9 @@ export default {
           deleteQuery = deleteQuery.eq("id", id);
         }
 
-        const { error: deleteError } = await deleteQuery.select("*");
+        const { error: deleteError } = await deleteQuery
+          .eq("calendar_id", calendar_id)
+          .select("*");
         if (deleteError)
           return res.status(400).json({ error: deleteError.message });
 

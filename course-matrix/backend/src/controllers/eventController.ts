@@ -3,7 +3,7 @@ import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
 import { error, time } from "console";
 import { eventNames, off } from "process";
-
+import { authHandler } from "../middleware/authHandler";
 /**
  * Helper method to generate weekly course events.
  * @param courseEventName - The name of the course event (typically derived from the offering code and meeting section).
@@ -54,7 +54,7 @@ function generateWeeklyCourseEvents(
   calendar_id: string,
   offering_id: string,
   semester_start_date: string,
-  semester_end_date: string,
+  semester_end_date: string
 ): any[] {
   //Map weekday code to JS day number
   const weekdayMap: { [key: string]: number } = {
@@ -138,12 +138,7 @@ export default {
       } = req.body;
 
       // Retrieve the authenticated user
-      const { data: authData, error: authError } =
-        await supabase.auth.getUser();
-      if (authError || !authData.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const user_id = authData.user.id;
+      const user_id = (req as any).user.id;
 
       //Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
@@ -199,7 +194,7 @@ export default {
             calendar_id,
             offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
           //If no semester dates provided, insert a single event using the provided event_day
@@ -272,12 +267,7 @@ export default {
       const { calendar_id } = req.query;
 
       // Retrieve the authenticated user
-      const { data: authData, error: authError } =
-        await supabase.auth.getUser();
-      if (authError || !authData.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const user_id = authData.user.id;
+      const user_id = (req as any).user.id;
 
       //Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
@@ -352,12 +342,7 @@ export default {
       }
 
       // Retrieve the authenticated user
-      const { data: authData, error: authError } =
-        await supabase.auth.getUser();
-      if (authError || !authData.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const user_id = authData.user.id;
+      const user_id = (req as any).user.id;
 
       //Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
@@ -426,7 +411,7 @@ export default {
             calendar_id,
             new_offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
           let eventDate = getNextWeekDayOccurance(courseDay);
@@ -506,12 +491,7 @@ export default {
       }
 
       // Retrieve the authenticated user
-      const { data: authData, error: authError } =
-        await supabase.auth.getUser();
-      if (authError || !authData.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const user_id = authData.user.id;
+      const user_id = (req as any).user.id;
 
       //Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase

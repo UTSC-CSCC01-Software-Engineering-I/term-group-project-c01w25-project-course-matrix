@@ -15,18 +15,13 @@ export default {
   createTimetable: asyncHandler(async (req: Request, res: Response) => {
     try {
       //Get user id from session authentication to insert in the user_id col
-      const { data, error: authError } = await supabase.auth.getUser();
-
-      if (authError || !data.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
+      const user_id = (req as any).user.id;
 
       //Retrieve timetable title
       const { timetable_title } = req.body;
       if (!timetable_title) {
         return res.status(400).json({ error: "timetable_title is required" });
       }
-      const user_id = data.user.id;
 
       //Create query to insert the user_id and timetable_title into the db
       let insertTimetable = supabase
@@ -55,12 +50,7 @@ export default {
   getTimetables: asyncHandler(async (req: Request, res: Response) => {
     try {
       //Retrieve user_id
-      const { data, error: authError } = await supabase.auth.getUser();
-
-      if (authError || !data.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const user_id = data.user.id;
+      const user_id = (req as any).user.id;
 
       //Retrieve user timetable item based on user_id
       let timeTableQuery = supabase
@@ -91,12 +81,7 @@ export default {
       const { timetable_title } = req.body;
 
       //Retrieve the authenticated user
-      const { data: authData, error: authError } =
-        await supabase.auth.getUser();
-      if (authError || !authData.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const user_id = authData.user.id;
+      const user_id = (req as any).user.id;
 
       //Retrieve users allowed to access the timetable
       const { data: timetableUserData, error: timetableUserError } =
@@ -152,12 +137,7 @@ export default {
       const { id } = req.params;
 
       // Retrieve the authenticated user
-      const { data: authData, error: authError } =
-        await supabase.auth.getUser();
-      if (authError || !authData.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      const user_id = authData.user.id;
+      const user_id = (req as any).user.id;
 
       //Retrieve users allowed to access the timetable
       const { data: timetableUserData, error: timetableUserError } =

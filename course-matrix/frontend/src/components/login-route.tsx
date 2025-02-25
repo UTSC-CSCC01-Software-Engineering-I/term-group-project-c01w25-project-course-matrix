@@ -12,9 +12,10 @@ interface AuthRouteProps {
  * Checks if a user session exists in localstorage. If so then redirect to dashboard.
  */
 const LoginRoute: React.FC<AuthRouteProps> = ({ component: Component }) => {
+  const userInfo = localStorage.getItem("userInfo");
   const { data, isLoading, error } = useGetSessionQuery();
 
-  return data?.user ? <Navigate to="/dashboard" replace /> : <Component />;
+  return (data?.user && userInfo) ? <Navigate to="/dashboard" replace /> : <Component />;
 };
 
 export default LoginRoute;

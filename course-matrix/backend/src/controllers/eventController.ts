@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
-import { error, time } from "console";
-import { eventNames, off } from "process";
-import { authHandler } from "../middleware/authHandler";
+
 /**
  * Helper method to generate weekly course events.
  * @param courseEventName - The name of the course event (typically derived from the offering code and meeting section).
@@ -95,7 +93,7 @@ function generateWeeklyCourseEvents(
       calendar_id,
       event_name: courseEventName,
       //Convert the occurrence of date to YYYY-MM-DD format
-      event_day: currentDate.toISOString().split("T")[0],
+      event_date: currentDate.toISOString().split("T")[0],
       event_start: courseStartTime,
       event_end: courseEndTime,
       event_description: null,
@@ -116,7 +114,7 @@ export default {
    * - Inserts into the course_events table.
    * Otherwise, it's treated as a user event and is inserted into the user_event table.
    * Expected body fields for both:
-   * - calendar_id, event_day, event_start, event_end, event_description
+   * - calendar_id, event_date, event_start, event_end, event_description
    * For course events, you must provide: offering_id
    * For user events, you must provide event_name
    */
@@ -126,7 +124,7 @@ export default {
       //Retrieve event properties from the request body
       const {
         calendar_id,
-        event_day,
+        event_date,
         event_start,
         event_end,
         event_description,
@@ -197,13 +195,13 @@ export default {
             semester_end_date
           );
         } else {
-          //If no semester dates provided, insert a single event using the provided event_day
+          //If no semester dates provided, insert a single event using the provided event_date
           let eventDate = getNextWeekDayOccurance(courseDay);
           eventsToInsert = [
             {
               calendar_id,
               event_name: courseEventName,
-              event_day: eventDate,
+              event_date: eventDate,
               event_start: courseStartTime,
               event_end: courseEndTime,
               event_description: null,
@@ -240,7 +238,7 @@ export default {
             {
               calendar_id,
               event_name,
-              event_day,
+              event_date,
               event_start,
               event_end,
               event_description,
@@ -325,7 +323,7 @@ export default {
       const { id } = req.params;
       const {
         calendar_id,
-        event_day,
+        event_date,
         event_start,
         event_end,
         event_description,
@@ -419,7 +417,7 @@ export default {
             {
               calendar_id,
               event_name: courseEventName,
-              event_day: eventDate,
+              event_date: eventDate,
               event_start: courseStartTime,
               event_end: courseEndTime,
               event_description: null,
@@ -455,7 +453,7 @@ export default {
 
         const updateData = {
           calendar_id,
-          event_day,
+          event_date,
           event_start,
           event_end,
           event_description,

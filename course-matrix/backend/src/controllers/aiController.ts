@@ -24,7 +24,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       `2. Integration with AI to let users create timetables and ask questions about` +
       `courses/offerings using natural language.` +
       `Your Job: respond to the user's questions about course/offering information, which has been provided to you.` +
-      `Do not respond to unrelated questions.`,
+      `Do not respond to unrelated questions. If the user asks an unrelated question on X, say that you dont have info on X and redirect them.`,
     messages,
   });
 

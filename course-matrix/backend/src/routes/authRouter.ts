@@ -59,4 +59,4 @@ authRouter.post("/reset-password", resetPassword);
  * Route to request that an account is deleted.
  * @route POST /delete-account
  */
-authRouter.delete('/accountDelete', accountDelete)
+authRouter.delete("/accountDelete", accountDelete);

@@ -234,22 +234,23 @@ export const resetPassword = asyncHandler(
  * - Responds with a success message if the user is deleted successfully
  * - Responds with an error message if the user is not deleted successfully
  */
-export const accountDelete = asyncHandler(async (req: Request, res: Response) => {
-  const {uuid} = req.body;
+export const accountDelete = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { uuid } = req.body;
 
-  if(!uuid){
-    return res.status(400).json({error: 'User ID (uuid) is required'});
-  }
+    if (!uuid) {
+      return res.status(400).json({ error: "User ID (uuid) is required" });
+    }
 
-  const {error} = await supabase.auth.admin.deleteUser(uuid);
+    const { error } = await supabase.auth.admin.deleteUser(uuid);
 
-  if (error) {
-    console.error('Supabase Error:', error);
-    return res.status(500).json({ error: error.message });
-  }
+    if (error) {
+      console.error("Supabase Error:", error);
+      return res.status(500).json({ error: error.message });
+    }
 
-  res.status(200).json({
-    message: `User ${uuid} deleted successfully`,
-  });
-  
-})
+    res.status(200).json({
+      message: `User ${uuid} deleted successfully`,
+    });
+  },
+);

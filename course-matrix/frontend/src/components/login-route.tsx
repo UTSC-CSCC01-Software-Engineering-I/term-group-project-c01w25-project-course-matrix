@@ -15,7 +15,11 @@ const LoginRoute: React.FC<AuthRouteProps> = ({ component: Component }) => {
   const userInfo = localStorage.getItem("userInfo");
   const { data, isLoading, error } = useGetSessionQuery();
 
-  return (data?.user && userInfo) ? <Navigate to="/dashboard" replace /> : <Component />;
+  return data?.user && userInfo ? (
+    <Navigate to="/dashboard" replace />
+  ) : (
+    <Component />
+  );
 };
 
 export default LoginRoute;

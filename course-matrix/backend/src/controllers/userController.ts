@@ -224,9 +224,15 @@ export const resetPassword = asyncHandler(
   },
 );
 
-/* The following function takes 1 field: (uuid)
- * The function will take the field uuid and delete the user from supabase 
- * with the same uuid.
+/** 
+ * @route DELETE /auth/accountDelete
+ * @description Deletes a users's account
+ * 
+ * This endpoint:
+ * - Takes 1 field, the user's UUID
+ * - Calls supabase's deleteUser() method to delete the user
+ * - Responds with a success message if the user is deleted successfully
+ * - Responds with an error message if the user is not deleted successfully
  */
 export const accountDelete = asyncHandler(async (req: Request, res: Response) => {
   const {uuid} = req.body;

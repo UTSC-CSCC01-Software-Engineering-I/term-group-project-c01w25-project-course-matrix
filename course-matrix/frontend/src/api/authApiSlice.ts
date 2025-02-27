@@ -54,7 +54,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
               'Content-Type': 'application/json',
               'Accept': 'application/json, text/plain, */*'
           },
-          body: data,  // Should include the user ID (uuid)
+          body: data, 
           credentials: 'include',
       }),
     }),

@@ -34,7 +34,7 @@ timetableRouter.put("/:id", authHandler, timetableController.updateTimetable);
 timetableRouter.delete(
   "/:id",
   authHandler,
-  timetableController.deleteTimetable
+  timetableController.deleteTimetable,
 );
 
 /**

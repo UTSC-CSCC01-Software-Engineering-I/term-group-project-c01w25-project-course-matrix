@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
-import { useLogoutMutation } from "@/api/authApiSlice";
+import { useAccountDeleteMutation, useLogoutMutation } from "@/api/authApiSlice";
 import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
 import { useNavigate } from "react-router-dom";
@@ -29,12 +29,15 @@ export function UserMenu() {
 	const dispatch = useDispatch();
 	const [logout] = useLogoutMutation();
 	const navigate = useNavigate();
+  const [deleteAccount] = useAccountDeleteMutation();
 	const user_metadata = JSON.parse(localStorage.getItem("userInfo")); //User Data
 	const initials = user_metadata.user.user_metadata.username //Gets User Initials
 		.split(" ")          // Split the string by spaces
 		.map(word => word[0]) // Take the first letter of each word
 		.join("")            // Join them back into a string
 		.toUpperCase();      // Convert to uppercase;
+  
+  const userId = user_metadata.user.id;
 
 	const handleLogout = async () => {
 		try {
@@ -45,6 +48,17 @@ export function UserMenu() {
 			console.error('Logout failed:', err);
 		}
 	};
+
+  const handleDelete = async () => {
+    try {
+      await deleteAccount({uuid: userId}).unwrap();
+      /* await logout({}).unwrap(); */
+			/* dispatch(clearCredentials()); */
+      navigate('/');
+    } catch (err){
+      console.error('Delete account failed', err);
+    }
+  }
 
 	return (
 		<DropdownMenu>
@@ -135,6 +149,7 @@ export function UserMenu() {
 									<Button
 										variant="destructive"
 										className="bg-red-600 text-white"
+                    onClick={handleDelete}
 									>
 										Delete
 									</Button>

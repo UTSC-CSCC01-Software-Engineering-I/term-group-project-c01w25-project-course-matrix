@@ -101,3 +101,27 @@ export const session = asyncHandler(async (req: Request, res: Response) => {
     res.status(500).json({error: error.message});
   }
 });
+
+/* The following function takes 1 field: (uuid)
+ * The function will take the field uuid and delete the user from supabase 
+ * with the same uuid.
+ */
+export const accountDelete = asyncHandler(async (req: Request, res: Response) => {
+  const {uuid} = req.body;
+
+  if(!uuid){
+    return res.status(400).json({error: 'User ID (uuid) is required'});
+  }
+
+  const {error} = await supabase.auth.admin.deleteUser(uuid);
+
+  if (error) {
+    console.error('Supabase Error:', error);
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.status(200).json({
+    message: `User ${uuid} deleted successfully`,
+  });
+  
+})

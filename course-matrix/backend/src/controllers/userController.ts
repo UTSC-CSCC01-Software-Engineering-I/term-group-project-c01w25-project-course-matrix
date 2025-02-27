@@ -224,10 +224,10 @@ export const resetPassword = asyncHandler(
   },
 );
 
-/** 
+/**
  * @route DELETE /auth/accountDelete
  * @description Deletes a users's account
- * 
+ *
  * This endpoint:
  * - Takes 1 field, the user's UUID
  * - Calls supabase's deleteUser() method to delete the user

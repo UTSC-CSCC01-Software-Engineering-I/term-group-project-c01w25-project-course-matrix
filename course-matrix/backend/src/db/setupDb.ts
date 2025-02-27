@@ -1,10 +1,16 @@
-import {createClient} from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
-import config from '../config/config';
+import config from "../config/config";
 
-export const supabase =
-    createClient(config.DATABASE_URL!, config.DATABASE_KEY!);
+/**
+ * Initializes and exports the Supabase client.
+ *
+ * This client is used to interact with the Supabase backend services.
+ * The client is configured using the Supabase URL and API key from the config file.
+ */
+export const supabase = createClient(
+  config.DATABASE_URL!,
+  config.DATABASE_KEY!,
+);
 
-export const supabaseCourseClient = createClient(config.DATABASE_URL!, config.DATABASE_KEY!, {db: {schema: 'course'}});
-
-console.log('Connected to Supabase Client!')
+console.log("Connected to Supabase Client!");

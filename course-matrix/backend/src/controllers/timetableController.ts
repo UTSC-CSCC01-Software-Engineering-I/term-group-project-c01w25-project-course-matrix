@@ -78,7 +78,14 @@ export default {
   updateTimetable: asyncHandler(async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
+
+      //Retrieve timetable title
       const { timetable_title } = req.body;
+      if (!timetable_title) {
+        return res.status(400).json({
+          error: "New timetable title is required when updating a timetable",
+        });
+      }
 
       //Retrieve the authenticated user
       const user_id = (req as any).user.id;
@@ -170,7 +177,7 @@ export default {
       if (timetableError)
         return res.status(400).json({ error: timetableError.message });
 
-      return res.status(204).send("Timetable successfully deleted");
+      return res.status(200).send("Timetable successfully deleted");
     } catch (error) {
       return res.status(500).send({ error });
     }

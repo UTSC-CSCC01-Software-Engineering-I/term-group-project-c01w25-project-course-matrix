@@ -138,6 +138,11 @@ export default {
       // Retrieve the authenticated user
       const user_id = (req as any).user.id;
 
+      //Check for calendar_id
+      if (!calendar_id) {
+        return res.status(400).json({ error: "calendar id is required" });
+      }
+
       //Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
         .schema("timetable")
@@ -260,12 +265,17 @@ export default {
    * Get events for a given calendar
    *
    */
-  getEvent: asyncHandler(async (req: Request, res: Response) => {
+  getEvents: asyncHandler(async (req: Request, res: Response) => {
     try {
       const { calendar_id } = req.query;
 
       // Retrieve the authenticated user
       const user_id = (req as any).user.id;
+
+      // Check for calendar_id
+      if (!calendar_id) {
+        return res.status(400).json({ error: "calendar id is required" });
+      }
 
       //Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
@@ -277,6 +287,10 @@ export default {
 
       const timetable_user_id = timetableData?.user_id;
 
+      if (!calendar_id) {
+        return res.status(400).json({ error: "calendar id is required" });
+      }
+
       //Validate user access
       if (user_id !== timetable_user_id) {
         return res
@@ -284,9 +298,6 @@ export default {
           .json({ message: "Unauthorized access to timetable events" });
       }
 
-      if (!calendar_id) {
-        return res.status(400).json({ error: "calendar id is required" });
-      }
       const { data: courseEvents, error: courseError } = await supabase
         .schema("timetable")
         .from("course_events")
@@ -335,12 +346,13 @@ export default {
         semester_end_date,
       } = req.body;
 
+      // Retrieve the authenticated user
+      const user_id = (req as any).user.id;
+
+      //Check for calendar_id
       if (!calendar_id) {
         return res.status(400).json({ error: "calendar id is required" });
       }
-
-      // Retrieve the authenticated user
-      const user_id = (req as any).user.id;
 
       //Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
@@ -484,12 +496,13 @@ export default {
       const { id } = req.params;
       const { calendar_id, event_type, offering_id } = req.query;
 
+      // Retrieve the authenticated user
+      const user_id = (req as any).user.id;
+
+      //Check for calendar_id
       if (!calendar_id) {
         return res.status(400).json({ error: "calendar id is required" });
       }
-
-      // Retrieve the authenticated user
-      const user_id = (req as any).user.id;
 
       //Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
@@ -533,7 +546,7 @@ export default {
         if (deleteError)
           return res.status(400).json({ error: deleteError.message });
 
-        return res.status(204).send();
+        return res.status(200).send("Event successfully deleted");
       } else if (event_type === "user") {
         const { error: deleteError } = await supabase
           .schema("timetable")
@@ -545,7 +558,7 @@ export default {
         if (deleteError)
           return res.status(400).json({ error: deleteError.message });
 
-        return res.status(204).send();
+        return res.status(200).send("Event successfully deleted");
       } else {
         return res.status(400).json({ error: "Invalid event type provided" });
       }

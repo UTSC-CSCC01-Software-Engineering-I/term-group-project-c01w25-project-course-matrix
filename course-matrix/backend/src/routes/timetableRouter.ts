@@ -34,7 +34,7 @@ timetableRouter.put("/:id", authHandler, timetableController.updateTimetable);
 timetableRouter.delete(
   "/:id",
   authHandler,
-  timetableController.deleteTimetable,
+  timetableController.deleteTimetable
 );
 
 /**
@@ -49,7 +49,7 @@ timetableRouter.post("/events", authHandler, eventController.createEvent);
  * @route GET /api/timetables/events?calendar_id=:calendar_id
  * @middleware authHandler - Middleware to check if the user is authenticated.
  */
-timetableRouter.get("/events", authHandler, eventController.getEvent);
+timetableRouter.get("/events", authHandler, eventController.getEvents);
 
 /**
  * Route to update an event

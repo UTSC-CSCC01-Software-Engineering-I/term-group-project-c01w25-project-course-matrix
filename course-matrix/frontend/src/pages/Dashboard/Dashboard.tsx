@@ -16,6 +16,7 @@ import { UserMenu } from "@/components/UserMenu";
 import { Separator } from "@radix-ui/react-separator";
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import TimetableBuilder from "../TimetableBuilder/TimetableBuilder";
+import AssistantPage from "../Assistant/AssistantPage";
 
 /**
  * Dashboard Component
@@ -76,7 +77,7 @@ const Dashboard = () => {
                   <Route path="/" element={<Navigate to="home" replace />} />
                   <Route path="/home" element={<>Home</>} />
                   <Route path="/timetable" element={<TimetableBuilder />} />
-                  <Route path="/assistant" element={<>Assistant</>} />
+                  <Route path="/assistant" element={<AssistantPage />} />
                 </Routes>
               </div>
             </SidebarInset>

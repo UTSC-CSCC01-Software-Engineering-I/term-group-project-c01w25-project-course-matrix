@@ -62,7 +62,7 @@ export function UserMenu() {
     try {
       await logout({}).unwrap();
       dispatch(clearCredentials());
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);
     }

@@ -11,7 +11,10 @@ import {
   GENERAL_ACADEMIC_TERMS,
   DEPARTMENT_CODES,
   ASSISTANT_TERMS,
+  USEFUL_INFO,
 } from "../constants/promptKeywords";
+import { codeToYear } from "../constants/constants";
+import { namespaceToMinResults } from '../constants/constants'
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -108,6 +111,8 @@ async function searchSelectedNamespaces(
     return allResults;
   }
 
+  let minSearchResultCount = k
+
   for (const namespace of namespaces) {
     const namespaceStore = await PineconeStore.fromExistingIndex(embeddings, {
       pineconeIndex: index as any,
@@ -116,16 +121,20 @@ async function searchSelectedNamespaces(
     });
 
     try {
-      const results = await namespaceStore.similaritySearch(query, k);
+      // Search results count given by the min result count for a given namespace (or k if k is greater)
+      const results = await namespaceStore.similaritySearch(query, Math.max(k, namespaceToMinResults.get(namespace)));
       console.log(`Found ${results.length} results in namespace: ${namespace}`);
       allResults = [...allResults, ...results];
+      if (results.length > minSearchResultCount) {
+        minSearchResultCount = results.length
+      }
     } catch (error) {
       console.log(`Error searching namespace ${namespace}:`, error);
     }
   }
 
-  // Limit to top k results
-  return allResults.slice(0, k);
+  // Limit to top minSearchResultCount results
+  return allResults.slice(0, minSearchResultCount);
 }
 
 export const chat = asyncHandler(async (req: Request, res: Response) => {

@@ -58,25 +58,43 @@ In addition to their specific roles, all team members have a collective responsi
 
 #### 1.3 Artifacts
 
-### Product Backlog
+- Our team will track the progress through Jira
 
-- Updated backlog with completed and pending items.
+  - Each user story will be uploaded to Jira as a ticket:
 
-### Sprint Backlog
+    - Categorized in the backlog by its epic, and execution sprint
 
-- Features and tasks completed during Sprint 2.
+    ![JIRA Backlog](./images/JIRA_Backlog.png)
 
-### User Stories
+    - Ticket details include: estimated story point to determine its priority, assignees
 
-- Example: _As a user, I want to edit my account details so that I can update my information easily._
+    ![Ticket Detail](./images/Ticket_Detail.png)
 
-### Burndown Chart
+    - Tickets of large user stories will be broken down into smaller child issues
 
-- Visual representation of progress.
+    ![Ticket Description and Child Issue](./images/Ticket_Description_and_Child_Issue.png)
 
-### Code Repository
+    - Each ticket will also show:
 
-- [Repository Link] with branches and commits related to Sprint 2.
+      - Other tickets blocked by it
+
+      ![Blocked tickets](./images/Blocked_ticket.png)
+
+      - Other tickets blocking it
+
+      ![Blocking tickets](./images/Blocking_tickets.png)
+
+  - Additional tasks required during the development process will also be submitted as a task ticket on JIRA for tracking.
+  - Students or groups of students will be assigned first to epic and then to the specific user story.
+  - Workflow
+
+  ![Ticket Workflow](./images/Ticket_Workflow.png)
+
+ - Furthermore, we will implement a Burndown Chart, which will be included as `burndown.pdf` by the end of the sprint. This chart will also feature comments on the sprint's progress and a velocity comparison.
+ - Below is an example Burndown Chart from Sprint 0:
+
+  ![Burndown Chart](./images/Burndown.png)
+
 
 ## 2. Product
 

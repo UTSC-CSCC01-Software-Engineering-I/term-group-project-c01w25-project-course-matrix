@@ -99,7 +99,6 @@ export function UserMenu() {
     try {
       const username = usernameRef.current?.value;
       if (!username.trim()) {
-        console.error("Empty username not allowed");
         return;
       }
       user_metadata.user.user_metadata.username = usernameRef.current?.value;

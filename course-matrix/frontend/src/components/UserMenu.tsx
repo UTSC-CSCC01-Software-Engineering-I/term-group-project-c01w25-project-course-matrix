@@ -74,7 +74,6 @@ export function UserMenu() {
     .toUpperCase(); // Convert to uppercase;
 
   const userId = user_metadata.user.id;
-  console.log(userId);
 
   const handleLogout = async () => {
     try {
@@ -98,6 +97,12 @@ export function UserMenu() {
 
   const handleUsernameUpdate = async () => {
     try {
+      const username = usernameRef.current?.value;
+      if(!username.trim()){
+        console.error("Empty username not allowed");
+        alert("Invalid Username: Must be atleast 1 character long");
+        return;
+      }
       user_metadata.user.user_metadata.username = usernameRef.current?.value;
       localStorage.setItem("userInfo", JSON.stringify(user_metadata));
       await usernameUpdate({
@@ -147,6 +152,11 @@ export function UserMenu() {
                 type="text"
                 placeholder="User"
                 ref={usernameRef}
+                onKeyDown={(e) => {
+                  if (e.key === " ") {
+                    e.stopPropagation(); // Allows space input
+                  }
+                }}
               />
               <Label htmlFor="email">New Email</Label>
               {/* Disable this email input box for now until we have the backend for accounts set up */}

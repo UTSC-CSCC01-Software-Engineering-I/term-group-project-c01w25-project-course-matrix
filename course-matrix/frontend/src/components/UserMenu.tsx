@@ -98,7 +98,7 @@ export function UserMenu() {
   const handleUsernameUpdate = async () => {
     try {
       const username = usernameRef.current?.value;
-      if(!username.trim()){
+      if (!username.trim()) {
         console.error("Empty username not allowed");
         alert("Invalid Username: Must be atleast 1 character long");
         return;

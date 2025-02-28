@@ -66,4 +66,4 @@ authRouter.delete("/accountDelete", accountDelete);
  * Route to request to update username
  * @route POST /updateUsername
  */
-authRouter.post("/updateUsername", updateUsername)
+authRouter.post("/updateUsername", updateUsername);

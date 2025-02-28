@@ -102,12 +102,14 @@ export function UserMenu() {
       user_metadata.user.user_metadata.username = usernameRef.current?.value;
       console.log(user_metadata.user.user_metadata.username);
       localStorage.setItem("userInfo", JSON.stringify(user_metadata));
-      await usernameUpdate({username: user_metadata.user.user_metadata.username});
+      await usernameUpdate({
+        username: user_metadata.user.user_metadata.username,
+      });
       /* navigate(""); */
-    } catch(err){
+    } catch (err) {
       console.error("Update username failed: ", err);
     }
-  }
+  };
 
   return (
     <DropdownMenu>

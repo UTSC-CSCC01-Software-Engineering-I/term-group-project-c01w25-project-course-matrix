@@ -74,6 +74,7 @@ export function UserMenu() {
     .toUpperCase(); // Convert to uppercase;
 
   const userId = user_metadata.user.id;
+  console.log(userId);
 
   const handleLogout = async () => {
     try {
@@ -88,7 +89,6 @@ export function UserMenu() {
   const handleDelete = async () => {
     try {
       await deleteAccount({ uuid: userId }).unwrap();
-      /* await logout({}).unwrap(); */
       dispatch(clearCredentials());
       navigate("/");
     } catch (err) {
@@ -98,14 +98,11 @@ export function UserMenu() {
 
   const handleUsernameUpdate = async () => {
     try {
-      console.log(usernameRef.current?.value);
       user_metadata.user.user_metadata.username = usernameRef.current?.value;
-      console.log(user_metadata.user.user_metadata.username);
       localStorage.setItem("userInfo", JSON.stringify(user_metadata));
       await usernameUpdate({
-        username: user_metadata.user.user_metadata.username,
+        userId: userId, username: user_metadata.user.user_metadata.username,
       });
-      /* navigate(""); */
     } catch (err) {
       console.error("Update username failed: ", err);
     }

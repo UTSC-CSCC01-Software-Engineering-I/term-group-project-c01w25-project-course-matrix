@@ -256,7 +256,7 @@ export const accountDelete = asyncHandler(
 );
 
 /**
- * @route UPDATE
+ * @route POST
  * @description Updates a users's accoount username
  *
  * This endpoint:
@@ -267,7 +267,7 @@ export const accountDelete = asyncHandler(
  */
 export const updateUsername = asyncHandler(
   async (req: Request, res: Response) => {
-    const { username } = req.body;
+    const { userId, username } = req.body;
 
     const {
       data: { user },
@@ -282,14 +282,14 @@ export const updateUsername = asyncHandler(
     } else {
       const updatedMetadata = { ...user.user_metadata, username: username };
 
-      const { data, error } = await supabase.auth.updateUser({
-        data: updatedMetadata,
+      const { data, error } = await supabase.auth.admin.updateUserById(userId, {
+        user_metadata: updatedMetadata,
       });
 
       if(error){
         return res.status(400).json({error: "unable to update user"});
       } else {
-        return res.status(400).json(`Updated metadata: ${updatedMetadata}`);
+        return res.status(200).json(`Updated metadata: ${updatedMetadata}`);
       }
     }
   } 

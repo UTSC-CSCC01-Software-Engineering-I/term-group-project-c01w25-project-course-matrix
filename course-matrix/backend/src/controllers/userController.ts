@@ -286,11 +286,11 @@ export const updateUsername = asyncHandler(
         data: updatedMetadata,
       });
 
-      if(error){
-        return res.status(400).json({error: "unable to update user"});
+      if (error) {
+        return res.status(400).json({ error: "unable to update user" });
       } else {
         return res.status(400).json(`Updated metadata: ${updatedMetadata}`);
       }
     }
-  } 
-)
+  },
+);

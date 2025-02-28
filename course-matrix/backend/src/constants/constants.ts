@@ -38,10 +38,9 @@ export const yearToCode = (year: number) => {
 };
 
 // Set minimum results wanted for a similarity search on the associated namespace.
-export const namespaceToMinResults = new Map()
-namespaceToMinResults.set("courses", 5)
-namespaceToMinResults.set("offerings", 16) // Typically, more offering info is wanted.
-namespaceToMinResults.set("prerequisites", 5)
-namespaceToMinResults.set("corequisites", 5)
-namespaceToMinResults.set("departments", 5)
-
+export const namespaceToMinResults = new Map();
+namespaceToMinResults.set("courses", 5);
+namespaceToMinResults.set("offerings", 16); // Typically, more offering info is wanted.
+namespaceToMinResults.set("prerequisites", 5);
+namespaceToMinResults.set("corequisites", 5);
+namespaceToMinResults.set("departments", 5);

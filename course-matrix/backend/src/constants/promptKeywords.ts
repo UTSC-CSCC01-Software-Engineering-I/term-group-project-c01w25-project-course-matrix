@@ -163,5 +163,3 @@ export const USEFUL_INFO = `
 2. A given course can have more than 1 offering for a meeting_section. For example there can be two lectures for section LEC01, happening on different days. This means those enrolled in LEC01 should know about both offerings since they must attend both each week.
 3. A course typically offers multiple lecture (LEC) sections and tutorial (TUT) / practical (PRAC) sections. Students are typically meant to enroll in a LEC section and one TUT/PRAC section for any given course, although some courses only have LEC sections.   
 `;
-
-

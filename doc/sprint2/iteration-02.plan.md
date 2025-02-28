@@ -1,150 +1,84 @@
-# Course Matrix
+# Release Plan
 
-## Iteration 01
+## Release Name: Course_Matrix_V1.1.0
 
-- **Start date**: 02/15/2025
-- **End date**: 03/07/2025
+## 1. Release Objectives for Sprint 2
 
----
+### 1.1 Goals
 
-## 1. Process
+- Part 2 of user registeration and login:
+  - User password change
+  - User account deletion
+  - Username + email display via dropdown menu
 
-### 1.1 Roles & Responsibilities
+- Expand database schemas to support additional timetable customization and AI assistant interactions by February 28, 2025
 
-#### **Epic 1: Scheduler**
+  - **`timetable` schema**:
+   - The `timetables` table should have columns for `id`, `created_at`, `timetable_title`, `user_id`, and `updated_at`.
+   - The `course_events` table should have columns for `id`, `created_at`, `calendar_id`, `updated_at`, `event_name`, `event_date` , `event_start`, `event_end`, `event_description`, and `offering_id`.
+   - The `user_events` table should have columns for `id`, `created_at`, `event_name`, `event_description`, `event_date` , `event_start`, `event_end`, `calendar_id`, and `updated_at`.
 
-**Team Members:** Austin, Minh, Thomas
+- Develop enhanced scheduling features for the demo by March 7th, 2025:
+  - Ability to insert, update, and delete timetable and events entries (course events for offered lectures, tutorial, etc and user events for users’ personal events) .
+  - Automatic and customized timetable generation based on user constraints.
+  - Custom colour customization for timetable entries.
+  - Favourite timetable functionality.
 
-- Develop a calendar interface that allows users to add, modify, and delete both custom entries and predefined course entries.
-- Implement an algorithm that optimally schedules events based on user preferences and constraints.
+- Build AI-powered assistant features:
+  - AI chatbot interface enabling users to create, rename, and delete chat logs.
+  - Retrieval of course information and program requirements from the database.
 
-#### **Epic 2: AI Assistant**
+### 1.2 Metrics for Measurement
 
-**Team Members:** Kevin, Masa
+- **Database Schema Expansion**
+  - Ensure the `timetable` schema supports new features.
+  - Verify referential integrity and indexing for efficient queries.
 
-- Develop an AI-powered chat interface that enables direct Q&A interactions between users and the AI.
-- Ensure seamless integration with the scheduling system to provide intelligent recommendations and assistance.
+- **Timetable Management**
+  - Users can create, modify, and delete timetables and event entries without errors.
+  - Timetable generation respects user constraints (e.g., time preferences, course exclusions).
+  - Custom colour selections persist across sessions.
+  - Favourite timetables are stored and retrievable.
 
-#### **Note Taking & Documentation**
+- **AI Assistant Features**
+  - Users can create, rename, and delete chat logs.
+  - AI fetches course details and program requirements exclusively from the internal vectorized database.
+  - AI does not use web-based or non-course-related information.
 
-**Team Members:** Minh and Thomas
+## 2. Release Scope
 
-- Take notes during stand-ups.
-- Create sprint 2 documentation: `iteration-plan-02`, `RPM`, and `sprint-02 review`.
-- Update the System Design Document.
+- **Timetable Management**
+  - Add, update, and delete timetables and event entries.
+  - Generate an optimized schedule based on user preferences.
+  - Customize timetable entry colours.
+  - Favourite timetables for quick access.
 
-_All team members are collectively responsible for supporting each other to achieve the sprint goals and develop a working prototype._
+- **AI Assistant**
+  - AI-powered chatbot with interactive Q&A.
+  - Retrieval of course and program requirement details.
+  - Chat log creation, renaming, and deletion.
 
----
+### 2.2 Excluded Features
 
-### 1.2 Events
+- Multi-user timetable sharing.
+- AI recommendations for schedule optimization.
+- Integration of web-based course information retrieval.
+- Push notifications for schedule changes.
 
-#### **Initial Planning Meeting**
+### 2.3 Bug Fixes
 
-- **Location:** Virtual
-- **Time:** 2/16/2025
-- **Purpose:**
-  - Review sprint 2 requirements.
-  - Define tasks and responsibilities for each team member.
+None
 
-#### **Stand-Up Meetings**
+### 2.4 Non-Functional Requirements
 
-- **Location:** Online or in-person (based on availability).
-- **Time:**
-  - Every **Tuesday** from **12 PM – 1 PM**
-  - **Friday & Sunday** from **9 PM – 10 PM**
-- **Purpose:**
-  - Progress updates: What has each member done since the last stand-up?
-  - Determine next steps and deadlines.
-  - Discuss blockers and possible solutions.
+- **Performance**
+  - AI assistants should respond within 5 seconds per query.
+  - Timetable generation should not exceed 10 seconds under typical load.
 
-#### **Final Review Meeting**
+### 2.5 Dependencies and Limitations
 
-- **Location:** Online
-- **Time:** 3/6/2025
-- **Purpose:**
-  - Review features and deliverables implemented in sprint 2.
-  - Identify changes for sprint 3.
+- The AI assistant relies solely on the internal course database and does not fetch web-based content.
+- Users must be logged in to access timetable and chat features.
 
----
 
-### 1.3 Artifacts
 
-#### **Product Backlog**
-
-- Updated backlog with completed and pending items.
-
-#### **Sprint Backlog**
-
-- Features and tasks completed during Sprint 2.
-
-#### **User Stories**
-
-- _Example:_ "As a user, I want to edit my account details so that I can update my information easily."
-
-#### **Burndown Chart**
-
-- Visual representation of progress.
-
-#### **Code Repository**
-
-- [Repository Link](https://github.com/UTSC-CSCC01-Software-Engineering-I/term-group-project-c01w25-project-course-matrix) (Branches and commits related to Sprint 2).
-
----
-
-## 2. Product
-
-### 2.1 Goal and Tasks
-
-#### **1. Develop product features for the product demo:**
-
-- **Account Management**
-
-  - [_Account Editing_](https://cscc01-course-matrix.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?selectedIssue=SCRUM-95)
-  - [_Account Deletion_](https://cscc01-course-matrix.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?selectedIssue=SCRUM-28)
-
-- **Epic 1: Scheduler**
-
-  - [_Timetable Basics/Insertion_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-46)
-  - [_Entries Update/Delete_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-47)
-  - [_Timetable Generation_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-52)
-  - [_Entries Visualization_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-50)
-  - [_Entries Colour Customization_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-51)
-  - [_Timetable Favourite_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-57)
-
-- **Epic 2: AI Assistant**
-  - [_Creation of New Chats_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-36)
-  - [_Chatlog Export/Rename/Delete_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-37)
-  - [_Course Info Retrieval_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-29)
-  - [_Program Requirements Retrieval_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-30)
-
-#### **2. Create Sprint 2 Documentation**
-
-- [_Sprint 2 Documentation_](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-119)
-
----
-
-### 2.2 Artifacts
-
-#### **Pages/Features**
-
-##### **Registration/Login**
-
-- Dropdown menu displaying username and associated email.
-- Functional password reset and account deletion features.
-
-##### **Scheduler**
-
-- Home page for creating new timetables.
-- Timetable management:
-  - Insert, update, and delete both course entries and custom user entries.
-- Algorithm for automated timetable generation.
-- Hover effect: Calendar highlights selected course entry.
-- Custom colour selection for timetable entries.
-- Option to favourite timetables for quick access.
-
-##### **AI Assistant**
-
-- Functional AI chatbot interface with chat log creation, editing, and deletion.
-- AI retrieves relevant course information and program requirements from the course database.
-- AI strictly uses the internal course database without relying on external or irrelevant information.

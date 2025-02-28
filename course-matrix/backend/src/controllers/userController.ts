@@ -254,3 +254,42 @@ export const accountDelete = asyncHandler(
     });
   },
 );
+
+/**
+ * @route UPDATE
+ * @description Updates a users's accoount username
+ * 
+ * This endpoint:
+ * - Takes 1 field, the user's new username
+ * - Calls supabase's updayUserById function
+ * - Responds with a success message if the username updates successfully
+ * - Responds with an error message if the username updates unsuccessfully
+ */
+export const updateUsername = asyncHandler(
+  async(req: Request, res: Response) => {
+    const { username } = req.body;
+
+    const { data: {user} } = await supabase.auth.getUser();
+
+    if(!username){
+      return res.status(400).json({ error: "Username is required" });
+    }
+
+    if(!user){
+      return res.status(400).json({error: "Unable to get user"});
+    }
+    else {
+      const updatedMetadata = { ...user.user_metadata, username: username};
+
+      const { data, error } = await supabase.auth.updateUser({
+        data: updatedMetadata
+      });
+
+      if(error){
+        console.error('Error updating user:', error);
+      } else {
+        console.log('Updated metadata:', data);
+      }
+    }
+  }
+)

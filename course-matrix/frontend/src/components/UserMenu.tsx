@@ -22,11 +22,12 @@ import { Mail } from "lucide-react";
 import {
   useAccountDeleteMutation,
   useLogoutMutation,
+  useUpdateUsernameMutation,
 } from "@/api/authApiSlice";
 import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 /**
  * UserMenu Component
@@ -62,6 +63,9 @@ export function UserMenu() {
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
   const [deleteAccount] = useAccountDeleteMutation();
+  const [usernameUpdate] = useUpdateUsernameMutation();
+  const usernameRef = useRef<HTMLInputElement>(null);
+
   const user_metadata = JSON.parse(localStorage.getItem("userInfo")); //User Data
   const initials = user_metadata.user.user_metadata.username //Gets User Initials
     .split(" ") // Split the string by spaces
@@ -85,12 +89,25 @@ export function UserMenu() {
     try {
       await deleteAccount({ uuid: userId }).unwrap();
       /* await logout({}).unwrap(); */
-      /* dispatch(clearCredentials()); */
+      dispatch(clearCredentials());
       navigate("/");
     } catch (err) {
-      console.error("Delete account failed", err);
+      console.error("Delete account failed: ", err);
     }
   };
+
+  const handleUsernameUpdate = async () => {
+    try {
+      console.log(usernameRef.current?.value);
+      user_metadata.user.user_metadata.username = usernameRef.current?.value;
+      console.log(user_metadata.user.user_metadata.username);
+      localStorage.setItem("userInfo", JSON.stringify(user_metadata));
+      await usernameUpdate({username: user_metadata.user.user_metadata.username});
+      /* navigate(""); */
+    } catch(err){
+      console.error("Update username failed: ", err);
+    }
+  }
 
   return (
     <DropdownMenu>
@@ -128,9 +145,9 @@ export function UserMenu() {
               {/* Disable this email input box for now until we have the backend for accounts set up */}
               <Input
                 id="username"
-                type="username"
+                type="text"
                 placeholder="User"
-                disabled
+                ref={usernameRef}
               />
               <Label htmlFor="email">New Email</Label>
               {/* Disable this email input box for now until we have the backend for accounts set up */}
@@ -148,7 +165,7 @@ export function UserMenu() {
                   <Button variant="secondary">Cancel</Button>
                 </DialogClose>
                 <DialogClose asChild>
-                  <Button>Save</Button>
+                  <Button onClick={handleUsernameUpdate}>Save</Button>
                 </DialogClose>
               </DialogFooter>
             </DialogContent>

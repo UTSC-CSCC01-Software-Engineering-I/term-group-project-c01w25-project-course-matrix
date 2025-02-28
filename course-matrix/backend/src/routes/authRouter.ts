@@ -9,6 +9,7 @@ import {
   requestPasswordReset,
   resetPassword,
   accountDelete,
+  updateUsername,
 } from "../controllers/userController";
 
 export const authRouter = express.Router();
@@ -60,3 +61,9 @@ authRouter.post("/reset-password", resetPassword);
  * @route POST /delete-account
  */
 authRouter.delete("/accountDelete", accountDelete);
+
+/**
+ * Route to request to update username
+ * @route POST /updateUsername
+ */
+authRouter.post("/updateUsername", updateUsername)

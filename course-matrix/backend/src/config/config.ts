@@ -6,14 +6,16 @@ import { config } from "dotenv";
 const configFile = `./.env`;
 config({ path: configFile });
 
-const { 
-  PORT, 
-  NODE_ENV, 
-  CLIENT_APP_URL, 
-  DATABASE_URL, 
+const {
+  PORT,
+  NODE_ENV,
+  CLIENT_APP_URL,
+  DATABASE_URL,
   DATABASE_KEY,
   OPENAI_API_KEY,
- } = process.env;
+  PINECONE_API_KEY,
+  PINECONE_INDEX_NAME,
+} = process.env;
 
 /**
  * Configuration object containing environment variables.
@@ -28,4 +30,6 @@ export default {
   DATABASE_URL,
   DATABASE_KEY,
   OPENAI_API_KEY,
+  PINECONE_API_KEY,
+  PINECONE_INDEX_NAME,
 };

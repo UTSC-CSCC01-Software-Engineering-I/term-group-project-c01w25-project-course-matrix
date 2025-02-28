@@ -5,7 +5,7 @@ import { streamText } from "ai";
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 console.log("Connected to OpenAI API");

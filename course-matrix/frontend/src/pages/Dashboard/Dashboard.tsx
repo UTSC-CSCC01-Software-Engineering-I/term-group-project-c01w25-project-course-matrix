@@ -77,7 +77,7 @@ const Dashboard = () => {
                   <Route path="/" element={<Navigate to="home" replace />} />
                   <Route path="/home" element={<>Home</>} />
                   <Route path="/timetable" element={<TimetableBuilder />} />
-                  <Route path="/assistant" element={<AssistantPage/>} />
+                  <Route path="/assistant" element={<AssistantPage />} />
                 </Routes>
               </div>
             </SidebarInset>

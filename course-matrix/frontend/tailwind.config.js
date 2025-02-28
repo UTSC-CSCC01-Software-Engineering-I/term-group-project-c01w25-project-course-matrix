@@ -87,6 +87,6 @@ export default {
   },
   plugins: [
     require("tailwindcss-animate"),
-    require("@assistant-ui/react-ui/tailwindcss")({ shadcn: true })
+    require("@assistant-ui/react-ui/tailwindcss")({ shadcn: true }),
   ],
 };

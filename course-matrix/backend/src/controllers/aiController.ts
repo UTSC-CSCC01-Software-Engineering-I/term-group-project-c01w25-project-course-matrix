@@ -27,7 +27,7 @@ const pinecone = new Pinecone({
 });
 
 const index: Index<RecordMetadata> = pinecone.Index(
-  process.env.PINECONE_INDEX_NAME!
+  process.env.PINECONE_INDEX_NAME!,
 );
 
 console.log("Connected to OpenAI API");
@@ -83,7 +83,7 @@ function analyzeQuery(query: string): {
       "offerings",
       "prerequisites",
       "corequisites",
-      "departments"
+      "departments",
     );
   }
 
@@ -100,7 +100,7 @@ function analyzeQuery(query: string): {
 async function searchSelectedNamespaces(
   query: string,
   k: number,
-  namespaces: string[]
+  namespaces: string[],
 ): Promise<Document[]> {
   let allResults: Document[] = [];
 
@@ -140,8 +140,8 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
   if (requiresSearch) {
     console.log(
       `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-        ", "
-      )}`
+        ", ",
+      )}`,
     );
     const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!);
 
@@ -149,7 +149,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
     const searchResults = await searchSelectedNamespaces(
       latestMessage,
       3,
-      relevantNamespaces
+      relevantNamespaces,
     );
     console.log("Search Results: ", searchResults);
 

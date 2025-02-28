@@ -90,11 +90,10 @@ In addition to their specific roles, all team members have a collective responsi
 
   ![Ticket Workflow](./images/Ticket_Workflow.png)
 
- - Furthermore, we will implement a Burndown Chart, which will be included as `burndown.pdf` by the end of the sprint. This chart will also feature comments on the sprint's progress and a velocity comparison.
- - Below is an example Burndown Chart from Sprint 0:
+- Furthermore, we will implement a Burndown Chart, which will be included as `burndown.pdf` by the end of the sprint. This chart will also feature comments on the sprint's progress and a velocity comparison.
+- Below is an example Burndown Chart from Sprint 0:
 
-  ![Burndown Chart](./images/Burndown.png)
-
+![Burndown Chart](./images/Burndown.png)
 
 ## 2. Product
 

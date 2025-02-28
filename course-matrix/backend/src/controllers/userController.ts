@@ -279,17 +279,17 @@ export const updateUsername = asyncHandler(
       return res.status(400).json({error: "Unable to get user"});
     }
     else {
-      const updatedMetadata = { ...user.user_metadata, username: username};
+      const updatedMetadata = { ...user.user_metadata, username: "username"};
 
       const { data, error } = await supabase.auth.updateUser({
         data: updatedMetadata
       });
 
       if(error){
-        console.error('Error updating user:', error);
+        return res.status(400).json({error: "unable to update user"});
       } else {
-        console.log('Updated metadata:', data);
+        return res.status(400).json(`Updated metadata: ${updatedMetadata}`);
       }
     }
-  }
+  } 
 )

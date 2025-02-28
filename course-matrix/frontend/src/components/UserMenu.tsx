@@ -64,8 +64,8 @@ export function UserMenu() {
   const navigate = useNavigate();
   const [deleteAccount] = useAccountDeleteMutation();
   const [usernameUpdate] = useUpdateUsernameMutation();
-  const usernameRef = useRef<HTMLInputElement>(null);
 
+  const usernameRef = useRef<HTMLInputElement>(null);
   const user_metadata = JSON.parse(localStorage.getItem("userInfo")); //User Data
   const initials = user_metadata.user.user_metadata.username //Gets User Initials
     .split(" ") // Split the string by spaces

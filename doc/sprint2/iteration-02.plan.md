@@ -7,6 +7,7 @@
 ### 1.1 Goals
 
 - Part 2 of user registeration and login:
+
   - User password change
   - User account deletion
   - Username + email display via dropdown menu
@@ -14,11 +15,12 @@
 - Expand database schemas to support additional timetable customization and AI assistant interactions by February 28, 2025
 
   - **`timetable` schema**:
-   - The `timetables` table should have columns for `id`, `created_at`, `timetable_title`, `user_id`, and `updated_at`.
-   - The `course_events` table should have columns for `id`, `created_at`, `calendar_id`, `updated_at`, `event_name`, `event_date` , `event_start`, `event_end`, `event_description`, and `offering_id`.
-   - The `user_events` table should have columns for `id`, `created_at`, `event_name`, `event_description`, `event_date` , `event_start`, `event_end`, `calendar_id`, and `updated_at`.
+  - The `timetables` table should have columns for `id`, `created_at`, `timetable_title`, `user_id`, and `updated_at`.
+  - The `course_events` table should have columns for `id`, `created_at`, `calendar_id`, `updated_at`, `event_name`, `event_date` , `event_start`, `event_end`, `event_description`, and `offering_id`.
+  - The `user_events` table should have columns for `id`, `created_at`, `event_name`, `event_description`, `event_date` , `event_start`, `event_end`, `calendar_id`, and `updated_at`.
 
 - Develop enhanced scheduling features for the demo by March 7th, 2025:
+
   - Ability to insert, update, and delete timetable and events entries (course events for offered lectures, tutorial, etc and user events for users’ personal events) .
   - Automatic and customized timetable generation based on user constraints.
   - Custom colour customization for timetable entries.
@@ -31,10 +33,12 @@
 ### 1.2 Metrics for Measurement
 
 - **Database Schema Expansion**
+
   - Ensure the `timetable` schema supports new features.
   - Verify referential integrity and indexing for efficient queries.
 
 - **Timetable Management**
+
   - Users can create, modify, and delete timetables and event entries without errors.
   - Timetable generation respects user constraints (e.g., time preferences, course exclusions).
   - Custom colour selections persist across sessions.
@@ -48,6 +52,7 @@
 ## 2. Release Scope
 
 - **Timetable Management**
+
   - Add, update, and delete timetables and event entries.
   - Generate an optimized schedule based on user preferences.
   - Customize timetable entry colours.
@@ -79,6 +84,3 @@ None
 
 - The AI assistant relies solely on the internal course database and does not fetch web-based content.
 - Users must be logged in to access timetable and chat features.
-
-
-

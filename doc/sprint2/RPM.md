@@ -6,7 +6,7 @@
 
 ### 1.1 Goals
 
-- Part 2 of user registeration and login:
+- Part 2 of user registration and login:
 
   - User password change
   - User account deletion
@@ -67,20 +67,23 @@
 
 - Multi-user timetable sharing.
 - AI recommendations for schedule optimization.
-- Integration of web-based course information retrieval.
 - Push notifications for schedule changes.
 
 ### 2.3 Bug Fixes
 
-None
+Fix passwords having unlimited length
+Fix Login session infinite loop bug
+Fix auth middleware login to check for user session
+Fix login not redirecting to dashboard if session already exists
+Fix form deselect field option in filter panel
 
 ### 2.4 Non-Functional Requirements
 
 - **Performance**
-  - AI assistants should respond within 5 seconds per query.
+  - AI assistants should stream first response within 5 seconds of user query.
   - Timetable generation should not exceed 10 seconds under typical load.
+  - Proper authorization for protected operations such as deleting/updating users
 
 ### 2.5 Dependencies and Limitations
 
 - The AI assistant relies solely on the internal course database and does not fetch web-based content.
-- Users must be logged in to access timetable and chat features.

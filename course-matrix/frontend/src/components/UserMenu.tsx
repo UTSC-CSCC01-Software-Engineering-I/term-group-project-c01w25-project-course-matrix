@@ -101,7 +101,8 @@ export function UserMenu() {
       user_metadata.user.user_metadata.username = usernameRef.current?.value;
       localStorage.setItem("userInfo", JSON.stringify(user_metadata));
       await usernameUpdate({
-        userId: userId, username: user_metadata.user.user_metadata.username,
+        userId: userId,
+        username: user_metadata.user.user_metadata.username,
       });
     } catch (err) {
       console.error("Update username failed: ", err);

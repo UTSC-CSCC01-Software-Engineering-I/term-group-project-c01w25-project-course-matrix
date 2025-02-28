@@ -100,7 +100,6 @@ export function UserMenu() {
       const username = usernameRef.current?.value;
       if(!username.trim()){
         console.error("Empty username not allowed");
-        alert("Invalid Username: Must be atleast 1 character long");
         return;
       }
       user_metadata.user.user_metadata.username = usernameRef.current?.value;
@@ -151,7 +150,7 @@ export function UserMenu() {
               <Input
                 id="username"
                 type="text"
-                placeholder="User"
+                placeholder={user_metadata.user.user_metadata.username}
                 ref={usernameRef}
                 onKeyDown={(e) => {
                   if (e.key === " ") {

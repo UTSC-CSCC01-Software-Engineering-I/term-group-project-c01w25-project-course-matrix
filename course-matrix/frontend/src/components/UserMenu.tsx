@@ -101,7 +101,7 @@ export function UserMenu() {
       if (!username.trim()) {
         return;
       }
-      user_metadata.user.user_metadata.username = usernameRef.current?.value;
+      user_metadata.user.user_metadata.username = usernameRef.current?.value.trimEnd();
       localStorage.setItem("userInfo", JSON.stringify(user_metadata));
       await usernameUpdate({
         userId: userId,

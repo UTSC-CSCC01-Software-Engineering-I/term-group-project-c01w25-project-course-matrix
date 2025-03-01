@@ -27,6 +27,11 @@ export const NAMESPACE_KEYWORDS = {
     "lab",
     "tutorial",
     "exam",
+    "online",
+    "synchronous",
+    "asynchronous",
+    "delivery mode",
+    "in person",
   ],
   prerequisites: [
     "prerequisite",

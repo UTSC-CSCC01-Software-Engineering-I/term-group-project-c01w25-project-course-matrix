@@ -190,16 +190,15 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
   
       ## Your Capabilities
       - Provide accurate information about UTSC courses, offerings, prerequisites, corequisites, and departments
-      - Answer questions about course descriptions, schedules, instructors, and requirements
+      - Answer questions about course descriptions, schedules, instructors, offerings, and requirements
       - Explain degree program requirements and course relationships
-      - Help students understand course planning and registration processes
+      - Answer questions about offerings of individual courses such as meeting section, time, day, instructor
   
       ## Response Guidelines
       - Be concise and direct when answering course-related questions
-      - When multiple relevant courses are mentioned in the context, prioritize the most relevant ones to the query
       - Use bullet points for listing multiple pieces of information
       - Include course codes when referencing specific courses
-      - If information is missing from the context but likely exists, acknowledge the limitation
+      - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
       - For unrelated questions, politely explain that you're specialized in UTSC academic information
   
       ## Available Knowledge
@@ -215,3 +214,40 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
 
   result.pipeDataStreamToResponse(res);
 });
+
+// Test Similarity search
+// Usage: provide user prompt in req.body
+export const testSimilaritySearch = asyncHandler(async (req: Request, res: Response) => {
+  const { message } = req.body;
+
+  // Analyze the query to determine if search is needed and which namespaces to search
+  const { requiresSearch, relevantNamespaces } = analyzeQuery(message);
+
+  let context = "[No context provided]";
+
+  if (requiresSearch) {
+    console.log(
+      `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
+        ", ",
+      )}`,
+    );
+
+    // Search only the relevant namespaces
+    const searchResults = await searchSelectedNamespaces(
+      message,
+      3,
+      relevantNamespaces,
+    );
+    console.log("Search Results: ", searchResults);
+
+    // Format context from search results into plaintext
+    if (searchResults.length > 0) {
+      context = searchResults.map((doc) => doc.pageContent).join("\n\n");
+    }
+  } else {
+    console.log("Query does not require knowledge retrieval, skipping search");
+  }
+
+  console.log("CONTEXT: ", context);
+  res.status(200).send(context)
+})

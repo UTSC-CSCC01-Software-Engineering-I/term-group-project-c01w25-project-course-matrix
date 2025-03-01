@@ -99,8 +99,8 @@ export function UserMenu() {
 
   const handleUsernameUpdate = async () => {
     try {
-      const username = usernameRef.current?.value;
-      if (!username.trim()) {
+      const username = usernameRef?.current?.value;
+      if (!username || !username.trim()) {
         return;
       }
       user_metadata.user.user_metadata.username =

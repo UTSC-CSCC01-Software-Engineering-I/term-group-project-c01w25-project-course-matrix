@@ -132,7 +132,7 @@ export function UserMenu() {
         <div className="p-4 flex gap-4 items-center">
           <Mail size={16} />
           <p className="text-sm font-medium">
-            {user_metadata.user.user_metadata.email}
+            {user_metadata?.user?.user_metadata?.email}
           </p>
         </div>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>

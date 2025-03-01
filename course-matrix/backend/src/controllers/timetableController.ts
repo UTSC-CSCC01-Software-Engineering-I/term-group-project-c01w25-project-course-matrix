@@ -18,16 +18,22 @@ export default {
       const user_id = (req as any).user.id;
 
       //Retrieve timetable title
-      const { timetable_title } = req.body;
+      const { timetable_title, semester } = req.body;
       if (!timetable_title) {
-        return res.status(400).json({ error: "timetable_title is required" });
+        return res.status(400).json({ error: "timetable title is required" });
+      }
+
+      if (!semester) {
+        return res
+          .status(400)
+          .json({ error: "timetable semester is required" });
       }
 
       //Create query to insert the user_id and timetable_title into the db
       let insertTimetable = supabase
         .schema("timetable")
         .from("timetables")
-        .insert([{ user_id, timetable_title }])
+        .insert([{ user_id, timetable_title, semester }])
         .select();
 
       const { data: timetableData, error: timetableError } =
@@ -80,10 +86,11 @@ export default {
       const { id } = req.params;
 
       //Retrieve timetable title
-      const { timetable_title } = req.body;
-      if (!timetable_title) {
+      const { timetable_title, semester } = req.body;
+      if (!timetable_title && !semester) {
         return res.status(400).json({
-          error: "New timetable title is required when updating a timetable",
+          error:
+            "New timetable title or semester is required when updating a timetable",
         });
       }
 
@@ -108,11 +115,15 @@ export default {
           .json({ message: "Unauthorized access to timetable events" });
       }
 
+      let updateData: any = {};
+      if (timetable_title) updateData.timetable_title = timetable_title;
+      if (semester) updateData.semester = semester;
+
       //Update timetable title, for authenticated user only
       let updateTimetableQuery = supabase
         .schema("timetable")
         .from("timetables")
-        .update({ timetable_title })
+        .update(updateData)
         .eq("id", id)
         .eq("user_id", user_id)
         .select();

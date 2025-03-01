@@ -118,7 +118,7 @@ export function UserMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="flex flex-row items-center gap-4 px-4 text-sm">
-          {user_metadata.user.user_metadata.username}
+          {username}
           <Avatar>
             {/* Avatar Image is the profile picture of the user. The default avatar is used as a placeholder for now. */}
             <AvatarImage src="../../public/img/default-avatar.png" />

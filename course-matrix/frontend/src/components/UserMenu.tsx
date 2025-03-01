@@ -67,8 +67,9 @@ export function UserMenu() {
 
   const usernameRef = useRef<HTMLInputElement>(null);
   const user_metadata = JSON.parse(localStorage.getItem("userInfo") ?? "{}"); //User Data
-  const username = (user_metadata?.user?.user_metadata?.username as string) ?? "John Doe"
-  const initials = username//Gets User Initials
+  const username =
+    (user_metadata?.user?.user_metadata?.username as string) ?? "John Doe";
+  const initials = username //Gets User Initials
     .split(" ") // Split the string by spaces
     .map((word) => word[0]) // Take the first letter of each word
     .join("") // Join them back into a string

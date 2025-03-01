@@ -217,37 +217,41 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
 
 // Test Similarity search
 // Usage: provide user prompt in req.body
-export const testSimilaritySearch = asyncHandler(async (req: Request, res: Response) => {
-  const { message } = req.body;
+export const testSimilaritySearch = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { message } = req.body;
 
-  // Analyze the query to determine if search is needed and which namespaces to search
-  const { requiresSearch, relevantNamespaces } = analyzeQuery(message);
+    // Analyze the query to determine if search is needed and which namespaces to search
+    const { requiresSearch, relevantNamespaces } = analyzeQuery(message);
 
-  let context = "[No context provided]";
+    let context = "[No context provided]";
 
-  if (requiresSearch) {
-    console.log(
-      `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-        ", ",
-      )}`,
-    );
+    if (requiresSearch) {
+      console.log(
+        `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
+          ", ",
+        )}`,
+      );
 
-    // Search only the relevant namespaces
-    const searchResults = await searchSelectedNamespaces(
-      message,
-      3,
-      relevantNamespaces,
-    );
-    console.log("Search Results: ", searchResults);
+      // Search only the relevant namespaces
+      const searchResults = await searchSelectedNamespaces(
+        message,
+        3,
+        relevantNamespaces,
+      );
+      console.log("Search Results: ", searchResults);
 
-    // Format context from search results into plaintext
-    if (searchResults.length > 0) {
-      context = searchResults.map((doc) => doc.pageContent).join("\n\n");
+      // Format context from search results into plaintext
+      if (searchResults.length > 0) {
+        context = searchResults.map((doc) => doc.pageContent).join("\n\n");
+      }
+    } else {
+      console.log(
+        "Query does not require knowledge retrieval, skipping search",
+      );
     }
-  } else {
-    console.log("Query does not require knowledge retrieval, skipping search");
-  }
 
-  console.log("CONTEXT: ", context);
-  res.status(200).send(context)
-})
+    console.log("CONTEXT: ", context);
+    res.status(200).send(context);
+  },
+);

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
+import { error } from "console";
 
 /**
  * Helper method to generate weekly course events.
@@ -52,7 +53,7 @@ function generateWeeklyCourseEvents(
   calendar_id: string,
   offering_id: string,
   semester_start_date: string,
-  semester_end_date: string,
+  semester_end_date: string
 ): any[] {
   //Map weekday code to JS day number
   const weekdayMap: { [key: string]: number } = {
@@ -150,13 +151,22 @@ export default {
         .select("*")
         .eq("id", calendar_id)
         .maybeSingle();
+
+      if (timetableError)
+        return res.status(400).json({ error: timetableError.message });
+
+      //Validate timetable validity:
+      if (!timetableData || timetableData.length === 0) {
+        return res.status(404).json({ error: "Calendar id not found" });
+      }
+
       const timetable_user_id = timetableData.user_id;
 
       //Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)
-          .json({ message: "Unauthorized access to timetable events" });
+          .json({ error: "Unauthorized access to timetable events" });
       }
 
       if (offering_id) {
@@ -169,7 +179,11 @@ export default {
           .select("*")
           .eq("id", offering_id)
           .maybeSingle();
-        if (offeringError || !offeringData) {
+
+        if (offeringError)
+          return res.status(400).json({ error: offeringError.message });
+
+        if (!offeringData || offeringData.length === 0) {
           return res.status(400).json({
             error: "Invalid offering_id or course offering not found.",
           });
@@ -197,7 +211,7 @@ export default {
             calendar_id,
             offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
           //If no semester dates provided, insert a single event using the provided event_date
@@ -267,7 +281,7 @@ export default {
    */
   getEvents: asyncHandler(async (req: Request, res: Response) => {
     try {
-      const { calendar_id } = req.query;
+      const { calendar_id } = req.params;
 
       // Retrieve the authenticated user
       const user_id = (req as any).user.id;
@@ -285,17 +299,21 @@ export default {
         .eq("id", calendar_id)
         .maybeSingle();
 
-      const timetable_user_id = timetableData?.user_id;
+      if (timetableError)
+        return res.status(400).json({ error: timetableError.message });
 
-      if (!calendar_id) {
-        return res.status(400).json({ error: "calendar id is required" });
+      //Validate timetable validity:
+      if (!timetableData || timetableData.length === 0) {
+        return res.status(404).json({ error: "Calendar id not found" });
       }
+
+      const timetable_user_id = timetableData.user_id;
 
       //Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)
-          .json({ message: "Unauthorized access to timetable events" });
+          .json({ error: "Unauthorized access to timetable events" });
       }
 
       const { data: courseEvents, error: courseError } = await supabase
@@ -361,17 +379,25 @@ export default {
         .select("*")
         .eq("id", calendar_id)
         .maybeSingle();
+
+      if (timetableError)
+        return res.status(400).json({ error: timetableError.message });
+
+      //Validate timetable validity:
+      if (!timetableData || timetableData.length === 0) {
+        return res.status(404).json({ error: "Calendar id not found" });
+      }
+
       const timetable_user_id = timetableData.user_id;
 
       //Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)
-          .json({ message: "Unauthorized access to timetable events" });
+          .json({ error: "Unauthorized access to timetable events" });
       }
 
       if (new_offering_id) {
-        console.log(old_offering_id);
         //If an offering_id is provided: Updating a courseEvent
         //If old_offering_id does not match throw an error
         const { data: oldofferingData, error: oldofferingError } =
@@ -382,15 +408,15 @@ export default {
             .eq("offering_id", old_offering_id)
             .eq("calendar_id", calendar_id);
 
-        console.log(oldofferingData);
-        console.log(oldofferingError);
-        if (oldofferingError || !oldofferingData) {
+        if (oldofferingError)
+          return res.status(400).json({ error: oldofferingError.message });
+
+        if (!oldofferingData || oldofferingData.length === 0) {
           return res.status(400).json({
             error:
               "Invalid current offering_id or current offering id not found.",
           });
         }
-        console.log(old_offering_id);
 
         const { data: newofferingData, error: newofferingError } =
           await supabase
@@ -399,12 +425,29 @@ export default {
             .select("*")
             .eq("id", new_offering_id)
             .maybeSingle();
-        if (newofferingError || !newofferingData) {
+
+        if (newofferingError)
+          return res.status(400).json({ error: newofferingError.message });
+
+        if (!newofferingData || newofferingData.length === 0) {
           return res.status(400).json({
             error: "Invalid offering_id or course offering not found.",
           });
         }
-        console.log(new_offering_id);
+
+        const { data: courseEventData, error: courseEventError } =
+          await supabase
+            .schema("timetable")
+            .from("course_events")
+            .select("*")
+            .eq("id", id)
+            .maybeSingle();
+
+        if (courseEventData.calendar_id !== timetableData.id) {
+          return res.status(400).json({
+            error: "Restriction id does not belong to the provided calendar id",
+          });
+        }
 
         const courseEventName = `${newofferingData.code} - ${newofferingData.meeting_section}`;
         const courseDay = newofferingData.day;
@@ -421,7 +464,7 @@ export default {
             calendar_id,
             new_offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
           let eventDate = getNextWeekDayOccurance(courseDay);
@@ -461,8 +504,20 @@ export default {
 
         return res.status(200).json(updateData);
       } else {
-        //Update userEvent
+        const { data: userEventData, error: usereventError } = await supabase
+          .schema("timetable")
+          .from("user_events")
+          .select("*")
+          .eq("id", id)
+          .maybeSingle();
 
+        if (userEventData.calendar_id !== timetableData.id) {
+          return res.status(400).json({
+            error: "Restriction id does not belong to the provided calendar id",
+          });
+        }
+
+        //Update userEvent
         const updateData = {
           calendar_id,
           event_date,
@@ -511,13 +566,22 @@ export default {
         .select("*")
         .eq("id", calendar_id)
         .maybeSingle();
+
+      if (timetableError)
+        return res.status(400).json({ error: timetableError.message });
+
+      //Validate timetable validity:
+      if (!timetableData || timetableData.length === 0) {
+        return res.status(404).json({ error: "Calendar id not found" });
+      }
+
       const timetable_user_id = timetableData.user_id;
 
       //Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)
-          .json({ message: "Unauthorized access to timetable events" });
+          .json({ error: "Unauthorized access to timetable events" });
       }
 
       if (!event_type) {
@@ -526,17 +590,27 @@ export default {
 
       if (event_type === "course") {
         //Validate note availability
-        const { data: noteData, error: noteError } = await supabase
-          .schema("timetable")
-          .from("course_events")
-          .select("*")
-          .eq("id", id)
-          .maybeSingle();
+        const { data: courseEventData, error: courseEventError } =
+          await supabase
+            .schema("timetable")
+            .from("course_events")
+            .select("*")
+            .eq("id", id)
+            .maybeSingle();
 
-        if (!noteData || noteError) {
+        if (courseEventError)
+          return res.status(400).json({ error: courseEventError.message });
+
+        if (!courseEventData || courseEventData.length === 0) {
           return res
             .status(400)
-            .json({ message: "Provided note ID is invalid or does not exist" });
+            .json({ error: "Provided note ID is invalid or does not exist" });
+        }
+
+        if (courseEventData.calendar_id !== timetableData.id) {
+          return res.status(400).json({
+            error: "Restriction id does not belong to the provided calendar id",
+          });
         }
 
         //Build the delete query
@@ -563,17 +637,26 @@ export default {
         return res.status(200).send("Event successfully deleted");
       } else if (event_type === "user") {
         //Validate note availability
-        const { data: noteData, error: noteError } = await supabase
+        const { data: userEventData, error: userEventError } = await supabase
           .schema("timetable")
           .from("user_events")
           .select("*")
           .eq("id", id)
           .maybeSingle();
 
-        if (!noteData || noteError) {
+        if (userEventError)
+          return res.status(400).json({ error: userEventError.message });
+
+        if (!userEventData || userEventData.length === 0) {
           return res
             .status(400)
-            .json({ message: "Provided note ID is invalid or does not exist" });
+            .json({ error: "Provided note ID is invalid or does not exist" });
+        }
+
+        if (userEventData.calendar_id !== timetableData.id) {
+          return res.status(400).json({
+            error: "Restriction id does not belong to the provided calendar id",
+          });
         }
 
         const { error: deleteError } = await supabase

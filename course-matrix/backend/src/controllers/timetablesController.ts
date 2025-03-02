@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
+import { error } from "console";
 
 export default {
   /**
@@ -70,6 +71,11 @@ export default {
       if (timetableError)
         return res.status(400).json({ error: timetableError.message });
 
+      //Validate timetable validity:
+      if (!timetableData || timetableData.length === 0) {
+        return res.status(404).json({ error: "Calendar id not found" });
+      }
+
       return res.status(200).json(timetableData);
     } catch (error) {
       return res.status(500).send({ error });
@@ -108,11 +114,19 @@ export default {
 
       const timetable_user_id = timetableUserData?.user_id;
 
+      if (timetableUserError)
+        return res.status(400).json({ error: timetableUserError.message });
+
+      //Validate timetable validity:
+      if (!timetableUserData || timetableUserData.length === 0) {
+        return res.status(404).json({ error: "Calendar id not found" });
+      }
+
       //Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)
-          .json({ message: "Unauthorized access to timetable events" });
+          .json({ error: "Unauthorized access to timetable events" });
       }
 
       let updateData: any = {};
@@ -137,7 +151,7 @@ export default {
       // If no records were updated due to non-existence timetable or it doesn't belong to the user.
       if (!timetableData || timetableData.length === 0) {
         return res.status(404).json({
-          message: "Timetable not found or you are not authorized to update it",
+          error: "Timetable not found or you are not authorized to update it",
         });
       }
       return res.status(200).json(timetableData);
@@ -165,14 +179,21 @@ export default {
           .select("*")
           .eq("id", id)
           .maybeSingle();
-
       const timetable_user_id = timetableUserData?.user_id;
+
+      if (timetableUserError)
+        return res.status(400).json({ error: timetableUserError.message });
+
+      //Validate timetable validity:
+      if (!timetableUserData || timetableUserData.length === 0) {
+        return res.status(404).json({ error: "Calendar id not found" });
+      }
 
       //Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)
-          .json({ message: "Unauthorized access to timetable events" });
+          .json({ error: "Unauthorized access to timetable events" });
       }
 
       // Delete only if the timetable belongs to the authenticated user

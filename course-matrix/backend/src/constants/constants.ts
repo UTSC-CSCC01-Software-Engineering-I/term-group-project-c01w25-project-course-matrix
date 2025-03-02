@@ -39,8 +39,11 @@ export const yearToCode = (year: number) => {
 
 // Set minimum results wanted for a similarity search on the associated namespace.
 export const namespaceToMinResults = new Map();
-namespaceToMinResults.set("courses", 5);
+namespaceToMinResults.set("courses", 10);
 namespaceToMinResults.set("offerings", 16); // Typically, more offering info is wanted.
 namespaceToMinResults.set("prerequisites", 5);
 namespaceToMinResults.set("corequisites", 5);
 namespaceToMinResults.set("departments", 5);
+
+// Consider the last X messages in history to influence vector DB query
+export const CHATBOT_MEMORY_THRESHOLD = 3;

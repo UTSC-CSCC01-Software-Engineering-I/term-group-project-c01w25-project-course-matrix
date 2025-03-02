@@ -26,7 +26,7 @@ import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button
 export const Thread: FC = () => {
   return (
     <ThreadPrimitive.Root
-      className="bg-background box-border h-[90%]"
+      className="bg-background box-border max-h-[90%] overflow-y-auto"
       style={{
         ["--thread-max-width" as string]: "42rem",
       }}
@@ -93,12 +93,12 @@ const ThreadWelcomeSuggestions: FC = () => {
     <div className="mt-3 flex w-full items-stretch justify-center gap-4">
       <ThreadPrimitive.Suggestion
         className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-lg border p-3 transition-colors ease-in"
-        prompt="Good elective to take for Summer 2025?"
+        prompt="List math courses for Summer 2025"
         method="replace"
         autoSend
       >
         <span className="line-clamp-2 text-ellipsis text-sm font-semibold">
-          Good elective to take for Summer 2025?
+          List math courses for Summer 2025
         </span>
       </ThreadPrimitive.Suggestion>
       <ThreadPrimitive.Suggestion

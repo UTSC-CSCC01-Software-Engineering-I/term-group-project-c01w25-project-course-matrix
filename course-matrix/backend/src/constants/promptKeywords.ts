@@ -32,6 +32,11 @@ export const NAMESPACE_KEYWORDS = {
     "asynchronous",
     "delivery mode",
     "in person",
+    "summer",
+    "spring",
+    "fall",
+    "winter",
+    "semester"
   ],
   prerequisites: [
     "prerequisite",
@@ -72,10 +77,6 @@ export const GENERAL_ACADEMIC_TERMS = [
   "credit",
   "gpa",
   "grade",
-  "semester",
-  "fall",
-  "winter",
-  "summer",
   "enroll",
   "register",
   "drop",

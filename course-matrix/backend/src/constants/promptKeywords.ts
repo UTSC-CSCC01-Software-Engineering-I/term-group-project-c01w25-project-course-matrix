@@ -36,7 +36,7 @@ export const NAMESPACE_KEYWORDS = {
     "spring",
     "fall",
     "winter",
-    "semester"
+    "semester",
   ],
   prerequisites: [
     "prerequisite",

@@ -139,7 +139,7 @@ async function searchSelectedNamespaces(
   // Limit to top minSearchResultCount results
   // return allResults.slice(0, minSearchResultCount);
 
-  return allResults
+  return allResults;
 }
 
 export const chat = asyncHandler(async (req: Request, res: Response) => {

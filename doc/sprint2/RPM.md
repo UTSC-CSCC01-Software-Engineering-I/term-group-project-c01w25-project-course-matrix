@@ -51,6 +51,8 @@
 
 ## 2. Release Scope
 
+### 2.1 Included Features
+
 - **Timetable Management**
 
   - Add, update, and delete timetables and event entries.

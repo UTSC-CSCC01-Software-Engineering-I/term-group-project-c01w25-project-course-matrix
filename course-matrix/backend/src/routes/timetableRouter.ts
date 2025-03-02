@@ -35,7 +35,7 @@ timetableRouter.put("/:id", authHandler, timetableController.updateTimetable);
 timetableRouter.delete(
   "/:id",
   authHandler,
-  timetableController.deleteTimetable
+  timetableController.deleteTimetable,
 );
 
 /**
@@ -53,7 +53,7 @@ timetableRouter.post("/events", authHandler, eventController.createEvent);
 timetableRouter.get(
   "/events/:calendar_id",
   authHandler,
-  eventController.getEvents
+  eventController.getEvents,
 );
 
 /**
@@ -78,7 +78,7 @@ timetableRouter.delete("/events/:id", authHandler, eventController.deleteEvent);
 timetableRouter.post(
   "/restrictions",
   authHandler,
-  restrictionsController.createRestriction
+  restrictionsController.createRestriction,
 );
 
 /**
@@ -89,7 +89,7 @@ timetableRouter.post(
 timetableRouter.get(
   "/restrictions/:calendar_id",
   authHandler,
-  restrictionsController.getRestriction
+  restrictionsController.getRestriction,
 );
 
 /**
@@ -100,7 +100,7 @@ timetableRouter.get(
 timetableRouter.put(
   "/restrictions/:id",
   authHandler,
-  restrictionsController.updateRestriction
+  restrictionsController.updateRestriction,
 );
 
 /**
@@ -111,5 +111,5 @@ timetableRouter.put(
 timetableRouter.delete(
   "/restrictions/:id",
   authHandler,
-  restrictionsController.deleteRestriction
+  restrictionsController.deleteRestriction,
 );

@@ -34,6 +34,11 @@ import { FilterForm, FilterFormSchema } from "@/models/filter-form";
 import { useGetCoursesQuery } from "@/api/coursesApiSlice";
 import { useDebounceValue } from "@/utils/useDebounce";
 import SearchFilters from "./SearchFilters";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -94,6 +99,7 @@ const TimetableBuilder = () => {
   const [isCustomSettingsOpen, setIsCustomSettingsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterForm | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [value, onChange] = useState<Value>(new Date());
 
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;
@@ -332,8 +338,7 @@ const TimetableBuilder = () => {
           </div>
           <div className="w-1/2 bg-slate-100/50 flex items-center justify-center">
             <p className="text-sm text-muted-foreground">
-              {" "}
-              Fill in the form to create your timetable!
+              <Calendar onChange={onChange} value={value} />
             </p>
           </div>
           {isCustomSettingsOpen && (

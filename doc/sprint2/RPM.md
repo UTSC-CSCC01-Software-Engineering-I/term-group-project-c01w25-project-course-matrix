@@ -71,11 +71,11 @@
 
 ### 2.3 Bug Fixes
 
-Fix passwords having unlimited length
-Fix Login session infinite loop bug
-Fix auth middleware login to check for user session
-Fix login not redirecting to dashboard if session already exists
-Fix form deselect field option in filter panel
+- Fix passwords having unlimited length
+- Fix Login session infinite loop bug
+- Fix auth middleware login to check for user session
+- Fix login not redirecting to dashboard if session already exists
+- Fix form deselect field option in filter panel
 
 ### 2.4 Non-Functional Requirements
 

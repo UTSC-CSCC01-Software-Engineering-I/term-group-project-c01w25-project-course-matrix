@@ -46,6 +46,7 @@ function getNextWeekDayOccurance(targetDay: string): string {
 }
 
 function generateWeeklyCourseEvents(
+  user_id: string,
   courseEventName: string,
   courseDay: string,
   courseStartTime: string,
@@ -53,7 +54,7 @@ function generateWeeklyCourseEvents(
   calendar_id: string,
   offering_id: string,
   semester_start_date: string,
-  semester_end_date: string,
+  semester_end_date: string
 ): any[] {
   //Map weekday code to JS day number
   const weekdayMap: { [key: string]: number } = {
@@ -91,6 +92,7 @@ function generateWeeklyCourseEvents(
   //Loop through the semester, adding an event for each week on the targeted weekday
   while (currentDate <= semesterEndObj) {
     eventsToInsert.push({
+      user_id,
       calendar_id,
       event_name: courseEventName,
       //Convert the occurrence of date to YYYY-MM-DD format
@@ -150,6 +152,7 @@ export default {
         .from("timetables")
         .select("*")
         .eq("id", calendar_id)
+        .eq("user_id", user_id)
         .maybeSingle();
 
       if (timetableError)
@@ -204,6 +207,7 @@ export default {
         let eventsToInsert: any[];
         if (semester_start_date && semester_end_date) {
           eventsToInsert = generateWeeklyCourseEvents(
+            user_id,
             courseEventName,
             courseDay,
             courseStartTime,
@@ -211,7 +215,7 @@ export default {
             calendar_id,
             offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
           //If no semester dates provided, insert a single event using the provided event_date
@@ -225,6 +229,7 @@ export default {
               event_end: courseEndTime,
               event_description: null,
               offering_id,
+              user_id,
             },
           ];
         }
@@ -250,19 +255,41 @@ export default {
             .status(400)
             .json({ error: "Event name is required for user events" });
         }
+
+        if (!event_date || !event_start || !event_end) {
+          return res
+            .status(400)
+            .json({ error: "Event date and time are required" });
+        }
+
+        // Function to construct date in local time
+        const start_time = new Date(`${event_date}T${event_start}-00:00`);
+        const end_time = new Date(`${event_date}T${event_end}-00:00`);
+
+        // Calculate difference in milliseconds
+        const diffMs = end_time.getTime() - start_time.getTime();
+        const diffMinutes = diffMs / (1000 * 60); // Convert to minutes
+
+        if (diffMinutes <= 15) {
+          return res
+            .status(400)
+            .json({ error: "Event duration must be at least 15 minutes" });
+        }
+
+        const eventsToInsert = {
+          user_id,
+          calendar_id,
+          event_name,
+          event_date,
+          event_start,
+          event_end,
+          event_description,
+        };
+
         const { data: userEventData, error: userEventError } = await supabase
           .schema("timetable")
           .from("user_events")
-          .insert([
-            {
-              calendar_id,
-              event_name,
-              event_date,
-              event_start,
-              event_end,
-              event_description,
-            },
-          ])
+          .insert([eventsToInsert])
           .select("*");
 
         if (userEventError) {
@@ -297,6 +324,7 @@ export default {
         .from("timetables")
         .select("*")
         .eq("id", calendar_id)
+        .eq("user_id", user_id)
         .maybeSingle();
 
       if (timetableError)
@@ -378,6 +406,7 @@ export default {
         .from("timetables")
         .select("*")
         .eq("id", calendar_id)
+        .eq("user_id", user_id)
         .maybeSingle();
 
       if (timetableError)
@@ -441,6 +470,8 @@ export default {
             .from("course_events")
             .select("*")
             .eq("id", id)
+            .eq("calendar_id", calendar_id)
+            .eq("user_id", user_id)
             .maybeSingle();
 
         if (courseEventData.calendar_id !== timetableData.id) {
@@ -457,6 +488,7 @@ export default {
         let eventsToInsert: any[];
         if (semester_start_date && semester_end_date) {
           eventsToInsert = generateWeeklyCourseEvents(
+            user_id,
             courseEventName,
             courseDay,
             courseStartTime,
@@ -464,12 +496,13 @@ export default {
             calendar_id,
             new_offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
-          let eventDate = getNextWeekDayOccurance(courseDay);
+          const eventDate = getNextWeekDayOccurance(courseDay);
           eventsToInsert = [
             {
+              user_id,
               calendar_id,
               event_name: courseEventName,
               event_date: eventDate,
@@ -509,6 +542,8 @@ export default {
           .from("user_events")
           .select("*")
           .eq("id", id)
+          .eq("calendar_id", calendar_id)
+          .eq("user_id", user_id)
           .maybeSingle();
 
         if (userEventData.calendar_id !== timetableData.id) {
@@ -565,6 +600,7 @@ export default {
         .from("timetables")
         .select("*")
         .eq("id", calendar_id)
+        .eq("user_id", user_id)
         .maybeSingle();
 
       if (timetableError)
@@ -596,6 +632,8 @@ export default {
             .from("course_events")
             .select("*")
             .eq("id", id)
+            .eq("user_id", user_id)
+            .eq("calendar_id", calendar_id)
             .maybeSingle();
 
         if (courseEventError)
@@ -642,6 +680,8 @@ export default {
           .from("user_events")
           .select("*")
           .eq("id", id)
+          .eq("user_id", user_id)
+          .eq("calendar_id", calendar_id)
           .maybeSingle();
 
         if (userEventError)

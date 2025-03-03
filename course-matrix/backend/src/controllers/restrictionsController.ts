@@ -38,6 +38,7 @@ export default {
         .from("timetables")
         .select("*")
         .eq("id", calendar_id)
+        .eq("user_id", user_id)
         .maybeSingle();
 
       if (timetableError)
@@ -62,6 +63,7 @@ export default {
         .from("restriction")
         .insert([
           {
+            user_id,
             type,
             days,
             start_time,
@@ -104,6 +106,7 @@ export default {
         .from("timetables")
         .select("*")
         .eq("id", calendar_id)
+        .eq("user_id", user_id)
         .maybeSingle();
 
       if (timetableError)
@@ -163,6 +166,8 @@ export default {
           .from("restriction")
           .select("*")
           .eq("id", id)
+          .eq("user_id", user_id)
+          .eq("calendar_id", calendar_id)
           .maybeSingle();
 
       if (restrictionCurrError)
@@ -178,6 +183,7 @@ export default {
         .from("timetables")
         .select("*")
         .eq("id", calendar_id)
+        .eq("user_id", user_id)
         .maybeSingle();
 
       if (timetableError)
@@ -253,6 +259,8 @@ export default {
           .from("restriction")
           .select("*")
           .eq("id", id)
+          .eq("user_id", user_id)
+          .eq("calendar_id", calendar_id)
           .maybeSingle();
 
       if (restrictionCurrError) {
@@ -269,6 +277,7 @@ export default {
         .from("timetables")
         .select("*")
         .eq("id", calendar_id)
+        .eq("user_id", user_id)
         .maybeSingle();
 
       if (timetableError) {

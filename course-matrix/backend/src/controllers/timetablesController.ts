@@ -110,6 +110,7 @@ export default {
           .from("timetables")
           .select("*")
           .eq("id", id)
+          .eq("user_id", user_id)
           .maybeSingle();
 
       const timetable_user_id = timetableUserData?.user_id;
@@ -178,6 +179,7 @@ export default {
           .from("timetables")
           .select("*")
           .eq("id", id)
+          .eq("user_id", user_id)
           .maybeSingle();
       const timetable_user_id = timetableUserData?.user_id;
 

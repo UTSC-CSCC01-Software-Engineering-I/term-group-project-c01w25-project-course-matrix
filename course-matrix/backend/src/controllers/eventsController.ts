@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
-import { error } from "console";
 
 /**
  * Helper method to generate weekly course events.
@@ -265,15 +264,27 @@ export default {
         // Function to construct date in local time
         const start_time = new Date(`${event_date}T${event_start}-00:00`);
         const end_time = new Date(`${event_date}T${event_end}-00:00`);
+        const valid_minutes = [0, 15, 30, 45];
 
-        // Calculate difference in milliseconds
-        const diffMs = end_time.getTime() - start_time.getTime();
-        const diffMinutes = diffMs / (1000 * 60); // Convert to minutes
+        if (
+          !valid_minutes.includes(start_time.getMinutes()) ||
+          !valid_minutes.includes(end_time.getMinutes())
+        ) {
+          return res.status(400).json({
+            error: "Event start / end minutes must be 00, 15, 30, 45",
+          });
+        }
 
-        if (diffMinutes <= 15) {
+        if (start_time.getTime() === end_time.getTime()) {
           return res
             .status(400)
-            .json({ error: "Event duration must be at least 15 minutes" });
+            .json({ error: "Event start and end time must not be the same" });
+        }
+
+        if (start_time.getTime() - end_time.getTime() > 0) {
+          return res
+            .status(400)
+            .json({ error: "Event start time cannot be after event end time" });
         }
 
         const eventsToInsert = {
@@ -348,13 +359,15 @@ export default {
         .schema("timetable")
         .from("course_events")
         .select("*")
+        .eq("user_id", user_id)
         .eq("calendar_id", calendar_id);
 
       const { data: userEvents, error: userError } = await supabase
         .schema("timetable")
         .from("user_events")
         .select("*")
-        .eq("calendar_id", calendar_id);
+        .eq("calendar_id", calendar_id)
+        .eq("user_id", user_id);
 
       if (courseError || userError) {
         return res
@@ -435,8 +448,8 @@ export default {
             .from("course_events")
             .select("*")
             .eq("offering_id", old_offering_id)
+            .eq("user_id", user_id)
             .eq("calendar_id", calendar_id);
-
         if (oldofferingError)
           return res.status(400).json({ error: oldofferingError.message });
 
@@ -470,8 +483,8 @@ export default {
             .from("course_events")
             .select("*")
             .eq("id", id)
-            .eq("calendar_id", calendar_id)
             .eq("user_id", user_id)
+            .eq("calendar_id", calendar_id)
             .maybeSingle();
 
         if (courseEventData.calendar_id !== timetableData.id) {
@@ -519,6 +532,7 @@ export default {
           .schema("timetable")
           .from("course_events")
           .delete()
+          .eq("user_id", user_id)
           .eq("calendar_id", calendar_id)
           .eq("offering_id", old_offering_id);
 
@@ -548,8 +562,34 @@ export default {
 
         if (userEventData.calendar_id !== timetableData.id) {
           return res.status(400).json({
-            error: "Restriction id does not belong to the provided calendar id",
+            error: "Event id does not belong to the provided calendar id",
           });
+        }
+
+        // Function to construct date in local time
+        const start_time = new Date(`${event_date}T${event_start}-00:00`);
+        const end_time = new Date(`${event_date}T${event_end}-00:00`);
+        const valid_minutes = [0, 15, 30, 45];
+
+        if (
+          !valid_minutes.includes(start_time.getMinutes()) ||
+          !valid_minutes.includes(end_time.getMinutes())
+        ) {
+          return res.status(400).json({
+            error: "Event start / end minutes must be 00, 15, 30, 45",
+          });
+        }
+
+        if (start_time.getTime() === end_time.getTime()) {
+          return res
+            .status(400)
+            .json({ error: "Event start and end time must not be the same" });
+        }
+
+        if (start_time.getTime() - end_time.getTime() > 0) {
+          return res
+            .status(400)
+            .json({ error: "Event start time cannot be after event end time" });
         }
 
         //Update userEvent
@@ -561,11 +601,14 @@ export default {
           event_description,
           event_name,
         };
+
         const { data: updateResult, error: updateError } = await supabase
           .schema("timetable")
           .from("user_events")
           .update(updateData)
           .eq("id", id)
+          .eq("user_id", user_id)
+          .eq("calendar_id", calendar_id)
           .select("*");
 
         if (updateError)
@@ -668,6 +711,7 @@ export default {
 
         const { error: deleteError } = await deleteQuery
           .eq("calendar_id", calendar_id)
+          .eq("user_id", user_id)
           .select("*");
         if (deleteError)
           return res.status(400).json({ error: deleteError.message });
@@ -704,6 +748,8 @@ export default {
           .from("user_events")
           .delete()
           .eq("id", id)
+          .eq("user_id", user_id)
+          .eq("calendar_id", calendar_id)
           .select("*");
 
         if (deleteError)

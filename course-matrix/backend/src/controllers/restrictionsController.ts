@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
-import { error } from "console";
 
 export default {
   /**
@@ -30,6 +29,32 @@ export default {
       //Check for calendar_id
       if (!calendar_id) {
         return res.status(400).json({ error: "calendar id is required" });
+      }
+
+      // Function to construct date in local time
+      const restriction_start = new Date(`2025-08-08T${start_time}-00:00`);
+      const restriction_end = new Date(`2025-08-08T${end_time}-00:00`);
+      const valid_minutes = [0, 15, 30, 45];
+
+      if (
+        !valid_minutes.includes(restriction_start.getMinutes()) ||
+        !valid_minutes.includes(restriction_end.getMinutes())
+      ) {
+        return res.status(400).json({
+          error: "Event start / end minutes must be 00, 15, 30, 45",
+        });
+      }
+
+      if (restriction_start.getTime() === restriction_end.getTime()) {
+        return res
+          .status(400)
+          .json({ error: "Event start and end time must not be the same" });
+      }
+
+      if (restriction_start.getTime() - restriction_end.getTime() > 0) {
+        return res
+          .status(400)
+          .json({ error: "Event start time cannot be after event end time" });
       }
 
       //Retrieve users allowed to access the timetable
@@ -130,7 +155,8 @@ export default {
         .schema("timetable")
         .from("restriction")
         .select()
-        .eq("calendar_id", calendar_id);
+        .eq("calendar_id", calendar_id)
+        .eq("user_id", user_id);
 
       if (restrictionError) {
         return res.status(400).json({ error: restrictionError.message });
@@ -177,6 +203,36 @@ export default {
         return res.status(404).json({ error: "Restriction id does not exist" });
       }
 
+      // Function to construct date in local time
+      const restriction_start = new Date(
+        `2025-08-08T${updateData.start_time}-00:00`
+      );
+      const restriction_end = new Date(
+        `2025-08-08T${updateData.end_time}-00:00`
+      );
+      const valid_minutes = [0, 15, 30, 45];
+
+      if (
+        !valid_minutes.includes(restriction_start.getMinutes()) ||
+        !valid_minutes.includes(restriction_end.getMinutes())
+      ) {
+        return res.status(400).json({
+          error: "Event start / end minutes must be 00, 15, 30, 45",
+        });
+      }
+
+      if (restriction_start.getTime() === restriction_end.getTime()) {
+        return res
+          .status(400)
+          .json({ error: "Event start and end time must not be the same" });
+      }
+
+      if (restriction_start.getTime() - restriction_end.getTime() > 0) {
+        return res
+          .status(400)
+          .json({ error: "Event start time cannot be after event end time" });
+      }
+
       //Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
         .schema("timetable")
@@ -221,6 +277,8 @@ export default {
         .from("restriction")
         .update(updateData)
         .eq("id", id)
+        .eq("user_id", user_id)
+        .eq("calendar_id", calendar_id)
         .select();
 
       if (restrictionError) {
@@ -309,7 +367,9 @@ export default {
         .schema("timetable")
         .from("restriction")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_id", user_id)
+        .eq("calendar_id", calendar_id);
 
       if (restrictionError) {
         return res.status(400).json({ error: restrictionError.message });

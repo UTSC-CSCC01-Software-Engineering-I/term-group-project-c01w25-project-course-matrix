@@ -13,7 +13,7 @@ import {
   ASSISTANT_TERMS,
   USEFUL_INFO,
 } from "../constants/promptKeywords";
-import { codeToYear } from "../constants/constants";
+import { CHATBOT_MEMORY_THRESHOLD, codeToYear } from "../constants/constants";
 import { namespaceToMinResults } from "../constants/constants";
 import OpenAI from "openai";
 
@@ -231,7 +231,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
   // Use GPT-4o to reformulate the query based on conversation history
   const reformulatedQuery = await reformulateQuery(
     latestMessage,
-    conversationHistory,
+    conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD), // last K messages
   );
   console.log(">>>> Original query:", latestMessage);
   console.log(">>>> Reformulated query:", reformulatedQuery);

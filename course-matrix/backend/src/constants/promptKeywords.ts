@@ -70,11 +70,7 @@ export const NAMESPACE_KEYWORDS = {
 };
 
 // General academic terms that might indicate a search is needed
-export const GENERAL_ACADEMIC_TERMS = [
-  "credit",
-  "enroll",
-  "drop",
-];
+export const GENERAL_ACADEMIC_TERMS = ["credit", "enroll", "drop"];
 
 // department codes
 export const DEPARTMENT_CODES = [

@@ -71,14 +71,8 @@ export const NAMESPACE_KEYWORDS = {
 
 // General academic terms that might indicate a search is needed
 export const GENERAL_ACADEMIC_TERMS = [
-  "utsc",
-  "university",
-  "scarborough",
   "credit",
-  "gpa",
-  "grade",
   "enroll",
-  "register",
   "drop",
 ];
 

@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 const TimetableCompareDialog = () => (
   <Dialog>
     <DialogTrigger asChild>
-      <Button size="sm" className="px-5 bg-black hover:bg-gray-700">
+      <Button size="sm" className="px-5">
         Compare
       </Button>
     </DialogTrigger>

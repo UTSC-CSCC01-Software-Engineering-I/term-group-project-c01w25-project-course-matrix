@@ -265,7 +265,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
     console.log("Query does not require knowledge retrieval, skipping search");
   }
 
-  console.log("CONTEXT: ", context);
+  // console.log("CONTEXT: ", context);
 
   const result = streamText({
     model: openai("gpt-4o-mini"),

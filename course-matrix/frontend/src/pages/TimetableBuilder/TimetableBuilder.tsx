@@ -333,8 +333,7 @@ const TimetableBuilder = () => {
             </Form>
           </div>
           <div className="w-1/2 bg-slate-100/50 flex items-center justify-center">
-            <p className="text-sm text-muted-foreground">
-            </p>
+            <p className="text-sm text-muted-foreground"></p>
           </div>
           {isCustomSettingsOpen && (
             <CreateCustomSetting

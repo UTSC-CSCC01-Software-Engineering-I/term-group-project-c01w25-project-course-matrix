@@ -205,10 +205,10 @@ export default {
 
       // Function to construct date in local time
       const restriction_start = new Date(
-        `2025-08-08T${updateData.start_time}-00:00`
+        `2025-08-08T${updateData.start_time}-00:00`,
       );
       const restriction_end = new Date(
-        `2025-08-08T${updateData.end_time}-00:00`
+        `2025-08-08T${updateData.end_time}-00:00`,
       );
       const valid_minutes = [0, 15, 30, 45];
 

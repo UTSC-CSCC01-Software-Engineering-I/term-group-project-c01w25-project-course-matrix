@@ -48,7 +48,7 @@ const ThreadListItem: FC = () => {
 
 const ThreadListItemTitle: FC = () => {
   return (
-    <p className="text-sm">
+    <p className="text-sm overflow-hidden text-ellipsis whitespace-nowrap">
       <ThreadListItemPrimitive.Title fallback="New Chat" />
     </p>
   );

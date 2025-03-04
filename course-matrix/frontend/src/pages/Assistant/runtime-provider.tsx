@@ -2,11 +2,12 @@ import { SERVER_URL } from "@/api/config";
 import { AssistantCloud, AssistantRuntimeProvider } from "@assistant-ui/react";
 import { useChatRuntime } from "@assistant-ui/react-ai-sdk";
 
-const PUBLIC_ASSISTANT_BASE_URL = import.meta.env.VITE_PUBLIC_ASSISTANT_BASE_URL;
+const PUBLIC_ASSISTANT_BASE_URL = import.meta.env
+  .VITE_PUBLIC_ASSISTANT_BASE_URL;
 const ASSISTANT_UI_KEY = import.meta.env.VITE_ASSISTANT_UI_KEY;
 
-const user = JSON.parse(localStorage.getItem("userInfo") ?? "{}")
-const userId = (user?.user?.id);
+const user = JSON.parse(localStorage.getItem("userInfo") ?? "{}");
+const userId = user?.user?.id;
 
 const getAuthToken = async () => {
   const client = new AssistantCloud({
@@ -15,8 +16,8 @@ const getAuthToken = async () => {
     workspaceId: userId,
   });
   const { token } = await client.auth.tokens.create();
-  return token
-}
+  return token;
+};
 
 const cloud = new AssistantCloud({
   baseUrl: PUBLIC_ASSISTANT_BASE_URL!,
@@ -24,7 +25,7 @@ const cloud = new AssistantCloud({
   //   fetch("/api/assistant-ui-token", { method: "POST" })
   //     .then((r) => r.json())
   //     .then((r) => r.token),
-  authToken: () => getAuthToken()
+  authToken: () => getAuthToken(),
 });
 
 export function RuntimeProvider({

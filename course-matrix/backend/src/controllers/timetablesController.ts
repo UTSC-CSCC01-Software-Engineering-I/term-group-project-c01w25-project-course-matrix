@@ -71,7 +71,7 @@ export default {
         return res.status(400).json({ error: timetableError.message });
 
       //Validate timetable validity:
-      if (!timetableData || timetableData.length === 0) {
+      if (!timetableData) {
         return res.status(404).json({ error: "Calendar id not found" });
       }
 

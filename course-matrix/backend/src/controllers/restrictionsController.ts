@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
+import { start } from "repl";
 
 export default {
   /**
@@ -32,29 +33,10 @@ export default {
       }
 
       // Function to construct date in local time
-      const restriction_start = new Date(`2025-08-08T${start_time}-00:00`);
-      const restriction_end = new Date(`2025-08-08T${end_time}-00:00`);
-      const valid_minutes = [0, 15, 30, 45];
-
-      if (
-        !valid_minutes.includes(restriction_start.getMinutes()) ||
-        !valid_minutes.includes(restriction_end.getMinutes())
-      ) {
-        return res.status(400).json({
-          error: "Event start / end minutes must be 00, 15, 30, 45",
-        });
-      }
-
-      if (restriction_start.getTime() === restriction_end.getTime()) {
+      if (!start_time && !end_time) {
         return res
           .status(400)
-          .json({ error: "Event start and end time must not be the same" });
-      }
-
-      if (restriction_start.getTime() - restriction_end.getTime() > 0) {
-        return res
-          .status(400)
-          .json({ error: "Event start time cannot be after event end time" });
+          .json({ error: "Start time or end time must be provided" });
       }
 
       //Retrieve users allowed to access the timetable
@@ -83,6 +65,25 @@ export default {
           .json({ error: "Unauthorized access to timetable restriction" });
       }
 
+      let startTime: String | null = null;
+      let endTime: String | null = null;
+
+      if (start_time) {
+        let restriction_start_time = new Date(start_time);
+        startTime = restriction_start_time.toISOString().split("T")[1];
+      }
+
+      if (end_time) {
+        let restriction_end_time = new Date(end_time);
+        endTime = restriction_end_time.toISOString().split("T")[1];
+      }
+
+      if (!start_time && !end_time) {
+        return res
+          .status(400)
+          .json({ error: "Start time or end time must be provided" });
+      }
+
       const { data: restrictionData, error: restrictionError } = await supabase
         .schema("timetable")
         .from("restriction")
@@ -91,8 +92,8 @@ export default {
             user_id,
             type,
             days,
-            start_time,
-            end_time,
+            start_time: startTime,
+            end_time: endTime,
             disabled,
             num_days,
             calendar_id,
@@ -203,34 +204,17 @@ export default {
         return res.status(404).json({ error: "Restriction id does not exist" });
       }
 
-      // Function to construct date in local time
-      const restriction_start = new Date(
-        `2025-08-08T${updateData.start_time}-00:00`,
-      );
-      const restriction_end = new Date(
-        `2025-08-08T${updateData.end_time}-00:00`,
-      );
-      const valid_minutes = [0, 15, 30, 45];
-
-      if (
-        !valid_minutes.includes(restriction_start.getMinutes()) ||
-        !valid_minutes.includes(restriction_end.getMinutes())
-      ) {
-        return res.status(400).json({
-          error: "Event start / end minutes must be 00, 15, 30, 45",
-        });
+      //Ensure start_time and end_time only contain time value
+      if (updateData.start_time) {
+        const restriction_start_time = new Date(updateData.start_time);
+        updateData.start_time = restriction_start_time
+          .toISOString()
+          .split("T")[1];
       }
 
-      if (restriction_start.getTime() === restriction_end.getTime()) {
-        return res
-          .status(400)
-          .json({ error: "Event start and end time must not be the same" });
-      }
-
-      if (restriction_start.getTime() - restriction_end.getTime() > 0) {
-        return res
-          .status(400)
-          .json({ error: "Event start time cannot be after event end time" });
+      if (updateData.end_time) {
+        const restriction_end_time = new Date(updateData.end_time);
+        updateData.end_time = restriction_end_time.toISOString().split("T")[1];
       }
 
       //Retrieve users allowed to access the timetable

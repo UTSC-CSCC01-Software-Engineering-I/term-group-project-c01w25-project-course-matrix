@@ -21,13 +21,18 @@ const COOKIE_OPTIONS: CookieOptions = {
  */
 export const signUp = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { username, email, password } = req.body;
 
     // calling supabase for user registeration
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${config.CLIENT_APP_URL}/signup-success` },
+      options: {
+        emailRedirectTo: `${config.CLIENT_APP_URL}/signup-success`,
+        data: {
+          username: username,
+        },
+      },
     });
 
     if (data.user?.identities?.length === 0) {
@@ -215,6 +220,77 @@ export const resetPassword = asyncHandler(
     } catch (error: any) {
       console.error("Error resetting password:", error);
       res.status(500).json({ error: error.message });
+    }
+  },
+);
+
+/**
+ * @route DELETE /auth/accountDelete
+ * @description Deletes a users's account
+ *
+ * This endpoint:
+ * - Takes 1 field, the user's UUID
+ * - Calls supabase's deleteUser() method to delete the user
+ * - Responds with a success message if the user is deleted successfully
+ * - Responds with an error message if the user is not deleted successfully
+ */
+export const accountDelete = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { uuid } = req.body;
+
+    if (!uuid) {
+      return res.status(400).json({ error: "User ID (uuid) is required" });
+    }
+
+    const { error } = await supabase.auth.admin.deleteUser(uuid);
+
+    if (error) {
+      console.error("Supabase Error:", error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.status(200).json({
+      message: `User ${uuid} deleted successfully`,
+    });
+  },
+);
+
+/**
+ * @route POST
+ * @description Updates a users's accoount username
+ *
+ * This endpoint:
+ * - Takes 1 field, the user's new username
+ * - Calls supabase's updayUserById function
+ * - Responds with a success message if the username updates successfully
+ * - Responds with an error message if the username updates unsuccessfully
+ */
+export const updateUsername = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { userId, username } = req.body;
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!username) {
+      return res.status(400).json({ error: "Username is required" });
+    }
+
+    if (!user) {
+      return res.status(400).json({ error: "Unable to get user" });
+    } else {
+      const updatedMetadata = { ...user.user_metadata, username: username };
+
+      const { data, error } = await supabase.auth.admin.updateUserById(userId, {
+        user_metadata: updatedMetadata,
+      });
+
+      if (error) {
+        return res.status(400).json({ error: "unable to update user" });
+      } else {
+        return res.status(200).json(`Updated metadata: ${updatedMetadata}`);
+      }
     }
   },
 );

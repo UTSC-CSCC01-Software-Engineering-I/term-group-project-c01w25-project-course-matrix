@@ -46,6 +46,30 @@ export const authApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+    accountDelete: builder.mutation({
+      query: (data) => ({
+        url: `${AUTH_URL}/accountDelete`,
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+        },
+        body: data,
+        credentials: "include",
+      }),
+    }),
+    updateUsername: builder.mutation({
+      query: (data) => ({
+        url: `${AUTH_URL}/updateUsername`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+        },
+        body: data,
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -54,4 +78,6 @@ export const {
   useLogoutMutation,
   useSignupMutation,
   useGetSessionQuery,
+  useAccountDeleteMutation,
+  useUpdateUsernameMutation,
 } = authApiSlice;

@@ -6,8 +6,14 @@ import { config } from "dotenv";
 const configFile = `./.env`;
 config({ path: configFile });
 
-const { PORT, NODE_ENV, CLIENT_APP_URL, DATABASE_URL, DATABASE_KEY } =
-  process.env;
+const {
+  PORT,
+  NODE_ENV,
+  CLIENT_APP_URL,
+  DATABASE_URL,
+  DATABASE_KEY,
+  OPENAI_API_KEY,
+} = process.env;
 
 /**
  * Configuration object containing environment variables.
@@ -21,4 +27,5 @@ export default {
   CLIENT_APP_URL,
   DATABASE_URL,
   DATABASE_KEY,
+  OPENAI_API_KEY,
 };

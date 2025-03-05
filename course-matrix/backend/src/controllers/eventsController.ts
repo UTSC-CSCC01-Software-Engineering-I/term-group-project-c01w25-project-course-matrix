@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
+import { start } from "repl";
 
 /**
  * Helper method to generate weekly course events.
@@ -53,7 +54,7 @@ function generateWeeklyCourseEvents(
   calendar_id: string,
   offering_id: string,
   semester_start_date: string,
-  semester_end_date: string,
+  semester_end_date: string
 ): any[] {
   //Map weekday code to JS day number
   const weekdayMap: { [key: string]: number } = {
@@ -214,7 +215,7 @@ export default {
             calendar_id,
             offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
           //If no semester dates provided, insert a single event using the provided event_date
@@ -265,6 +266,10 @@ export default {
         const start_time = new Date(`${event_date}T${event_start}-00:00`);
         const end_time = new Date(`${event_date}T${event_end}-00:00`);
         const valid_minutes = [0, 15, 30, 45];
+
+        if (isNaN(start_time.getTime()) || isNaN(end_time.getTime())) {
+          return res.status(400).json({ error: "Invalid event date or time" });
+        }
 
         if (
           !valid_minutes.includes(start_time.getMinutes()) ||
@@ -509,7 +514,7 @@ export default {
             calendar_id,
             new_offering_id,
             semester_start_date,
-            semester_end_date,
+            semester_end_date
           );
         } else {
           const eventDate = getNextWeekDayOccurance(courseDay);
@@ -567,17 +572,44 @@ export default {
         }
 
         // Function to construct date in local time
-        const start_time = new Date(`${event_date}T${event_start}-00:00`);
-        const end_time = new Date(`${event_date}T${event_end}-00:00`);
+
+        let start_time = null;
+        let end_time = null;
+        let date = null;
         const valid_minutes = [0, 15, 30, 45];
 
-        if (
-          !valid_minutes.includes(start_time.getMinutes()) ||
-          !valid_minutes.includes(end_time.getMinutes())
-        ) {
-          return res.status(400).json({
-            error: "Event start / end minutes must be 00, 15, 30, 45",
-          });
+        if (!event_date) {
+          date = userEventData.event_date;
+        } else {
+          date = event_date;
+        }
+
+        if (event_start) {
+          start_time = new Date(`${date}T${event_start}-00:00`);
+          if (!valid_minutes.includes(start_time.getMinutes())) {
+            return res.status(400).json({
+              error: "Event start time must be 00, 15, 30, 45",
+            });
+          }
+        } else {
+          start_time = new Date(`${date}T${userEventData.event_start}-00:00`);
+        }
+
+        if (event_end) {
+          end_time = new Date(`${date}T${event_end}-00:00`);
+          if (!valid_minutes.includes(end_time.getMinutes())) {
+            return res.status(400).json({
+              error: "Event end  time must be 00, 15, 30, 45",
+            });
+          }
+        } else {
+          end_time = new Date(`${date}T${userEventData.event_end}-00:00`);
+        }
+
+        if (!start_time || !end_time) {
+          console.log("Start time or end time is null");
+          console.log("start_time:", start_time);
+          console.log("end_time:", end_time);
         }
 
         if (start_time.getTime() === end_time.getTime()) {
@@ -586,7 +618,7 @@ export default {
             .json({ error: "Event start and end time must not be the same" });
         }
 
-        if (start_time.getTime() - end_time.getTime() > 0) {
+        if (start_time.getTime() > end_time.getTime()) {
           return res
             .status(400)
             .json({ error: "Event start time cannot be after event end time" });

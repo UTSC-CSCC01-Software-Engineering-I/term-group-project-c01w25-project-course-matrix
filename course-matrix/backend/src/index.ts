@@ -16,6 +16,7 @@ import {
   departmentsRouter,
   offeringsRouter,
 } from "./routes/courseRouter";
+import { timetableRouter } from "./routes/timetableRouter";
 import { aiRouter } from "./routes/aiRouter";
 
 const app: Express = express();
@@ -44,6 +45,7 @@ app.use("/auth", authRouter);
 app.use("/api/courses", coursesRouter);
 app.use("/api/departments", departmentsRouter);
 app.use("/api/offerings", offeringsRouter);
+app.use("/api/timetables", timetableRouter);
 app.use("/api/ai", aiRouter);
 
 /**

@@ -142,13 +142,19 @@ const defaultComponents = memoizeMarkdownComponents({
   ),
   ul: ({ className, ...props }) => (
     <ul
-      className={cn("my-5 ml-6 list-disc [&>li]:mt-2", className)}
+      className={cn(
+        "my-5 ml-6 text-sm list-disc [&>li]:mt-2 leading-6",
+        className,
+      )}
       {...props}
     />
   ),
   ol: ({ className, ...props }) => (
     <ol
-      className={cn("my-5 ml-6 list-decimal [&>li]:mt-2", className)}
+      className={cn(
+        "my-5 ml-6 text-sm list-decimal [&>li]:mt-2 leading-6",
+        className,
+      )}
       {...props}
     />
   ),
@@ -158,7 +164,7 @@ const defaultComponents = memoizeMarkdownComponents({
   table: ({ className, ...props }) => (
     <table
       className={cn(
-        "my-5 w-full border-separate border-spacing-0 overflow-y-auto",
+        "my-5 w-full text-sm border-separate border-spacing-0 overflow-y-auto",
         className,
       )}
       {...props}
@@ -167,7 +173,7 @@ const defaultComponents = memoizeMarkdownComponents({
   th: ({ className, ...props }) => (
     <th
       className={cn(
-        "bg-muted px-4 py-2 text-left font-bold first:rounded-tl-lg last:rounded-tr-lg [&[align=center]]:text-center [&[align=right]]:text-right",
+        "bg-muted px-4 py-2 text-sm text-left font-bold first:rounded-tl-lg last:rounded-tr-lg [&[align=center]]:text-center [&[align=right]]:text-right",
         className,
       )}
       {...props}
@@ -176,7 +182,7 @@ const defaultComponents = memoizeMarkdownComponents({
   td: ({ className, ...props }) => (
     <td
       className={cn(
-        "border-b border-l px-4 py-2 text-left last:border-r [&[align=center]]:text-center [&[align=right]]:text-right",
+        "border-b border-l text-sm px-4 py-2 text-left last:border-r [&[align=center]]:text-center [&[align=right]]:text-right",
         className,
       )}
       {...props}
@@ -185,7 +191,7 @@ const defaultComponents = memoizeMarkdownComponents({
   tr: ({ className, ...props }) => (
     <tr
       className={cn(
-        "m-0 border-b p-0 first:border-t [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg",
+        "m-0 border-b p-0 text-sm first:border-t [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg",
         className,
       )}
       {...props}

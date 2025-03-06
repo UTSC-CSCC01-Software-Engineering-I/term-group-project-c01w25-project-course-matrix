@@ -1,6 +1,7 @@
 import { z, ZodType } from "zod";
 
 export type SignupForm = {
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -8,11 +9,14 @@ export type SignupForm = {
 
 export const SignupFormSchema: ZodType<SignupForm> = z
   .object({
+    username: z
+      .string()
+      .min(1, "Please enter a Username")
+      .max(50, "Username must be 50 characters or less"),
     email: z.string().min(1, "Please enter an email").email("Invalid email"),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
-      .max(50, "Password must be 50 characters or less")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
       .regex(/[0-9]/, "Password must contain at least one number")

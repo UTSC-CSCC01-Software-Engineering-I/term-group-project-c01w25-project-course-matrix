@@ -19,10 +19,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail } from "lucide-react";
-import { useLogoutMutation } from "@/api/authApiSlice";
+import {
+  useAccountDeleteMutation,
+  useLogoutMutation,
+  useUpdateUsernameMutation,
+} from "@/api/authApiSlice";
 import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
 
 /**
  * UserMenu Component
@@ -57,6 +62,20 @@ export function UserMenu() {
   const dispatch = useDispatch();
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
+  const [deleteAccount] = useAccountDeleteMutation();
+  const [usernameUpdate] = useUpdateUsernameMutation();
+
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const user_metadata = JSON.parse(localStorage.getItem("userInfo") ?? "{}"); //User Data
+  const username =
+    (user_metadata?.user?.user_metadata?.username as string) ?? "John Doe";
+  const initials = username //Gets User Initials
+    .split(" ") // Split the string by spaces
+    .map((word) => word[0]) // Take the first letter of each word
+    .join("") // Join them back into a string
+    .toUpperCase(); // Convert to uppercase;
+
+  const userId = user_metadata.user.id;
 
   const handleLogout = async () => {
     try {
@@ -68,25 +87,53 @@ export function UserMenu() {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await deleteAccount({ uuid: userId }).unwrap();
+      dispatch(clearCredentials());
+      navigate("/");
+    } catch (err) {
+      console.error("Delete account failed: ", err);
+    }
+  };
+
+  const handleUsernameUpdate = async () => {
+    try {
+      const username = usernameRef?.current?.value;
+      if (!username || !username.trim()) {
+        return;
+      }
+      user_metadata.user.user_metadata.username =
+        usernameRef.current?.value.trimEnd();
+      localStorage.setItem("userInfo", JSON.stringify(user_metadata));
+      await usernameUpdate({
+        userId: userId,
+        username: user_metadata.user.user_metadata.username,
+      });
+    } catch (err) {
+      console.error("Update username failed: ", err);
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="flex flex-row items-center gap-4 px-4 text-sm">
-          {/* John Doe is just a placeholder name for now */}
-          John Doe
+          {username}
           <Avatar>
             {/* Avatar Image is the profile picture of the user. The default avatar is used as a placeholder for now. */}
             <AvatarImage src="../../public/img/default-avatar.png" />
             {/* Avatar Fallback is the initials of the user. Avatar Fallback will be used if Avatar Image fails to load */}
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {/* Placeholder email of john.doe@gmail.com for now */}
         <div className="p-4 flex gap-4 items-center">
           <Mail size={16} />
-          <p className="text-sm font-medium">john.doe@gmail.com</p>
+          <p className="text-sm font-medium">
+            {user_metadata?.user?.user_metadata?.email}
+          </p>
         </div>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <Dialog>
@@ -100,6 +147,19 @@ export function UserMenu() {
                   Edit your account details.
                 </DialogDescription>
               </DialogHeader>
+              <Label htmlFor="username">New User Name</Label>
+              {/* Disable this email input box for now until we have the backend for accounts set up */}
+              <Input
+                id="username"
+                type="text"
+                placeholder={user_metadata.user.user_metadata.username}
+                ref={usernameRef}
+                onKeyDown={(e) => {
+                  if (e.key === " ") {
+                    e.stopPropagation(); // Allows space input
+                  }
+                }}
+              />
               <Label htmlFor="email">New Email</Label>
               {/* Disable this email input box for now until we have the backend for accounts set up */}
               <Input
@@ -116,7 +176,7 @@ export function UserMenu() {
                   <Button variant="secondary">Cancel</Button>
                 </DialogClose>
                 <DialogClose asChild>
-                  <Button>Save</Button>
+                  <Button onClick={handleUsernameUpdate}>Save</Button>
                 </DialogClose>
               </DialogFooter>
             </DialogContent>
@@ -153,6 +213,7 @@ export function UserMenu() {
                   <Button
                     variant="destructive"
                     className="bg-red-600 text-white"
+                    onClick={handleDelete}
                   >
                     Delete
                   </Button>

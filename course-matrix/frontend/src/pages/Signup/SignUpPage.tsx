@@ -58,6 +58,7 @@ const SignupPage = () => {
   const signupForm = useForm<z.infer<typeof SignupFormSchema>>({
     resolver: zodResolver(SignupFormSchema),
     defaultValues: {
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -110,6 +111,19 @@ const SignupPage = () => {
               onSubmit={signupForm.handleSubmit(onSubmit)}
               className="space-y-4"
             >
+              <FormField
+                control={signupForm.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem className="text-left w-[400px]">
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input {...field} id="UsernameInput" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={signupForm.control}
                 name="email"

@@ -37,6 +37,7 @@ async function processCSV(filePath: string, namespace: string) {
   });
 }
 
+
 // Generate embeddings for pdfs
 async function processPDF(filePath: string, namespace: string) {
   const fileName = path.basename(filePath);

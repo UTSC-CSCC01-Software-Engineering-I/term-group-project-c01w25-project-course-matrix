@@ -57,16 +57,8 @@ export const NAMESPACE_KEYWORDS = {
     "concurrent",
     "co-enroll",
   ],
-  departments: [
-    "department",
-    "faculty",
-    "program",
-    "major",
-    "minor",
-    "specialist",
-    "division",
-    "academic unit",
-  ],
+  departments: ["department", "faculty", "division"],
+  programs: ["program", "major", "minor", "specialist", "degree", "stream"],
 };
 
 // General academic terms that might indicate a search is needed

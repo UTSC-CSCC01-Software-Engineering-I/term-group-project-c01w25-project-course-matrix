@@ -23,6 +23,7 @@ import { useLogoutMutation } from "@/api/authApiSlice";
 import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
 import { useNavigate } from "react-router-dom";
+import { useRuntimeRefresh } from "@/pages/Assistant/runtime-provider";
 
 /**
  * UserMenu Component
@@ -57,11 +58,13 @@ export function UserMenu() {
   const dispatch = useDispatch();
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
+  const refreshRuntime = useRuntimeRefresh();
 
   const handleLogout = async () => {
     try {
       await logout({}).unwrap();
       dispatch(clearCredentials());
+      refreshRuntime();
       navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);

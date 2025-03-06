@@ -44,6 +44,7 @@ namespaceToMinResults.set("offerings", 16); // Typically, more offering info is 
 namespaceToMinResults.set("prerequisites", 5);
 namespaceToMinResults.set("corequisites", 5);
 namespaceToMinResults.set("departments", 5);
+namespaceToMinResults.set("programs", 5);
 
 // Consider the last X messages in history to influence vector DB query
 export const CHATBOT_MEMORY_THRESHOLD = 3;

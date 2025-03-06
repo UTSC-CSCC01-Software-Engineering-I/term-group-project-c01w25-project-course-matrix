@@ -71,7 +71,7 @@ async function processPDF(filePath: string, namespace: string) {
   // console.log("Sample split docs: ", splitDocs.slice(0, 6))
 
   console.log(
-    `Split into ${splitDocs.length} sections by "Calendar Section:" delimiter`
+    `Split into ${splitDocs.length} sections by "Calendar Section:" delimiter`,
   );
 
   // Store the split documents as embeddings

@@ -13,6 +13,8 @@ const {
   DATABASE_URL,
   DATABASE_KEY,
   OPENAI_API_KEY,
+  PINECONE_API_KEY,
+  PINECONE_INDEX_NAME,
 } = process.env;
 
 /**
@@ -28,4 +30,6 @@ export default {
   DATABASE_URL,
   DATABASE_KEY,
   OPENAI_API_KEY,
+  PINECONE_API_KEY,
+  PINECONE_INDEX_NAME,
 };

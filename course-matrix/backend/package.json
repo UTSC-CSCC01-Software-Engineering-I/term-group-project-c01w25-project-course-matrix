@@ -4,7 +4,9 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "ts-node -r dotenv/config src/index.ts"
+    "dev": "ts-node -r dotenv/config src/index.ts",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "keywords": [],
   "author": "",

@@ -195,7 +195,9 @@ const TimetableBuilder = () => {
               {isEditingTimetable && (
                 <Select
                   onValueChange={(value) => setTimetableId(parseInt(value))}
-                  defaultValue={editingTimetableId ? editingTimetableId.toString() : ""}
+                  defaultValue={
+                    editingTimetableId ? editingTimetableId.toString() : ""
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select calendar" />

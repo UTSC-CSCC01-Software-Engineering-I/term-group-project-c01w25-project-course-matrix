@@ -16,7 +16,7 @@ const Home = () => {
     (user_metadata?.user?.user_metadata?.username as string) ??
     (user_metadata?.user?.email as string);
 
-  const { data, isLoading } = useGetTimetablesQuery() as {
+  const { data, isLoading, refetch } = useGetTimetablesQuery() as {
     data: Timetable[];
     isLoading: boolean;
   };
@@ -63,6 +63,7 @@ const Home = () => {
           ) : (
             data?.map((timetable, index) => (
               <TimetableCard
+                refetch={refetch}
                 key={index}
                 timetableId={timetable.id}
                 title={timetable.timetable_title}

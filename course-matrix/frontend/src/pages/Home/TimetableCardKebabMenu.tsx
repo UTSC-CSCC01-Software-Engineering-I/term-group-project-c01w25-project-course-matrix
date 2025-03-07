@@ -20,6 +20,7 @@ import { EllipsisVertical } from "lucide-react";
 import { useDeleteTimetableMutation } from "@/api/timetableApiSlice";
 
 interface TimetableCardKebabMenuProps {
+  refetch: () => void;
   timetableId: number;
 }
 
@@ -28,6 +29,7 @@ interface TimetableCardKebabMenuProps {
  * @returns {JSX.Element} The rendered component.
  */
 const TimetableCardKebabMenu = ({
+  refetch,
   timetableId,
 }: TimetableCardKebabMenuProps) => {
   const [deleteTimetable] = useDeleteTimetableMutation();
@@ -35,7 +37,7 @@ const TimetableCardKebabMenu = ({
   const handleDelete = async () => {
     try {
       await deleteTimetable(timetableId);
-      window.location.reload();
+      refetch();
     } catch (error) {
       console.error("Failed to delete timetable:", error);
     }

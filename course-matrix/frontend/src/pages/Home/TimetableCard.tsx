@@ -13,6 +13,7 @@ import TimetableCardKebabMenu from "./TimetableCardKebabMenu";
 import { useUpdateTimetableMutation } from "@/api/timetableApiSlice";
 
 interface TimetableCardProps {
+  refetch: () => void;
   timetableId: number;
   title: string;
   lastEditedDate: Date;
@@ -25,6 +26,7 @@ interface TimetableCardProps {
  * @returns {JSX.Element} The rendered component.
  */
 const TimetableCard = ({
+  refetch,
   timetableId,
   title,
   lastEditedDate,
@@ -88,7 +90,7 @@ const TimetableCard = ({
                 >
                   <Pencil />
                 </Button>
-                <TimetableCardKebabMenu timetableId={timetableId} />
+                <TimetableCardKebabMenu refetch={refetch} timetableId={timetableId} />
               </>
             )}
             {isEditingTitle && (

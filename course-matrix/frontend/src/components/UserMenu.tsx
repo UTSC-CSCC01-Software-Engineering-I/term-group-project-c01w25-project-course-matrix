@@ -27,6 +27,7 @@ import {
 import { useDispatch } from "react-redux";
 import { clearCredentials } from "@/stores/authslice";
 import { useNavigate } from "react-router-dom";
+import { useRuntimeRefresh } from "@/pages/Assistant/runtime-provider";
 import { useEffect, useState, useRef } from "react";
 
 /**
@@ -62,6 +63,7 @@ export function UserMenu() {
   const dispatch = useDispatch();
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
+  const refreshRuntime = useRuntimeRefresh();
   const [deleteAccount] = useAccountDeleteMutation();
   const [usernameUpdate] = useUpdateUsernameMutation();
 
@@ -81,6 +83,7 @@ export function UserMenu() {
     try {
       await logout({}).unwrap();
       dispatch(clearCredentials());
+      refreshRuntime();
       navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);

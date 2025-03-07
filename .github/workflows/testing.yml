@@ -5,7 +5,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install modules
-      run: yarn
     - name: Run tests
-      run: cd course-matrix/frontend && yarn test
+      run: cd course-matrix/frontend && yarn && yarn test

@@ -1,6 +1,6 @@
 // Keywords related to each namespace
 export const NAMESPACE_KEYWORDS = {
-  courses: [
+  courses_v2: [
     "course",
     "class",
     "description",

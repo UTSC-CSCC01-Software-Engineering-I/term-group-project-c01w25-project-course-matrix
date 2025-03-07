@@ -58,8 +58,8 @@ function analyzeQuery(query: string): {
 
   // If a course code is detected, add tehse namespaces
   if (containsCourseCode) {
-    if (!relevantNamespaces.includes("courses"))
-      relevantNamespaces.push("courses");
+    if (!relevantNamespaces.includes("courses_v2"))
+      relevantNamespaces.push("courses_v2");
     if (!relevantNamespaces.includes("offerings"))
       relevantNamespaces.push("offerings");
     if (!relevantNamespaces.includes("prerequisites"))
@@ -70,8 +70,8 @@ function analyzeQuery(query: string): {
   if (DEPARTMENT_CODES.some((code) => lowerQuery.includes(code))) {
     if (!relevantNamespaces.includes("departments"))
       relevantNamespaces.push("departments");
-    if (!relevantNamespaces.includes("courses"))
-      relevantNamespaces.push("courses");
+    if (!relevantNamespaces.includes("courses_v2"))
+      relevantNamespaces.push("courses_v2");
   }
 
   // If search is required at all
@@ -83,7 +83,7 @@ function analyzeQuery(query: string): {
   // If no specific namespaces identified & search required, then search all
   if (requiresSearch && relevantNamespaces.length === 0) {
     relevantNamespaces.push(
-      "courses",
+      "courses_v2",
       "offerings",
       "prerequisites",
       "corequisites",
@@ -154,7 +154,7 @@ async function reformulateQuery(
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    console.log("History: ", conversationHistory);
+    // console.log("History: ", conversationHistory);
 
     // Create messages array with the correct type structure
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
@@ -187,7 +187,13 @@ async function reformulateQuery(
           Output: "What are the course names of course codes: MGTA01, CSCA08, MATA31, MATA35?"
 
           User: "How are you doing today?"
-          Output: "How are you doing today?"`,
+          Output: "How are you doing today?"
+
+          User: "Give 2nd year math courses."
+          Output: "What are some 2nd year math courses?"
+
+          User: "Give first year math courses."
+          Output: "What are some 1st year math courses?"`,
       },
     ];
 
@@ -209,7 +215,7 @@ async function reformulateQuery(
       model: "gpt-4o-mini",
       messages: messages,
       temperature: 0.1, // Lower temperature for more consistent, focused queries
-      max_tokens: 150, // Limit response length
+      max_tokens: latestQuery.length * 3, // Limit response length. Proportional to user input.
       top_p: 0.5, // Reduced top_p for more focused outputs
     });
 

@@ -97,6 +97,7 @@ async function processPDF(filePath: string, namespace: string) {
 // processCSV("../data/tables/offerings_summer_2025.csv", "offerings")
 // processCSV("../data/tables/offerings_winter_2026.csv", "offerings")
 // processCSV("../data/tables/departments.csv", "departments")
+// processCSV("../data/tables/courses_with_year.csv", "courses_v2")
 
 console.log("embeddings done.");
 

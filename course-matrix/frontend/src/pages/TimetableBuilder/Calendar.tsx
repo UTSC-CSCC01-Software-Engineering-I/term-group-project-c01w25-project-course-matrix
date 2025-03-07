@@ -94,7 +94,7 @@ function Calendar({ courseEvents, userEvents }) {
     <div>
       <h1 className="text-4xl flex flex-row justify-between font-medium tracking-tight mb-8">
         <div>Your Timetable</div>
-        <Button size="sm">Save as copy</Button>
+        <Button size="sm">Save Timetable</Button>
       </h1>
       <ScheduleXCalendar calendarApp={calendar} />
     </div>

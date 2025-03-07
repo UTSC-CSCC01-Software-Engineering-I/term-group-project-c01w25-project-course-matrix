@@ -94,6 +94,7 @@ const TimetableBuilder = () => {
 
   const [queryParams, setQueryParams] = useSearchParams();
   const isEditingTimetable = queryParams.has("edit");
+  const editingTimetableId = queryParams.get("edit");
 
   const selectedCourses = form.watch("courses") || [];
   const enabledRestrictions = form.watch("restrictions") || [];
@@ -194,9 +195,7 @@ const TimetableBuilder = () => {
               {isEditingTimetable && (
                 <Select
                   onValueChange={(value) => setTimetableId(parseInt(value))}
-                  defaultValue={
-                    timetables[0] ? timetables[0].id.toString() : ""
-                  }
+                  defaultValue={editingTimetableId.toString()}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select calendar" />

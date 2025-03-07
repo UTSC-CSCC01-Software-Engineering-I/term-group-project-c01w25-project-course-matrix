@@ -52,7 +52,9 @@ const TimetableCardKebabMenu = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>
-          <Link to={`/dashboard/timetable?edit=${timetableId}`}>Edit Timetable</Link>
+          <Link to={`/dashboard/timetable?edit=${timetableId}`}>
+            Edit Timetable
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <Dialog>

@@ -90,7 +90,10 @@ const TimetableCard = ({
                 >
                   <Pencil />
                 </Button>
-                <TimetableCardKebabMenu refetch={refetch} timetableId={timetableId} />
+                <TimetableCardKebabMenu
+                  refetch={refetch}
+                  timetableId={timetableId}
+                />
               </>
             )}
             {isEditingTitle && (

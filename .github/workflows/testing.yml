@@ -6,6 +6,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run frontend tests
-      run: cd course-matrix/frontend && yarn && yarn test
+      run: cd course-matrix/frontend && npm install && npm run test
     - name: Run backend tests
-      run: cd course-matrix/backend && yarn && yarn test
+      run: cd course-matrix/backend && npm install && npm run test

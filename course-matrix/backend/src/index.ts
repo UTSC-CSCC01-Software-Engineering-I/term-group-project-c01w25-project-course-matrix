@@ -24,14 +24,7 @@ const HOST = "localhost";
 let server: Server;
 const swaggerDocs = swaggerjsdoc(swaggerOptions);
 
-app.use(
-  cors({
-    origin: config.CLIENT_APP_URL,
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
-    credentials: true,
-    allowedHeaders: ["Content-Type"],
-  }),
-);
+app.use(cors({ origin: config.CLIENT_APP_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));

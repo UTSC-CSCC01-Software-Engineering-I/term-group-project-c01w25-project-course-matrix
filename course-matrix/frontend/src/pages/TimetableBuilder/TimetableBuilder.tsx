@@ -188,14 +188,14 @@ const TimetableBuilder = () => {
       <div className="w-full">
         <div className="m-8">
           <div className="mb-4 flex flex-row justify-between items-center">
-            <div className="flex items-center gap-4 relative group">
-              <h1 className="text-2xl font-medium tracking-tight">
+            <div>
+              <h1 className="text-2xl font-medium tracking-tight mb-4">
                 {isEditingTimetable ? "Edit Timetable" : "New Timetable"}
               </h1>
               {isEditingTimetable && (
                 <Select
                   onValueChange={(value) => setTimetableId(parseInt(value))}
-                  defaultValue={editingTimetableId.toString()}
+                  defaultValue={editingTimetableId ? editingTimetableId.toString() : ""}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select calendar" />

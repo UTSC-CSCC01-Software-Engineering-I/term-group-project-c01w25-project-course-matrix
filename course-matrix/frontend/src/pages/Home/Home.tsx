@@ -4,7 +4,6 @@ import TimetableCard from "./TimetableCard";
 import TimetableCompareButton from "./TimetableCompareButton";
 import TimetableCreateNewButton from "./TimetableCreateNewButton";
 import { useGetTimetablesQuery } from "../../api/timetableApiSlice";
-import { Timetable } from "../../utils/type-utils";
 
 /**
  * Home component that displays the user's timetables and provides options to create or compare timetables.
@@ -16,10 +15,7 @@ const Home = () => {
     (user_metadata?.user?.user_metadata?.username as string) ??
     (user_metadata?.user?.email as string);
 
-  const { data, isLoading, refetch } = useGetTimetablesQuery() as {
-    data: Timetable[];
-    isLoading: boolean;
-  };
+  const { data, isLoading, refetch } = useGetTimetablesQuery();
 
   return (
     <div className="w-full">

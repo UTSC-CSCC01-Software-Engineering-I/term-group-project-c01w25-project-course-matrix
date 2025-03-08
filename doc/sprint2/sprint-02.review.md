@@ -78,7 +78,7 @@ Work periods proved to be an excellent addition to our group’s productivity. T
 
 
 - Account Editing (https://cscc01-course-matrix.atlassian.net/browse/SCRUM-95). The user can now edit their account from our `auth\users\` table such that they can change their username and password as they please. The user can change their username to anything they want so long as it is not blank nor over 50 characters long and their password can be changed via email confirmation. 
-![Burndown Chart](./images/Burndown.png)
+![Burndown Chart](./images/user_edit.png)
 - Account Deletion (https://cscc01-course-matrix.atlassian.net/browse/SCRUM-28). The user can now delete their account from our `auth\users\` table such that all information regarding the account is deleted as well. 
 ![Account Deletion](images/user_delete.png)
 

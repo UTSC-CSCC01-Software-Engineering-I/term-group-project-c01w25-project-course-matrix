@@ -18,6 +18,7 @@ import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import TimetableBuilder from "../TimetableBuilder/TimetableBuilder";
 import AssistantPage from "../Assistant/AssistantPage";
 import { RuntimeProvider } from "../Assistant/runtime-provider";
+import Home from "../Home/Home";
 
 /**
  * Dashboard Component
@@ -77,7 +78,7 @@ const Dashboard = () => {
                   <Routes>
                     <Route path="*" element={<Navigate to="/not-found" />} />
                     <Route path="/" element={<Navigate to="home" replace />} />
-                    <Route path="/home" element={<>Home</>} />
+                    <Route path="/home" element={<Home />} />
                     <Route path="/timetable" element={<TimetableBuilder />} />
                     <Route path="/assistant" element={<AssistantPage />} />
                   </Routes>

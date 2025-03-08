@@ -20,10 +20,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
   Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
-  SelectContent,
-  SelectItem,
 } from "@/components/ui/select";
 import CourseSearch from "@/pages/TimetableBuilder/CourseSearch";
 import { mockSearchData } from "./mockSearchData";
@@ -32,8 +34,13 @@ import CreateCustomSetting from "./CreateCustomSetting";
 import { formatTime } from "@/utils/format-date-time";
 import { FilterForm, FilterFormSchema } from "@/models/filter-form";
 import { useGetCoursesQuery } from "@/api/coursesApiSlice";
+import { useGetTimetablesQuery } from "@/api/timetableApiSlice";
+import { useGetEventsQuery } from "@/api/eventsApiSlice";
 import { useDebounceValue } from "@/utils/useDebounce";
 import SearchFilters from "./SearchFilters";
+import Calendar from "./Calendar";
+import { Timetable } from "@/utils/type-utils";
+import { useSearchParams } from "react-router-dom";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -85,15 +92,19 @@ const TimetableBuilder = () => {
     resolver: zodResolver(FilterFormSchema),
   });
 
+  const [queryParams, setQueryParams] = useSearchParams();
+  const isEditingTimetable = queryParams.has("edit");
+  const editingTimetableId = queryParams.get("edit");
+
   const selectedCourses = form.watch("courses") || [];
   const enabledRestrictions = form.watch("restrictions") || [];
   const searchQuery = form.watch("search");
   const debouncedSearchQuery = useDebounceValue(searchQuery, 250);
 
-  const [isEditNameOpen, setIsEditNameOpen] = useState(false);
   const [isCustomSettingsOpen, setIsCustomSettingsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterForm | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [timetableId, setTimetableId] = useState(-1);
 
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;
@@ -107,6 +118,20 @@ const TimetableBuilder = () => {
     semester: form.getValues("semester"),
     ...filters,
   });
+
+  const { data: eventsData, isLoading: eventsLoading } = useGetEventsQuery(
+    timetableId,
+  ) as {
+    data: { courseEvents: unknown[]; userEvents: unknown[] };
+    isLoading: boolean;
+  };
+  const courseEvents = eventsData?.courseEvents || [];
+  const userEvents = eventsData?.userEvents || [];
+
+  const { data: timetablesData } = useGetTimetablesQuery() as {
+    data: Timetable[];
+  };
+  const timetables = timetablesData || [];
 
   useEffect(() => {
     if (searchQuery) {
@@ -157,19 +182,37 @@ const TimetableBuilder = () => {
       <div className="w-full">
         <div className="m-8">
           <div className="mb-4 flex flex-row justify-between items-center">
-            <div className="flex items-center gap-4 relative group">
-              <h1 className="text-2xl font-medium tracking-tight">
-                {baseTimetableForm.name}
+            <div>
+              <h1 className="text-2xl font-medium tracking-tight mb-4">
+                {isEditingTimetable ? "Edit Timetable" : "New Timetable"}
               </h1>
-              <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity top-2 -right-7 cursor-pointer">
-                <Edit
-                  size={16}
-                  className="text-gray-500 hover:text-green-500"
-                  onClick={() => {
-                    setIsEditNameOpen(true);
+              {isEditingTimetable && (
+                <Select
+                  onValueChange={(value) => {
+                    setTimetableId(parseInt(value));
+                    setQueryParams({ edit: value });
                   }}
-                />
-              </div>
+                  defaultValue={
+                    editingTimetableId ? editingTimetableId.toString() : ""
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select calendar" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {timetables.map((timetable) => (
+                        <SelectItem
+                          key={timetable.id}
+                          value={timetable.id.toString()}
+                        >
+                          {timetable.timetable_title}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
             </div>
             <div className="flex gap-4 ">
               <Button size="sm" variant="outline" onClick={handleReset}>
@@ -182,7 +225,7 @@ const TimetableBuilder = () => {
         </div>
 
         <div className="m-8 flex gap-12">
-          <div className="w-1/2">
+          <div className="w-2/5">
             <Form {...form}>
               <FormContext.Provider value={form}>
                 <form
@@ -330,11 +373,8 @@ const TimetableBuilder = () => {
               </FormContext.Provider>
             </Form>
           </div>
-          <div className="w-1/2 bg-slate-100/50 flex items-center justify-center">
-            <p className="text-sm text-muted-foreground">
-              {" "}
-              Fill in the form to create your timetable!
-            </p>
+          <div className="w-3/5">
+            <Calendar courseEvents={courseEvents} userEvents={userEvents} />
           </div>
           {isCustomSettingsOpen && (
             <CreateCustomSetting

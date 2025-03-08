@@ -72,6 +72,7 @@
   - Generate timetable
 
 - Calendar customization features:
+
   - Add, update, and delete personal events from the user's calendar
   - Customize the personal calendar with colour-coding
   - Overlay course options over the user's current calendar
@@ -96,4 +97,5 @@ None
   - When users finish filling out the filtering options and click on the search button, the website should not take over 5 seconds to display all courses that fit the description
 
 ### 2.5 Dependencies and Limitations
+
 - None

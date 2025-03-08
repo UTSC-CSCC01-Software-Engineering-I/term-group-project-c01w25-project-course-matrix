@@ -15,6 +15,7 @@
   - Develop software backend API and frontend UI to handle users' account registrations and authentications to ensure secured access to different pages
 
 - **Epic 2: Course Database**: Kevin and Austin
+
   - Create a course database schema to store all course offerings and course information
   - Develop software backend API and frontend UI to display all courses and course offerings information
 
@@ -36,6 +37,7 @@ In addition to their specific roles, all team members have a collective responsi
     - Define tasks and responsibilities for each team member
 
 - **Stand up meeting**:
+
   - Location: Online or in-person depending on members availability
   - Time: Every Tuesday from 12 pm to 1 pm, Friday and Sunday from 9 pm to 10 pm
   - Purposes

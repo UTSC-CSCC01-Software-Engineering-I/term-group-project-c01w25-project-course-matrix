@@ -50,13 +50,13 @@ Furthermore, we laid the foundation for a timetable generator by enabling users 
 - Build database schemas to store course information, course offerings and user accounts by Feb 9th 2025
 
   - `course` schema:
+
     - The `offerings` table should have columns for the Meeting Section, Session Offering, Day of Week, Start-End time, Location, Number of current enrollments, Max number of enrollments, Instructor
     - The `courses` table should have columns for the course code, name, breadth requirements, description, prerequisites, corequisites, and exclusions
     - The `corequisites` table should have columns to map each course_id with their corresponding corequisite course_ids
     - The `prerequisites` table should have columns to map each course_id with their corresponding prerequisite course_ids
     - The `departments` table should have columns to map each department to their code name as shown in the course codes
-
-  ![course schema](./images/course_schema.png)
+      ![course schema](./images/course_schema.png)
 
   - `account` schema (renamed: `auth` schema) :
     - The `users` table should have columns to store user account information: email, encrypted password, user_id

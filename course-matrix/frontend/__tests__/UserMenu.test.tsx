@@ -1,13 +1,8 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { BrowserRouter as Router } from "react-router-dom";
 import configureStore from "redux-mock-store";
 import { UserMenu } from "../src/components/UserMenu";
-import "@testing-library/jest-dom";
+import { afterEach, beforeEach, describe, expect, test } from "@jest/globals";
 
-const mockStore = configureStore([]);
-const store = mockStore({});
+// const mockStore = configureStore([]);
 
 describe("UserMenu Component", () => {
   beforeEach(() => {
@@ -29,17 +24,11 @@ describe("UserMenu Component", () => {
     localStorage.clear();
   });
 
-  test("renders user menu with username and avatar", () => {
-    // render(
-    //   <Provider store={store}>
-    //     <Router>
-    //       <UserMenu />
-    //     </Router>
-    //   </Provider>,
-    // );
-    // expect(screen.getByText("John Doe")).toBeInTheDocument();
-    // expect(screen.getByText("JD")).toBeInTheDocument();
+  test("check local storage", () => {
+    expect(localStorage.getItem("userInfo")).not.toBeNull();
   });
+
+  // Will finish the rest of the tests below in Sprint 3
 
   //   test("opens edit account dialog", () => {
   //     render(

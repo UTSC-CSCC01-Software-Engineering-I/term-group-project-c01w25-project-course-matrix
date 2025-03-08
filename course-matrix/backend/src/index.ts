@@ -94,3 +94,5 @@ const unexpectedErrorHandler = (error: unknown) => {
 
 process.on("uncaughtException", unexpectedErrorHandler);
 process.on("unhandledRejection", unexpectedErrorHandler);
+
+export default app;

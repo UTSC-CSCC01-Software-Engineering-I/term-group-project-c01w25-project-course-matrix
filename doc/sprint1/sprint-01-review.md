@@ -55,7 +55,6 @@ Furthermore, we laid the foundation for a timetable generator by enabling users 
     - The `corequisites` table should have columns to map each course_id with their corresponding corequisite course_ids
     - The `prerequisites` table should have columns to map each course_id with their corresponding prerequisite course_ids
     - The `departments` table should have columns to map each department to their code name as shown in the course codes
-
   ![course schema](./images/course_schema.png)
 
   - `account` schema (renamed: `auth` schema) :

@@ -1,5 +1,4 @@
 import { Input } from "@/components/ui/input";
-
 import { cn } from "@/lib/utils";
 import React from "react";
 import {
@@ -9,7 +8,6 @@ import {
   getDateByType,
   setDateByType,
 } from "../utils/time-picker-utils";
-
 export interface TimePickerInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   picker: TimePickerType;
@@ -19,7 +17,6 @@ export interface TimePickerInputProps
   onRightFocus?: () => void;
   onLeftFocus?: () => void;
 }
-
 const TimePickerInput = React.forwardRef<
   HTMLInputElement,
   TimePickerInputProps
@@ -91,7 +88,6 @@ const TimePickerInput = React.forwardRef<
       }
       if (e.key >= "0" && e.key <= "9") {
         if (picker === "12hours") setPrevIntKey(e.key);
-
         const newValue = calculateNewValue(e.key);
         if (flag) onRightFocus?.();
         setFlag((prev) => !prev);
@@ -99,7 +95,6 @@ const TimePickerInput = React.forwardRef<
         setDate(setDateByType(tempDate, newValue, picker, period));
       }
     };
-
     return (
       <Input
         ref={ref}

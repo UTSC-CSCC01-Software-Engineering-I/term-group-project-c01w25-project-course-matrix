@@ -78,7 +78,6 @@ A fully realized Course Matrix will include the following features and developme
 - **Intuitive User Interface**: A seamless and user-friendly design ensures users can easily navigate and utilize the platform without requiring extensive instructions.
 
 **Development Standards**:
-
 - **Rigorous Testing**: All code is thoroughly tested to address potential bugs and ensure functionality across all use cases.
 - **Feature Integration and Code Review**: New features are reviewed by at least two team members to ensure quality and consistency before being merged into the production environment, adhering to a structured code review process.
 

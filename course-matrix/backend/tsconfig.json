@@ -1,19 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./build",
     "strict": true,
-    "jsx": "react-jsx",
-    "types": ["jest", "@testing-library/jest-dom"]
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
-  "include": [
-    "**/*.test.tsx",
-    "**/*.test.ts",
-    "./jest.config.ts",
-    "tests",
-    "src"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "tests"]
 }

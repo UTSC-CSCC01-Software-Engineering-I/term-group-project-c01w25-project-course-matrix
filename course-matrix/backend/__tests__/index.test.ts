@@ -3,11 +3,10 @@ import request from "supertest";
 import app from "../src/index";
 
 describe("Sum function", () => {
-	test("Returns correct value", () => {
-		expect(2 + 3).toEqual(5);
-	});
+  test("Returns correct value", () => {
+    expect(2 + 3).toEqual(5);
+  });
 });
-
 
 // Will finish the rest of the tests below in Sprint 3
 

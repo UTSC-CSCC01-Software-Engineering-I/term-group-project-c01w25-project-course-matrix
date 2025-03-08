@@ -211,7 +211,7 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z
   );
 
 export const baseTimetableForm: TimetableForm = {
-  name: "Edit Timetable",
+  name: "New Timetable",
   date: new Date(),
   semester: "Fall 2025",
   search: "",

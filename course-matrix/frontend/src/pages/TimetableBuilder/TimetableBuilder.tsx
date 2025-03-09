@@ -104,7 +104,7 @@ const TimetableBuilder = () => {
   const [isCustomSettingsOpen, setIsCustomSettingsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterForm | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [timetableId, setTimetableId] = useState(-1);
+  const [timetableId, setTimetableId] = useState(editingTimetableId ? parseInt(editingTimetableId) : 0);
 
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;

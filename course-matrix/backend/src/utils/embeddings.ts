@@ -5,6 +5,7 @@ import { PineconeStore } from "@langchain/pinecone";
 import { Pinecone } from "@pinecone-database/pinecone";
 import config from "../config/config";
 import path from "path";
+import { convertBreadthRequirement } from "./convert-breadth-requirement";
 
 console.log("Running embeddings process...");
 
@@ -25,6 +26,35 @@ async function processCSV(filePath: string, namespace: string) {
   docs = docs.map((doc, index) => ({
     ...doc,
     metadata: { ...doc.metadata, source: fileName, row: index + 1 }, // Store row number & csv filename
+  }));
+  console.log("Sample doc: ", docs[0]);
+
+  const index = pinecone.Index(process.env.PINECONE_INDEX_NAME!);
+
+  // Store each row as an individual embedding
+  await PineconeStore.fromDocuments(docs, embeddings, {
+    pineconeIndex: index as any,
+    namespace: namespace,
+  });
+}
+
+// Generate embeddings for courses.csv
+async function processCoursesCSV(filePath: string, namespace: string) {
+  const fileName = path.basename(filePath);
+  const loader = new CSVLoader(filePath);
+  let docs = await loader.load();
+
+  docs = docs.map((doc, index) => ({
+    ...doc,
+    metadata: {
+      ...doc.metadata,
+      source: fileName,
+      row: index + 1,
+      breadth_requirement: convertBreadthRequirement(
+        doc.pageContent.split("\n")[1].split(": ")[1]
+      ),
+      year_level: doc.pageContent.split("\n")[10].split(": ")[1],
+    },
   }));
   console.log("Sample doc: ", docs[0]);
 
@@ -71,7 +101,7 @@ async function processPDF(filePath: string, namespace: string) {
   // console.log("Sample split docs: ", splitDocs.slice(0, 6))
 
   console.log(
-    `Split into ${splitDocs.length} sections by "Calendar Section:" delimiter`,
+    `Split into ${splitDocs.length} sections by "Calendar Section:" delimiter`
   );
 
   // Store the split documents as embeddings
@@ -98,6 +128,7 @@ async function processPDF(filePath: string, namespace: string) {
 // processCSV("../data/tables/offerings_winter_2026.csv", "offerings")
 // processCSV("../data/tables/departments.csv", "departments")
 // processCSV("../data/tables/courses_with_year.csv", "courses_v2")
+// processCoursesCSV("../data/tables/courses_with_year.csv", "courses_v3");
 
 console.log("embeddings done.");
 

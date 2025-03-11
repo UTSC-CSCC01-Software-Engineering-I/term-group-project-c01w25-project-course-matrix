@@ -292,7 +292,7 @@ const TimetableBuilder = () => {
                   </div>
                   <div className="flex flex-col">
                     <p className="text-sm pb-2">
-                      Selected courses: {selectedCourses.length}
+                      Selected courses: {selectedCourses.length} (Max 8)
                     </p>
                     <div className="flex gap-2 flex-col">
                       {selectedCourses.map((course, index) => (
@@ -372,18 +372,19 @@ const TimetableBuilder = () => {
 
                   <Button type="submit">Generate</Button>
                 </form>
+
+                {isCustomSettingsOpen && (
+                  <CreateCustomSetting
+                    submitHandler={handleAddRestriction}
+                    closeHandler={() => setIsCustomSettingsOpen(false)}
+                  />
+                )}
               </FormContext.Provider>
             </Form>
           </div>
           <div className="w-3/5">
             <Calendar courseEvents={courseEvents} userEvents={userEvents} />
           </div>
-          {isCustomSettingsOpen && (
-            <CreateCustomSetting
-              submitHandler={handleAddRestriction}
-              closeHandler={() => setIsCustomSettingsOpen(false)}
-            />
-          )}
 
           {showFilters && (
             <SearchFilters

@@ -83,7 +83,7 @@ export const RestrictionSchema = z
     {
       message: "Start time must be before end time",
       path: ["startTime"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -98,7 +98,7 @@ export const RestrictionSchema = z
     {
       message: "Must choose time",
       path: ["endTime"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -113,7 +113,7 @@ export const RestrictionSchema = z
     {
       message: "Must choose time",
       path: ["startTime"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -129,7 +129,7 @@ export const RestrictionSchema = z
     {
       message: "Cannot block all days",
       path: ["days"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -145,7 +145,7 @@ export const RestrictionSchema = z
     {
       message: "Must choose at least 1 day",
       path: ["days"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -161,7 +161,7 @@ export const RestrictionSchema = z
     {
       message: "Cannot block all days",
       path: ["numDays"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -176,7 +176,7 @@ export const RestrictionSchema = z
     {
       message: "Number must be at least 1",
       path: ["numDays"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -193,7 +193,7 @@ export const RestrictionSchema = z
     {
       message: "Cannot restrict whole day",
       path: ["endTime"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -210,7 +210,7 @@ export const RestrictionSchema = z
     {
       message: "Cannot restrict whole day",
       path: ["startTime"],
-    }
+    },
   );
 
 export const TimetableFormSchema: ZodType<TimetableForm> = z
@@ -232,7 +232,7 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z
     {
       message: "Must pick at least 1 course",
       path: ["search"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -241,7 +241,7 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z
     {
       message: "Cannot pick more than 8 courses",
       path: ["search"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -252,7 +252,7 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z
     {
       message: "Already added minimum days off per week",
       path: ["restrictions"],
-    }
+    },
   );
 
 export const baseTimetableForm: TimetableForm = {

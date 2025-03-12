@@ -12,14 +12,10 @@ import {
   DEPARTMENT_CODES,
   ASSISTANT_TERMS,
   USEFUL_INFO,
-  BREADTH_REQUIREMENT_KEYWORDS,
-  YEAR_LEVEL_KEYWORDS,
 } from "../constants/promptKeywords";
 import { CHATBOT_MEMORY_THRESHOLD, codeToYear } from "../constants/constants";
 import { namespaceToMinResults } from "../constants/constants";
 import OpenAI from "openai";
-import { convertBreadthRequirement } from "../utils/convert-breadth-requirement";
-import { convertYearLevel } from "../utils/convert-year-level";
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -35,7 +31,7 @@ const pinecone = new Pinecone({
 });
 
 const index: Index<RecordMetadata> = pinecone.Index(
-  process.env.PINECONE_INDEX_NAME!,
+  process.env.PINECONE_INDEX_NAME!
 );
 
 console.log("Connected to OpenAI API");
@@ -62,8 +58,8 @@ function analyzeQuery(query: string): {
 
   // If a course code is detected, add tehse namespaces
   if (containsCourseCode) {
-    if (!relevantNamespaces.includes("courses_v3"))
-      relevantNamespaces.push("courses_v3");
+    if (!relevantNamespaces.includes("courses_v2"))
+      relevantNamespaces.push("courses_v2");
     if (!relevantNamespaces.includes("offerings"))
       relevantNamespaces.push("offerings");
     if (!relevantNamespaces.includes("prerequisites"))
@@ -74,8 +70,8 @@ function analyzeQuery(query: string): {
   if (DEPARTMENT_CODES.some((code) => lowerQuery.includes(code))) {
     if (!relevantNamespaces.includes("departments"))
       relevantNamespaces.push("departments");
-    if (!relevantNamespaces.includes("courses_v3"))
-      relevantNamespaces.push("courses_v3");
+    if (!relevantNamespaces.includes("courses_v2"))
+      relevantNamespaces.push("courses_v2");
   }
 
   // If search is required at all
@@ -87,12 +83,12 @@ function analyzeQuery(query: string): {
   // If no specific namespaces identified & search required, then search all
   if (requiresSearch && relevantNamespaces.length === 0) {
     relevantNamespaces.push(
-      "courses_v3",
+      "courses_v2",
       "offerings",
       "prerequisites",
       "corequisites",
       "departments",
-      "programs",
+      "programs"
     );
   }
 
@@ -109,8 +105,7 @@ function analyzeQuery(query: string): {
 async function searchSelectedNamespaces(
   query: string,
   k: number,
-  namespaces: string[],
-  filters?: Object,
+  namespaces: string[]
 ): Promise<Document[]> {
   let allResults: Document[] = [];
 
@@ -131,8 +126,7 @@ async function searchSelectedNamespaces(
       // Search results count given by the min result count for a given namespace (or k if k is greater)
       const results = await namespaceStore.similaritySearch(
         query,
-        Math.max(k, namespaceToMinResults.get(namespace)),
-        namespace === "courses_v3" ? filters : undefined,
+        Math.max(k, namespaceToMinResults.get(namespace))
       );
       console.log(`Found ${results.length} results in namespace: ${namespace}`);
       allResults = [...allResults, ...results];
@@ -153,7 +147,7 @@ async function searchSelectedNamespaces(
 // Reformulate user query to make more concise query to database, taking into consideration context
 async function reformulateQuery(
   latestQuery: string,
-  conversationHistory: any[],
+  conversationHistory: any[]
 ): Promise<string> {
   try {
     const openai = new OpenAI({
@@ -233,69 +227,6 @@ async function reformulateQuery(
   }
 }
 
-// Determines whether to apply metadata filtering based on user query.
-function includeFilters(query: string) {
-  const lowerQuery = query.toLocaleLowerCase();
-  const relaventBreadthRequirements: string[] = [];
-  const relaventYearLevels: string[] = [];
-
-  Object.entries(BREADTH_REQUIREMENT_KEYWORDS).forEach(
-    ([namespace, keywords]) => {
-      if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
-        relaventBreadthRequirements.push(convertBreadthRequirement(namespace));
-      }
-    },
-  );
-
-  Object.entries(YEAR_LEVEL_KEYWORDS).forEach(([namespace, keywords]) => {
-    if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
-      relaventYearLevels.push(convertYearLevel(namespace));
-    }
-  });
-
-  let filter = {};
-  if (relaventBreadthRequirements.length > 0 && relaventYearLevels.length > 0) {
-    filter = {
-      $and: [
-        {
-          $or: relaventBreadthRequirements.map((req) => ({
-            breadth_requirement: { $eq: req },
-          })),
-        },
-        {
-          $or: relaventYearLevels.map((yl) => ({ year_level: { $eq: yl } })),
-        },
-      ],
-    };
-  } else if (relaventBreadthRequirements.length > 0) {
-    filter = {
-      $or: relaventBreadthRequirements.map((req) => ({
-        breadth_requirement: { $eq: req },
-      })),
-    };
-  } else if (relaventYearLevels.length > 0) {
-    filter = {
-      $or: relaventYearLevels.map((yl) => ({ year_level: { $eq: yl } })),
-    };
-  }
-  return filter;
-}
-
-/**
- * @description Handles user queries and generates responses using GPT-4o, with optional knowledge retrieval.
- *
- * @param {Request} req - The Express request object, containing:
- *   @param {Object[]} req.body.messages - Array of message objects representing the conversation history.
- *   @param {string} req.body.messages[].role - The role of the message sender (e.g., "user", "assistant").
- *   @param {Object[]} req.body.messages[].content - An array containing message content objects.
- *   @param {string} req.body.messages[].content[].text - The actual text of the message.
- *
- * @param {Response} res - The Express response object used to stream the generated response.
- *
- * @returns {void} Responds with a streamed text response of the AI output
- *
- * @throws {Error} If query reformulation or knowledge retrieval fails.
- */
 export const chat = asyncHandler(async (req: Request, res: Response) => {
   const { messages } = req.body;
   const latestMessage = messages[messages.length - 1].content[0].text;
@@ -309,7 +240,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
   // Use GPT-4o to reformulate the query based on conversation history
   const reformulatedQuery = await reformulateQuery(
     latestMessage,
-    conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD), // last K messages
+    conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD) // last K messages
   );
   console.log(">>>> Original query:", latestMessage);
   console.log(">>>> Reformulated query:", reformulatedQuery);
@@ -323,19 +254,15 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
   if (requiresSearch) {
     console.log(
       `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-        ", ",
-      )}`,
+        ", "
+      )}`
     );
-
-    const filters = includeFilters(reformulatedQuery);
-    // console.log("Filters: ", JSON.stringify(filters))
 
     // Search only relevant namespaces
     const searchResults = await searchSelectedNamespaces(
       reformulatedQuery,
       3,
-      relevantNamespaces,
-      Object.keys(filters).length === 0 ? undefined : filters,
+      relevantNamespaces
     );
     // console.log("Search Results: ", searchResults);
 
@@ -403,15 +330,15 @@ export const testSimilaritySearch = asyncHandler(
     if (requiresSearch) {
       console.log(
         `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-          ", ",
-        )}`,
+          ", "
+        )}`
       );
 
       // Search only the relevant namespaces
       const searchResults = await searchSelectedNamespaces(
         message,
         3,
-        relevantNamespaces,
+        relevantNamespaces
       );
       console.log("Search Results: ", searchResults);
 
@@ -421,11 +348,11 @@ export const testSimilaritySearch = asyncHandler(
       }
     } else {
       console.log(
-        "Query does not require knowledge retrieval, skipping search",
+        "Query does not require knowledge retrieval, skipping search"
       );
     }
 
     console.log("CONTEXT: ", context);
     res.status(200).send(context);
-  },
+  }
 );

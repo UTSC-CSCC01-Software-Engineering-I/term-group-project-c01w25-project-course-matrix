@@ -120,7 +120,7 @@ const TimetableBuilder = () => {
   });
 
   const { data: eventsData, isLoading: eventsLoading } = useGetEventsQuery(
-    timetableId
+    timetableId,
   ) as {
     data: { courseEvents: unknown[]; userEvents: unknown[] };
     isLoading: boolean;
@@ -254,7 +254,7 @@ const TimetableBuilder = () => {
                                     <SelectItem key={value} value={value}>
                                       {value}
                                     </SelectItem>
-                                  )
+                                  ),
                                 )}
                               </SelectContent>
                             </Select>

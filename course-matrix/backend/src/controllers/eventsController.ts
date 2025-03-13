@@ -16,7 +16,7 @@ import { start } from "repl";
  * @returns An array of event objects ready to be inserted.
  */
 
-function getNextWeekDayOccurance(targetDay: string): string {
+export function getNextWeekDayOccurance(targetDay: string): string {
   //Map weekday code to JS day number
   const weekdayMap: { [key: string]: number } = {
     SU: 0,
@@ -45,7 +45,7 @@ function getNextWeekDayOccurance(targetDay: string): string {
   return today.toISOString().split("T")[0];
 }
 
-function generateWeeklyCourseEvents(
+export function generateWeeklyCourseEvents(
   user_id: string,
   courseEventName: string,
   courseDay: string,

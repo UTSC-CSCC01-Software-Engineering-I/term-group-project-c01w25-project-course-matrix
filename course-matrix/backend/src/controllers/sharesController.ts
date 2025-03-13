@@ -31,7 +31,7 @@ export default {
         "get_user_id_by_email",
         {
           email: shared_email,
-        }
+        },
       );
 
       if (sharedError) {
@@ -109,7 +109,7 @@ export default {
         .schema("timetable")
         .from("shared")
         .select(
-          "calendar_id, timetables!inner(id, user_id, timetable_title, semester, favorite)"
+          "calendar_id, timetables!inner(id, user_id, timetable_title, semester, favorite)",
         )
         .eq("shared_id", user_id);
 

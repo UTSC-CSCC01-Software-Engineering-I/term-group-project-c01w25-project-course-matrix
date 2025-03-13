@@ -134,15 +134,15 @@ In addition to their specific roles, all team members have a collective responsi
   - Timetable Generation via AI:
     [SCRUM-31](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-31)
   - Refine AI outputs:
-    [SCRUM-132]-(https://cscc01-course-matrix.atlassian.net/browse/SCRUM-132)
+    [SCRUM-132](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-132)
 
 -\_Epic 3: Deployment
 
 - Project Deployment:
-  [SCRUM-130]-(https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130)
+  [SCRUM-130](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130)
 
 **3. Create sprint3 documentation:**
-[SCRUM-127]-(https://cscc01-course-matrix.atlassian.net/browse/SCRUM-127)
+[SCRUM-127](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-127)
 
 #### 2.2 Artifacts
 

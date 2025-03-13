@@ -20,7 +20,11 @@ coursesRouter.get("/", authHandler, coursesController.getCourses);
  * @route GET /total-courses
  * @middleware authHandler - Middleware to check if the user is authenticated.
  */
-coursesRouter.get("/total-sections", authHandler, coursesController.getNumberOfSections);
+coursesRouter.get(
+  "/total-sections",
+  authHandler,
+  coursesController.getNumberOfSections,
+);
 
 /**
  * Route to get a list of departments.
@@ -34,7 +38,11 @@ departmentsRouter.get("/", authHandler, departmentsController.getDepartments);
  * @route GET /events/:offering_id
  * @middleware authHandler - Middleware to check if the user is authenticated.
  */
-offeringsRouter.get("/events", authHandler, offeringsController.getOfferingEvents);
+offeringsRouter.get(
+  "/events",
+  authHandler,
+  offeringsController.getOfferingEvents,
+);
 
 /**
  * Route to get a list of offerings.

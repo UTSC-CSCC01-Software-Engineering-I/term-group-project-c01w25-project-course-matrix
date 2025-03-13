@@ -250,7 +250,7 @@ export const baseTimetableForm: TimetableForm = {
   search: "",
   courses: [],
   restrictions: [],
-  offeringIds: []
+  offeringIds: [],
 };
 
 export const baseRestrictionForm: RestrictionForm = {

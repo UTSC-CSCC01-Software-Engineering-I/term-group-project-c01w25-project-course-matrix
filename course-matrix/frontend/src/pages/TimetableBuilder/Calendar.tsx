@@ -140,9 +140,6 @@ function Calendar({
   const totalNumberOfSections =
     numberOfSectionsData?.totalNumberOfCourseSections ?? 0;
 
-  console.log("totalNumberOfSections", totalNumberOfSections);
-  console.log("offerings length", offeringIds.length);
-
   const allOfferingSectionsHaveBeenSelected =
     offeringIds.length === totalNumberOfSections;
 

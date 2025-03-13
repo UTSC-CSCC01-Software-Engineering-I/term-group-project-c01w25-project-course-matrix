@@ -137,7 +137,7 @@ In addition to their specific roles, all team members have a collective responsi
   - Refine AI outputs:
     [SCRUM-132](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-132)
 
-- \_Epic 3: Deployment
+- _Epic 3: Deployment_
 
 - Project Deployment:
   [SCRUM-130](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130)

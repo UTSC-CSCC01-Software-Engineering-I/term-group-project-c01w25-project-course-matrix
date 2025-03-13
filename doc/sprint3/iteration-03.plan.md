@@ -36,7 +36,7 @@ In addition to their specific roles, all team members have a collective responsi
 
 #### Epic 3: Deployment
 
-**Team Members:** Masahisa 
+**Team Members:** Masahisa
 
 - Create a dockerfile such that our application can be run on a docker image with application setup being done automatically.
 - Ensure that our application’s docker image runs on a VM instance accessible on the web.
@@ -59,6 +59,7 @@ In addition to their specific roles, all team members have a collective responsi
     - Define tasks and responsibilities for each team member
 
 - **Stand up meeting**:
+
   - Location: Online or in-person depending on members availability
   - Time: Every Tuesday from 12 pm to 1 pm, Thursday and Sunday from 9 pm to 10 pm
   - Purposes
@@ -107,11 +108,10 @@ In addition to their specific roles, all team members have a collective responsi
 
   ![Ticket Workflow](./images/Ticket_Workflow.png)
 
- - Furthermore, we will implement a Burndown Chart, which will be included as `burndown.pdf` by the end of the sprint. This chart will also feature comments on the sprint's progress and a velocity comparison.
- - Below is an example Burndown Chart from Sprint 0:
+- Furthermore, we will implement a Burndown Chart, which will be included as `burndown.pdf` by the end of the sprint. This chart will also feature comments on the sprint's progress and a velocity comparison.
+- Below is an example Burndown Chart from Sprint 0:
 
-  ![Burndown Chart](./images/Burndown.png)
-
+![Burndown Chart](./images/Burndown.png)
 
 ## 2. Product
 
@@ -128,19 +128,20 @@ In addition to their specific roles, all team members have a collective responsi
   - Entries Colour Customization: [SCRUM-51](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-51)
   - Timetable Favourite: [SCRUM-57](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-57)
   - Timetable Export/Share:
-[SCRUM-58](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-58)
+    [SCRUM-58](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-58)
 
 - _Epic 2: AI Assistant_
+
   - Timetable Generation via AI:
-[SCRUM-31](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-31) 
+    [SCRUM-31](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-31)
   - Refine AI outputs:
-[SCRUM-132](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-132) 
+    [SCRUM-132](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-132)
 
 - _Epic 3: Deployment_
   - Project Deployment:
-[SCRUM-130](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130) 
+    [SCRUM-130](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130)
 
-**3. Create sprint3 documentation:** 
+**3. Create sprint3 documentation:**
 [SCRUM-127](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-127)
 
 #### 2.2 Artifacts

@@ -138,6 +138,23 @@ export default {
       const owner_id = (req as any).user.id;
       const { calendar_id } = req.params;
 
+      const { data: existingTimetable, error: existingTimetableError } =
+        await supabase
+          .schema("timetable")
+          .from("shared")
+          .select("*")
+          .eq("calendar_id", calendar_id)
+          .eq("owner_id", owner_id);
+
+      if (existingTimetableError) {
+        return res.status(500).json({ error: existingTimetableError.message });
+      }
+
+      if (!existingTimetable || existingTimetable.length === 0) {
+        return res
+          .status(404)
+          .json({ error: "Provided timetable for delete does not found" });
+      }
       const { error: deleteError } = await supabase
         .schema("timetable")
         .from("shared")
@@ -166,6 +183,23 @@ export default {
       const shared_id = (req as any).user.id;
       const { calendar_id } = req.params;
 
+      const { data: existingTimetable, error: existingTimetableError } =
+        await supabase
+          .schema("timetable")
+          .from("shared")
+          .select("*")
+          .eq("calendar_id", calendar_id)
+          .eq("shared_id", shared_id);
+
+      if (existingTimetableError) {
+        return res.status(500).json({ error: existingTimetableError.message });
+      }
+
+      if (!existingTimetable || existingTimetable.length === 0) {
+        return res.status(404).json({
+          error: "Provided timetable for delete does not found",
+        });
+      }
       const { error: deleteError } = await supabase
         .schema("timetable")
         .from("shared")

@@ -204,7 +204,7 @@ async function reformulateQuery(
           Output: "What are some 3rd year math courses?"
           
           User: "What breadth requirement does CSCC01 satisfy?"
-          Output: "What breadth reequirement does code: CSCC01 satisfy?"
+          Output: "What breadth requirement does code: CSCC01 satisfy?"
 
           `,
       },

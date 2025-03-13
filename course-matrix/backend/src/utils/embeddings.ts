@@ -51,7 +51,7 @@ async function processCoursesCSV(filePath: string, namespace: string) {
       source: fileName,
       row: index + 1,
       breadth_requirement: convertBreadthRequirement(
-        doc.pageContent.split("\n")[1].split(": ")[1]
+        doc.pageContent.split("\n")[1].split(": ")[1],
       ),
       year_level: doc.pageContent.split("\n")[10].split(": ")[1],
     },
@@ -101,7 +101,7 @@ async function processPDF(filePath: string, namespace: string) {
   // console.log("Sample split docs: ", splitDocs.slice(0, 6))
 
   console.log(
-    `Split into ${splitDocs.length} sections by "Calendar Section:" delimiter`
+    `Split into ${splitDocs.length} sections by "Calendar Section:" delimiter`,
   );
 
   // Store the split documents as embeddings

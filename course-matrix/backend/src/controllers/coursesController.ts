@@ -114,10 +114,12 @@ export default {
     try {
       const { course_ids, semester } = req.query;
 
-      if (!course_ids || !semester) {
-        return res.status(400).send({
-          error: "Missing required parameters: course_ids, semester",
-        });
+      if (!semester) {
+        return res.status(400).send({ error: "Semester is required" });
+      }
+
+      if (!course_ids) {
+        return res.status(200).send({ totalNumberOfCourseSections: 0 });
       }
 
       const course_ids_array = (course_ids as string).split(",");

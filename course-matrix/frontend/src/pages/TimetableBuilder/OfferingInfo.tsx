@@ -14,14 +14,12 @@ import { TimetableFormSchema } from "@/models/timetable-form";
 import { z } from "zod";
 
 interface OfferingInfoProps {
-  offeringIds: number[];
   course: Pick<CourseModel, "code" | "name" | "id">;
   semester: string;
   form: UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 }
 
 const OfferingInfo = ({
-  offeringIds,
   course,
   semester,
   form,
@@ -30,6 +28,8 @@ const OfferingInfo = ({
     course_code: course.code,
     semester: semester,
   });
+
+  const offeringIds = form.watch("offeringIds") ?? [];
 
   const lectures = data?.filter((offering: OfferingModel) =>
     offering.meeting_section.startsWith("LEC"),
@@ -86,20 +86,6 @@ const OfferingInfo = ({
     initialSelectedPractical,
   ]);
 
-  useEffect(() => {
-    const offeringIds = form.getValues("offeringIds") ?? [];
-    const otherCourseOfferingIds = offeringIds.filter(
-      (id) => !data?.map((offering: OfferingModel) => offering.id).includes(id),
-    );
-    const newOfferingIds = [
-      ...otherCourseOfferingIds,
-      selectedLecture?.id,
-      selectedTutorial?.id,
-      selectedPractical?.id,
-    ].filter((id): id is number => id !== undefined);
-    form.setValue("offeringIds", newOfferingIds);
-  }, [selectedLecture, selectedTutorial, selectedPractical, form, data]);
-
   const handleSelect = (
     lecture: OfferingModel | undefined,
     tutorial: OfferingModel | undefined,
@@ -117,6 +103,14 @@ const OfferingInfo = ({
       setSelectedPractical(practical);
       setIsEditingPracticalSection(false);
     }
+    const oldOfferingIds : number[] = [initialSelectedLecture?.id, initialSelectedTutorial?.id, initialSelectedPractical?.id].filter(Boolean) as number[];
+    const newOfferingIds : number[] = [lecture?.id, tutorial?.id, practical?.id].filter(Boolean) as number[];
+    const formOfferingIds = form.getValues("offeringIds") ?? [];
+    const filteredOfferingIds = formOfferingIds.filter(
+      (id: number) => !oldOfferingIds.includes(id),
+    );
+    const resultOfferingIds = [...filteredOfferingIds, ...newOfferingIds];
+    form.setValue("offeringIds", resultOfferingIds);
   };
 
   const [isEditingLectureSection, setIsEditingLectureSection] = useState(false);
@@ -150,8 +144,8 @@ const OfferingInfo = ({
                       (offering: OfferingModel) =>
                         offering.id.toString() === value,
                     ),
-                    undefined,
-                    undefined,
+                    initialSelectedTutorial,
+                    initialSelectedPractical,
                   )
                 }
               >
@@ -185,12 +179,12 @@ const OfferingInfo = ({
                 value={selectedTutorial?.id?.toString()}
                 onValueChange={(value) => {
                   handleSelect(
-                    undefined,
+                    initialSelectedLecture,
                     tutorials?.find(
                       (offering: OfferingModel) =>
                         offering.id.toString() === value,
                     ),
-                    undefined,
+                    initialSelectedPractical,
                   );
                 }}
               >
@@ -224,8 +218,8 @@ const OfferingInfo = ({
                 value={selectedPractical?.id?.toString()}
                 onValueChange={(value) => {
                   handleSelect(
-                    undefined,
-                    undefined,
+                    initialSelectedLecture,
+                    initialSelectedTutorial,
                     practicals?.find(
                       (offering: OfferingModel) =>
                         offering.id.toString() === value,

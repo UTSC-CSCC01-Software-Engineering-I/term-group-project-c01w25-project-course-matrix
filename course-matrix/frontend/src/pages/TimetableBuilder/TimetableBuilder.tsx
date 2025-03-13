@@ -32,32 +32,28 @@ import { mockSearchData } from "./mockSearchData";
 import CreateCustomSetting from "./CreateCustomSetting";
 import { formatTime } from "@/utils/format-date-time";
 import { FilterForm, FilterFormSchema } from "@/models/filter-form";
-import {
-  useGetCoursesQuery,
-  useGetNumberOfCourseSectionsQuery,
-} from "@/api/coursesApiSlice";
+import { useGetCoursesQuery, } from "@/api/coursesApiSlice";
 import { useGetTimetablesQuery } from "@/api/timetableApiSlice";
 import { useGetEventsQuery } from "@/api/eventsApiSlice";
-import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
+import { useGetRestrictionsQuery } from "@/api/restrictionsApiSlice";
 import { useDebounceValue } from "@/utils/useDebounce";
 import SearchFilters from "./SearchFilters";
 import Calendar from "./Calendar";
-import { Timetable } from "@/utils/type-utils";
+import { Event, TimetableEvents, Timetable } from "@/utils/type-utils";
 import { useSearchParams } from "react-router-dom";
 import OfferingInfo from "./OfferingInfo";
 import { Checkbox } from "@/components/ui/checkbox";
+import { time } from "console";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
 const SEARCH_LIMIT = 1000;
 
-interface Event {
-  id: number;
-  event_name: string;
-  event_date: string;
-  event_start: string;
-  event_end: string;
-  offering_id: number;
+function getSemesterStartAndEndDates(semester: string) {
+  return {
+    start: semester === "Summer 2025" ? "2025-05-02" : semester === "Fall 2025" ? "2025-09-03" : "2026-01-06",
+    end: semester === "Summer 2025" ? "2025-08-07" : semester === "Fall 2025" ? "2025-12-03" : "2026-04-04",
+  };
 }
 
 /**
@@ -108,23 +104,20 @@ const TimetableBuilder = () => {
 
   const [queryParams, setQueryParams] = useSearchParams();
   const isEditingTimetable = queryParams.has("edit");
-  const editingTimetableId = queryParams.get("edit");
+  const timetableId = parseInt(queryParams.get("edit") || "0");
 
   const selectedCourses = form.watch("courses") || [];
   const enabledRestrictions = form.watch("restrictions") || [];
   const searchQuery = form.watch("search");
   const debouncedSearchQuery = useDebounceValue(searchQuery, 250);
   const selectedSemester = form.getValues("semester");
-
+  
   // console.log("Selected courses", selectedCourses);
   // console.log("Enabled restrictions", enabledRestrictions);
 
   const [isCustomSettingsOpen, setIsCustomSettingsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterForm | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [timetableId, setTimetableId] = useState(
-    editingTimetableId ? parseInt(editingTimetableId) : 0,
-  );
   const [isChoosingSectionsManually, setIsChoosingSectionsManually] =
     useState(false);
 
@@ -134,87 +127,65 @@ const TimetableBuilder = () => {
 
   // limit search number if no search query or filters for performance purposes.
   // Otherwise, limit is 10k, which effectively gets all results.
-  const { data, isLoading, error, refetch } = useGetCoursesQuery({
+  const { data: coursesData, isLoading, error, refetch } = useGetCoursesQuery({
     limit: noSearchAndFilter() ? SEARCH_LIMIT : 10000,
     search: debouncedSearchQuery || undefined,
     semester: selectedSemester,
     ...filters,
   });
 
-  const { data: eventsData, isLoading: eventsLoading } = useGetEventsQuery(
-    timetableId,
-  ) as {
-    data: { courseEvents: Event[]; userEvents: Event[] };
-    isLoading: boolean;
-  };
-
-  const courseEventsOfferingIds = [
-    ...new Set(eventsData?.courseEvents.map((event) => event.offering_id)),
-  ];
-  const offeringIds = [
-    ...new Set([
-      ...courseEventsOfferingIds,
-      ...(form.getValues("offeringIds") || []),
-    ]),
-  ];
-
-  const semesterStartDate =
-    selectedSemester === "Summer 2025"
-      ? "2025-05-02"
-      : selectedSemester === "Fall 2025"
-        ? "2025-09-03"
-        : "2026-01-06";
-  const semesterEndDate =
-    selectedSemester === "Summer 2025"
-      ? "2025-08-07"
-      : selectedSemester === "Fall 2025"
-        ? "2025-12-03"
-        : "2026-04-04";
-
-  const { data: offeringEventsData } = useGetOfferingEventsQuery({
-    offering_ids: offeringIds,
-    semester_start_date: semesterStartDate,
-    semester_end_date: semesterEndDate,
-  }) as { data: Event[] };
-
+  const { data: timetableEventsData } = useGetEventsQuery(timetableId) as { data: TimetableEvents };
   const [courseEvents, setCourseEvents] = useState<Event[]>([]);
-  const userEvents = eventsData?.userEvents || [];
+  const userEvents = timetableEventsData?.userEvents || [];
 
-  // This is mainly to set the initial state of the course and user events when editing a timetable
+  const semesterStartDate = getSemesterStartAndEndDates(selectedSemester).start;
+  const semesterEndDate = getSemesterStartAndEndDates(selectedSemester).end;
+
+  // console.log("COURSE EVENTS", courseEvents);
+  // console.log("USER EVENTS", userEvents);
+  // console.log("OFFERING EVENTS", offeringEventsData);
+
+  // const { data: restrictionsData } = useGetRestrictionsQuery(timetableId);
+
+  const [loadedCourses, setLoadedCourses] = useState(false);
+  const [loadedOfferingIds, setLoadedOfferingIds] = useState(false);
+  // const [loadedRestrictions, setLoadedRestrictions] = useState(false);
+
+  // Set the state variable courseEvents, set the form value for 'offeringIds', and set the form value for 'courses'
   useEffect(() => {
-    let events: Event[] = [];
-    if (eventsData) {
-      events = [
-        ...events,
-        ...eventsData.userEvents,
-        ...eventsData.courseEvents,
-      ]; // Load User Events and Course Events
+    // Set the form value for 'offeringIds'
+    if (!loadedOfferingIds && timetableEventsData?.courseEvents) {
+      const existingOfferingIds = [...new Set(timetableEventsData?.courseEvents.map((event) => event.offering_id))].sort();
+      form.setValue("offeringIds", existingOfferingIds);
+      setLoadedOfferingIds(true);
     }
 
-    if (offeringEventsData) events = [...events, ...offeringEventsData]; // Offering Events
-    setCourseEvents(events);
+    // Set the form value for 'courses' and set the state variable courseEvents
+    if (!loadedCourses && timetableEventsData?.courseEvents && coursesData) {
+      setCourseEvents(timetableEventsData.courseEvents);
+      const existingCourseCodes = (timetableEventsData?.courseEvents || []).map((event) =>
+        event.event_name.split(" - ")[0].trim(),
+      );
+      const existingCourses = coursesData?.filter((course: { code: string }) => existingCourseCodes.includes(course.code)) || [];
+      form.setValue("courses", existingCourses);
+      setLoadedCourses(true);
+    }
 
-    const addedCourses = (eventsData?.courseEvents || []).map((event) =>
-      event.event_name.split(" - ")[0].trim(),
-    );
-    const newCourses =
-      data?.filter((course: { code: string }) =>
-        addedCourses.includes(course.code),
-      ) || [];
-    const currentCoursesList = form.getValues("courses") || [];
-    const newCoursesList = newCourses.reduce((acc, course) => {
-      if (!currentCoursesList.find((item) => item.code === course.code)) {
-        acc.push(course);
-      }
-      return acc;
-    }, currentCoursesList);
-    form.setValue("courses", newCoursesList);
-  }, [data, eventsData, form, offeringEventsData]);
+    // Set the form value for 'restrictions'
+    // if (!loadedRestrictions && restrictionsData) {
+    //   form.setValue("restrictions", restrictionsData);
+    //   setLoadedRestrictions(true);
+    //   console.log("RESTRICTIONS DATA", restrictionsData);
+    // }
+  }, [timetableEventsData, coursesData, loadedOfferingIds, loadedCourses, form]);
 
   const { data: timetablesData } = useGetTimetablesQuery() as {
     data: Timetable[];
   };
   const timetables = timetablesData || [];
+  const currentTimetableTitle = timetables.find(
+    (timetable) => timetable.id === timetableId,
+  )?.timetable_title;
 
   useEffect(() => {
     if (searchQuery) {
@@ -270,31 +241,9 @@ const TimetableBuilder = () => {
                 {isEditingTimetable ? "Edit Timetable" : "New Timetable"}
               </h1>
               {isEditingTimetable && (
-                <Select
-                  onValueChange={(value) => {
-                    setTimetableId(parseInt(value));
-                    setQueryParams({ edit: value });
-                  }}
-                  defaultValue={
-                    editingTimetableId ? editingTimetableId.toString() : ""
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select calendar" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {timetables.map((timetable) => (
-                        <SelectItem
-                          key={timetable.id}
-                          value={timetable.id.toString()}
-                        >
-                          {timetable.timetable_title}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <p className="text-sm italic text-blue-500">
+                  The timetable you are editing is named: <strong>{currentTimetableTitle}</strong>
+                </p>
               )}
             </div>
             <div className="flex gap-4 ">
@@ -361,7 +310,7 @@ const TimetableBuilder = () => {
                               onChange={(value) => {
                                 field.onChange(value);
                               }}
-                              data={data} // TODO: Replace with variable data
+                              data={coursesData} // TODO: Replace with variable data
                               isLoading={isLoading}
                               showFilter={() => setShowFilters(true)}
                             />
@@ -410,7 +359,6 @@ const TimetableBuilder = () => {
                             </div>
                             {isChoosingSectionsManually && (
                               <OfferingInfo
-                                offeringIds={offeringIds}
                                 course={course}
                                 semester={selectedSemester}
                                 form={form}
@@ -488,6 +436,7 @@ const TimetableBuilder = () => {
           </div>
           <div className="w-3/5">
             <Calendar
+              timetablesData={timetablesData}
               semesterStartDate={semesterStartDate}
               semesterEndDate={semesterEndDate}
               courseEvents={courseEvents}

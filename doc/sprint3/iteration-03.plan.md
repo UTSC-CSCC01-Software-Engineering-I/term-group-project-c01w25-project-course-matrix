@@ -131,12 +131,13 @@ In addition to their specific roles, all team members have a collective responsi
     [SCRUM-58](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-58)
 
 - _Epic 2: AI Assistant_
+
   - Timetable Generation via AI:
     [SCRUM-31](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-31)
   - Refine AI outputs:
     [SCRUM-132](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-132)
 
-- _Epic 3: Deployment
+- \_Epic 3: Deployment
 
 - Project Deployment:
   [SCRUM-130](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130)

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
+import { maybeCoerceBoolean } from "openai/core";
 
 export default {
   /**
@@ -23,6 +24,26 @@ export default {
         return res
           .status(400)
           .json({ error: "timetable title and semester are required" });
+      }
+
+      // Check if a timetable with the same title already exist for this user
+      const { data: existingTimetable, error: existingTimetableError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("id")
+          .eq("user_id", user_id)
+          .eq("timetable_title", timetable_title)
+          .maybeSingle();
+
+      if (existingTimetableError) {
+        return res.status(400).json({ error: existingTimetableError.message });
+      }
+
+      if (existingTimetable) {
+        return res
+          .status(400)
+          .json({ error: "A timetable with this title already exist" });
       }
 
       //Create query to insert the user_id and timetable_title into the db
@@ -121,6 +142,25 @@ export default {
         return res
           .status(400)
           .json({ error: "Timetable not found or unauthorized" });
+
+      // Check for duplicate timetable title
+      if (timetable_title) {
+        const { data: existingTimetable, error: existingTimetableError } =
+          await supabase
+            .schema("timetable")
+            .from("timetables")
+            .select("*")
+            .eq("user_id", user_id)
+            .eq("timetable_title", timetable_title)
+            .neq("id", id)
+            .maybeSingle();
+
+        if (existingTimetable) {
+          return res
+            .status(400)
+            .json({ error: "A timetable this title already exist" });
+        }
+      }
 
       let updateData: any = {};
       if (timetable_title) updateData.timetable_title = timetable_title;

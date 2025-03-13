@@ -139,8 +139,8 @@ In addition to their specific roles, all team members have a collective responsi
 
 - _Epic 3: Deployment_
 
-- Project Deployment:
-  [SCRUM-130](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130)
+  - Project Deployment:
+    [SCRUM-130](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130)
 
 **3. Create sprint3 documentation:**
 [SCRUM-127](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-127)

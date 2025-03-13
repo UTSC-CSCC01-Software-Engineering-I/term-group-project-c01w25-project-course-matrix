@@ -178,16 +178,18 @@ async function reformulateQuery(
           - DO replace pronouns and references with specific names and identifiers
           - DO include course codes, names and specific details for academic entities
           - If the query is not about university courses & offerings, return exactly a copy of the user's query.
+          - Append "code: " before course codes For example: "CSCC01" -> "code: CSCC01"
+          - If a course year level is written as "first year", "second year", etc. Then replace "first" with "1st" and "second" with "2nd" etc.
 
           Examples:
           User: "When is it offered?"
-          Output: "When is CSCA48 Introduction to Computer Science offered in the 2024-2025 academic year?"
+          Output: "When is CSCA48 offered in the 2024-2025 academic year?"
 
           User: "Tell me more about that"
-          Output: "What are the details, descriptions, and requirements for MATA31 Calculus I?"
+          Output: "What are the details, descriptions, and requirements for MATA31?"
 
           User: "Who teaches it?"
-          Output: "Who are the instructors for MGEA02 Introduction to Microeconomics at UTSC?"
+          Output: "Who are the instructors for MGEA02 at UTSC?"
 
           User: "What are the course names of those codes?"
           Output: "What are the course names of course codes: MGTA01, CSCA08, MATA31, MATA35?"
@@ -198,8 +200,13 @@ async function reformulateQuery(
           User: "Give 2nd year math courses."
           Output: "What are some 2nd year math courses?"
 
-          User: "Give first year math courses."
-          Output: "What are some 1st year math courses?"`,
+          User: "Give third year math courses."
+          Output: "What are some 3rd year math courses?"
+          
+          User: "What breadth requirement does CSCC01 satisfy?"
+          Output: "What breadth reequirement does code: CSCC01 satisfy?"
+
+          `,
       },
     ];
 
@@ -347,7 +354,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
     console.log("Query does not require knowledge retrieval, skipping search");
   }
 
-  // console.log("CONTEXT: ", context);
+  console.log("CONTEXT: ", context);
 
   const result = streamText({
     model: openai("gpt-4o-mini"),

@@ -44,5 +44,8 @@ export const restrictionsApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetRestrictionsQuery, useCreateRestrictionMutation, useDeleteRestrictionMutation } =
-  restrictionsApiSlice;
+export const {
+  useGetRestrictionsQuery,
+  useCreateRestrictionMutation,
+  useDeleteRestrictionMutation,
+} = restrictionsApiSlice;

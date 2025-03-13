@@ -19,11 +19,7 @@ interface OfferingInfoProps {
   form: UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 }
 
-const OfferingInfo = ({
-  course,
-  semester,
-  form,
-}: OfferingInfoProps) => {
+const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
   const { data, isLoading } = useGetOfferingsQuery({
     course_code: course.code,
     semester: semester,
@@ -103,8 +99,16 @@ const OfferingInfo = ({
       setSelectedPractical(practical);
       setIsEditingPracticalSection(false);
     }
-    const oldOfferingIds : number[] = [initialSelectedLecture?.id, initialSelectedTutorial?.id, initialSelectedPractical?.id].filter(Boolean) as number[];
-    const newOfferingIds : number[] = [lecture?.id, tutorial?.id, practical?.id].filter(Boolean) as number[];
+    const oldOfferingIds: number[] = [
+      initialSelectedLecture?.id,
+      initialSelectedTutorial?.id,
+      initialSelectedPractical?.id,
+    ].filter(Boolean) as number[];
+    const newOfferingIds: number[] = [
+      lecture?.id,
+      tutorial?.id,
+      practical?.id,
+    ].filter(Boolean) as number[];
     const formOfferingIds = form.getValues("offeringIds") ?? [];
     const filteredOfferingIds = formOfferingIds.filter(
       (id: number) => !oldOfferingIds.includes(id),

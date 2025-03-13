@@ -32,7 +32,7 @@ import { mockSearchData } from "./mockSearchData";
 import CreateCustomSetting from "./CreateCustomSetting";
 import { formatTime } from "@/utils/format-date-time";
 import { FilterForm, FilterFormSchema } from "@/models/filter-form";
-import { useGetCoursesQuery, } from "@/api/coursesApiSlice";
+import { useGetCoursesQuery } from "@/api/coursesApiSlice";
 import { useGetTimetablesQuery } from "@/api/timetableApiSlice";
 import { useGetEventsQuery } from "@/api/eventsApiSlice";
 import { useGetRestrictionsQuery } from "@/api/restrictionsApiSlice";
@@ -51,8 +51,18 @@ const SEARCH_LIMIT = 1000;
 
 function getSemesterStartAndEndDates(semester: string) {
   return {
-    start: semester === "Summer 2025" ? "2025-05-02" : semester === "Fall 2025" ? "2025-09-03" : "2026-01-06",
-    end: semester === "Summer 2025" ? "2025-08-07" : semester === "Fall 2025" ? "2025-12-03" : "2026-04-04",
+    start:
+      semester === "Summer 2025"
+        ? "2025-05-02"
+        : semester === "Fall 2025"
+          ? "2025-09-03"
+          : "2026-01-06",
+    end:
+      semester === "Summer 2025"
+        ? "2025-08-07"
+        : semester === "Fall 2025"
+          ? "2025-12-03"
+          : "2026-04-04",
   };
 }
 
@@ -111,7 +121,7 @@ const TimetableBuilder = () => {
   const searchQuery = form.watch("search");
   const debouncedSearchQuery = useDebounceValue(searchQuery, 250);
   const selectedSemester = form.getValues("semester");
-  
+
   // console.log("Selected courses", selectedCourses);
   // console.log("Enabled restrictions", enabledRestrictions);
 
@@ -127,14 +137,21 @@ const TimetableBuilder = () => {
 
   // limit search number if no search query or filters for performance purposes.
   // Otherwise, limit is 10k, which effectively gets all results.
-  const { data: coursesData, isLoading, error, refetch } = useGetCoursesQuery({
+  const {
+    data: coursesData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetCoursesQuery({
     limit: noSearchAndFilter() ? SEARCH_LIMIT : 10000,
     search: debouncedSearchQuery || undefined,
     semester: selectedSemester,
     ...filters,
   });
 
-  const { data: timetableEventsData } = useGetEventsQuery(timetableId) as { data: TimetableEvents };
+  const { data: timetableEventsData } = useGetEventsQuery(timetableId) as {
+    data: TimetableEvents;
+  };
   const [courseEvents, setCourseEvents] = useState<Event[]>([]);
   const userEvents = timetableEventsData?.userEvents || [];
 
@@ -155,7 +172,11 @@ const TimetableBuilder = () => {
   useEffect(() => {
     // Set the form value for 'offeringIds'
     if (!loadedOfferingIds && timetableEventsData?.courseEvents) {
-      const existingOfferingIds = [...new Set(timetableEventsData?.courseEvents.map((event) => event.offering_id))].sort();
+      const existingOfferingIds = [
+        ...new Set(
+          timetableEventsData?.courseEvents.map((event) => event.offering_id),
+        ),
+      ].sort();
       form.setValue("offeringIds", existingOfferingIds);
       setLoadedOfferingIds(true);
     }
@@ -163,10 +184,13 @@ const TimetableBuilder = () => {
     // Set the form value for 'courses' and set the state variable courseEvents
     if (!loadedCourses && timetableEventsData?.courseEvents && coursesData) {
       setCourseEvents(timetableEventsData.courseEvents);
-      const existingCourseCodes = (timetableEventsData?.courseEvents || []).map((event) =>
-        event.event_name.split(" - ")[0].trim(),
+      const existingCourseCodes = (timetableEventsData?.courseEvents || []).map(
+        (event) => event.event_name.split(" - ")[0].trim(),
       );
-      const existingCourses = coursesData?.filter((course: { code: string }) => existingCourseCodes.includes(course.code)) || [];
+      const existingCourses =
+        coursesData?.filter((course: { code: string }) =>
+          existingCourseCodes.includes(course.code),
+        ) || [];
       form.setValue("courses", existingCourses);
       setLoadedCourses(true);
     }
@@ -177,7 +201,13 @@ const TimetableBuilder = () => {
     //   setLoadedRestrictions(true);
     //   console.log("RESTRICTIONS DATA", restrictionsData);
     // }
-  }, [timetableEventsData, coursesData, loadedOfferingIds, loadedCourses, form]);
+  }, [
+    timetableEventsData,
+    coursesData,
+    loadedOfferingIds,
+    loadedCourses,
+    form,
+  ]);
 
   const { data: timetablesData } = useGetTimetablesQuery() as {
     data: Timetable[];
@@ -242,7 +272,8 @@ const TimetableBuilder = () => {
               </h1>
               {isEditingTimetable && (
                 <p className="text-sm italic text-blue-500">
-                  The timetable you are editing is named: <strong>{currentTimetableTitle}</strong>
+                  The timetable you are editing is named:{" "}
+                  <strong>{currentTimetableTitle}</strong>
                 </p>
               )}
             </div>

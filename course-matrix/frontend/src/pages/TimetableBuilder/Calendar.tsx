@@ -1,186 +1,184 @@
 import { ScheduleXCalendar } from "@schedule-x/react";
 import {
-	createCalendar,
-	createViewDay,
-	createViewMonthAgenda,
-	createViewMonthGrid,
-	createViewWeek,
-	viewWeek,
+  createCalendar,
+  createViewDay,
+  createViewMonthAgenda,
+  createViewMonthGrid,
+  createViewWeek,
+  viewWeek,
 } from "@schedule-x/calendar";
 import { createDragAndDropPlugin } from "@schedule-x/drag-and-drop";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
 import "@schedule-x/theme-default/dist/index.css";
 import { Button } from "@/components/ui/button";
 import {
-	Dialog,
-	DialogTrigger,
-	DialogContent,
-	DialogHeader,
-	DialogFooter,
-	DialogTitle,
-	DialogDescription,
-	DialogClose,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UseFormReturn } from "react-hook-form";
 import { TimetableFormSchema } from "@/models/timetable-form";
 import {
-	useCreateTimetableMutation,
-	useDeleteTimetableMutation,
+  useCreateTimetableMutation,
+  useDeleteTimetableMutation,
 } from "@/api/timetableApiSlice";
 import { useCreateRestrictionMutation } from "@/api/restrictionsApiSlice";
 import { z } from "zod";
 import { useEffect, useState } from "react";
 import { useGetNumberOfCourseSectionsQuery } from "@/api/coursesApiSlice";
-import {
-	useCreateEventMutation,
-} from "@/api/eventsApiSlice";
+import { useCreateEventMutation } from "@/api/eventsApiSlice";
 import { useSearchParams } from "react-router-dom";
 import { Event, Timetable } from "@/utils/type-utils";
 
 interface CalendarProps {
-	timetablesData: Timetable[];
-	semesterStartDate: string;
-	semesterEndDate: string;
-	courseEvents: Event[];
-	userEvents: Event[];
-	form: UseFormReturn<z.infer<typeof TimetableFormSchema>>;
+  timetablesData: Timetable[];
+  semesterStartDate: string;
+  semesterEndDate: string;
+  courseEvents: Event[];
+  userEvents: Event[];
+  form: UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 }
 
 function parseEvent(id: number, event: Event, calendarId: string) {
-	return {
-		id: id,
-		title: event.event_name,
-		start:
-			event.event_date +
-			" " +
-			event.event_start.split(":")[0] +
-			":" +
-			event.event_start.split(":")[1],
-		end:
-			event.event_date +
-			" " +
-			event.event_end.split(":")[0] +
-			":" +
-			event.event_end.split(":")[1],
-		calendarId: calendarId,
-	};
+  return {
+    id: id,
+    title: event.event_name,
+    start:
+      event.event_date +
+      " " +
+      event.event_start.split(":")[0] +
+      ":" +
+      event.event_start.split(":")[1],
+    end:
+      event.event_date +
+      " " +
+      event.event_end.split(":")[0] +
+      ":" +
+      event.event_end.split(":")[1],
+    calendarId: calendarId,
+  };
 }
 
 function Calendar({
-	timetablesData,
-	semesterStartDate,
-	semesterEndDate,
-	courseEvents,
-	userEvents,
-	form,
+  timetablesData,
+  semesterStartDate,
+  semesterEndDate,
+  courseEvents,
+  userEvents,
+  form,
 }: CalendarProps) {
-	const [queryParams] = useSearchParams();
-	const isEditingTimetable = queryParams.has("edit");
-	const timetableId = parseInt(queryParams.get("edit") ?? "0");
+  const [queryParams] = useSearchParams();
+  const isEditingTimetable = queryParams.has("edit");
+  const timetableId = parseInt(queryParams.get("edit") ?? "0");
 
-	const [createTimetable] = useCreateTimetableMutation();
-	const [createEvent] = useCreateEventMutation();
-	const [deleteTimetable] = useDeleteTimetableMutation();
+  const [createTimetable] = useCreateTimetableMutation();
+  const [createEvent] = useCreateEventMutation();
+  const [deleteTimetable] = useDeleteTimetableMutation();
   const [createRestriction] = useCreateRestrictionMutation();
 
-	let index = 1;
-	const courseEventsParsed = courseEvents.map((event) =>
-		parseEvent(index++, event, "courseEvent")
-	);
-	const userEventsParsed = userEvents.map((event) =>
-		parseEvent(index++, event, "userEvent")
-	);
+  let index = 1;
+  const courseEventsParsed = courseEvents.map((event) =>
+    parseEvent(index++, event, "courseEvent"),
+  );
+  const userEventsParsed = userEvents.map((event) =>
+    parseEvent(index++, event, "userEvent"),
+  );
 
-	const calendar = createCalendar({
-		views: [
-			createViewDay(),
-			createViewWeek(),
-			createViewMonthGrid(),
-			createViewMonthAgenda(),
-		],
-		defaultView: viewWeek.name,
-		events: [...courseEventsParsed, ...userEventsParsed],
-		calendars: {
-			courseEvent: {
-				colorName: "courseEvent",
-				lightColors: {
-					main: "#1c7df9",
-					container: "#d2e7ff",
-					onContainer: "#002859",
-				},
-				darkColors: {
-					main: "#c0dfff",
-					onContainer: "#dee6ff",
-					container: "#426aa2",
-				},
-			},
-		},
-		plugins: [createDragAndDropPlugin(), createEventModalPlugin()],
-		weekOptions: {
-			gridHeight: 1000,
-		},
-	});
+  const calendar = createCalendar({
+    views: [
+      createViewDay(),
+      createViewWeek(),
+      createViewMonthGrid(),
+      createViewMonthAgenda(),
+    ],
+    defaultView: viewWeek.name,
+    events: [...courseEventsParsed, ...userEventsParsed],
+    calendars: {
+      courseEvent: {
+        colorName: "courseEvent",
+        lightColors: {
+          main: "#1c7df9",
+          container: "#d2e7ff",
+          onContainer: "#002859",
+        },
+        darkColors: {
+          main: "#c0dfff",
+          onContainer: "#dee6ff",
+          container: "#426aa2",
+        },
+      },
+    },
+    plugins: [createDragAndDropPlugin(), createEventModalPlugin()],
+    weekOptions: {
+      gridHeight: 1000,
+    },
+  });
 
-	// const { data: oldTimetableEvents } = useGetEventsQuery(timetableId) as {
-	// 	data: TimetableEvents;
-	// };
-	// const oldOfferingIds = [
-	// 	...new Set(
-	// 		oldTimetableEvents?.courseEvents.map((event) => event.offering_id)
-	// 	),
-	// ].sort();
-	const newOfferingIds = form.watch("offeringIds") ?? [];
-	const semester = form.watch("semester") ?? "";
-	const [timetableTitle, setTimetableTitle] = useState("");
+  // const { data: oldTimetableEvents } = useGetEventsQuery(timetableId) as {
+  // 	data: TimetableEvents;
+  // };
+  // const oldOfferingIds = [
+  // 	...new Set(
+  // 		oldTimetableEvents?.courseEvents.map((event) => event.offering_id)
+  // 	),
+  // ].sort();
+  const newOfferingIds = form.watch("offeringIds") ?? [];
+  const semester = form.watch("semester") ?? "";
+  const [timetableTitle, setTimetableTitle] = useState("");
 
-	const selectedCourses = form.getValues("courses") ?? [];
-	const selectedCourseIds = selectedCourses.map((course) => course.id);
-	const { data: numberOfSectionsData } = useGetNumberOfCourseSectionsQuery({
-		course_ids: selectedCourseIds.join(","),
-		semester: semester,
-	});
-	const totalNumberOfSections =
-		numberOfSectionsData?.totalNumberOfCourseSections ?? 0;
+  const selectedCourses = form.getValues("courses") ?? [];
+  const selectedCourseIds = selectedCourses.map((course) => course.id);
+  const { data: numberOfSectionsData } = useGetNumberOfCourseSectionsQuery({
+    course_ids: selectedCourseIds.join(","),
+    semester: semester,
+  });
+  const totalNumberOfSections =
+    numberOfSectionsData?.totalNumberOfCourseSections ?? 0;
 
-	const allOfferingSectionsHaveBeenSelected =
-		newOfferingIds.length === totalNumberOfSections;
+  const allOfferingSectionsHaveBeenSelected =
+    newOfferingIds.length === totalNumberOfSections;
 
-	useEffect(() => {
-		if (!isEditingTimetable) {
-			return;
-		}
-		setTimetableTitle(
-			timetablesData?.find((timetable) => timetable.id === timetableId)
-				?.timetable_title ?? ""
-		);
-	}, [timetablesData, timetableId, timetableTitle, isEditingTimetable]);
+  useEffect(() => {
+    if (!isEditingTimetable) {
+      return;
+    }
+    setTimetableTitle(
+      timetablesData?.find((timetable) => timetable.id === timetableId)
+        ?.timetable_title ?? "",
+    );
+  }, [timetablesData, timetableId, timetableTitle, isEditingTimetable]);
 
-	const handleCreate = async () => {
-		// Create timetable
-		const { data, error } = await createTimetable({
-			timetable_title: timetableTitle,
-			semester: semester,
-		});
-		if (error) {
-			console.error(error);
-		}
+  const handleCreate = async () => {
+    // Create timetable
+    const { data, error } = await createTimetable({
+      timetable_title: timetableTitle,
+      semester: semester,
+    });
+    if (error) {
+      console.error(error);
+    }
 
-		// Create course events for the newly created timetable
-		const timetableId = data[0]?.id;
-		const promises = newOfferingIds.map(async (offeringId) => {
-			const { error: offeringError } = await createEvent({
-				calendar_id: timetableId,
-				offering_id: offeringId,
-				semester_start_date: semesterStartDate,
-				semester_end_date: semesterEndDate,
-			});
-			if (offeringError) {
-				console.error(offeringError);
-			}
-		});
-		await Promise.all(promises);
+    // Create course events for the newly created timetable
+    const timetableId = data[0]?.id;
+    const promises = newOfferingIds.map(async (offeringId) => {
+      const { error: offeringError } = await createEvent({
+        calendar_id: timetableId,
+        offering_id: offeringId,
+        semester_start_date: semesterStartDate,
+        semester_end_date: semesterEndDate,
+      });
+      if (offeringError) {
+        console.error(offeringError);
+      }
+    });
+    await Promise.all(promises);
 
     // Create restrictions for the newly created timetable
     const restrictions = form.getValues("restrictions") ?? [];
@@ -194,95 +192,96 @@ function Calendar({
         disabled: restriction.disabled,
         num_days: restriction.numDays,
       };
-      const { error: restrictionError } = await createRestriction(restrictionObject);
+      const { error: restrictionError } =
+        await createRestriction(restrictionObject);
       if (restrictionError) {
         console.error(restrictionError);
       }
     });
     await Promise.all(restrictionPromises);
 
-		// Refresh the page and redirect to the home page to see the newly created timetable
-		window.location.reload();
-		window.location.href = "/home";
-	};
+    // Refresh the page and redirect to the home page to see the newly created timetable
+    window.location.reload();
+    window.location.href = "/home";
+  };
 
-	const handleUpdate = async () => {
-		// Delete the existing timetable
-		const { error: deleteError } = await deleteTimetable(timetableId);
-		if (deleteError) {
-			console.error(deleteError);
-		}
+  const handleUpdate = async () => {
+    // Delete the existing timetable
+    const { error: deleteError } = await deleteTimetable(timetableId);
+    if (deleteError) {
+      console.error(deleteError);
+    }
 
-		// Create new timetable and create course events for the newly created timetable
-		await handleCreate();
-	};
+    // Create new timetable and create course events for the newly created timetable
+    await handleCreate();
+  };
 
-	return (
-		<div>
-			<h1 className="text-4xl flex flex-row justify-between font-medium tracking-tight mb-8">
-				<div>Your Timetable</div>
-				{!isEditingTimetable ? (
-					<Dialog>
-						{!allOfferingSectionsHaveBeenSelected && (
-							<p className="text-sm text-red-500 pr-2">
-								Please select all LEC/TUT/PRA sections for your courses in order
-								to save your timetable.
-							</p>
-						)}
-						<DialogTrigger asChild>
-							<Button size="sm" disabled={!allOfferingSectionsHaveBeenSelected}>
-								Create Timetable
-							</Button>
-						</DialogTrigger>
-						<DialogContent className="gap-5">
-							<DialogHeader>
-								<DialogTitle>Timetable Creation</DialogTitle>
-								<DialogDescription>
-									What would you like to name your timetable?
-								</DialogDescription>
-							</DialogHeader>
-							<Label htmlFor="timetableName">Timetable Name</Label>
-							<Input
-								id="timetableName"
-								placeholder="Placeholder name"
-								onChange={(e) => setTimetableTitle(e.target.value.trim())}
-							/>
-							<DialogFooter>
-								<DialogClose asChild>
-									<Button variant="secondary">Cancel</Button>
-								</DialogClose>
-								<DialogClose asChild>
-									<Button
-										onClick={handleCreate}
-										disabled={timetableTitle === ""}
-									>
-										Save
-									</Button>
-								</DialogClose>
-							</DialogFooter>
-						</DialogContent>
-					</Dialog>
-				) : (
-					<>
-						{!allOfferingSectionsHaveBeenSelected && (
-							<p className="text-sm text-red-500 pr-2">
-								Please select all LEC/TUT/PRA sections for your courses in order
-								to save your timetable.
-							</p>
-						)}
-						<Button
-							size="sm"
-							disabled={!allOfferingSectionsHaveBeenSelected}
-							onClick={handleUpdate}
-						>
-							Update Timetable
-						</Button>
-					</>
-				)}
-			</h1>
-			<ScheduleXCalendar calendarApp={calendar} />
-		</div>
-	);
+  return (
+    <div>
+      <h1 className="text-4xl flex flex-row justify-between font-medium tracking-tight mb-8">
+        <div>Your Timetable</div>
+        {!isEditingTimetable ? (
+          <Dialog>
+            {!allOfferingSectionsHaveBeenSelected && (
+              <p className="text-sm text-red-500 pr-2">
+                Please select all LEC/TUT/PRA sections for your courses in order
+                to save your timetable.
+              </p>
+            )}
+            <DialogTrigger asChild>
+              <Button size="sm" disabled={!allOfferingSectionsHaveBeenSelected}>
+                Create Timetable
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="gap-5">
+              <DialogHeader>
+                <DialogTitle>Timetable Creation</DialogTitle>
+                <DialogDescription>
+                  What would you like to name your timetable?
+                </DialogDescription>
+              </DialogHeader>
+              <Label htmlFor="timetableName">Timetable Name</Label>
+              <Input
+                id="timetableName"
+                placeholder="Placeholder name"
+                onChange={(e) => setTimetableTitle(e.target.value.trim())}
+              />
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="secondary">Cancel</Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button
+                    onClick={handleCreate}
+                    disabled={timetableTitle === ""}
+                  >
+                    Save
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <>
+            {!allOfferingSectionsHaveBeenSelected && (
+              <p className="text-sm text-red-500 pr-2">
+                Please select all LEC/TUT/PRA sections for your courses in order
+                to save your timetable.
+              </p>
+            )}
+            <Button
+              size="sm"
+              disabled={!allOfferingSectionsHaveBeenSelected}
+              onClick={handleUpdate}
+            >
+              Update Timetable
+            </Button>
+          </>
+        )}
+      </h1>
+      <ScheduleXCalendar calendarApp={calendar} />
+    </div>
+  );
 }
 
 export default Calendar;

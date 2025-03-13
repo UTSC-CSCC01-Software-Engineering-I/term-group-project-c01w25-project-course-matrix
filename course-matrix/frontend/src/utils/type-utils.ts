@@ -10,11 +10,11 @@ export type Event = {
   event_start: string;
   event_end: string;
   offering_id: number;
-}
-  
+};
+
 export type TimetableEvents = {
-  courseEvents: Event[],
-  userEvents: Event[]
+  courseEvents: Event[];
+  userEvents: Event[];
 };
 
 export type Timetable = {

@@ -2,6 +2,7 @@ import express from "express";
 import timetableController from "../controllers/timetablesController";
 import eventController from "../controllers/eventsController";
 import restrictionsController from "../controllers/restrictionsController";
+import sharesController from "../controllers/sharesController";
 import { authHandler } from "../middleware/authHandler";
 
 export const timetableRouter = express.Router();
@@ -35,7 +36,7 @@ timetableRouter.put("/:id", authHandler, timetableController.updateTimetable);
 timetableRouter.delete(
   "/:id",
   authHandler,
-  timetableController.deleteTimetable,
+  timetableController.deleteTimetable
 );
 
 /**
@@ -53,7 +54,7 @@ timetableRouter.post("/events", authHandler, eventController.createEvent);
 timetableRouter.get(
   "/events/:calendar_id",
   authHandler,
-  eventController.getEvents,
+  eventController.getEvents
 );
 
 /**
@@ -78,7 +79,7 @@ timetableRouter.delete("/events/:id", authHandler, eventController.deleteEvent);
 timetableRouter.post(
   "/restrictions",
   authHandler,
-  restrictionsController.createRestriction,
+  restrictionsController.createRestriction
 );
 
 /**
@@ -89,7 +90,7 @@ timetableRouter.post(
 timetableRouter.get(
   "/restrictions/:calendar_id",
   authHandler,
-  restrictionsController.getRestriction,
+  restrictionsController.getRestriction
 );
 
 /**
@@ -100,7 +101,7 @@ timetableRouter.get(
 timetableRouter.put(
   "/restrictions/:id",
   authHandler,
-  restrictionsController.updateRestriction,
+  restrictionsController.updateRestriction
 );
 
 /**
@@ -111,5 +112,41 @@ timetableRouter.put(
 timetableRouter.delete(
   "/restrictions/:id",
   authHandler,
-  restrictionsController.deleteRestriction,
+  restrictionsController.deleteRestriction
+);
+
+/**
+ * Route to create shared entry
+ * @route POST /api/timetables/shared
+ * @middleware authHandler - Middleware to check if the user is authenticated
+ */
+timetableRouter.post("/shared", authHandler, sharesController.createShare);
+
+/**
+ * Route to get all shared entry for authenticated user
+ * @route GET /api/timetables/shared
+ * @middleware authHandler - Middleware to check if the user is authenticated
+ */
+timetableRouter.get("/shared", authHandler, sharesController.getShare);
+
+/**
+ * Route to delete all shared entries for a timetable as timetable's owner
+ * @route DELETE /api/timetables/shared/owner/:calendar_id
+ * @middleware authHandler - Middleware to check if the user is authenticated
+ */
+timetableRouter.delete(
+  "/shared/owner/:calendar_id",
+  authHandler,
+  sharesController.deleteOwnerShare
+);
+
+/**
+ * Route to delete a single entry for the authneticate user
+ * @route DELETE /api/timetables/shared/:calendar_id
+ * @middleware authHandler - Middleware to check if the user is authenticated
+ */
+timetableRouter.delete(
+  "/shared/:calendar_id",
+  authHandler,
+  sharesController.deleteShare
 );

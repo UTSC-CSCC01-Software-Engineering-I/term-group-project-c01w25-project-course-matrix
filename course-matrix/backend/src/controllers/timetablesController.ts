@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
-import { maybeCoerceBoolean } from "openai/core";
 
 export default {
   /**

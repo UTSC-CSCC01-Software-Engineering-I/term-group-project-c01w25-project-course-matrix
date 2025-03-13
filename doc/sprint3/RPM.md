@@ -28,7 +28,7 @@
   - Project on update is automatically tested
   - Project auto redeploys on update
 
-- Unit Testing;
+ - Unit Testing;
   - Project functions will have unit tests written for them
   - Project functions will pass unit tests written for them
 

@@ -96,13 +96,15 @@ const CreateCustomSetting = ({
     closeHandler();
   };
 
-  const form = useContext(FormContext)
+  const form = useContext(FormContext);
 
   const isDaysOffRestrictionApplied = () => {
-    const val =  form?.getValues("restrictions").some(r => r.type === "Days Off")
-    console.log(val)
-    return val
-  }
+    const val = form
+      ?.getValues("restrictions")
+      .some((r) => r.type === "Days Off");
+    console.log(val);
+    return val;
+  };
 
   const getRestrictionType = (value: string) => {
     if (
@@ -174,7 +176,10 @@ const CreateCustomSetting = ({
                             <SelectItem value="Restrict Day">
                               Restrict Entire Day
                             </SelectItem>
-                            <SelectItem value="Days Off" disabled={isDaysOffRestrictionApplied()}>
+                            <SelectItem
+                              value="Days Off"
+                              disabled={isDaysOffRestrictionApplied()}
+                            >
                               Enforce Minimum Days Off Per Week
                             </SelectItem>
                           </SelectContent>

@@ -332,9 +332,18 @@ const TimetableBuilder = () => {
                   </div>
 
                   <div className="flex flex-col">
-                    <p className="text-sm pb-2">
-                      Enabled Restrictions: {enabledRestrictions.length}
-                    </p>
+                    <FormField
+                      control={form.control}
+                      name="restrictions"
+                      render={({ field }) => (
+                        <FormItem className="pb-2">
+                          <p className="text-sm">
+                            Enabled Restrictions: {enabledRestrictions.length}
+                          </p>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <div className="flex gap-2 flex-col">
                       {enabledRestrictions.map((restric, index) => (
                         <div

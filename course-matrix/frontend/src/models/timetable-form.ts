@@ -252,7 +252,7 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z
     {
       message: "Already added minimum days off per week",
       path: ["restrictions"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -261,7 +261,7 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z
     {
       message: "Duplicate restriction detected. Please remove.",
       path: ["restrictions"],
-    }
+    },
   );
 
 export const baseTimetableForm: TimetableForm = {
@@ -289,7 +289,7 @@ function hasDuplicate(restrictions: RestrictionForm[]) {
           ((s.numDays && r.numDays && s.numDays === r.numDays) ||
             (s.days?.sort().join(" ") === r.days?.sort().join(" ") &&
               s.startTime?.getHours() === r.startTime?.getHours() &&
-              s.endTime?.getHours() === s.endTime?.getHours()))
+              s.endTime?.getHours() === s.endTime?.getHours())),
       )
     ) {
       return true;

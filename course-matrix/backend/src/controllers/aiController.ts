@@ -1,7 +1,7 @@
 import asyncHandler from "../middleware/asyncHandler";
 import { Request, Response } from "express";
 import { createOpenAI } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { CoreMessage, streamText } from "ai";
 import { Index, Pinecone, RecordMetadata } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
@@ -15,11 +15,18 @@ import {
   BREADTH_REQUIREMENT_KEYWORDS,
   YEAR_LEVEL_KEYWORDS,
 } from "../constants/promptKeywords";
-import { CHATBOT_MEMORY_THRESHOLD, codeToYear } from "../constants/constants";
+import {
+  CHATBOT_MEMORY_THRESHOLD,
+  CHATBOT_TIMETABLE_CMD,
+} from "../constants/constants";
 import { namespaceToMinResults } from "../constants/constants";
 import OpenAI from "openai";
 import { convertBreadthRequirement } from "../utils/convert-breadth-requirement";
 import { convertYearLevel } from "../utils/convert-year-level";
+import {
+  availableFunctions,
+  FunctionNames,
+} from "../constants/availableFunctions";
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -35,7 +42,7 @@ const pinecone = new Pinecone({
 });
 
 const index: Index<RecordMetadata> = pinecone.Index(
-  process.env.PINECONE_INDEX_NAME!,
+  process.env.PINECONE_INDEX_NAME!
 );
 
 console.log("Connected to OpenAI API");
@@ -92,7 +99,7 @@ function analyzeQuery(query: string): {
       "prerequisites",
       "corequisites",
       "departments",
-      "programs",
+      "programs"
     );
   }
 
@@ -110,7 +117,7 @@ async function searchSelectedNamespaces(
   query: string,
   k: number,
   namespaces: string[],
-  filters?: Object,
+  filters?: Object
 ): Promise<Document[]> {
   let allResults: Document[] = [];
 
@@ -132,7 +139,7 @@ async function searchSelectedNamespaces(
       const results = await namespaceStore.similaritySearch(
         query,
         Math.max(k, namespaceToMinResults.get(namespace)),
-        namespace === "courses_v3" ? filters : undefined,
+        namespace === "courses_v3" ? filters : undefined
       );
       console.log(`Found ${results.length} results in namespace: ${namespace}`);
       allResults = [...allResults, ...results];
@@ -153,10 +160,10 @@ async function searchSelectedNamespaces(
 // Reformulate user query to make more concise query to database, taking into consideration context
 async function reformulateQuery(
   latestQuery: string,
-  conversationHistory: any[],
+  conversationHistory: any[]
 ): Promise<string> {
   try {
-    const openai = new OpenAI({
+    const openai2 = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
 
@@ -224,7 +231,7 @@ async function reformulateQuery(
       content: latestQuery,
     });
 
-    const response = await openai.chat.completions.create({
+    const response = await openai2.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages,
       temperature: 0.1, // Lower temperature for more consistent, focused queries
@@ -251,7 +258,7 @@ function includeFilters(query: string) {
       if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
         relaventBreadthRequirements.push(convertBreadthRequirement(namespace));
       }
-    },
+    }
   );
 
   Object.entries(YEAR_LEVEL_KEYWORDS).forEach(([namespace, keywords]) => {
@@ -305,95 +312,194 @@ function includeFilters(query: string) {
  */
 export const chat = asyncHandler(async (req: Request, res: Response) => {
   const { messages } = req.body;
-  const latestMessage = messages[messages.length - 1].content[0].text;
 
-  // Get conversation history (excluding the latest message)
-  const conversationHistory = (messages as any[]).slice(0, -1).map((msg) => ({
-    role: msg?.role,
-    content: msg?.content[0]?.text,
-  }));
+  try {
+    const latestMessage = messages[messages.length - 1].content[0].text;
 
-  // Use GPT-4o to reformulate the query based on conversation history
-  const reformulatedQuery = await reformulateQuery(
-    latestMessage,
-    conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD), // last K messages
-  );
-  console.log(">>>> Original query:", latestMessage);
-  console.log(">>>> Reformulated query:", reformulatedQuery);
+    if (latestMessage.startsWith(CHATBOT_TIMETABLE_CMD)) {
+      // ----- Flow 1 - Agent performs action on timetable -----
 
-  // Analyze the query to determine if search is needed and which namespaces to search
-  const { requiresSearch, relevantNamespaces } =
-    analyzeQuery(reformulatedQuery);
+      const openai2 = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
 
-  let context = "[No context provided]";
+      // Call with function definitions
+      const response = await openai2.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages,
+        functions: [
+          {
+            name: "getTimetables",
+            description:
+              "Get all the timetables of the currently logged in user.",
+            parameters: {
+              type: "object",
+              properties: {},
+              required: [],
+            },
+          },
+        ],
+        function_call: "auto",
+      });
 
-  if (requiresSearch) {
-    console.log(
-      `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-        ", ",
-      )}`,
-    );
+      let responseMessage = response.choices[0].message;
 
-    const filters = includeFilters(reformulatedQuery);
-    // console.log("Filters: ", JSON.stringify(filters))
+      console.log(responseMessage);
 
-    // Search only relevant namespaces
-    const searchResults = await searchSelectedNamespaces(
-      reformulatedQuery,
-      3,
-      relevantNamespaces,
-      Object.keys(filters).length === 0 ? undefined : filters,
-    );
-    // console.log("Search Results: ", searchResults);
+      // Check if the model wants to call a tool/function
+      if (responseMessage.function_call) {
+        // Add the assistant's message with tool calls to conversation
+        // messages.push(responseMessage);
 
-    // Format context from search results into plaintext
-    if (searchResults.length > 0) {
-      context = searchResults.map((doc) => doc.pageContent).join("\n\n");
-    }
-  } else {
-    console.log("Query does not require knowledge retrieval, skipping search");
-  }
+        // Process the tool call
+        const toolCall = responseMessage.function_call;
+        const functionName = toolCall.name as FunctionNames;
+        const functionToCall = availableFunctions[functionName];
+        const functionArgs = JSON.parse(toolCall.arguments);
 
-  console.log("CONTEXT: ", context);
+        if (functionToCall) {
+          // Execute the function
+          const functionResponse = await functionToCall(functionArgs, req);
 
-  const result = streamText({
-    model: openai("gpt-4o-mini"),
-    system: `# Morpheus - Course Matrix Assistant
-  
-      ## Identity & Purpose
-      You are Morpheus, the official AI assistant for Course Matrix, an AI-powered platform that helps University of Toronto Scarborough (UTSC) students plan their academic journey.
-  
-      ## About Course Matrix
-      Course Matrix streamlines course selection and timetable creation by:
-      - Generating optimized timetables in one click based on selected courses and personal preferences
-      - Allowing natural language queries about courses, offerings, and academic programs
-      - Providing personalized recommendations based on degree requirements and course availability
-  
-      ## Your Capabilities
-      - Provide accurate information about UTSC courses, offerings, prerequisites, corequisites, and departments
-      - Answer questions about course descriptions, schedules, instructors, offerings, and requirements
-      - Explain degree program requirements and course relationships
-      - Answer questions about offerings of individual courses such as meeting section, time, day, instructor
-  
-      ## Response Guidelines
-      - Be concise and direct when answering course-related questions
-      - Use bullet points for listing multiple pieces of information
-      - Include course codes when referencing specific courses
-      - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
-      - For unrelated questions, politely explain that you're specialized in UTSC academic information
-  
-      ## Available Knowledge
-      ${
-        context === "[No context provided]"
-          ? "No specific course information is available for this query. Answer based on general knowledge about the Course Matrix platform."
-          : "Use the following information to inform your response. Also use conversation history to inform response as well.\n\n" +
-            context
+          // Add the tool result to the conversation
+          messages.push({
+            role: "tool",
+            content: JSON.stringify(functionResponse),
+          });
+        }
+
+        // Get a new response from the model with all the tool responses
+        const result = streamText({
+          model: openai("gpt-4o-mini"),
+          system: `# Morpheus - Course Matrix Assistant
+        
+            ## Identity & Purpose
+            You are Morpheus, the official AI assistant for Course Matrix, an AI-powered platform that helps University of Toronto Scarborough (UTSC) students plan their academic journey.
+        
+            ## About Course Matrix
+            Course Matrix streamlines course selection and timetable creation by:
+            - Generating optimized timetables in one click based on selected courses and personal preferences
+            - Allowing natural language queries about courses, offerings, and academic programs
+            - Providing personalized recommendations based on degree requirements and course availability
+            - Creating, reading, updating, and deleting user timetables based on natural language
+        
+            ## Your Capabilities
+            - Provide accurate information about UTSC courses, offerings, prerequisites, corequisites, and departments
+            - Answer questions about course descriptions, schedules, instructors, offerings, and requirements
+            - Explain degree program requirements and course relationships
+            - Answer questions about offerings of individual courses such as meeting section, time, day, instructor
+        
+            ## Response Guidelines
+            - Be concise and direct when answering course-related questions
+            - Use bullet points for listing multiple pieces of information
+            - Include course codes when referencing specific courses
+            - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
+            - For unrelated questions, politely explain that you're specialized in UTSC academic information
+            `,
+          messages,
+        });
+
+        result.pipeDataStreamToResponse(res);
       }
-      `,
-    messages,
-  });
+    } else {
+      // ----- Flow 2 - Answer query -----
 
-  result.pipeDataStreamToResponse(res);
+      // Get conversation history (excluding the latest message)
+      const conversationHistory = (messages as any[])
+        .slice(0, -1)
+        .map((msg) => ({
+          role: msg?.role,
+          content: msg?.content[0]?.text,
+        }));
+
+      // Use GPT-4o to reformulate the query based on conversation history
+      const reformulatedQuery = await reformulateQuery(
+        latestMessage,
+        conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD) // last K messages
+      );
+      console.log(">>>> Original query:", latestMessage);
+      console.log(">>>> Reformulated query:", reformulatedQuery);
+
+      // Analyze the query to determine if search is needed and which namespaces to search
+      const { requiresSearch, relevantNamespaces } =
+        analyzeQuery(reformulatedQuery);
+
+      let context = "[No context provided]";
+
+      if (requiresSearch) {
+        console.log(
+          `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
+            ", "
+          )}`
+        );
+
+        const filters = includeFilters(reformulatedQuery);
+        // console.log("Filters: ", JSON.stringify(filters))
+
+        // Search only relevant namespaces
+        const searchResults = await searchSelectedNamespaces(
+          reformulatedQuery,
+          3,
+          relevantNamespaces,
+          Object.keys(filters).length === 0 ? undefined : filters
+        );
+        // console.log("Search Results: ", searchResults);
+
+        // Format context from search results into plaintext
+        if (searchResults.length > 0) {
+          context = searchResults.map((doc) => doc.pageContent).join("\n\n");
+        }
+      } else {
+        console.log(
+          "Query does not require knowledge retrieval, skipping search"
+        );
+      }
+
+      // console.log("CONTEXT: ", context);
+
+      const result = streamText({
+        model: openai("gpt-4o-mini"),
+        system: `# Morpheus - Course Matrix Assistant
+      
+          ## Identity & Purpose
+          You are Morpheus, the official AI assistant for Course Matrix, an AI-powered platform that helps University of Toronto Scarborough (UTSC) students plan their academic journey.
+      
+          ## About Course Matrix
+          Course Matrix streamlines course selection and timetable creation by:
+          - Generating optimized timetables in one click based on selected courses and personal preferences
+          - Allowing natural language queries about courses, offerings, and academic programs
+          - Providing personalized recommendations based on degree requirements and course availability
+      
+          ## Your Capabilities
+          - Provide accurate information about UTSC courses, offerings, prerequisites, corequisites, and departments
+          - Answer questions about course descriptions, schedules, instructors, offerings, and requirements
+          - Explain degree program requirements and course relationships
+          - Answer questions about offerings of individual courses such as meeting section, time, day, instructor
+      
+          ## Response Guidelines
+          - Be concise and direct when answering course-related questions
+          - Use bullet points for listing multiple pieces of information
+          - Include course codes when referencing specific courses
+          - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
+          - For unrelated questions, politely explain that you're specialized in UTSC academic information
+      
+          ## Available Knowledge
+          ${
+            context === "[No context provided]"
+              ? "No specific course information is available for this query. Answer based on general knowledge about the Course Matrix platform."
+              : "Use the following information to inform your response. Also use conversation history to inform response as well.\n\n" +
+                context
+          }
+          `,
+        messages,
+      });
+
+      result.pipeDataStreamToResponse(res);
+    }
+  } catch (error: any) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error?.message });
+  }
 });
 
 // Test Similarity search
@@ -410,15 +516,15 @@ export const testSimilaritySearch = asyncHandler(
     if (requiresSearch) {
       console.log(
         `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-          ", ",
-        )}`,
+          ", "
+        )}`
       );
 
       // Search only the relevant namespaces
       const searchResults = await searchSelectedNamespaces(
         message,
         3,
-        relevantNamespaces,
+        relevantNamespaces
       );
       console.log("Search Results: ", searchResults);
 
@@ -428,11 +534,11 @@ export const testSimilaritySearch = asyncHandler(
       }
     } else {
       console.log(
-        "Query does not require knowledge retrieval, skipping search",
+        "Query does not require knowledge retrieval, skipping search"
       );
     }
 
     console.log("CONTEXT: ", context);
     res.status(200).send(context);
-  },
+  }
 );

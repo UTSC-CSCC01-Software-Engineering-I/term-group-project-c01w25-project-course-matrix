@@ -48,3 +48,5 @@ namespaceToMinResults.set("programs", 5);
 
 // Consider the last X messages in history to influence vector DB query
 export const CHATBOT_MEMORY_THRESHOLD = 3;
+
+export const CHATBOT_TIMETABLE_CMD = "/timetable";

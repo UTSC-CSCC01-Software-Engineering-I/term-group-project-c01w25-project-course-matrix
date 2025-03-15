@@ -43,7 +43,7 @@ export default {
       if (existingTimetable) {
         return res
           .status(400)
-          .json({ error: "A timetable with this title already exist" });
+          .json({ error: "A timetable with this title already exists" });
       }
 
       //Create query to insert the user_id and timetable_title into the db

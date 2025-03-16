@@ -18,51 +18,26 @@ export default {
       const user_id = (req as any).user.id;
 
       //Retrieve timetable title
-      const { timetable_title, semester, favorite = false } = req.body;
-      if (!timetable_title || !semester) {
-        return res
-          .status(400)
-          .json({ error: "timetable title and semester are required" });
+      const { timetable_title, semester } = req.body;
+      if (!timetable_title) {
+        return res.status(400).json({ error: "timetable title is required" });
       }
 
-      // Check if a timetable with the same title already exist for this user
-      const { data: existingTimetable, error: existingTimetableError } =
-        await supabase
-          .schema("timetable")
-          .from("timetables")
-          .select("id")
-          .eq("user_id", user_id)
-          .eq("timetable_title", timetable_title)
-          .maybeSingle();
-
-      if (existingTimetableError) {
-        return res.status(400).json({ error: existingTimetableError.message });
-      }
-
-      if (existingTimetable) {
+      if (!semester) {
         return res
           .status(400)
-          .json({ error: "A timetable with this title already exist" });
+          .json({ error: "timetable semester is required" });
       }
 
       //Create query to insert the user_id and timetable_title into the db
       let insertTimetable = supabase
         .schema("timetable")
         .from("timetables")
-        .insert([
-          {
-            user_id,
-            timetable_title,
-            semester,
-            favorite,
-          },
-        ])
-        .select()
-        .single();
+        .insert([{ user_id, timetable_title, semester }])
+        .select();
 
       const { data: timetableData, error: timetableError } =
         await insertTimetable;
-
       if (timetableError) {
         return res.status(400).json({ error: timetableError.message });
       }
@@ -116,11 +91,11 @@ export default {
       const { id } = req.params;
 
       //Retrieve timetable title
-      const { timetable_title, semester, favorite } = req.body;
-      if (!timetable_title && !semester && favorite === undefined) {
+      const { timetable_title, semester } = req.body;
+      if (!timetable_title && !semester) {
         return res.status(400).json({
           error:
-            "New timetable title or semester or updated favorite status is required when updating a timetable",
+            "New timetable title or semester is required when updating a timetable",
         });
       }
 
@@ -137,34 +112,17 @@ export default {
           .eq("user_id", user_id)
           .maybeSingle();
 
-      if (timetableUserError || !timetableUserData)
-        return res
-          .status(400)
-          .json({ error: "Timetable not found or unauthorized" });
+      if (timetableUserError)
+        return res.status(400).json({ error: timetableUserError.message });
 
-      // Check for duplicate timetable title
-      if (timetable_title) {
-        const { data: existingTimetable, error: existingTimetableError } =
-          await supabase
-            .schema("timetable")
-            .from("timetables")
-            .select("*")
-            .eq("user_id", user_id)
-            .eq("timetable_title", timetable_title)
-            .neq("id", id)
-            .maybeSingle();
-
-        if (existingTimetable) {
-          return res
-            .status(400)
-            .json({ error: "A timetable this title already exist" });
-        }
+      //Validate timetable validity:
+      if (!timetableUserData || timetableUserData.length === 0) {
+        return res.status(404).json({ error: "Calendar id not found" });
       }
 
       let updateData: any = {};
       if (timetable_title) updateData.timetable_title = timetable_title;
       if (semester) updateData.semester = semester;
-      if (favorite !== undefined) updateData.favorite = favorite;
 
       //Update timetable title, for authenticated user only
       let updateTimetableQuery = supabase
@@ -173,8 +131,7 @@ export default {
         .update(updateData)
         .eq("id", id)
         .eq("user_id", user_id)
-        .select()
-        .single();
+        .select();
 
       const { data: timetableData, error: timetableError } =
         await updateTimetableQuery;

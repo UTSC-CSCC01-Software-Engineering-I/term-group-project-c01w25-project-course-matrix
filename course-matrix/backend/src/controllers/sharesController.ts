@@ -19,26 +19,25 @@ export default {
           .json({ error: "Shared user email and calendar ID are required" });
       }
 
-      // Owner cannot share a timetable to themselve
+      // Owner cannot share a timetable to themselves
       if (shared_email === owner_email) {
         return res
           .status(400)
-          .json({ error: "Users cannot share timetable to themselves " });
+          .json({ error: "Users cannot share a timetable with themselves" });
       }
 
       // Query users for shared_id using email
       const { data: sharedUser, error: sharedError } = await supabase.rpc(
         "get_user_id_by_email",
-        {
-          email: shared_email,
-        },
+        { email: shared_email }
       );
 
       if (sharedError) {
         return res.status(500).json({ error: sharedError.message });
       }
 
-      if (!sharedUser) {
+      // Ensure sharedUser exists and is not an empty array
+      if (!sharedUser || sharedUser.length === 0) {
         return res
           .status(404)
           .json({ error: "User with provided email not found" });
@@ -46,7 +45,7 @@ export default {
 
       const shared_id = sharedUser[0].id;
 
-      // Check for the calendar exists and belongs to the owner
+      // Check if the calendar exists and belongs to the owner
       const { data: timeTable, error: timeTableError } = await supabase
         .schema("timetable")
         .from("timetables")
@@ -61,7 +60,7 @@ export default {
         });
       }
 
-      // Check if the sharing has already existed
+      // Check if the sharing already exists
       const { data: existingShare, error: existingShareError } = await supabase
         .schema("timetable")
         .from("shared")
@@ -77,7 +76,7 @@ export default {
         });
       }
 
-      // Inser the shared timetable entry
+      // Insert the shared timetable entry
       const { data: shareInsert, error: shareError } = await supabase
         .schema("timetable")
         .from("shared")
@@ -96,7 +95,39 @@ export default {
   }),
 
   /**
-   * Get all share timetables for the current user
+   * Get all timetables that the owner has shared
+   */
+  getOwnerShare: asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const user_id = (req as any).user.id;
+
+      //Fetch all shared calendar IDs where user is the owner who share
+      const { data: shareData, error: sharedError } = await supabase
+        .schema("timetable")
+        .from("shared")
+        .select(
+          "calendar_id, owner_id, timetables!inner(id, user_id, timetable_title, semester, favorite)"
+        )
+        .eq("owner_id", user_id);
+
+      if (sharedError) {
+        return res.status(400).json({ error: sharedError.message });
+      }
+
+      if (!shareData || shareData.length === 0) {
+        return res
+          .status(404)
+          .json({ error: "This user has not shared any timetables" });
+      }
+
+      return res.status(200).json(shareData);
+    } catch (error) {
+      return res.status(500).send({ error });
+    }
+  }),
+
+  /**
+   * Get all timetables shared with the current user
    * @route GET /api/shared
    */
 
@@ -109,7 +140,7 @@ export default {
         .schema("timetable")
         .from("shared")
         .select(
-          "calendar_id, timetables!inner(id, user_id, timetable_title, semester, favorite)",
+          "calendar_id, owner_id, timetables!inner(id, user_id, timetable_title, semester, favorite)"
         )
         .eq("shared_id", user_id);
 
@@ -133,6 +164,7 @@ export default {
    * Delete all shared record for a timetable as the timetable's owner
    * @route DELETE /api/shared/owner/:calendar_id
    */
+
   deleteOwnerShare: asyncHandler(async (req: Request, res: Response) => {
     try {
       const owner_id = (req as any).user.id;

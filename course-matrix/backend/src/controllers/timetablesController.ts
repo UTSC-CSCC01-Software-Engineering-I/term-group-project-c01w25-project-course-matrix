@@ -25,6 +25,26 @@ export default {
           .json({ error: "timetable title and semester are required" });
       }
 
+      // Check if a timetable with the same title already exist for this user
+      const { data: existingTimetable, error: existingTimetableError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("id")
+          .eq("user_id", user_id)
+          .eq("timetable_title", timetable_title)
+          .maybeSingle();
+
+      if (existingTimetableError) {
+        return res.status(400).json({ error: existingTimetableError.message });
+      }
+
+      if (existingTimetable) {
+        return res
+          .status(400)
+          .json({ error: "A timetable with this title already exists" });
+      }
+
       //Create query to insert the user_id and timetable_title into the db
       let insertTimetable = supabase
         .schema("timetable")

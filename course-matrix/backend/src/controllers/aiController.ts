@@ -12,10 +12,14 @@ import {
   DEPARTMENT_CODES,
   ASSISTANT_TERMS,
   USEFUL_INFO,
+  BREADTH_REQUIREMENT_KEYWORDS,
+  YEAR_LEVEL_KEYWORDS,
 } from "../constants/promptKeywords";
 import { CHATBOT_MEMORY_THRESHOLD, codeToYear } from "../constants/constants";
 import { namespaceToMinResults } from "../constants/constants";
 import OpenAI from "openai";
+import { convertBreadthRequirement } from "../utils/convert-breadth-requirement";
+import { convertYearLevel } from "../utils/convert-year-level";
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -58,8 +62,8 @@ function analyzeQuery(query: string): {
 
   // If a course code is detected, add tehse namespaces
   if (containsCourseCode) {
-    if (!relevantNamespaces.includes("courses_v2"))
-      relevantNamespaces.push("courses_v2");
+    if (!relevantNamespaces.includes("courses_v3"))
+      relevantNamespaces.push("courses_v3");
     if (!relevantNamespaces.includes("offerings"))
       relevantNamespaces.push("offerings");
     if (!relevantNamespaces.includes("prerequisites"))
@@ -70,8 +74,8 @@ function analyzeQuery(query: string): {
   if (DEPARTMENT_CODES.some((code) => lowerQuery.includes(code))) {
     if (!relevantNamespaces.includes("departments"))
       relevantNamespaces.push("departments");
-    if (!relevantNamespaces.includes("courses_v2"))
-      relevantNamespaces.push("courses_v2");
+    if (!relevantNamespaces.includes("courses_v3"))
+      relevantNamespaces.push("courses_v3");
   }
 
   // If search is required at all
@@ -83,7 +87,7 @@ function analyzeQuery(query: string): {
   // If no specific namespaces identified & search required, then search all
   if (requiresSearch && relevantNamespaces.length === 0) {
     relevantNamespaces.push(
-      "courses_v2",
+      "courses_v3",
       "offerings",
       "prerequisites",
       "corequisites",
@@ -106,6 +110,7 @@ async function searchSelectedNamespaces(
   query: string,
   k: number,
   namespaces: string[],
+  filters?: Object,
 ): Promise<Document[]> {
   let allResults: Document[] = [];
 
@@ -127,6 +132,7 @@ async function searchSelectedNamespaces(
       const results = await namespaceStore.similaritySearch(
         query,
         Math.max(k, namespaceToMinResults.get(namespace)),
+        namespace === "courses_v3" ? filters : undefined,
       );
       console.log(`Found ${results.length} results in namespace: ${namespace}`);
       allResults = [...allResults, ...results];
@@ -172,16 +178,18 @@ async function reformulateQuery(
           - DO replace pronouns and references with specific names and identifiers
           - DO include course codes, names and specific details for academic entities
           - If the query is not about university courses & offerings, return exactly a copy of the user's query.
+          - Append "code: " before course codes For example: "CSCC01" -> "code: CSCC01"
+          - If a course year level is written as "first year", "second year", etc. Then replace "first" with "1st" and "second" with "2nd" etc.
 
           Examples:
           User: "When is it offered?"
-          Output: "When is CSCA48 Introduction to Computer Science offered in the 2024-2025 academic year?"
+          Output: "When is CSCA48 offered in the 2024-2025 academic year?"
 
           User: "Tell me more about that"
-          Output: "What are the details, descriptions, and requirements for MATA31 Calculus I?"
+          Output: "What are the details, descriptions, and requirements for MATA31?"
 
           User: "Who teaches it?"
-          Output: "Who are the instructors for MGEA02 Introduction to Microeconomics at UTSC?"
+          Output: "Who are the instructors for MGEA02 at UTSC?"
 
           User: "What are the course names of those codes?"
           Output: "What are the course names of course codes: MGTA01, CSCA08, MATA31, MATA35?"
@@ -192,8 +200,13 @@ async function reformulateQuery(
           User: "Give 2nd year math courses."
           Output: "What are some 2nd year math courses?"
 
-          User: "Give first year math courses."
-          Output: "What are some 1st year math courses?"`,
+          User: "Give third year math courses."
+          Output: "What are some 3rd year math courses?"
+          
+          User: "What breadth requirement does CSCC01 satisfy?"
+          Output: "What breadth requirement does code: CSCC01 satisfy?"
+
+          `,
       },
     ];
 
@@ -227,6 +240,69 @@ async function reformulateQuery(
   }
 }
 
+// Determines whether to apply metadata filtering based on user query.
+function includeFilters(query: string) {
+  const lowerQuery = query.toLocaleLowerCase();
+  const relaventBreadthRequirements: string[] = [];
+  const relaventYearLevels: string[] = [];
+
+  Object.entries(BREADTH_REQUIREMENT_KEYWORDS).forEach(
+    ([namespace, keywords]) => {
+      if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
+        relaventBreadthRequirements.push(convertBreadthRequirement(namespace));
+      }
+    },
+  );
+
+  Object.entries(YEAR_LEVEL_KEYWORDS).forEach(([namespace, keywords]) => {
+    if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
+      relaventYearLevels.push(convertYearLevel(namespace));
+    }
+  });
+
+  let filter = {};
+  if (relaventBreadthRequirements.length > 0 && relaventYearLevels.length > 0) {
+    filter = {
+      $and: [
+        {
+          $or: relaventBreadthRequirements.map((req) => ({
+            breadth_requirement: { $eq: req },
+          })),
+        },
+        {
+          $or: relaventYearLevels.map((yl) => ({ year_level: { $eq: yl } })),
+        },
+      ],
+    };
+  } else if (relaventBreadthRequirements.length > 0) {
+    filter = {
+      $or: relaventBreadthRequirements.map((req) => ({
+        breadth_requirement: { $eq: req },
+      })),
+    };
+  } else if (relaventYearLevels.length > 0) {
+    filter = {
+      $or: relaventYearLevels.map((yl) => ({ year_level: { $eq: yl } })),
+    };
+  }
+  return filter;
+}
+
+/**
+ * @description Handles user queries and generates responses using GPT-4o, with optional knowledge retrieval.
+ *
+ * @param {Request} req - The Express request object, containing:
+ *   @param {Object[]} req.body.messages - Array of message objects representing the conversation history.
+ *   @param {string} req.body.messages[].role - The role of the message sender (e.g., "user", "assistant").
+ *   @param {Object[]} req.body.messages[].content - An array containing message content objects.
+ *   @param {string} req.body.messages[].content[].text - The actual text of the message.
+ *
+ * @param {Response} res - The Express response object used to stream the generated response.
+ *
+ * @returns {void} Responds with a streamed text response of the AI output
+ *
+ * @throws {Error} If query reformulation or knowledge retrieval fails.
+ */
 export const chat = asyncHandler(async (req: Request, res: Response) => {
   const { messages } = req.body;
   const latestMessage = messages[messages.length - 1].content[0].text;
@@ -258,11 +334,15 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       )}`,
     );
 
+    const filters = includeFilters(reformulatedQuery);
+    // console.log("Filters: ", JSON.stringify(filters))
+
     // Search only relevant namespaces
     const searchResults = await searchSelectedNamespaces(
       reformulatedQuery,
       3,
       relevantNamespaces,
+      Object.keys(filters).length === 0 ? undefined : filters,
     );
     // console.log("Search Results: ", searchResults);
 
@@ -274,7 +354,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
     console.log("Query does not require knowledge retrieval, skipping search");
   }
 
-  // console.log("CONTEXT: ", context);
+  console.log("CONTEXT: ", context);
 
   const result = streamText({
     model: openai("gpt-4o-mini"),

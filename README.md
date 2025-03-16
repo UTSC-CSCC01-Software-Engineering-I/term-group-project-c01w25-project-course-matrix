@@ -61,6 +61,8 @@ The `DATABASE_URL` variable should contain your Supabase project url and the `DA
 
 ```
 VITE_SERVER_URL="http://localhost:8081"
+VITE_PUBLIC_ASSISTANT_BASE_URL=[Insert vite public assistant bas URL]
+VITE_ASSISTANT_UI_KEY=[Insert vite assistant UI key]
 ```
 
 ### Running the Application

@@ -1,7 +1,7 @@
 import asyncHandler from "../middleware/asyncHandler";
 import { Request, Response } from "express";
 import { createOpenAI } from "@ai-sdk/openai";
-import { CoreMessage, streamText } from "ai";
+import { CoreMessage, generateObject, InvalidToolArgumentsError, NoSuchToolError, streamText, tool, ToolExecutionError } from "ai";
 import { Index, Pinecone, RecordMetadata } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
@@ -27,6 +27,7 @@ import {
   availableFunctions,
   FunctionNames,
 } from "../constants/availableFunctions";
+import { z } from "zod";
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -231,6 +232,8 @@ async function reformulateQuery(
       content: latestQuery,
     });
 
+    console.log(messages)
+
     const response = await openai2.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages,
@@ -319,55 +322,6 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
     if (latestMessage.startsWith(CHATBOT_TIMETABLE_CMD)) {
       // ----- Flow 1 - Agent performs action on timetable -----
 
-      const openai2 = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
-
-      // Call with function definitions
-      const response = await openai2.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages,
-        functions: [
-          {
-            name: "getTimetables",
-            description:
-              "Get all the timetables of the currently logged in user.",
-            parameters: {
-              type: "object",
-              properties: {},
-              required: [],
-            },
-          },
-        ],
-        function_call: "auto",
-      });
-
-      let responseMessage = response.choices[0].message;
-
-      console.log(responseMessage);
-
-      // Check if the model wants to call a tool/function
-      if (responseMessage.function_call) {
-        // Add the assistant's message with tool calls to conversation
-        // messages.push(responseMessage);
-
-        // Process the tool call
-        const toolCall = responseMessage.function_call;
-        const functionName = toolCall.name as FunctionNames;
-        const functionToCall = availableFunctions[functionName];
-        const functionArgs = JSON.parse(toolCall.arguments);
-
-        if (functionToCall) {
-          // Execute the function
-          const functionResponse = await functionToCall(functionArgs, req);
-
-          // Add the tool result to the conversation
-          messages.push({
-            role: "tool",
-            content: JSON.stringify(functionResponse),
-          });
-        }
-
         // Get a new response from the model with all the tool responses
         const result = streamText({
           model: openai("gpt-4o-mini"),
@@ -397,10 +351,53 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - For unrelated questions, politely explain that you're specialized in UTSC academic information
             `,
           messages,
+          tools: {
+            getTimetables: tool({
+              description: "Get all the timetables of the currently logged in user.",
+              parameters: z.object({}),
+              execute: async (args) => {
+                return await availableFunctions.getTimetables(args, req);
+              }
+            })
+          },
+          maxSteps: 3, // Controls how many back and forths the model can take with user or calling multiple tools
+          experimental_repairToolCall: async ({
+            toolCall,
+            tools,
+            parameterSchema,
+            error,
+          }) => {
+            if (NoSuchToolError.isInstance(error)) {
+              return null; // do not attempt to fix invalid tool names
+            }
+        
+            const tool = tools[toolCall.toolName as keyof typeof tools];
+            console.log(`The model tried to call the tool "${toolCall.toolName}"` +
+                  ` with the following arguments:`,
+                JSON.stringify(toolCall.args),
+                `The tool accepts the following schema:`,
+                JSON.stringify(parameterSchema(toolCall)),
+                'Please fix the arguments.')
+        
+            const { object: repairedArgs } = await generateObject({
+              model: openai('gpt-4o', { structuredOutputs: true }),
+              schema: tool.parameters,
+              prompt: [
+                `The model tried to call the tool "${toolCall.toolName}"` +
+                  ` with the following arguments:`,
+                JSON.stringify(toolCall.args),
+                `The tool accepts the following schema:`,
+                JSON.stringify(parameterSchema(toolCall)),
+                'Please fix the arguments.',
+              ].join('\n'),
+            });
+        
+            return { ...toolCall, args: JSON.stringify(repairedArgs) };
+          },
         });
 
         result.pipeDataStreamToResponse(res);
-      }
+        
     } else {
       // ----- Flow 2 - Answer query -----
 

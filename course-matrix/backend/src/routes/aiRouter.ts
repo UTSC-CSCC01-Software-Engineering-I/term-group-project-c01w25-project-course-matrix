@@ -1,6 +1,6 @@
 import express from "express";
 import { chat, testSimilaritySearch } from "../controllers/aiController";
-import { authRouter } from "./authRouter";
+import { authHandler } from "../middleware/authHandler";
 
 export const aiRouter = express.Router();
 
@@ -8,7 +8,7 @@ export const aiRouter = express.Router();
  * @route POST /api/ai/chat
  * @description Handles user queries and generates responses using GPT-4o, with optional knowledge retrieval.
  */
-aiRouter.post("/chat", authRouter, chat);
+aiRouter.post("/chat", authHandler, chat);
 /**
  * @route POST /api/ai/test-similarity-search
  * @description Test vector database similarity search feature

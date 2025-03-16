@@ -22,6 +22,7 @@ export const availableFunctions: AvailableFunctions = {
         .eq("user_id", user_id);
       const { data: timetableData, error: timetableError } =
         await timeTableQuery;
+      // console.log("Timetables: ", timetableData)
 
       if (timetableError) return { status: 400, error: timetableError.message };
 
@@ -35,6 +36,7 @@ export const availableFunctions: AvailableFunctions = {
 
       return { status: 200, data: timetableData };
     } catch (error) {
+      console.log(error)
       return { status: 400, error: error };
     }
   },

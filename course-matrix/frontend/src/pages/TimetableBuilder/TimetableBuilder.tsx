@@ -41,9 +41,11 @@ import SearchFilters from "./SearchFilters";
 import Calendar from "./Calendar";
 import { Timetable } from "@/utils/type-utils";
 import { useSearchParams } from "react-router-dom";
+
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
 const SEARCH_LIMIT = 1000;
+
 /**
  * TimetableBuilder Component
  *
@@ -79,31 +81,37 @@ const SEARCH_LIMIT = 1000;
  *
  * @returns {JSX.Element} The rendered timetable builder.
  */
+
 const TimetableBuilder = () => {
   const form = useForm<z.infer<typeof TimetableFormSchema>>({
     resolver: zodResolver(TimetableFormSchema),
     defaultValues: baseTimetableForm,
   });
+
   const filterForm = useForm<z.infer<typeof FilterFormSchema>>({
     resolver: zodResolver(FilterFormSchema),
   });
+
   const [queryParams, setQueryParams] = useSearchParams();
   const isEditingTimetable = queryParams.has("edit");
   const editingTimetableId = queryParams.get("edit");
+
   const selectedCourses = form.watch("courses") || [];
   const enabledRestrictions = form.watch("restrictions") || [];
   const searchQuery = form.watch("search");
   const debouncedSearchQuery = useDebounceValue(searchQuery, 250);
+
   const [isCustomSettingsOpen, setIsCustomSettingsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterForm | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [timetableId, setTimetableId] = useState(
-    editingTimetableId ? parseInt(editingTimetableId) : 0,
+    editingTimetableId ? parseInt(editingTimetableId) : 0
   );
 
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;
   };
+
   // limit search number if no search query or filters for performance purposes.
   // Otherwise, limit is 10k, which effectively gets all results.
   const { data, isLoading, error, refetch } = useGetCoursesQuery({
@@ -112,32 +120,38 @@ const TimetableBuilder = () => {
     semester: form.getValues("semester"),
     ...filters,
   });
+
   const { data: eventsData, isLoading: eventsLoading } = useGetEventsQuery(
-    timetableId,
+    timetableId
   ) as {
     data: { courseEvents: unknown[]; userEvents: unknown[] };
     isLoading: boolean;
   };
   const courseEvents = eventsData?.courseEvents || [];
   const userEvents = eventsData?.userEvents || [];
+
   const { data: timetablesData } = useGetTimetablesQuery() as {
     data: Timetable[];
   };
   const timetables = timetablesData || [];
+
   useEffect(() => {
     if (searchQuery) {
       refetch();
     }
   }, [debouncedSearchQuery]);
+
   const createTimetable = (values: z.infer<typeof TimetableFormSchema>) => {
     console.log(values);
     // TODO Send request to /api/timetable/create
   };
+
   const handleReset = () => {
     form.reset();
     filterForm.reset();
     setFilters(null);
   };
+
   const handleRemoveCourse = (course: {
     id: number;
     code: string;
@@ -147,20 +161,24 @@ const TimetableBuilder = () => {
     const newList = currentList.filter((item) => item.id !== course.id);
     form.setValue("courses", newList);
   };
+
   const handleAddRestriction = (values: z.infer<typeof RestrictionSchema>) => {
     const currentList = form.getValues("restrictions");
     const newList = [...currentList, values];
     form.setValue("restrictions", newList);
   };
+
   const handleRemoveRestriction = (index: number) => {
     const currentList = form.getValues("restrictions");
     const newList = currentList.filter((_, i) => i !== index);
     form.setValue("restrictions", newList);
   };
+
   const applyFilters = (values: z.infer<typeof FilterFormSchema>) => {
     setFilters(values);
     console.log("Apply filters", values);
   };
+
   return (
     <>
       <div className="w-full">
@@ -207,6 +225,7 @@ const TimetableBuilder = () => {
           </div>
           <hr />
         </div>
+
         <div className="m-8 flex gap-12">
           <div className="w-2/5">
             <Form {...form}>
@@ -237,7 +256,7 @@ const TimetableBuilder = () => {
                                     <SelectItem key={value} value={value}>
                                       {value}
                                     </SelectItem>
-                                  ),
+                                  )
                                 )}
                               </SelectContent>
                             </Select>
@@ -246,6 +265,7 @@ const TimetableBuilder = () => {
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="search"
@@ -292,6 +312,7 @@ const TimetableBuilder = () => {
                       ))}
                     </div>
                   </div>
+
                   <div className="flex gap-12 items-end">
                     <div className="flex flex-col gap-2">
                       <h2 className="text-lg">Custom Settings</h2>
@@ -309,6 +330,7 @@ const TimetableBuilder = () => {
                       + Add new
                     </Button>
                   </div>
+
                   <div className="flex flex-col">
                     <FormField
                       control={form.control}
@@ -346,6 +368,7 @@ const TimetableBuilder = () => {
                               {restric.numDays} days off
                             </p>
                           )}
+
                           <X
                             size={16}
                             className="hover:text-red-500 cursor-pointer"
@@ -355,6 +378,7 @@ const TimetableBuilder = () => {
                       ))}
                     </div>
                   </div>
+
                   <Button type="submit">Generate</Button>
                 </form>
 
@@ -370,6 +394,7 @@ const TimetableBuilder = () => {
           <div className="w-3/5">
             <Calendar courseEvents={courseEvents} userEvents={userEvents} />
           </div>
+
           {showFilters && (
             <SearchFilters
               submitHandler={applyFilters}
@@ -387,4 +412,5 @@ const TimetableBuilder = () => {
     </>
   );
 };
+
 export default TimetableBuilder;

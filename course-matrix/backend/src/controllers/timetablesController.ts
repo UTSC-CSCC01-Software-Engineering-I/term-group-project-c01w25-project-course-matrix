@@ -18,15 +18,11 @@ export default {
       const user_id = (req as any).user.id;
 
       //Retrieve timetable title
-      const { timetable_title, semester } = req.body;
-      if (!timetable_title) {
-        return res.status(400).json({ error: "timetable title is required" });
-      }
-
-      if (!semester) {
+      const { timetable_title, semester, favorite = false } = req.body;
+      if (!timetable_title || !semester) {
         return res
           .status(400)
-          .json({ error: "timetable semester is required" });
+          .json({ error: "timetable title and semester are required" });
       }
 
       // Check if a timetable with the same title already exist for this user
@@ -53,7 +49,14 @@ export default {
       let insertTimetable = supabase
         .schema("timetable")
         .from("timetables")
-        .insert([{ user_id, timetable_title, semester }])
+        .insert([
+          {
+            user_id,
+            timetable_title,
+            semester,
+            favorite,
+          },
+        ])
         .select()
         .single();
 
@@ -113,11 +116,11 @@ export default {
       const { id } = req.params;
 
       //Retrieve timetable title
-      const { timetable_title, semester } = req.body;
-      if (!timetable_title && !semester) {
+      const { timetable_title, semester, favorite } = req.body;
+      if (!timetable_title && !semester && favorite === undefined) {
         return res.status(400).json({
           error:
-            "New timetable title or semester is required when updating a timetable",
+            "New timetable title or semester or updated favorite status is required when updating a timetable",
         });
       }
 
@@ -134,26 +137,15 @@ export default {
           .eq("user_id", user_id)
           .maybeSingle();
 
-      const timetable_user_id = timetableUserData?.user_id;
-
-      if (timetableUserError)
-        return res.status(400).json({ error: timetableUserError.message });
-
-      //Validate timetable validity:
-      if (!timetableUserData || timetableUserData.length === 0) {
-        return res.status(404).json({ error: "Calendar id not found" });
-      }
-
-      //Validate user access
-      if (user_id !== timetable_user_id) {
+      if (timetableUserError || !timetableUserData)
         return res
-          .status(401)
-          .json({ error: "Unauthorized access to timetable events" });
-      }
+          .status(400)
+          .json({ error: "Timetable not found or unauthorized" });
 
       let updateData: any = {};
       if (timetable_title) updateData.timetable_title = timetable_title;
       if (semester) updateData.semester = semester;
+      if (favorite !== undefined) updateData.favorite = favorite;
 
       //Update timetable title, for authenticated user only
       let updateTimetableQuery = supabase
@@ -162,7 +154,8 @@ export default {
         .update(updateData)
         .eq("id", id)
         .eq("user_id", user_id)
-        .select();
+        .select()
+        .single();
 
       const { data: timetableData, error: timetableError } =
         await updateTimetableQuery;
@@ -202,7 +195,6 @@ export default {
           .eq("id", id)
           .eq("user_id", user_id)
           .maybeSingle();
-      const timetable_user_id = timetableUserData?.user_id;
 
       if (timetableUserError)
         return res.status(400).json({ error: timetableUserError.message });
@@ -210,13 +202,6 @@ export default {
       //Validate timetable validity:
       if (!timetableUserData || timetableUserData.length === 0) {
         return res.status(404).json({ error: "Calendar id not found" });
-      }
-
-      //Validate user access
-      if (user_id !== timetable_user_id) {
-        return res
-          .status(401)
-          .json({ error: "Unauthorized access to timetable events" });
       }
 
       // Delete only if the timetable belongs to the authenticated user

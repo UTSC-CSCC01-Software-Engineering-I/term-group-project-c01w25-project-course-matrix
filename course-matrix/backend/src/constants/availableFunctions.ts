@@ -36,7 +36,7 @@ export const availableFunctions: AvailableFunctions = {
 
       return { status: 200, data: timetableData };
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return { status: 400, error: error };
     }
   },

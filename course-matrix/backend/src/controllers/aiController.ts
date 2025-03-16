@@ -1,7 +1,15 @@
 import asyncHandler from "../middleware/asyncHandler";
 import { Request, Response } from "express";
 import { createOpenAI } from "@ai-sdk/openai";
-import { CoreMessage, generateObject, InvalidToolArgumentsError, NoSuchToolError, streamText, tool, ToolExecutionError } from "ai";
+import {
+  CoreMessage,
+  generateObject,
+  InvalidToolArgumentsError,
+  NoSuchToolError,
+  streamText,
+  tool,
+  ToolExecutionError,
+} from "ai";
 import { Index, Pinecone, RecordMetadata } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
@@ -232,7 +240,7 @@ async function reformulateQuery(
       content: latestQuery,
     });
 
-    console.log(messages)
+    console.log(messages);
 
     const response = await openai2.chat.completions.create({
       model: "gpt-4o-mini",
@@ -322,10 +330,10 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
     if (latestMessage.startsWith(CHATBOT_TIMETABLE_CMD)) {
       // ----- Flow 1 - Agent performs action on timetable -----
 
-        // Get a new response from the model with all the tool responses
-        const result = streamText({
-          model: openai("gpt-4o-mini"),
-          system: `# Morpheus - Course Matrix Assistant
+      // Get a new response from the model with all the tool responses
+      const result = streamText({
+        model: openai("gpt-4o-mini"),
+        system: `# Morpheus - Course Matrix Assistant
         
             ## Identity & Purpose
             You are Morpheus, the official AI assistant for Course Matrix, an AI-powered platform that helps University of Toronto Scarborough (UTSC) students plan their academic journey.
@@ -350,54 +358,56 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
             - For unrelated questions, politely explain that you're specialized in UTSC academic information
             `,
-          messages,
-          tools: {
-            getTimetables: tool({
-              description: "Get all the timetables of the currently logged in user.",
-              parameters: z.object({}),
-              execute: async (args) => {
-                return await availableFunctions.getTimetables(args, req);
-              }
-            })
-          },
-          maxSteps: 3, // Controls how many back and forths the model can take with user or calling multiple tools
-          experimental_repairToolCall: async ({
-            toolCall,
-            tools,
-            parameterSchema,
-            error,
-          }) => {
-            if (NoSuchToolError.isInstance(error)) {
-              return null; // do not attempt to fix invalid tool names
-            }
-        
-            const tool = tools[toolCall.toolName as keyof typeof tools];
-            console.log(`The model tried to call the tool "${toolCall.toolName}"` +
-                  ` with the following arguments:`,
-                JSON.stringify(toolCall.args),
-                `The tool accepts the following schema:`,
-                JSON.stringify(parameterSchema(toolCall)),
-                'Please fix the arguments.')
-        
-            const { object: repairedArgs } = await generateObject({
-              model: openai('gpt-4o', { structuredOutputs: true }),
-              schema: tool.parameters,
-              prompt: [
-                `The model tried to call the tool "${toolCall.toolName}"` +
-                  ` with the following arguments:`,
-                JSON.stringify(toolCall.args),
-                `The tool accepts the following schema:`,
-                JSON.stringify(parameterSchema(toolCall)),
-                'Please fix the arguments.',
-              ].join('\n'),
-            });
-        
-            return { ...toolCall, args: JSON.stringify(repairedArgs) };
-          },
-        });
+        messages,
+        tools: {
+          getTimetables: tool({
+            description:
+              "Get all the timetables of the currently logged in user.",
+            parameters: z.object({}),
+            execute: async (args) => {
+              return await availableFunctions.getTimetables(args, req);
+            },
+          }),
+        },
+        maxSteps: 3, // Controls how many back and forths the model can take with user or calling multiple tools
+        experimental_repairToolCall: async ({
+          toolCall,
+          tools,
+          parameterSchema,
+          error,
+        }) => {
+          if (NoSuchToolError.isInstance(error)) {
+            return null; // do not attempt to fix invalid tool names
+          }
 
-        result.pipeDataStreamToResponse(res);
-        
+          const tool = tools[toolCall.toolName as keyof typeof tools];
+          console.log(
+            `The model tried to call the tool "${toolCall.toolName}"` +
+              ` with the following arguments:`,
+            JSON.stringify(toolCall.args),
+            `The tool accepts the following schema:`,
+            JSON.stringify(parameterSchema(toolCall)),
+            "Please fix the arguments.",
+          );
+
+          const { object: repairedArgs } = await generateObject({
+            model: openai("gpt-4o", { structuredOutputs: true }),
+            schema: tool.parameters,
+            prompt: [
+              `The model tried to call the tool "${toolCall.toolName}"` +
+                ` with the following arguments:`,
+              JSON.stringify(toolCall.args),
+              `The tool accepts the following schema:`,
+              JSON.stringify(parameterSchema(toolCall)),
+              "Please fix the arguments.",
+            ].join("\n"),
+          });
+
+          return { ...toolCall, args: JSON.stringify(repairedArgs) };
+        },
+      });
+
+      result.pipeDataStreamToResponse(res);
     } else {
       // ----- Flow 2 - Answer query -----
 

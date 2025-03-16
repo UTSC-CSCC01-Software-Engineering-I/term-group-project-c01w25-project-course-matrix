@@ -61,7 +61,7 @@ export function RuntimeProvider({
   const runtime = useChatRuntime({
     cloud,
     api: `${SERVER_URL}/api/ai/chat`,
-    credentials: "include"
+    credentials: "include",
   });
 
   const contextValue = {

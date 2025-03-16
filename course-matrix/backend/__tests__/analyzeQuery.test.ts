@@ -91,7 +91,7 @@ describe("analyzeQuery", () => {
 
   test("should detect multiple namespaces in a single query", () => {
     const result = analyzeQuery(
-      "What are the prerequisites and schedule for CSC108?"
+      "What are the prerequisites and schedule for CSC108?",
     );
     expect(result.requiresSearch).toBe(true);
     expect(result.relevantNamespaces).toContain("prerequisites");

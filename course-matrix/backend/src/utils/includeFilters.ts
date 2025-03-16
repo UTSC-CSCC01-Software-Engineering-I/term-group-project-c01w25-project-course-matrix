@@ -16,7 +16,7 @@ export function includeFilters(query: string) {
       if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
         relaventBreadthRequirements.push(convertBreadthRequirement(namespace));
       }
-    }
+    },
   );
 
   Object.entries(YEAR_LEVEL_KEYWORDS).forEach(([namespace, keywords]) => {

@@ -57,7 +57,7 @@ export function analyzeQuery(query: string): {
       "prerequisites",
       "corequisites",
       "departments",
-      "programs"
+      "programs",
     );
   }
 

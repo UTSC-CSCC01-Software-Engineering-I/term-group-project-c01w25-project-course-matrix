@@ -63,7 +63,7 @@ export const NAMESPACE_KEYWORDS = {
 
 export const BREADTH_REQUIREMENT_KEYWORDS = {
   ART_LIT_LANG: [
-    "ART_LIT_LANG",
+    "art_lit_lang",
     "art literature",
     "arts literature",
     "art language",
@@ -73,7 +73,7 @@ export const BREADTH_REQUIREMENT_KEYWORDS = {
     "arts literature language",
   ],
   HIS_PHIL_CUL: [
-    "HIS_PHIL_CUL",
+    "his_phil_cul",
     "history philosophy culture",
     "history, philosophy, culture",
     "history, philosophy, and culture",
@@ -84,16 +84,16 @@ export const BREADTH_REQUIREMENT_KEYWORDS = {
     "history culture",
     "History, Philosophy and Cultural Studies",
   ],
-  SOCIAL_SCI: ["SOCIAL_SCI", "social science", "social sciences"],
-  NAT_SCI: ["NAT_SCI", "natural science", "natural sciences"],
-  QUANT: ["QUANT", "quantitative reasoning"],
+  SOCIAL_SCI: ["social_sci", "social science", "social sciences"],
+  NAT_SCI: ["nat_sci", "natural science", "natural sciences"],
+  QUANT: ["quant", "quantitative reasoning", "quantitative"],
 };
 
 export const YEAR_LEVEL_KEYWORDS = {
-  first_year: ["first year", "first-year", "A-level", "A level", "1st year"],
-  second_year: ["second year", "second-year", "B-level", "B level", "2nd year"],
-  third_year: ["third year", "third-year", "C-level", "C level", "3rd year"],
-  fourth_year: ["fourth year", "fourth-year", "D-level", "D level", "4th year"],
+  first_year: ["first year", "first-year", "a-level", "a level", "1st year"],
+  second_year: ["second year", "second-year", "b-level", "b level", "2nd year"],
+  third_year: ["third year", "third-year", "c-level", "c level", "3rd year"],
+  fourth_year: ["fourth year", "fourth-year", "d-level", "d level", "4th year"],
 };
 
 // General academic terms that might indicate a search is needed

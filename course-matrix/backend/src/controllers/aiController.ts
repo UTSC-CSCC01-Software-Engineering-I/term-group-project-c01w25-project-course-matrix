@@ -36,6 +36,8 @@ import {
   FunctionNames,
 } from "../constants/availableFunctions";
 import { z } from "zod";
+import { analyzeQuery } from "../utils/analyzeQuery";
+import { includeFilters } from "../utils/includeFilters";
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -56,73 +58,7 @@ const index: Index<RecordMetadata> = pinecone.Index(
 
 console.log("Connected to OpenAI API");
 
-// Analyze query contents and pick out relavent namespaces to search.
-function analyzeQuery(query: string): {
-  requiresSearch: boolean;
-  relevantNamespaces: string[];
-} {
-  const lowerQuery = query.toLowerCase();
-
-  // Check for course codes (typically 3 letters followed by numbers)
-  const courseCodeRegex = /\b[a-zA-Z]{3}[a-zA-Z]?\d{2,3}[a-zA-Z]?\b/i;
-  const containsCourseCode = courseCodeRegex.test(query);
-
-  const relevantNamespaces: string[] = [];
-
-  // Check each namespace's keywords
-  Object.entries(NAMESPACE_KEYWORDS).forEach(([namespace, keywords]) => {
-    if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
-      relevantNamespaces.push(namespace);
-    }
-  });
-
-  // If a course code is detected, add tehse namespaces
-  if (containsCourseCode) {
-    if (!relevantNamespaces.includes("courses_v3"))
-      relevantNamespaces.push("courses_v3");
-    if (!relevantNamespaces.includes("offerings"))
-      relevantNamespaces.push("offerings");
-    if (!relevantNamespaces.includes("prerequisites"))
-      relevantNamespaces.push("prerequisites");
-  }
-
-  // Check for dept codes
-  if (DEPARTMENT_CODES.some((code) => lowerQuery.includes(code))) {
-    if (!relevantNamespaces.includes("departments"))
-      relevantNamespaces.push("departments");
-    if (!relevantNamespaces.includes("courses_v3"))
-      relevantNamespaces.push("courses_v3");
-  }
-
-  // If search is required at all
-  const requiresSearch =
-    relevantNamespaces.length > 0 ||
-    GENERAL_ACADEMIC_TERMS.some((term) => lowerQuery.includes(term)) ||
-    containsCourseCode;
-
-  // If no specific namespaces identified & search required, then search all
-  if (requiresSearch && relevantNamespaces.length === 0) {
-    relevantNamespaces.push(
-      "courses_v3",
-      "offerings",
-      "prerequisites",
-      "corequisites",
-      "departments",
-      "programs",
-    );
-  }
-
-  if (
-    ASSISTANT_TERMS.some((term) => lowerQuery.includes(term)) &&
-    relevantNamespaces.length === 0
-  ) {
-    return { requiresSearch: false, relevantNamespaces: [] };
-  }
-
-  return { requiresSearch, relevantNamespaces };
-}
-
-async function searchSelectedNamespaces(
+export async function searchSelectedNamespaces(
   query: string,
   k: number,
   namespaces: string[],
@@ -167,7 +103,7 @@ async function searchSelectedNamespaces(
 }
 
 // Reformulate user query to make more concise query to database, taking into consideration context
-async function reformulateQuery(
+export async function reformulateQuery(
   latestQuery: string,
   conversationHistory: any[],
 ): Promise<string> {
@@ -240,8 +176,6 @@ async function reformulateQuery(
       content: latestQuery,
     });
 
-    console.log(messages);
-
     const response = await openai2.chat.completions.create({
       model: "gpt-4o-mini",
       messages: messages,
@@ -256,54 +190,6 @@ async function reformulateQuery(
     // Fallback to original query if reformulation fails
     return latestQuery;
   }
-}
-
-// Determines whether to apply metadata filtering based on user query.
-function includeFilters(query: string) {
-  const lowerQuery = query.toLocaleLowerCase();
-  const relaventBreadthRequirements: string[] = [];
-  const relaventYearLevels: string[] = [];
-
-  Object.entries(BREADTH_REQUIREMENT_KEYWORDS).forEach(
-    ([namespace, keywords]) => {
-      if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
-        relaventBreadthRequirements.push(convertBreadthRequirement(namespace));
-      }
-    },
-  );
-
-  Object.entries(YEAR_LEVEL_KEYWORDS).forEach(([namespace, keywords]) => {
-    if (keywords.some((keyword) => lowerQuery.includes(keyword))) {
-      relaventYearLevels.push(convertYearLevel(namespace));
-    }
-  });
-
-  let filter = {};
-  if (relaventBreadthRequirements.length > 0 && relaventYearLevels.length > 0) {
-    filter = {
-      $and: [
-        {
-          $or: relaventBreadthRequirements.map((req) => ({
-            breadth_requirement: { $eq: req },
-          })),
-        },
-        {
-          $or: relaventYearLevels.map((yl) => ({ year_level: { $eq: yl } })),
-        },
-      ],
-    };
-  } else if (relaventBreadthRequirements.length > 0) {
-    filter = {
-      $or: relaventBreadthRequirements.map((req) => ({
-        breadth_requirement: { $eq: req },
-      })),
-    };
-  } else if (relaventYearLevels.length > 0) {
-    filter = {
-      $or: relaventYearLevels.map((yl) => ({ year_level: { $eq: yl } })),
-    };
-  }
-  return filter;
 }
 
 /**

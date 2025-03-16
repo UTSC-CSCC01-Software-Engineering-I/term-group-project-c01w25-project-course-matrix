@@ -256,27 +256,27 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             },
           }),
           updateTimetable: tool({
-            description:
-              "Update a user's timetable by title and/or semester",
+            description: "Update a user's timetable by title and/or semester",
             parameters: z.object({
               id: z.number().positive(),
               timetable_title: z.string().optional(),
-              semester: z.enum(["Fall 2025", "Summer 2025", "Winter 2026"]).optional(),
+              semester: z
+                .enum(["Fall 2025", "Summer 2025", "Winter 2026"])
+                .optional(),
             }),
             execute: async (args) => {
               return await availableFunctions.updateTimetable(args, req);
-            }
+            },
           }),
           deleteTimetable: tool({
-            description:
-              "Delete a user's timetable",
+            description: "Delete a user's timetable",
             parameters: z.object({
               id: z.number().positive(),
             }),
             execute: async (args) => {
-              return await availableFunctions.deleteTimetable(args, req)
-            } 
-          })
+              return await availableFunctions.deleteTimetable(args, req);
+            },
+          }),
         },
         maxSteps: CHATBOT_TOOL_CALL_MAX_STEPS, // Controls how many back and forths the model can take with user or calling multiple tools
         experimental_repairToolCall: async ({

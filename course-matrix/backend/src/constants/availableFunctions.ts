@@ -2,7 +2,10 @@ import { supabase } from "../db/setupDb";
 import { Request } from "express";
 
 // Add all possible function names here
-export type FunctionNames = "getTimetables" | "updateTimetable" | "deleteTimetable"; 
+export type FunctionNames =
+  | "getTimetables"
+  | "updateTimetable"
+  | "deleteTimetable";
 
 type AvailableFunctions = {
   [K in FunctionNames]: (args: any, req: Request) => Promise<any>;
@@ -43,7 +46,7 @@ export const availableFunctions: AvailableFunctions = {
   },
   updateTimetable: async (args: any, req: Request) => {
     try {
-      const { id, timetable_title, semester  } = args;
+      const { id, timetable_title, semester } = args;
 
       if (!timetable_title && !semester) {
         return {
@@ -69,16 +72,19 @@ export const availableFunctions: AvailableFunctions = {
       const timetable_user_id = timetableUserData?.user_id;
 
       if (timetableUserError)
-        return {status: 400, error: timetableUserError.message };
+        return { status: 400, error: timetableUserError.message };
 
       //Validate timetable validity:
       if (!timetableUserData || timetableUserData.length === 0) {
-        return {status: 404, error: "Calendar id not found" };
+        return { status: 404, error: "Calendar id not found" };
       }
 
       //Validate user access
       if (user_id !== timetable_user_id) {
-        return { status: 401,  error: "Unauthorized access to timetable events" };
+        return {
+          status: 401,
+          error: "Unauthorized access to timetable events",
+        };
       }
 
       let updateData: any = {};
@@ -97,8 +103,7 @@ export const availableFunctions: AvailableFunctions = {
       const { data: timetableData, error: timetableError } =
         await updateTimetableQuery;
 
-      if (timetableError)
-        return { status: 400, error: timetableError.message };
+      if (timetableError) return { status: 400, error: timetableError.message };
 
       // If no records were updated due to non-existence timetable or it doesn't belong to the user.
       if (!timetableData || timetableData.length === 0) {
@@ -109,7 +114,7 @@ export const availableFunctions: AvailableFunctions = {
       }
       return { status: 200, data: timetableData };
     } catch (error) {
-      return { status: 500,  error: error };
+      return { status: 500, error: error };
     }
   },
   deleteTimetable: async (args: any, req: Request) => {
@@ -135,12 +140,15 @@ export const availableFunctions: AvailableFunctions = {
 
       //Validate timetable validity:
       if (!timetableUserData || timetableUserData.length === 0) {
-        return { status: 404,  error: "Calendar id not found" };
+        return { status: 404, error: "Calendar id not found" };
       }
 
       //Validate user access
       if (user_id !== timetable_user_id) {
-        return  { status: 401, error: "Unauthorized access to timetable events" };
+        return {
+          status: 401,
+          error: "Unauthorized access to timetable events",
+        };
       }
 
       // Delete only if the timetable belongs to the authenticated user
@@ -153,12 +161,11 @@ export const availableFunctions: AvailableFunctions = {
 
       const { error: timetableError } = await deleteTimetableQuery;
 
-      if (timetableError)
-        return { status: 400, error: timetableError.message };
+      if (timetableError) return { status: 400, error: timetableError.message };
 
-      return { status: 200, data: "Timetable successfully deleted"};
+      return { status: 200, data: "Timetable successfully deleted" };
     } catch (error) {
       return { status: 500, error: error };
     }
-  }
+  },
 };

@@ -81,6 +81,7 @@ const CourseSearch = ({
   const handleAddCourse = (item: CourseModel) => {
     if (!form) return;
     const currentList = form.getValues("courses") || [];
+    if (currentList.length > 7) return; // ensure max courses added is 8
     if (currentList.find((c) => c.id === item.id)) return; // ensure uniqueness
     const newList = [...currentList, item];
     console.log(newList);

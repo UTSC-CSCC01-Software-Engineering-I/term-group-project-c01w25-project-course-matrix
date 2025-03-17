@@ -103,7 +103,7 @@ export const filterValidOfferings = (
   f: (x: Offering) => boolean,
 ): Offering[] => {
   return offerings.filter(f);
-}
+};
 
 // Function to check if an offering satisfies the restrictions
 export function isValidOffering(
@@ -125,7 +125,7 @@ export function isValidOffering(
 
       case RestrictionType.RestrictBetween:
         if (
-          offering.start < restriction.endTime && 
+          offering.start < restriction.endTime &&
           restriction.startTime < offering.end
         ) {
           return false;
@@ -181,8 +181,8 @@ export function getFrequencyTable(arr: Offering[]): Map<string, number> {
   const freqMap = new Map<string, number>();
 
   for (const item of arr) {
-      const count = freqMap.get(item.day) || 0;
-      freqMap.set(item.day, count + 1);
+    const count = freqMap.get(item.day) || 0;
+    freqMap.set(item.day, count + 1);
   }
   return freqMap;
 }
@@ -194,7 +194,7 @@ export async function getValidSchedules(
   curList: Offering[],
   cur: number,
   len: number,
-  maxdays: number
+  maxdays: number,
 ) {
   // Base case: if all courses have been considered
   if (cur == len) {
@@ -203,7 +203,7 @@ export async function getValidSchedules(
     // If the number of unique days is within the allowed limit, add the current schedule to the list
     if (freq.size <= maxdays) {
       validSchedules.push([...curList]); // Push a copy of the current list
-    } 
+    }
     return;
   }
 
@@ -221,7 +221,7 @@ export async function getValidSchedules(
         curList,
         cur + 1,
         len,
-        maxdays
+        maxdays,
       );
 
       // Backtrack: remove the last offering if no valid schedule was found
@@ -271,7 +271,7 @@ export default {
         [],
         0,
         validCourseOfferingsList.length,
-        maxdays
+        maxdays,
       );
 
       // Return error if no valid schedules are found
@@ -283,7 +283,8 @@ export default {
       return res.status(200).json({ validSchedules });
     } catch (error) {
       // Catch any error and return the error message
-      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
       return res.status(500).send({ error: errorMessage });
     }
   }),

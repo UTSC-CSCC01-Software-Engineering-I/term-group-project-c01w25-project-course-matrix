@@ -9,6 +9,7 @@ export const aiRouter = express.Router();
  * @description Handles user queries and generates responses using GPT-4o, with optional knowledge retrieval.
  */
 aiRouter.post("/chat", authHandler, chat);
+
 /**
  * @route POST /api/ai/test-similarity-search
  * @description Test vector database similarity search feature

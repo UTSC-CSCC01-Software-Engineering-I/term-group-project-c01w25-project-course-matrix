@@ -60,7 +60,7 @@ export function TimePickerHr({ date, setDate }: TimePickerHrProps) {
       </div> */}
       <div className="grid gap-1 text-center">
         <Label htmlFor="period" className="text-xs">
-          Period
+          AM/PM
         </Label>
         <TimePeriodSelect
           period={period}

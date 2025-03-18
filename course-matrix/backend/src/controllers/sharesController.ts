@@ -421,7 +421,9 @@ export default {
 
       return res
         .status(200)
-        .json({ message: `Sharing record: ${id} deleted successfully` });
+        .json({
+          message: `Sharing record: ${id} of calendar: ${calendar_id} deleted successfully`,
+        });
     } catch (error) {
       return res.status(500).send({ error });
     }

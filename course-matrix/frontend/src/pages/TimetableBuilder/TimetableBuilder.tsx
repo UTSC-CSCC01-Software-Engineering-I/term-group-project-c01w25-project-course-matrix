@@ -356,7 +356,7 @@ const TimetableBuilder = () => {
                   <div className="flex flex-col">
                     <div className="flex justify-between items-center mb-6">
                       <p className="text-sm">
-                        Selected courses: {selectedCourses.length}
+                        Selected courses: {selectedCourses.length} (Max 8)
                       </p>
                       <div className="flex items-center gap-2">
                         <Checkbox
@@ -422,9 +422,18 @@ const TimetableBuilder = () => {
                   </div>
 
                   <div className="flex flex-col">
-                    <p className="text-sm pb-2">
-                      Enabled Restrictions: {enabledRestrictions.length}
-                    </p>
+                    <FormField
+                      control={form.control}
+                      name="restrictions"
+                      render={({ field }) => (
+                        <FormItem className="pb-2">
+                          <p className="text-sm">
+                            Enabled Restrictions: {enabledRestrictions.length}
+                          </p>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <div className="flex gap-2 flex-col">
                       {enabledRestrictions.map((restric, index) => (
                         <div
@@ -464,6 +473,13 @@ const TimetableBuilder = () => {
                     <Button type="submit">Generate</Button>
                   )}
                 </form>
+
+                {isCustomSettingsOpen && (
+                  <CreateCustomSetting
+                    submitHandler={handleAddRestriction}
+                    closeHandler={() => setIsCustomSettingsOpen(false)}
+                  />
+                )}
               </FormContext.Provider>
             </Form>
           </div>
@@ -477,12 +493,6 @@ const TimetableBuilder = () => {
               form={form}
             />
           </div>
-          {isCustomSettingsOpen && (
-            <CreateCustomSetting
-              submitHandler={handleAddRestriction}
-              closeHandler={() => setIsCustomSettingsOpen(false)}
-            />
-          )}
 
           {showFilters && (
             <SearchFilters

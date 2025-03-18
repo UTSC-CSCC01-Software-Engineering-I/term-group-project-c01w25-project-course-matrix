@@ -209,6 +209,40 @@ export const RestrictionSchema = z
       message: "Number must be at least 1",
       path: ["numDays"],
     },
+  )
+  .refine(
+    (data) => {
+      if (
+        data.type &&
+        data.type === "Restrict Before" &&
+        data.endTime?.getHours() === 0 &&
+        data.endTime?.getMinutes() === 0
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Cannot restrict whole day",
+      path: ["endTime"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (
+        data.type &&
+        data.type === "Restrict After" &&
+        data.startTime?.getHours() === 0 &&
+        data.startTime?.getMinutes() === 0
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Cannot restrict whole day",
+      path: ["startTime"],
+    },
   );
 
 export const TimetableFormSchema: ZodType<TimetableForm> = z
@@ -241,6 +275,26 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z
       message: "Cannot pick more than 8 courses",
       path: ["search"],
     },
+  )
+  .refine(
+    (data) => {
+      return !(
+        data.restrictions.filter((r) => r.type === "Days Off").length > 1
+      );
+    },
+    {
+      message: "Already added minimum days off per week",
+      path: ["restrictions"],
+    },
+  )
+  .refine(
+    (data) => {
+      return !hasDuplicate(data.restrictions);
+    },
+    {
+      message: "Duplicate restriction detected. Please remove.",
+      path: ["restrictions"],
+    },
   );
 
 export const baseTimetableForm: TimetableForm = {
@@ -258,3 +312,23 @@ export const baseRestrictionForm: RestrictionForm = {
   days: [],
   disabled: false,
 };
+
+function hasDuplicate(restrictions: RestrictionForm[]) {
+  const seen: RestrictionForm[] = [];
+  for (const r of restrictions) {
+    if (
+      seen.some(
+        (s) =>
+          s.type === r.type &&
+          ((s.numDays && r.numDays && s.numDays === r.numDays) ||
+            (s.days?.sort().join(" ") === r.days?.sort().join(" ") &&
+              s.startTime?.getHours() === r.startTime?.getHours() &&
+              s.endTime?.getHours() === s.endTime?.getHours())),
+      )
+    ) {
+      return true;
+    }
+    seen.push(r);
+  }
+  return false;
+}

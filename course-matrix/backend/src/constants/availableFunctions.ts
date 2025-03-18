@@ -169,7 +169,5 @@ export const availableFunctions: AvailableFunctions = {
       return { status: 500, error: error };
     }
   },
-  generateTimetable: async (args: any, req: Request) => {
-    
-  }
+  generateTimetable: async (args: any, req: Request) => {},
 };

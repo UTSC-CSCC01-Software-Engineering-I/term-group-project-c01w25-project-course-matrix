@@ -283,12 +283,13 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             },
           }),
           generateTimetable: tool({
-            description: "Generate a timetable based on selected courses and restrictions",
+            description:
+              "Generate a timetable based on selected courses and restrictions",
             parameters: TimetableFormSchema,
             execute: async (args) => {
-              return await availableFunctions.generateTimetable(args, req)
-            }
-          })
+              return await availableFunctions.generateTimetable(args, req);
+            },
+          }),
         },
         maxSteps: CHATBOT_TOOL_CALL_MAX_STEPS, // Controls how many back and forths the model can take with user or calling multiple tools
         experimental_repairToolCall: async ({

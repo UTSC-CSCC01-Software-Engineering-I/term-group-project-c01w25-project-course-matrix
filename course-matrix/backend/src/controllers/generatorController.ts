@@ -80,7 +80,6 @@ export interface CategorizedOfferingList {
   offerings: Record<string, Offering[]>;
 }
 
-
 // Function to fetch offerings from the database for a given course and semester
 export async function getOfferings(course_id: number, semester: string) {
   let {data: offeringData, error: offeringError} =

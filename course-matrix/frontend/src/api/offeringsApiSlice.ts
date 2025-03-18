@@ -20,5 +20,4 @@ export const offeringsApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetOfferingsQuery } =
-  offeringsApiSlice;
+export const { useGetOfferingsQuery } = offeringsApiSlice;

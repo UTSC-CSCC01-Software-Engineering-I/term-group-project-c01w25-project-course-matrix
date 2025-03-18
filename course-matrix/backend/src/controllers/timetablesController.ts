@@ -137,10 +137,13 @@ export default {
           .eq("user_id", user_id)
           .maybeSingle();
 
-      if (timetableUserError || !timetableUserData)
-        return res
-          .status(400)
-          .json({ error: "Timetable not found or unauthorized" });
+      if (timetableUserError)
+        return res.status(400).json({ error: timetableUserError.message });
+
+      //Validate timetable validity:
+      if (!timetableUserData || timetableUserData.length === 0) {
+        return res.status(404).json({ error: "Calendar id not found" });
+      }
 
       let updateData: any = {};
       if (timetable_title) updateData.timetable_title = timetable_title;

@@ -68,6 +68,13 @@ export interface OfferingList {
   offerings: Offering[];
 }
 
+export interface CategorizedOfferingList {
+  course_id: number;
+  category: 'LEC'|'TUT'|'PRA'
+  offerings: Offering[];
+}
+
+
 // Function to fetch offerings from the database for a given course and semester
 export async function getOfferings(course_id: number, semester: string) {
   let {data: offeringData, error: offeringError} =
@@ -106,6 +113,19 @@ export const filterValidOfferings = (
     ): Offering[] => {
   return offerings.filter(f);
 };
+
+// Function to get the maximum number of days allowed based on restrictions
+export async function getMaxDays(restrictions: Restriction[]) {
+  for (const restriction of restrictions) {
+    if (restriction.disabled) continue;
+    if (restriction.type == RestrictionType.RestrictDaysOff) {
+      return 5 -
+          restriction
+              .numDays;  // Subtract the restricted days from the total days
+    }
+  }
+  return 5;  // Default to 5 days if no restrictions
+}
 
 // Function to check if an offering satisfies the restrictions
 export function isValidOffering(
@@ -147,19 +167,6 @@ export function isValidOffering(
   return true;
 }
 
-// Function to get the maximum number of days allowed based on restrictions
-export async function getMaxDays(restrictions: Restriction[]) {
-  for (const restriction of restrictions) {
-    if (restriction.disabled) continue;
-    if (restriction.type == RestrictionType.RestrictDaysOff) {
-      return 5 -
-          restriction
-              .numDays;  // Subtract the restricted days from the total days
-    }
-  }
-  return 5;  // Default to 5 days if no restrictions
-}
-
 // Function to get valid offerings by filtering them based on the restrictions
 export async function getValidOfferings(
     offerings: Offering[],
@@ -169,6 +176,46 @@ export async function getValidOfferings(
       offerings,
       (x) => isValidOffering(x, restrictions),
   );
+}
+
+export async function categorizeValidOfferings(offerings: OfferingList[]) {
+  const lst: CategorizedOfferingList[] = [];
+
+  for (const offering of offerings) {
+    const lectures: CategorizedOfferingList = {
+      course_id: offering.course_id,
+      category: 'LEC',
+      offerings: []
+    };
+    const tutorials: CategorizedOfferingList = {
+      course_id: offering.course_id,
+      category: 'TUT',
+      offerings: []
+    };
+    const practicals: CategorizedOfferingList = {
+      course_id: offering.course_id,
+      category: 'PRA',
+      offerings: []
+    }
+
+    for (const entry of offering.offerings) {
+      const meeting_section = entry.meeting_section;
+      if (meeting_section.startsWith('PRA')) {
+        practicals.offerings.push(entry);
+      } else if (meeting_section.startsWith('TUT')) {
+        tutorials.offerings.push(entry);
+      } else {
+        lectures.offerings.push(entry);
+      }
+    }
+
+    for (const x of [lectures, practicals, tutorials]) {
+      if (x.offerings.length > 0) {
+        lst.push(x);
+      }
+    }
+  }
+  return lst;
 }
 
 // Function to check if an offering can be inserted into the current list of
@@ -199,7 +246,7 @@ export function getFrequencyTable(arr: Offering[]): Map<string, number> {
 // Function to generate all valid schedules based on offerings and restrictions
 export async function getValidSchedules(
     validSchedules: Offering[][],
-    courseOfferingsList: OfferingList[],
+    courseOfferingsList: CategorizedOfferingList[],
     curList: Offering[],
     cur: number,
     len: number,
@@ -269,9 +316,14 @@ export default {
       }
 
       // Log course offerings (for debugging purposes)
-      validCourseOfferingsList.forEach(
+      /*validCourseOfferingsList.forEach(
           (course) => console.log(JSON.stringify(course, null, 2)),
-      );
+      );*/
+
+      const categorizedOfferings =
+          await categorizeValidOfferings(validCourseOfferingsList);
+      // console.log(typeof categorizedOfferings);
+      // console.log(JSON.stringify(categorizedOfferings, null, 2));
 
 
       const validSchedules: Offering[][] = [];
@@ -279,10 +331,10 @@ export default {
       // Generate valid schedules for the given courses and restrictions
       await getValidSchedules(
           validSchedules,
-          validCourseOfferingsList,
+          categorizedOfferings,
           [],
           0,
-          validCourseOfferingsList.length,
+          categorizedOfferings.length,
           maxdays,
       );
 

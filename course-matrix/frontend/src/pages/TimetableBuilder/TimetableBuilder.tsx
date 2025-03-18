@@ -39,7 +39,7 @@ import { useGetRestrictionsQuery } from "@/api/restrictionsApiSlice";
 import { useDebounceValue } from "@/utils/useDebounce";
 import SearchFilters from "./SearchFilters";
 import Calendar from "./Calendar";
-import { Event, TimetableEvents, Timetable } from "@/utils/type-utils";
+import { Event, TimetableEvents, Timetable, Restriction } from "@/utils/type-utils";
 import { useSearchParams } from "react-router-dom";
 import OfferingInfo from "./OfferingInfo";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -193,7 +193,7 @@ const TimetableBuilder = () => {
 
     // Set the form value for 'restrictions'
     if (!loadedRestrictions && restrictionsData) {
-      const parsedRestrictions = restrictionsData.map((restriction) => ({
+      const parsedRestrictions = restrictionsData.map((restriction: Restriction) => ({
         ...restriction,
         days: JSON.parse(restriction.days),
       }));

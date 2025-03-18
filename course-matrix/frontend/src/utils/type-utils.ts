@@ -25,3 +25,17 @@ export type Timetable = {
   timetable_title: string;
   user_id: string;
 };
+
+export type Restriction = {
+  id: number;
+  user_id: string;
+  created_at: Date;
+  updated_at: Date;
+  type: string;
+  days: string;
+  start_time: string;
+  end_time: string;
+  disabled: boolean;
+  num_days: number;
+  calendar_id: number;
+};

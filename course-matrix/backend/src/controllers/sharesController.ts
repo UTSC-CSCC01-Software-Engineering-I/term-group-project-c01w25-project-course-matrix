@@ -26,23 +26,20 @@ export default {
           .json({ error: "Users cannot share a timetable with themselves" });
       }
 
-      // Query users for shared_id using email
       const { data: sharedUser, error: sharedError } = await supabase.rpc(
         "get_user_id_by_email",
-        { email: shared_email },
+        { email: shared_email }
       );
 
       if (sharedError) {
-        return res.status(500).json({ error: sharedError.message });
+        return res.status(400).json({ Error: sharedError.message });
       }
 
-      // Ensure sharedUser exists and is not an empty array
       if (!sharedUser || sharedUser.length === 0) {
         return res
           .status(400)
           .json({ error: "User with provided email not found" });
       }
-
       const shared_id = sharedUser[0].id;
 
       // Check if the calendar exists and belongs to the owner
@@ -106,7 +103,7 @@ export default {
         .schema("timetable")
         .from("shared")
         .select(
-          "calendar_id, owner_id, timetables!inner(id, user_id, timetable_title, semester, favorite)",
+          "calendar_id, owner_id, shared_id, timetables!inner(id, user_id, timetable_title, semester, favorite)"
         )
         .eq("owner_id", user_id);
 
@@ -140,7 +137,7 @@ export default {
         .schema("timetable")
         .from("shared")
         .select(
-          "calendar_id, owner_id, timetables!inner(id, user_id, timetable_title, semester, favorite)",
+          "calendar_id, owner_id, shared_id, timetables!inner(id, user_id, timetable_title, semester, favorite)"
         )
         .eq("shared_id", user_id);
 
@@ -162,45 +159,222 @@ export default {
 
   /**
    * Delete all shared record for a timetable as the timetable's owner
-   * @route DELETE /api/shared/owner/:calendar_id
+   * @route DELETE /api/shared/owner/:id?
    */
 
   deleteOwnerShare: asyncHandler(async (req: Request, res: Response) => {
     try {
       const owner_id = (req as any).user.id;
-      const { calendar_id } = req.params;
+      const { id } = req.params;
+      const { calendar_id, shared_email } = req.body;
 
-      const { data: existingTimetable, error: existingTimetableError } =
-        await supabase
+      if (!id) {
+        if (calendar_id && !shared_email) {
+          // Check if the provided calendar_id belong to the current user
+          const { data: existingTimetable, error: existingTimetableError } =
+            await supabase
+              .schema("timetable")
+              .from("shared")
+              .select("*")
+              .eq("calendar_id", calendar_id)
+              .eq("owner_id", owner_id);
+
+          if (existingTimetableError) {
+            return res
+              .status(500)
+              .json({ error: existingTimetableError.message });
+          }
+
+          if (!existingTimetable || existingTimetable.length === 0) {
+            return res
+              .status(404)
+              .json({ error: "Provided timetable for delete does not found" });
+          }
+
+          //Delete all shares belong to the owner for a specific table
+          const { error: deleteError } = await supabase
+            .schema("timetable")
+            .from("shared")
+            .delete()
+            .eq("calendar_id", calendar_id)
+            .eq("owner_id", owner_id);
+
+          if (deleteError) {
+            return res.status(400).json({ error: deleteError.message });
+          }
+
+          return res.status(200).send({
+            message: `All sharing records for the timetable: ${calendar_id} of user: ${
+              (req as any).user.email
+            } have been deleted successfully`,
+          });
+        }
+
+        if (!calendar_id && shared_email) {
+          // Delete all shares belonging to the owner shared with a specific person
+
+          // Get Person id via email
+          const { data: sharedUser, error: sharedError } = await supabase.rpc(
+            "get_user_id_by_email",
+            { email: shared_email }
+          );
+
+          if (sharedError) {
+            return res.status(400).json({ error: sharedError.message });
+          }
+
+          if (!sharedUser || sharedUser.length === 0) {
+            return res
+              .status(400)
+              .json({ error: "User with provided email not found" });
+          }
+
+          const shared_id = sharedUser[0].id;
+
+          //Check if the curernt owner has shared with the provided user
+          const { data: existingTimetable, error: existingTimetableError } =
+            await supabase
+              .schema("timetable")
+              .from("shared")
+              .select("*")
+              .eq("shared_id", shared_id)
+              .eq("owner_id", owner_id);
+
+          if (existingTimetableError) {
+            return res
+              .status(500)
+              .json({ error: existingTimetableError.message });
+          }
+
+          if (!existingTimetable || existingTimetable.length === 0) {
+            return res.status(404).json({
+              error: "You have not shared any timetable with the provided user",
+            });
+          }
+
+          const { error: deleteError } = await supabase
+            .schema("timetable")
+            .from("shared")
+            .delete()
+            .eq("owner_id", owner_id)
+            .eq("shared_id", shared_id);
+
+          if (deleteError) {
+            return res.status(400).json({ error: deleteError.message });
+          }
+
+          return res.status(200).json({
+            message: `All sharing records of user: ${
+              (req as any).user.email
+            } to user: ${shared_email} have been deleted successfully`,
+          });
+        }
+
+        if (calendar_id && shared_email) {
+          // Get Person id via email
+          const { data: sharedUser, error: sharedError } = await supabase.rpc(
+            "get_user_id_by_email",
+            { email: shared_email }
+          );
+
+          if (sharedError) {
+            return res.status(400).json({ error: sharedError.message });
+          }
+
+          if (!sharedUser || sharedUser.length === 0) {
+            return res
+              .status(400)
+              .json({ error: "User with provided email not found" });
+          }
+
+          const shared_id = sharedUser[0].id;
+
+          //Check if the curernt owner has shared with the provided user
+          const { data: existingTimetable, error: existingTimetableError } =
+            await supabase
+              .schema("timetable")
+              .from("shared")
+              .select("*")
+              .eq("calendar_id", calendar_id)
+              .eq("shared_id", shared_id)
+              .eq("owner_id", owner_id);
+
+          if (existingTimetableError) {
+            return res
+              .status(500)
+              .json({ error: existingTimetableError.message });
+          }
+
+          if (!existingTimetable || existingTimetable.length === 0) {
+            return res.status(404).json({
+              error:
+                "You have not shared the provided timetable with the provided user",
+            });
+          }
+
+          const { error: deleteError } = await supabase
+            .schema("timetable")
+            .from("shared")
+            .delete()
+            .eq("calendar_id", calendar_id)
+            .eq("owner_id", owner_id)
+            .eq("shared_id", shared_id);
+
+          if (deleteError) {
+            return res.status(400).json({ error: deleteError.message });
+          }
+
+          return res.status(200).json({
+            message: `All sharing records of table: ${calendar_id} from user: ${
+              (req as any).user.email
+            } to user: ${shared_email} have been deleted successfully`,
+          });
+        }
+        return res.status(400).json({
+          error: "Calendar_id, shared_email or share id is required",
+        });
+      } else {
+        if (!calendar_id) {
+          return res.status(400).json({
+            error: "Calendar_id is requried to delete a specific share entry",
+          });
+        }
+
+        const { data: existingShare, error: existingShareError } =
+          await supabase
+            .schema("timetable")
+            .from("shared")
+            .select("*")
+            .eq("id", id)
+            .eq("calendar_id", calendar_id)
+            .eq("owner_id", owner_id);
+
+        if (existingShareError) {
+          return res.status(400).json({ error: existingShareError.message });
+        }
+
+        if (!existingShare || existingShare.length === 0) {
+          return res
+            .status(404)
+            .json({ error: "Cannot find the provided share entry" });
+        }
+
+        const { error: deleteError } = await supabase
           .schema("timetable")
           .from("shared")
-          .select("*")
+          .delete()
+          .eq("id", id)
           .eq("calendar_id", calendar_id)
           .eq("owner_id", owner_id);
 
-      if (existingTimetableError) {
-        return res.status(500).json({ error: existingTimetableError.message });
-      }
+        if (deleteError) {
+          return res.status(400).json({ error: deleteError.message });
+        }
 
-      if (!existingTimetable || existingTimetable.length === 0) {
-        return res
-          .status(404)
-          .json({ error: "Provided timetable for delete does not found" });
+        return res.status(200).json({
+          message: `Share number ${id} of calendar: ${calendar_id} has been sucessfully deleted`,
+        });
       }
-      const { error: deleteError } = await supabase
-        .schema("timetable")
-        .from("shared")
-        .delete()
-        .eq("calendar_id", calendar_id)
-        .eq("owner_id", owner_id);
-
-      if (deleteError) {
-        return res.status(400).json({ error: deleteError.message });
-      }
-
-      return res.status(200).send({
-        message: "All sharing records for the timetable deleted successfully",
-      });
     } catch (error) {
       return res.status(500).send({ error });
     }
@@ -208,18 +382,20 @@ export default {
 
   /**
    * Delete a shared entryas shared userd
-   * @route DELETE /api/shared/:calendar_id
+   * @route DELETE /api/shared/:id?
    */
   deleteShare: asyncHandler(async (req: Request, res: Response) => {
     try {
       const shared_id = (req as any).user.id;
-      const { calendar_id } = req.params;
+      const { id } = req.params;
+      const { calendar_id } = req.body;
 
       const { data: existingTimetable, error: existingTimetableError } =
         await supabase
           .schema("timetable")
           .from("shared")
           .select("*")
+          .eq("id", id)
           .eq("calendar_id", calendar_id)
           .eq("shared_id", shared_id);
 
@@ -236,6 +412,7 @@ export default {
         .schema("timetable")
         .from("shared")
         .delete()
+        .eq("id", id)
         .eq("calendar_id", calendar_id)
         .eq("shared_id", shared_id);
       if (deleteError) {
@@ -244,7 +421,7 @@ export default {
 
       return res
         .status(200)
-        .json({ message: "Sharing record deleted successfully" });
+        .json({ message: `Sharing record: ${id} deleted successfully` });
     } catch (error) {
       return res.status(500).send({ error });
     }

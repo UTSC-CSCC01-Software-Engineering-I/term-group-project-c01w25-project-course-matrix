@@ -244,6 +244,10 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Include course codes when referencing specific courses
             - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
             - For unrelated questions, politely explain that you're specialized in UTSC academic information
+
+            ## Tool call guidelines
+            - Include the timetable ID in all getTimetbles tool call responses
+            - If the tool call is a getTimetables call, then at the end of each timetable listed, include a link displayed as "View timetable" to ${process.env.CLIENT_APP_URL}/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
             `,
         messages,
         tools: {

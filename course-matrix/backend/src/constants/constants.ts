@@ -51,4 +51,4 @@ export const CHATBOT_MEMORY_THRESHOLD = 3;
 
 export const CHATBOT_TIMETABLE_CMD = "/timetable";
 
-export const CHATBOT_TOOL_CALL_MAX_STEPS = 3;
+export const CHATBOT_TOOL_CALL_MAX_STEPS = 5;

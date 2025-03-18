@@ -306,7 +306,6 @@ export default {
         });
       }
 
-
       // Filter out invalid offerings based on the restrictions
       for (const {course_id, offerings} of courseOfferingsList) {
         validCourseOfferingsList.push({

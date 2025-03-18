@@ -34,17 +34,6 @@ coursesRouter.get(
 departmentsRouter.get("/", authHandler, departmentsController.getDepartments);
 
 /**
- * Route to get a list of events for an offering.
- * @route GET /events/:offering_id
- * @middleware authHandler - Middleware to check if the user is authenticated.
- */
-offeringsRouter.get(
-  "/events",
-  authHandler,
-  offeringsController.getOfferingEvents,
-);
-
-/**
  * Route to get a list of offerings.
  * @route GET /
  * @middleware authHandler - Middleware to check if the user is authenticated.

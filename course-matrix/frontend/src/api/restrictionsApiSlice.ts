@@ -24,10 +24,10 @@ export const restrictionsApiSlice = apiSlice.injectEndpoints({
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        providesTags: ["Restrictions"],
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Restrictions"],
     }),
     deleteRestriction: builder.mutation({
       query: (id) => ({
@@ -37,9 +37,9 @@ export const restrictionsApiSlice = apiSlice.injectEndpoints({
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        providesTags: ["Restrictions"],
         credentials: "include",
       }),
+      invalidatesTags: ["Restrictions"],
     }),
   }),
 });

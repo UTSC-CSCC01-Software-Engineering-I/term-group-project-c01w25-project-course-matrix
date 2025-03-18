@@ -28,13 +28,14 @@ import { TimetableFormSchema } from "@/models/timetable-form";
 import {
   useCreateTimetableMutation,
   useDeleteTimetableMutation,
+  useGetTimetablesQuery,
 } from "@/api/timetableApiSlice";
 import { useCreateRestrictionMutation } from "@/api/restrictionsApiSlice";
 import { z } from "zod";
 import { useEffect, useState } from "react";
 import { useGetNumberOfCourseSectionsQuery } from "@/api/coursesApiSlice";
 import { useCreateEventMutation } from "@/api/eventsApiSlice";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Event, Timetable } from "@/utils/type-utils";
 
 interface CalendarProps {
@@ -74,6 +75,7 @@ function Calendar({
   userEvents,
   form,
 }: CalendarProps) {
+  const navigate = useNavigate();
   const [queryParams] = useSearchParams();
   const isEditingTimetable = queryParams.has("edit");
   const timetableId = parseInt(queryParams.get("edit") ?? "0");
@@ -163,6 +165,7 @@ function Calendar({
     });
     if (error) {
       console.error(error);
+      return;
     }
 
     // Create course events for the newly created timetable
@@ -200,9 +203,8 @@ function Calendar({
     });
     await Promise.all(restrictionPromises);
 
-    // Refresh the page and redirect to the home page to see the newly created timetable
-    window.location.reload();
-    window.location.href = "/home";
+    // Redirect to the home page to see the newly created timetable
+    navigate("/home");
   };
 
   const handleUpdate = async () => {

@@ -13,10 +13,10 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        providesTags: ["Event"],
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Event"],
     }),
     getEvents: builder.query<unknown, number>({
       query: (id) => ({
@@ -38,10 +38,10 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        providesTags: ["Event"],
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Event"],
     }),
     deleteEvent: builder.mutation({
       query: (id) => ({
@@ -51,9 +51,9 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        providesTags: ["Event"],
         credentials: "include",
       }),
+      invalidatesTags: ["Event"],
     }),
   }),
 });

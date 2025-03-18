@@ -1,3 +1,4 @@
+import exp from 'constants';
 import {Request, Response} from 'express';
 
 import {supabase} from '../db/setupDb';  // Supabase instance for database interactions
@@ -62,6 +63,11 @@ export interface Restriction {
   numDays: number;
 }
 
+export interface GroupedOfferingList {
+  course_id: number;
+  groups: Record<string, Offering[]>;
+}
+
 // Interface for organizing offerings by course ID
 export interface OfferingList {
   course_id: number;
@@ -71,7 +77,7 @@ export interface OfferingList {
 export interface CategorizedOfferingList {
   course_id: number;
   category: 'LEC'|'TUT'|'PRA'
-  offerings: Offering[];
+  offerings: Record<string, Offering[]>;
 }
 
 
@@ -105,14 +111,22 @@ export async function getOfferings(course_id: number, semester: string) {
   return offeringData;
 }
 
-// Utility function to filter valid offerings based on the provided filter
-// function
-export const filterValidOfferings = (
-    offerings: Offering[],
-    f: (x: Offering) => boolean,
-    ): Offering[] => {
-  return offerings.filter(f);
-};
+export async function groupOfferings(courseOfferingsList: OfferingList[]) {
+  const groupedOfferingsList: GroupedOfferingList[] = [];
+  for (const offering of courseOfferingsList) {
+    const groupedOfferings:
+        GroupedOfferingList = {course_id: offering.course_id, groups: {}};
+    offering.offerings.forEach(offering => {
+      if (!groupedOfferings.groups[offering.meeting_section]) {
+        groupedOfferings.groups[offering.meeting_section] = [];
+      }
+      groupedOfferings.groups[offering.meeting_section].push(offering);
+    })
+    groupedOfferingsList.push(groupedOfferings);
+  }
+
+  return groupedOfferingsList;
+}
 
 // Function to get the maximum number of days allowed based on restrictions
 export async function getMaxDays(restrictions: Restriction[]) {
@@ -169,48 +183,61 @@ export function isValidOffering(
 
 // Function to get valid offerings by filtering them based on the restrictions
 export async function getValidOfferings(
-    offerings: Offering[],
+    groups: Record<string, Offering[]>,
     restrictions: Restriction[],
 ) {
-  return filterValidOfferings(
-      offerings,
-      (x) => isValidOffering(x, restrictions),
-  );
+  const validGroups: Record<string, Offering[]> = {};
+
+  // Loop through each group in the groups object
+  for (const [groupKey, offerings] of Object.entries(groups)) {
+    // Check if all offerings in the group are valid
+    const allValid =
+        offerings.every((offering) => isValidOffering(offering, restrictions));
+
+    // Only add the group to validGroups if all offerings are valid
+    if (allValid) {
+      validGroups[groupKey] = offerings;
+    }
+  }
+
+  // Return the object with valid groups
+  return validGroups;
 }
 
-export async function categorizeValidOfferings(offerings: OfferingList[]) {
+export async function categorizeValidOfferings(
+    offerings: GroupedOfferingList[]) {
   const lst: CategorizedOfferingList[] = [];
 
   for (const offering of offerings) {
     const lectures: CategorizedOfferingList = {
       course_id: offering.course_id,
       category: 'LEC',
-      offerings: []
+      offerings: {}
     };
     const tutorials: CategorizedOfferingList = {
       course_id: offering.course_id,
       category: 'TUT',
-      offerings: []
+      offerings: {}
     };
     const practicals: CategorizedOfferingList = {
       course_id: offering.course_id,
       category: 'PRA',
-      offerings: []
+      offerings: {}
     }
 
-    for (const entry of offering.offerings) {
-      const meeting_section = entry.meeting_section;
-      if (meeting_section.startsWith('PRA')) {
-        practicals.offerings.push(entry);
-      } else if (meeting_section.startsWith('TUT')) {
-        tutorials.offerings.push(entry);
+    for (const [meeting_section, offerings] of Object.entries(
+             offering.groups)) {
+      if (meeting_section && meeting_section.startsWith('PRA')) {
+        practicals.offerings[meeting_section] = offerings;
+      } else if (meeting_section && meeting_section.startsWith('TUT')) {
+        tutorials.offerings[meeting_section] = offerings;
       } else {
-        lectures.offerings.push(entry);
+        lectures.offerings[meeting_section] = offerings;
       }
     }
 
     for (const x of [lectures, practicals, tutorials]) {
-      if (x.offerings.length > 0) {
+      if (Object.keys(x.offerings).length > 0) {
         lst.push(x);
       }
     }
@@ -232,6 +259,12 @@ export async function canInsert(toInsert: Offering, curList: Offering[]) {
   return true;  // No conflict found
 }
 
+export async function canInsertList(
+    toInsertList: Offering[], curList: Offering[]) {
+  console.log(toInsertList);
+  return toInsertList.every((x) => canInsert(x, curList));
+}
+
 // Function to generate a frequency table of days from a list of offerings
 export function getFrequencyTable(arr: Offering[]): Map<string, number> {
   const freqMap = new Map<string, number>();
@@ -244,6 +277,7 @@ export function getFrequencyTable(arr: Offering[]): Map<string, number> {
 }
 
 // Function to generate all valid schedules based on offerings and restrictions
+
 export async function getValidSchedules(
     validSchedules: Offering[][],
     courseOfferingsList: CategorizedOfferingList[],
@@ -267,9 +301,11 @@ export async function getValidSchedules(
   const offeringsForCourse = courseOfferingsList[cur];
 
   // Recursively attempt to add offerings for the current course
-  for (const offering of offeringsForCourse.offerings) {
-    if (await canInsert(offering, curList)) {
-      curList.push(offering);  // Add offering to the current list
+  for (const [groupKey, offerings] of Object.entries(
+           offeringsForCourse.offerings)) {
+    if (await canInsertList(offerings, curList)) {
+      const count = offerings.length;
+      curList.push(...offerings);  // Add offering to the current list
 
       // Recursively generate schedules for the next course
       await getValidSchedules(
@@ -282,7 +318,7 @@ export async function getValidSchedules(
       );
 
       // Backtrack: remove the last offering if no valid schedule was found
-      curList.pop();
+      for (let i = 0; i < count; i++) curList.pop();
     }
   }
 }
@@ -294,9 +330,9 @@ export default {
       // Extract event details and course information from the request
       const {name, date, semester, search, courses, restrictions} = req.body;
       const courseOfferingsList: OfferingList[] = [];
-      const validCourseOfferingsList: OfferingList[] = [];
+      const validCourseOfferingsList: GroupedOfferingList[] = [];
       const maxdays = await getMaxDays(restrictions);
-
+      const validSchedules: Offering[][] = [];
       // Fetch offerings for each course
       for (const course of courses) {
         const {id} = course;
@@ -306,26 +342,24 @@ export default {
         });
       }
 
+      const groupedOfferingsList: GroupedOfferingList[] =
+          await groupOfferings(courseOfferingsList);
+
+      // console.log(JSON.stringify(groupedOfferingsList, null, 2));
+
       // Filter out invalid offerings based on the restrictions
-      for (const {course_id, offerings} of courseOfferingsList) {
+      for (const {course_id, groups} of groupedOfferingsList) {
         validCourseOfferingsList.push({
           course_id: course_id,
-          offerings: await getValidOfferings(offerings ?? [], restrictions),
+          groups: await getValidOfferings(groups, restrictions),
         });
       }
 
-      // Log course offerings (for debugging purposes)
-      /*validCourseOfferingsList.forEach(
-          (course) => console.log(JSON.stringify(course, null, 2)),
-      );*/
-
       const categorizedOfferings =
           await categorizeValidOfferings(validCourseOfferingsList);
+
       // console.log(typeof categorizedOfferings);
       // console.log(JSON.stringify(categorizedOfferings, null, 2));
-
-
-      const validSchedules: Offering[][] = [];
 
       // Generate valid schedules for the given courses and restrictions
       await getValidSchedules(

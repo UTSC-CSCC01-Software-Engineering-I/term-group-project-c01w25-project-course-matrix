@@ -28,7 +28,7 @@ export default {
 
       const { data: sharedUser, error: sharedError } = await supabase.rpc(
         "get_user_id_by_email",
-        { email: shared_email },
+        { email: shared_email }
       );
 
       if (sharedError) {
@@ -103,7 +103,7 @@ export default {
         .schema("timetable")
         .from("shared")
         .select(
-          "calendar_id, owner_id, shared_id, timetables!inner(id, user_id, timetable_title, semester, favorite)",
+          "id,calendar_id, owner_id, shared_id, timetables!inner(id, user_id, timetable_title, semester, favorite)"
         )
         .eq("owner_id", user_id);
 
@@ -137,7 +137,7 @@ export default {
         .schema("timetable")
         .from("shared")
         .select(
-          "calendar_id, owner_id, shared_id, timetables!inner(id, user_id, timetable_title, semester, favorite)",
+          "id, calendar_id, owner_id, shared_id, timetables!inner(id, user_id, timetable_title, semester, favorite)"
         )
         .eq("shared_id", user_id);
 
@@ -216,7 +216,7 @@ export default {
           // Get Person id via email
           const { data: sharedUser, error: sharedError } = await supabase.rpc(
             "get_user_id_by_email",
-            { email: shared_email },
+            { email: shared_email }
           );
 
           if (sharedError) {
@@ -274,7 +274,7 @@ export default {
           // Get Person id via email
           const { data: sharedUser, error: sharedError } = await supabase.rpc(
             "get_user_id_by_email",
-            { email: shared_email },
+            { email: shared_email }
           );
 
           if (sharedError) {

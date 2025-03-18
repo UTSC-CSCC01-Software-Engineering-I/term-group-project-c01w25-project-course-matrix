@@ -204,7 +204,7 @@ function Calendar({
     await Promise.all(restrictionPromises);
 
     // Redirect to the home page to see the newly created timetable
-    // navigate("/home");
+    navigate("/home");
   };
 
   const handleUpdate = async () => {

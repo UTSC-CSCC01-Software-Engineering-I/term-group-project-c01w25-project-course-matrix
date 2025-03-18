@@ -78,7 +78,7 @@ function Calendar({
   const navigate = useNavigate();
   const [queryParams] = useSearchParams();
   const isEditingTimetable = queryParams.has("edit");
-  const timetableId = parseInt(queryParams.get("edit") ?? "0");
+  const editingTimetableId = parseInt(queryParams.get("edit") ?? "0");
 
   const [createTimetable] = useCreateTimetableMutation();
   const [createEvent] = useCreateEventMutation();
@@ -152,10 +152,10 @@ function Calendar({
       return;
     }
     setTimetableTitle(
-      timetablesData?.find((timetable) => timetable.id === timetableId)
+      timetablesData?.find((timetable) => timetable.id === editingTimetableId)
         ?.timetable_title ?? "",
     );
-  }, [timetablesData, timetableId, timetableTitle, isEditingTimetable]);
+  }, [timetablesData, editingTimetableId, timetableTitle, isEditingTimetable]);
 
   const handleCreate = async () => {
     // Create timetable
@@ -169,10 +169,10 @@ function Calendar({
     }
 
     // Create course events for the newly created timetable
-    const timetableId = data[0]?.id;
+    const newTimetableId = data?.id;
     const promises = newOfferingIds.map(async (offeringId) => {
       const { error: offeringError } = await createEvent({
-        calendar_id: timetableId,
+        calendar_id: newTimetableId,
         offering_id: offeringId,
         semester_start_date: semesterStartDate,
         semester_end_date: semesterEndDate,
@@ -187,7 +187,7 @@ function Calendar({
     const restrictions = form.getValues("restrictions") ?? [];
     const restrictionPromises = restrictions.map(async (restriction) => {
       const restrictionObject = {
-        calendar_id: timetableId,
+        calendar_id: newTimetableId,
         type: restriction.type,
         days: restriction.days,
         start_time: restriction.startTime,
@@ -204,12 +204,12 @@ function Calendar({
     await Promise.all(restrictionPromises);
 
     // Redirect to the home page to see the newly created timetable
-    navigate("/home");
+    // navigate("/home");
   };
 
   const handleUpdate = async () => {
     // Delete the existing timetable
-    const { error: deleteError } = await deleteTimetable(timetableId);
+    const { error: deleteError } = await deleteTimetable(editingTimetableId);
     if (deleteError) {
       console.error(deleteError);
     }

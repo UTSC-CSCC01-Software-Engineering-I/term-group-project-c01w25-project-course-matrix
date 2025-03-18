@@ -39,6 +39,7 @@ import {
 import { z } from "zod";
 import { analyzeQuery } from "../utils/analyzeQuery";
 import { includeFilters } from "../utils/includeFilters";
+import { TimetableFormSchema } from "../models/timetable-form";
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -281,6 +282,13 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
               return await availableFunctions.deleteTimetable(args, req);
             },
           }),
+          generateTimetable: tool({
+            description: "Generate a timetable based on selected courses and restrictions",
+            parameters: TimetableFormSchema,
+            execute: async (args) => {
+              return await availableFunctions.generateTimetable(args, req)
+            }
+          })
         },
         maxSteps: CHATBOT_TOOL_CALL_MAX_STEPS, // Controls how many back and forths the model can take with user or calling multiple tools
         experimental_repairToolCall: async ({

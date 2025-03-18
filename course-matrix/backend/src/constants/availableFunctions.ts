@@ -5,7 +5,8 @@ import { Request } from "express";
 export type FunctionNames =
   | "getTimetables"
   | "updateTimetable"
-  | "deleteTimetable";
+  | "deleteTimetable"
+  | "generateTimetable";
 
 type AvailableFunctions = {
   [K in FunctionNames]: (args: any, req: Request) => Promise<any>;
@@ -168,4 +169,7 @@ export const availableFunctions: AvailableFunctions = {
       return { status: 500, error: error };
     }
   },
+  generateTimetable: async (args: any, req: Request) => {
+    
+  }
 };

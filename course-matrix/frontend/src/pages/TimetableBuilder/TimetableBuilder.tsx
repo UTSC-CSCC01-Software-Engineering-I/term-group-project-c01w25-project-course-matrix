@@ -13,7 +13,7 @@ import {
   TimetableFormSchema,
   baseTimetableForm,
 } from "@/models/timetable-form";
-import { Edit, X } from "lucide-react";
+import { X } from "lucide-react";
 import { createContext, useEffect, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,14 +21,11 @@ import { z } from "zod";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import CourseSearch from "@/pages/TimetableBuilder/CourseSearch";
-import { mockSearchData } from "./mockSearchData";
 import CreateCustomSetting from "./CreateCustomSetting";
 import { formatTime } from "@/utils/format-date-time";
 import { FilterForm, FilterFormSchema } from "@/models/filter-form";
@@ -48,7 +45,6 @@ import {
 import { useSearchParams } from "react-router-dom";
 import OfferingInfo from "./OfferingInfo";
 import { Checkbox } from "@/components/ui/checkbox";
-import { time } from "console";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -117,7 +113,7 @@ const TimetableBuilder = () => {
     resolver: zodResolver(FilterFormSchema),
   });
 
-  const [queryParams, setQueryParams] = useSearchParams();
+  const [queryParams] = useSearchParams();
   const isEditingTimetable = queryParams.has("edit");
   const timetableId = parseInt(queryParams.get("edit") || "0");
 
@@ -145,7 +141,6 @@ const TimetableBuilder = () => {
   const {
     data: coursesData,
     isLoading,
-    error,
     refetch,
   } = useGetCoursesQuery({
     limit: noSearchAndFilter() ? SEARCH_LIMIT : 10000,
@@ -201,7 +196,7 @@ const TimetableBuilder = () => {
       const parsedRestrictions = restrictionsData.map(
         (restriction: Restriction) => ({
           ...restriction,
-          days: JSON.parse(restriction.days),
+          days: JSON.parse(restriction?.days),
         }),
       );
       console.log("Parsed restrictions", parsedRestrictions);
@@ -432,7 +427,7 @@ const TimetableBuilder = () => {
                     <FormField
                       control={form.control}
                       name="restrictions"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem className="pb-2">
                           <p className="text-sm">
                             Enabled Restrictions: {enabledRestrictions.length}

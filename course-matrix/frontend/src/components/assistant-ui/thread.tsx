@@ -82,7 +82,9 @@ const ThreadWelcome: FC = () => {
             Hi my name is <span className="text-primary">Morpheus</span>. How
             can I help you today?
           </p>
-          <p className="mt-4 text-sm text-gray-300"><strong>Tip: </strong> Use /timetable to work with your timetables</p>
+          <p className="mt-4 text-sm text-gray-300">
+            <strong>Tip: </strong> Use /timetable to work with your timetables
+          </p>
         </div>
         <ThreadWelcomeSuggestions />
       </div>

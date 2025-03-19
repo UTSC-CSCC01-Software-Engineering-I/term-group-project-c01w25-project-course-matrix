@@ -54,7 +54,7 @@
   - Project when updated is automatically unit tested
   - Project when updated and passing unit tests is auto-redeployed
 
-– **Integration Testing / UnitTesting**
+– **Integration / Unit Testing**
 
 - Project functions are unit tested so that their behaviour is clear and potential bugs are caught
 - Project functions passes unit tests so bug free functionality is ensured

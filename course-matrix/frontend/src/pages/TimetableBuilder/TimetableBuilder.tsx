@@ -115,7 +115,7 @@ const TimetableBuilder = () => {
   const [filters, setFilters] = useState<FilterForm | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [isChoosingSectionsManually, setIsChoosingSectionsManually] =
-    useState(false);
+    useState(isEditingTimetable);
 
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;
@@ -379,7 +379,7 @@ const TimetableBuilder = () => {
                       <p className="text-sm">
                         Selected courses: {selectedCourses.length} (Max 8)
                       </p>
-                      <div className="flex items-center gap-2">
+                      {!isEditingTimetable && (<div className="flex items-center gap-2">
                         <Checkbox
                           id="manual-selection"
                           checked={isChoosingSectionsManually}
@@ -393,7 +393,7 @@ const TimetableBuilder = () => {
                         >
                           Choose meeting sections manually?
                         </label>
-                      </div>
+                      </div>)}
                     </div>
                     <div className="flex gap-2 flex-col">
                       {!isEditingTimetable ||

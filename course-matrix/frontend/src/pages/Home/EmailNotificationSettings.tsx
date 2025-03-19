@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { TimetableModel } from "@/models/models";
 import { useEffect, useState } from "react";
 
 interface EmailNotificationSettingsProps {
@@ -28,9 +29,11 @@ export const EmailNotificationSettings = ({
   const [toggled, setToggled] = useState<boolean>(false);
 
   useEffect(() => {
-    if ((data as any)?.email_notifications_enabled !== undefined) {
-      setToggled((data as any)?.email_notifications_enabled);
-      console.log((data as any)?.email_notifications_enabled);
+    if (data) {
+      const val = (data as TimetableModel[])[0]?.email_notifications_enabled;
+      if ( val !== undefined) {
+        setToggled(val);
+      }
     }
   }, [data]);
 

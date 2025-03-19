@@ -111,12 +111,6 @@ export interface CorequisiteModel {
   course_code: string;
 
   /** Course code for the corequisite course */
-  id: number;
-  created_at: string;
-  updated_at: string;
-  course_id: number;
-  corequisite_id: number;
-  course_code: string;
   corequisite_code: string;
 }
 
@@ -174,4 +168,33 @@ export interface OfferingModel {
 
   /** Additional notes about the course offering */
   notes: string;
+}
+
+/**
+ * Represents a timetable including details like its title, semester, and favorite satus
+ */
+export interface TimetableModel {
+  /** Unique identifier */
+  id: number;
+
+  /** Creation timestamp */
+  created_at: string;
+
+  /** Last updated at timestamp  */
+  updated_at: string;
+
+  /**  Name of timetable */
+  timetable_title: string;
+
+  /** ID of user owning this timetable  */
+  user_id: string;
+
+  /** Semester that the timetable is for */
+  semester: string;
+
+  /** Is timetable favorited by user */
+  favorite: boolean;
+
+  /** Has user enabled email notifications for this timetable */
+  email_notifications_enabled: boolean;
 }

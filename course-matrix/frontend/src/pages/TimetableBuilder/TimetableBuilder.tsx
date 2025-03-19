@@ -181,13 +181,12 @@ const TimetableBuilder = () => {
       form.setValue("offeringIds", existingOfferingIds);
       setLoadedOfferingIds(true);
 
-      const existingCourseCodes = (timetableEventsData?.courseEvents || []).map(
-        (event) => event.event_name.split(" - ")[0].trim(),
+      const existingCourseIds = existingOfferingIds.map(
+        (offeringId) => offeringIdToCourseIdMap[offeringId],
       );
-      const existingCourses =
-        coursesData?.filter((course: { code: string }) =>
-          existingCourseCodes.includes(course.code),
-        ) || [];
+      const existingCourses = coursesData.filter((course) =>
+        existingCourseIds.includes(course.id),
+      );
       form.setValue("courses", existingCourses);
       setLoadedCourses(true);
 

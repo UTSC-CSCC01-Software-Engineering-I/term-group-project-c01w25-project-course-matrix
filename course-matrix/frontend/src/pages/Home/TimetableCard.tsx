@@ -11,6 +11,7 @@ import { Pencil } from "lucide-react";
 import { useState } from "react";
 import TimetableCardKebabMenu from "./TimetableCardKebabMenu";
 import { useUpdateTimetableMutation } from "@/api/timetableApiSlice";
+import { Link } from "react-router-dom";
 
 interface TimetableCardProps {
   refetch: () => void;
@@ -62,10 +63,12 @@ const TimetableCard = ({
   return (
     <Card className="w-full">
       <CardHeader>
-        <img
-          src="../../public/img/default-timetable-card-image.png"
-          alt="Timetable default image"
-        />
+        <Link to={`/dashboard/timetable?edit=${timetableId}`}>
+          <img
+            src="../../public/img/default-timetable-card-image.png"
+            alt="Timetable default image"
+          />
+        </Link>
         <div className="flex justify-between items-center">
           <CardTitle>
             <Input

@@ -15,8 +15,8 @@
 
 - Develop a calendar interface that allows users to retrieve, add, modify, and delete timetables and events both user custom event entries and predefined course entries.
 - Develop an algorithm that optimally schedules events based on user preferences and constraints.
-- Develop an algorithm that emails notification its users based on upcoming timetable events
-- Develop custom color customization so that users can select what colors they want for different courses
+- Develop an interface that emails notification its users based on upcoming timetable events
+- Develop custom colour customization so that users can select what colours they want for different courses
 - Develop a calendar interface that allows users to export and share their timetables with other users
 - Develop an algorithm that allows users to compare two different timetables together
 
@@ -125,7 +125,7 @@ In addition to their specific roles, all team members have a collective responsi
   - Entries Update/Delete: [SCRUM-47](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-47)
   - Timetable Generation: [SCRUM-52](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-52)
   - Entries Visualization: [SCRUM-50](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-50)
-  - Entries Colour Customization: [SCRUM-51](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-51)
+  - Entries colour Customization: [SCRUM-51](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-51)
   - Timetable Favourite: [SCRUM-57](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-57)
   - Timetable Export/Share:
 [SCRUM-58](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-58)

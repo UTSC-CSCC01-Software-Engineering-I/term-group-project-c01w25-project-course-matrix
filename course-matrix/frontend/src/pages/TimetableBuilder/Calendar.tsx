@@ -373,7 +373,7 @@ const Calendar = React.memo<CalendarProps>(
               </DialogContent>
             </Dialog>
           ) : (
-            <>
+            <div className="flex gap-2">
               {isChoosingSectionsManually &&
                 !allOfferingSectionsHaveBeenSelected && (
                   <p className="text-sm text-red-500 pr-2">
@@ -381,6 +381,10 @@ const Calendar = React.memo<CalendarProps>(
                     order to save your timetable.
                   </p>
                 )}
+
+              <Button size="sm" variant="outline" onClick={() => navigate("/home")} >
+                Cancel Editing
+              </Button>
               <Button
                 size="sm"
                 disabled={!allOfferingSectionsHaveBeenSelected}
@@ -388,7 +392,7 @@ const Calendar = React.memo<CalendarProps>(
               >
                 Update Timetable
               </Button>
-            </>
+            </div>
           )}
         </h1>
         <ScheduleXCalendar calendarApp={calendar} />

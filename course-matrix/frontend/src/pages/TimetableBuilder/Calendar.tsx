@@ -382,7 +382,11 @@ const Calendar = React.memo<CalendarProps>(
                   </p>
                 )}
 
-              <Button size="sm" variant="outline" onClick={() => navigate("/home")} >
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => navigate("/home")}
+              >
                 Cancel Editing
               </Button>
               <Button

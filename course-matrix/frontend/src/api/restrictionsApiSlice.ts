@@ -15,6 +15,7 @@ export const restrictionsApiSlice = apiSlice.injectEndpoints({
         providesTags: ["Restrictions"],
         credentials: "include",
       }),
+      keepUnusedDataFor: 0,
     }),
     createRestriction: builder.mutation({
       query: (data) => ({

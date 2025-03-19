@@ -46,6 +46,7 @@ import {
 import { useSearchParams } from "react-router-dom";
 import OfferingInfo from "./OfferingInfo";
 import { Checkbox } from "@/components/ui/checkbox";
+import { CourseModel } from "@/models/models";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -134,6 +135,12 @@ const TimetableBuilder = () => {
     ...filters,
   });
 
+  const { data: allCoursesData } = useGetCoursesQuery({
+    limit: 10000,
+  }) as {
+    data: CourseModel[];
+  };
+
   const { data: offeringData } = useGetOfferingsQuery({}) as {
     data: Offering[];
   };
@@ -169,7 +176,7 @@ const TimetableBuilder = () => {
       timetableEventsData?.courseEvents &&
       !loadedCourses &&
       timetableEventsData?.courseEvents &&
-      coursesData &&
+      allCoursesData &&
       !loadedRestrictions &&
       restrictionsData
     ) {
@@ -181,10 +188,10 @@ const TimetableBuilder = () => {
       form.setValue("offeringIds", existingOfferingIds);
       setLoadedOfferingIds(true);
 
-      const existingCourseIds = existingOfferingIds.map(
+      const existingCourseIds = [...new Set(existingOfferingIds.map(
         (offeringId) => offeringIdToCourseIdMap[offeringId],
-      );
-      const existingCourses = coursesData.filter((course) =>
+      ))];
+      const existingCourses = allCoursesData.filter((course: CourseModel) =>
         existingCourseIds.includes(course.id),
       );
       form.setValue("courses", existingCourses);
@@ -218,15 +225,7 @@ const TimetableBuilder = () => {
       form.setValue("restrictions", parsedRestrictions);
       setLoadedRestrictions(true);
     }
-  }, [
-    timetableEventsData,
-    coursesData,
-    restrictionsData,
-    loadedCourses,
-    loadedOfferingIds,
-    loadedRestrictions,
-    form,
-  ]);
+  }, [timetableEventsData, coursesData, restrictionsData, loadedCourses, loadedOfferingIds, loadedRestrictions, form, allCoursesData, offeringIdToCourseIdMap]);
 
   const { data: timetablesData } = useGetTimetablesQuery() as {
     data: Timetable[];
@@ -279,7 +278,7 @@ const TimetableBuilder = () => {
     setFilters(values);
     console.log("Apply filters", values);
   };
-
+  
   return (
     <>
       <div className="w-full">

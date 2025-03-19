@@ -1,6 +1,18 @@
-import { useGetTimetableQuery, useUpdateTimetableMutation } from "@/api/timetableApiSlice";
+import {
+  useGetTimetableQuery,
+  useUpdateTimetableMutation,
+} from "@/api/timetableApiSlice";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
 
@@ -11,15 +23,14 @@ interface EmailNotificationSettingsProps {
 export const EmailNotificationSettings = ({
   timetableId,
 }: EmailNotificationSettingsProps) => {
-  
-  const {data, isLoading, refetch} = useGetTimetableQuery(timetableId);
+  const { data, isLoading, refetch } = useGetTimetableQuery(timetableId);
   const [updateTimetable] = useUpdateTimetableMutation();
   const [toggled, setToggled] = useState<boolean>(false);
 
   useEffect(() => {
     if ((data as any)?.email_notifications_enabled !== undefined) {
       setToggled((data as any)?.email_notifications_enabled);
-      console.log((data as any)?.email_notifications_enabled)
+      console.log((data as any)?.email_notifications_enabled);
     }
   }, [data]);
 
@@ -27,13 +38,13 @@ export const EmailNotificationSettings = ({
     try {
       await updateTimetable({
         id: timetableId,
-        email_notifications_enabled: toggled
+        email_notifications_enabled: toggled,
       }).unwrap();
       refetch();
     } catch (error) {
       console.error("Failed to update timetable:", error);
     }
-  }
+  };
 
   return (
     <Dialog>
@@ -42,9 +53,7 @@ export const EmailNotificationSettings = ({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            Notification settings
-          </DialogTitle>
+          <DialogTitle>Notification settings</DialogTitle>
           <DialogDescription>
             Email notifications will be sent to your account email.
           </DialogDescription>
@@ -53,7 +62,9 @@ export const EmailNotificationSettings = ({
           <div className="w-full flex items-center justify-between border rounded-lg p-3">
             <div>
               <div className="text-sm font-bold">Course event emails</div>
-              <div className="text-sm text-gray-400">Recieve emails prior to upcoming course events</div>
+              <div className="text-sm text-gray-400">
+                Recieve emails prior to upcoming course events
+              </div>
             </div>
             <div>
               <Switch
@@ -68,15 +79,10 @@ export const EmailNotificationSettings = ({
             <Button variant="outline">Cancel</Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button
-              onClick={handleUpdateEmailNotifications}
-            >
-              Save
-            </Button>
+            <Button onClick={handleUpdateEmailNotifications}>Save</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-)
-  
-}
+  );
+};

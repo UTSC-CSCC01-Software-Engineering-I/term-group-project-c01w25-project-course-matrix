@@ -43,7 +43,7 @@ app.use("/api/offerings", offeringsRouter);
 app.use("/api/timetables", timetableRouter);
 app.use("/api/ai", aiRouter);
 
-cron.schedule('* * * * *', checkAndNotifyEvents);
+cron.schedule("* * * * *", checkAndNotifyEvents);
 
 /**
  * Root route to test the backend server.

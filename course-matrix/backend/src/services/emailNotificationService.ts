@@ -32,12 +32,14 @@ export function correctDay(offering: any): boolean {
   }
 
   if (!isDateBetween(now, startDay, endDay)) {
-    console.log(`${now.toDateString()} is not between ${startDay.toDateString()} and ${endDay.toDateString()}`)
+    console.log(
+      `${now.toDateString()} is not between ${startDay.toDateString()} and ${endDay.toDateString()}`,
+    );
     return false;
   }
 
   if (weekdays[now.getDay()] !== day) {
-    console.log(`${weekdays[now.getDay()]} is not equal to ${day}`)
+    console.log(`${weekdays[now.getDay()]} is not equal to ${day}`);
     return false;
   }
 
@@ -50,8 +52,7 @@ export async function checkAndNotifyEvents() {
   let now;
   if (TEST_NOTIFICATIONS) {
     now = new Date(2025, 7, 5, 18, 45, 1);
-  }
-  else {
+  } else {
     now = new Date();
   }
 
@@ -80,12 +81,13 @@ export async function checkAndNotifyEvents() {
     // Send email notifications for each event
     for (const event of events) {
       // Get offering
-      const { data: offerings, error: errorOffering } = await supabaseServersideClient
-        .schema("course")
-        .from("offerings")
-        .select("*")
-        .eq("id", event.offering_id)
-        .limit(1);
+      const { data: offerings, error: errorOffering } =
+        await supabaseServersideClient
+          .schema("course")
+          .from("offerings")
+          .select("*")
+          .eq("id", event.offering_id)
+          .limit(1);
 
       if (errorOffering) {
         console.error("Error fetching user: ", errorOffering);
@@ -138,7 +140,7 @@ export async function checkAndNotifyEvents() {
           event.event_name
         }" is starting in approximately 15 minutes.</p>
         <p><strong>Start time:</strong> ${new Date(
-          event.event_start
+          event.event_start,
         ).toLocaleString()}</p>
         <p><strong>Description:</strong> ${
           event.event_description || "No description provided"
@@ -148,11 +150,10 @@ export async function checkAndNotifyEvents() {
 
       // Send email
       try {
-        const data = await brevoApiInstance.sendTransacEmail(
-          brevoSendSmtpEmail
-        );
+        const data =
+          await brevoApiInstance.sendTransacEmail(brevoSendSmtpEmail);
         console.log(
-          `Email sent to ${userEmail} for event ${event.id}. Message ID: ${data.messageId}`
+          `Email sent to ${userEmail} for event ${event.id}. Message ID: ${data.messageId}`,
         );
       } catch (emailError) {
         console.error("Error sending email with Brevo:", emailError);

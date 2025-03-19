@@ -32,12 +32,13 @@ import { FilterForm, FilterFormSchema } from "@/models/filter-form";
 import { useGetCoursesQuery } from "@/api/coursesApiSlice";
 import { useGetTimetablesQuery } from "@/api/timetableApiSlice";
 import { useGetEventsQuery } from "@/api/eventsApiSlice";
+import { useGetOfferingsQuery } from "@/api/offeringsApiSlice";
 import { useGetRestrictionsQuery } from "@/api/restrictionsApiSlice";
 import { useDebounceValue } from "@/utils/useDebounce";
 import SearchFilters from "./SearchFilters";
 import Calendar from "./Calendar";
 import {
-  Event,
+  Offering,
   TimetableEvents,
   Timetable,
   Restriction,
@@ -149,10 +150,18 @@ const TimetableBuilder = () => {
     ...filters,
   });
 
-  const { data: timetableEventsData } = useGetEventsQuery(timetableId) as {
+  const { data: offeringData } = useGetOfferingsQuery({}) as {
+    data: Offering[];
+  };
+  const offerings = offeringData || [];
+  const offeringIdToCourseIdMap = offerings.reduce((acc, offering) => {
+    acc[offering.id] = offering.course_id;
+    return acc;
+  }, {} as Record<number, number>);
+
+  const { data: timetableEventsData } = useGetEventsQuery(timetableId, { skip: !isEditingTimetable }) as {
     data: TimetableEvents;
   };
-  const [courseEvents, setCourseEvents] = useState<Event[]>([]);
   const userEvents = timetableEventsData?.userEvents || [];
 
   const semesterStartDate = getSemesterStartAndEndDates(selectedSemester).start;
@@ -162,7 +171,9 @@ const TimetableBuilder = () => {
   const [loadedOfferingIds, setLoadedOfferingIds] = useState(false);
   const [loadedRestrictions, setLoadedRestrictions] = useState(false);
 
-  const { data: restrictionsData } = useGetRestrictionsQuery(timetableId);
+  const { data: restrictionsData } = useGetRestrictionsQuery(timetableId, { skip: !isEditingTimetable }) as {
+    data: Restriction[];
+  };
 
   // Set the state variable courseEvents, and set the form values for 'offeringIds', 'courses', and 'restrictions'
   useEffect(() => {
@@ -179,11 +190,10 @@ const TimetableBuilder = () => {
         ...new Set(
           timetableEventsData?.courseEvents.map((event) => event.offering_id),
         ),
-      ].sort();
+      ].sort((a, b) => a - b);
       form.setValue("offeringIds", existingOfferingIds);
       setLoadedOfferingIds(true);
 
-      setCourseEvents(timetableEventsData.courseEvents);
       const existingCourseCodes = (timetableEventsData?.courseEvents || []).map(
         (event) => event.event_name.split(" - ")[0].trim(),
       );
@@ -344,6 +354,7 @@ const TimetableBuilder = () => {
                               value={field.value}
                               onChange={(value) => {
                                 field.onChange(value);
+                                console.log("VALUE: ", value);
                               }}
                               data={coursesData} // TODO: Replace with variable data
                               isLoading={isLoading}
@@ -377,7 +388,8 @@ const TimetableBuilder = () => {
                       </div>
                     </div>
                     <div className="flex gap-2 flex-col">
-                      {selectedCourses.map((course, index) => {
+                      {!isEditingTimetable || (isEditingTimetable && loadedCourses && loadedOfferingIds) ? (
+                      selectedCourses.map((course, index) => {
                         return (
                           <div key={index}>
                             <div className="flex p-2 justify-between bg-green-100/50 text-xs rounded-md w-[80%]">
@@ -388,7 +400,17 @@ const TimetableBuilder = () => {
                                 <X
                                   size={16}
                                   className="hover:text-red-500 cursor-pointer"
-                                  onClick={() => handleRemoveCourse(course)}
+                                  onClick={() => {
+                                    handleRemoveCourse(course);
+                                    const newOfferingsIds = form
+                                      .getValues("offeringIds")
+                                      .filter(
+                                        (offeringId: number) =>
+                                          offeringIdToCourseIdMap[offeringId] !==
+                                          course.id,
+                                      );
+                                    form.setValue("offeringIds", newOfferingsIds);
+                                  }}
                                 />
                               </div>
                             </div>
@@ -401,7 +423,12 @@ const TimetableBuilder = () => {
                             )}
                           </div>
                         );
-                      })}
+                      })) : (
+                        <p className="text-sm text-muted-foreground">
+                          Loading courses...
+                        </p>
+                      )
+                    }
                     </div>
                   </div>
 
@@ -490,7 +517,6 @@ const TimetableBuilder = () => {
               timetablesData={timetablesData}
               semesterStartDate={semesterStartDate}
               semesterEndDate={semesterEndDate}
-              courseEvents={courseEvents}
               userEvents={userEvents}
               form={form}
             />

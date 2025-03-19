@@ -25,24 +25,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UseFormReturn } from "react-hook-form";
 import { TimetableFormSchema } from "@/models/timetable-form";
-import {
-  useCreateTimetableMutation,
-  useDeleteTimetableMutation,
-  useGetTimetablesQuery,
-} from "@/api/timetableApiSlice";
+import { useCreateTimetableMutation } from "@/api/timetableApiSlice";
 import { useCreateRestrictionMutation } from "@/api/restrictionsApiSlice";
 import { z } from "zod";
 import { useEffect, useState } from "react";
 import { useGetNumberOfCourseSectionsQuery } from "@/api/coursesApiSlice";
-import { useCreateEventMutation } from "@/api/eventsApiSlice";
+import { useCreateEventMutation, useGetEventsQuery, useUpdateEventMutation, useDeleteEventMutation } from "@/api/eventsApiSlice";
+import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Event, Timetable } from "@/utils/type-utils";
+import { Event, Timetable, TimetableEvents } from "@/utils/type-utils";
 
 interface CalendarProps {
   timetablesData: Timetable[];
   semesterStartDate: string;
   semesterEndDate: string;
-  courseEvents: Event[];
   userEvents: Event[];
   form: UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 }
@@ -71,7 +67,6 @@ function Calendar({
   timetablesData,
   semesterStartDate,
   semesterEndDate,
-  courseEvents,
   userEvents,
   form,
 }: CalendarProps) {
@@ -79,11 +74,20 @@ function Calendar({
   const [queryParams] = useSearchParams();
   const isEditingTimetable = queryParams.has("edit");
   const editingTimetableId = parseInt(queryParams.get("edit") ?? "0");
+  const newOfferingIds = form.watch("offeringIds") ?? [];
 
   const [createTimetable] = useCreateTimetableMutation();
   const [createEvent] = useCreateEventMutation();
-  const [deleteTimetable] = useDeleteTimetableMutation();
+  const [updateEvent] = useUpdateEventMutation();
+  const [deleteEvent] = useDeleteEventMutation();
   const [createRestriction] = useCreateRestrictionMutation();
+
+  const { data: courseEventsData } = useGetOfferingEventsQuery({
+    offering_ids: newOfferingIds.join(","),
+    semester_start_date: semesterStartDate,
+    semester_end_date: semesterEndDate,
+  }) as { data: Event[] };
+  const courseEvents = courseEventsData ?? [];
 
   let index = 1;
   const courseEventsParsed = courseEvents.map((event) =>
@@ -123,19 +127,19 @@ function Calendar({
     },
   });
 
-  // const { data: oldTimetableEvents } = useGetEventsQuery(timetableId) as {
-  // 	data: TimetableEvents;
-  // };
-  // const oldOfferingIds = [
-  // 	...new Set(
-  // 		oldTimetableEvents?.courseEvents.map((event) => event.offering_id)
-  // 	),
-  // ].sort();
-  const newOfferingIds = form.watch("offeringIds") ?? [];
+  const { data: oldTimetableEvents } = useGetEventsQuery(editingTimetableId, { skip: !isEditingTimetable }) as {
+  	data: TimetableEvents;
+  };
+  const oldOfferingIds = [
+  	...new Set(
+  		oldTimetableEvents?.courseEvents.map((event) => event.offering_id)
+  	),
+  ].sort((a, b) => a - b);
+  
   const semester = form.watch("semester") ?? "";
   const [timetableTitle, setTimetableTitle] = useState("");
 
-  const selectedCourses = form.getValues("courses") ?? [];
+  const selectedCourses = form.watch("courses") ?? [];
   const selectedCourseIds = selectedCourses.map((course) => course.id);
   const { data: numberOfSectionsData } = useGetNumberOfCourseSectionsQuery({
     course_ids: selectedCourseIds.join(","),
@@ -146,7 +150,7 @@ function Calendar({
 
   const allOfferingSectionsHaveBeenSelected =
     newOfferingIds.length === totalNumberOfSections;
-
+  
   useEffect(() => {
     if (!isEditingTimetable) {
       return;
@@ -170,7 +174,7 @@ function Calendar({
 
     // Create course events for the newly created timetable
     const newTimetableId = data?.id;
-    const promises = newOfferingIds.map(async (offeringId) => {
+    for (const offeringId of newOfferingIds) {
       const { error: offeringError } = await createEvent({
         calendar_id: newTimetableId,
         offering_id: offeringId,
@@ -180,12 +184,11 @@ function Calendar({
       if (offeringError) {
         console.error(offeringError);
       }
-    });
-    await Promise.all(promises);
+    }
 
     // Create restrictions for the newly created timetable
     const restrictions = form.getValues("restrictions") ?? [];
-    const restrictionPromises = restrictions.map(async (restriction) => {
+    for (const restriction of restrictions) {
       const restrictionObject = {
         calendar_id: newTimetableId,
         type: restriction.type,
@@ -195,27 +198,51 @@ function Calendar({
         disabled: restriction.disabled,
         num_days: restriction.numDays,
       };
-      const { error: restrictionError } =
-        await createRestriction(restrictionObject);
+      const { error: restrictionError } = await createRestriction(restrictionObject);
       if (restrictionError) {
         console.error(restrictionError);
       }
-    });
-    await Promise.all(restrictionPromises);
+    }
 
     // Redirect to the home page to see the newly created timetable
     navigate("/home");
   };
 
   const handleUpdate = async () => {
-    // Delete the existing timetable
-    const { error: deleteError } = await deleteTimetable(editingTimetableId);
-    if (deleteError) {
-      console.error(deleteError);
+    const offeringIdsToDelete = oldOfferingIds.filter(
+      (offeringId) => !newOfferingIds.includes(offeringId),
+    );
+    const offeringIdsToAdd = newOfferingIds.filter(
+      (offeringId) => !oldOfferingIds.includes(offeringId),
+    );
+
+    // Delete course events
+    for (const offeringId of offeringIdsToDelete) {
+      const { error: deleteError } = await deleteEvent({
+        id: 1,
+        calendar_id: editingTimetableId,
+        event_type: "course",
+        offering_id: offeringId,
+      });
+      if (deleteError) {
+        console.error(deleteError);
+      }
     }
 
-    // Create new timetable and create course events for the newly created timetable
-    await handleCreate();
+    // Create course events
+    for (const offeringId of offeringIdsToAdd) {
+      const { error: createError } = await createEvent({
+        calendar_id: editingTimetableId,
+        offering_id: offeringId,
+        semester_start_date: semesterStartDate,
+        semester_end_date: semesterEndDate,
+      });
+      if (createError) {
+        console.error(createError);
+      }
+    }
+
+    form.setValue("offeringIds", newOfferingIds);
   };
 
   return (

@@ -12,6 +12,26 @@ export type Event = {
   offering_id: number;
 };
 
+export type Offering = {
+  id: number;
+  created_at: Date;
+  updated_at: Date;
+  course_id: number;
+  meeting_section: string;
+  offering: string;
+  day: string;
+  start: string;
+  end: string;
+  location: string;
+  current: number;
+  max: number;
+  is_waitlisted: boolean;
+  delivery_mode: string;
+  instructor: string;
+  notes: string;
+  code: string;
+}
+
 export type TimetableEvents = {
   courseEvents: Event[];
   userEvents: Event[];

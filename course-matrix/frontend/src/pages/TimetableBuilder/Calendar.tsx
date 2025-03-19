@@ -156,14 +156,19 @@ const Calendar = React.memo<CalendarProps>(
     const { data: numberOfSectionsData } = useGetNumberOfCourseSectionsQuery({
       course_ids: selectedCourseIds.join(","),
       semester: semester,
+    }, {
+      skip: !selectedCourses.length,
     });
 
-    const totalNumberOfSections =
-      numberOfSectionsData?.totalNumberOfCourseSections ?? 0;
+    const totalNumberOfSections = !selectedCourses.length ? 0 : (numberOfSectionsData?.totalNumberOfCourseSections ?? 0);
 
     const allOfferingSectionsHaveBeenSelected =
       newOfferingIds.length === totalNumberOfSections;
 
+
+    console.log("TOTAL NUMBER OF SECTIONS", totalNumberOfSections);
+    console.log("NEW OFFERING IDS", newOfferingIds);
+    
     useEffect(() => {
       if (!isEditingTimetable) {
         return;

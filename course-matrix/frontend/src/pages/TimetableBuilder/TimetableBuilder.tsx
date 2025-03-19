@@ -305,7 +305,10 @@ const TimetableBuilder = () => {
                           <FormLabel>Semester</FormLabel>
                           <FormControl>
                             <Select
-                              onValueChange={field.onChange}
+                              onValueChange={(value) => {
+                                form.reset({ offeringIds: [], courses: [] });
+                                form.setValue("semester", value);
+                              }}
                               value={field.value}
                               defaultValue={field.value}
                             >

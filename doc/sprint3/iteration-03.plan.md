@@ -42,11 +42,11 @@ In addition to their specific roles, all team members have a collective responsi
 - Ensure that our application’s docker image runs on a VM instance accessible on the web.
 - Ensure that our deployed project automatically redeploys when a new version of our application is pushed that passes all unit testing.
 
-#### Epic 4: Unit Testing
+#### Epic 4: Unit and integration Testing
 
 **Team Members:** Austin
 
-- Create unit tests for our application functions (timetable, ai assistant, user stories, etc.) such that their functionality is clear and bug free.
+- Create unit / integration tests for our application functions (timetable, ai assistant, user stories, etc.) such that their functionality is clear and bug free.
 
 #### 1.2 Events
 

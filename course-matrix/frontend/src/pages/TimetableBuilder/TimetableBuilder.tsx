@@ -188,9 +188,13 @@ const TimetableBuilder = () => {
       form.setValue("offeringIds", existingOfferingIds);
       setLoadedOfferingIds(true);
 
-      const existingCourseIds = [...new Set(existingOfferingIds.map(
-        (offeringId) => offeringIdToCourseIdMap[offeringId],
-      ))];
+      const existingCourseIds = [
+        ...new Set(
+          existingOfferingIds.map(
+            (offeringId) => offeringIdToCourseIdMap[offeringId],
+          ),
+        ),
+      ];
       const existingCourses = allCoursesData.filter((course: CourseModel) =>
         existingCourseIds.includes(course.id),
       );
@@ -225,7 +229,17 @@ const TimetableBuilder = () => {
       form.setValue("restrictions", parsedRestrictions);
       setLoadedRestrictions(true);
     }
-  }, [timetableEventsData, coursesData, restrictionsData, loadedCourses, loadedOfferingIds, loadedRestrictions, form, allCoursesData, offeringIdToCourseIdMap]);
+  }, [
+    timetableEventsData,
+    coursesData,
+    restrictionsData,
+    loadedCourses,
+    loadedOfferingIds,
+    loadedRestrictions,
+    form,
+    allCoursesData,
+    offeringIdToCourseIdMap,
+  ]);
 
   const { data: timetablesData } = useGetTimetablesQuery() as {
     data: Timetable[];
@@ -278,7 +292,7 @@ const TimetableBuilder = () => {
     setFilters(values);
     console.log("Apply filters", values);
   };
-  
+
   return (
     <>
       <div className="w-full">

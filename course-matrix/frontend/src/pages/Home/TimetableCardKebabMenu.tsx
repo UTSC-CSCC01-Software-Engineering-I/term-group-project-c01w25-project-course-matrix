@@ -58,7 +58,7 @@ const TimetableCardKebabMenu = ({
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <EmailNotificationSettings timetableId={timetableId}/>
+          <EmailNotificationSettings timetableId={timetableId} />
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <Dialog>

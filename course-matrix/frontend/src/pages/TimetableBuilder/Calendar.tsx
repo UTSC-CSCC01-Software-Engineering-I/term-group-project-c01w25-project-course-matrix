@@ -30,7 +30,12 @@ import { useCreateRestrictionMutation } from "@/api/restrictionsApiSlice";
 import { z } from "zod";
 import { useEffect, useState } from "react";
 import { useGetNumberOfCourseSectionsQuery } from "@/api/coursesApiSlice";
-import { useCreateEventMutation, useGetEventsQuery, useUpdateEventMutation, useDeleteEventMutation } from "@/api/eventsApiSlice";
+import {
+  useCreateEventMutation,
+  useGetEventsQuery,
+  useUpdateEventMutation,
+  useDeleteEventMutation,
+} from "@/api/eventsApiSlice";
 import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Event, Timetable, TimetableEvents } from "@/utils/type-utils";
@@ -127,15 +132,17 @@ function Calendar({
     },
   });
 
-  const { data: oldTimetableEvents } = useGetEventsQuery(editingTimetableId, { skip: !isEditingTimetable }) as {
-  	data: TimetableEvents;
+  const { data: oldTimetableEvents } = useGetEventsQuery(editingTimetableId, {
+    skip: !isEditingTimetable,
+  }) as {
+    data: TimetableEvents;
   };
   const oldOfferingIds = [
-  	...new Set(
-  		oldTimetableEvents?.courseEvents.map((event) => event.offering_id)
-  	),
+    ...new Set(
+      oldTimetableEvents?.courseEvents.map((event) => event.offering_id),
+    ),
   ].sort((a, b) => a - b);
-  
+
   const semester = form.watch("semester") ?? "";
   const [timetableTitle, setTimetableTitle] = useState("");
 
@@ -150,7 +157,7 @@ function Calendar({
 
   const allOfferingSectionsHaveBeenSelected =
     newOfferingIds.length === totalNumberOfSections;
-  
+
   useEffect(() => {
     if (!isEditingTimetable) {
       return;
@@ -198,7 +205,8 @@ function Calendar({
         disabled: restriction.disabled,
         num_days: restriction.numDays,
       };
-      const { error: restrictionError } = await createRestriction(restrictionObject);
+      const { error: restrictionError } =
+        await createRestriction(restrictionObject);
       if (restrictionError) {
         console.error(restrictionError);
       }

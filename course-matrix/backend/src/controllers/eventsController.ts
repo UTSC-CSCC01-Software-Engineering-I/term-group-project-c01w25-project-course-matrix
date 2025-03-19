@@ -495,7 +495,8 @@ export default {
 
           if (courseEventData.calendar_id !== timetableData.id) {
             return res.status(400).json({
-              error: "Restriction id does not belong to the provided calendar id",
+              error:
+                "Restriction id does not belong to the provided calendar id",
             });
           }
         }
@@ -716,7 +717,6 @@ export default {
         if (courseEventError)
           return res.status(400).json({ error: courseEventError.message });
 
-
         if (!offering_id) {
           if (!courseEventData || courseEventData.length === 0) {
             return res
@@ -726,7 +726,8 @@ export default {
 
           if (courseEventData.calendar_id !== timetableData.id) {
             return res.status(400).json({
-              error: "Restriction id does not belong to the provided calendar id",
+              error:
+                "Restriction id does not belong to the provided calendar id",
             });
           }
         }

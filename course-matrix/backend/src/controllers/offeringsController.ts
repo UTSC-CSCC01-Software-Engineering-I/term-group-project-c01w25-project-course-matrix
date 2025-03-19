@@ -105,10 +105,7 @@ export default {
 
       // If course code or semester is not provided, return all offerings
       if (!course_code || !semester) {
-        offeringsQuery = supabase
-          .schema("course")
-          .from("offerings")
-          .select();
+        offeringsQuery = supabase.schema("course").from("offerings").select();
 
         const { data: offeringsData, error: offeringsError } =
           await offeringsQuery;

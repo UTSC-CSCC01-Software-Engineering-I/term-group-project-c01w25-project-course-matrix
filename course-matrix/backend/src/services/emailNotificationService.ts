@@ -34,7 +34,7 @@ async function sendBrevoEmail(emailData: EmaiLData) {
   } catch (error: any) {
     console.error(
       "Error sending email:",
-      error?.response ? error?.response?.data : error?.message
+      error?.response ? error?.response?.data : error?.message,
     );
     throw error;
   }

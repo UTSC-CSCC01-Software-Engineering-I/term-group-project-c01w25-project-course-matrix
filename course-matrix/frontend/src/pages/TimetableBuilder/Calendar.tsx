@@ -23,29 +23,28 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { TimetableFormSchema } from "@/models/timetable-form";
-import { useCreateTimetableMutation } from "@/api/timetableApiSlice";
+import { useGetTimetablesQuery, useCreateTimetableMutation } from "@/api/timetableApiSlice";
 import { useCreateRestrictionMutation } from "@/api/restrictionsApiSlice";
 import { z } from "zod";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useGetNumberOfCourseSectionsQuery } from "@/api/coursesApiSlice";
 import {
   useCreateEventMutation,
   useGetEventsQuery,
-  useUpdateEventMutation,
   useDeleteEventMutation,
 } from "@/api/eventsApiSlice";
 import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Event, Timetable, TimetableEvents } from "@/utils/type-utils";
+import { TimetableForm } from "@/models/timetable-form";
+import { getSemesterStartAndEndDates } from "@/utils/semester-utils";
 
 interface CalendarProps {
-  timetablesData: Timetable[];
-  semesterStartDate: string;
-  semesterEndDate: string;
-  userEvents: Event[];
-  form: UseFormReturn<z.infer<typeof TimetableFormSchema>>;
+  semester: string;
+  selectedCourses: TimetableForm["courses"];
+  newOfferingIds: number[];
 }
 
 function parseEvent(id: number, event: Event, calendarId: string) {
@@ -68,31 +67,38 @@ function parseEvent(id: number, event: Event, calendarId: string) {
   };
 }
 
-function Calendar({
-  timetablesData,
-  semesterStartDate,
-  semesterEndDate,
-  userEvents,
-  form,
-}: CalendarProps) {
+const Calendar = React.memo<CalendarProps>(({
+  semester,
+  selectedCourses,
+  newOfferingIds,
+}) => {
+  const form = useForm<z.infer<typeof TimetableFormSchema>>();
+
   const navigate = useNavigate();
   const [queryParams] = useSearchParams();
   const isEditingTimetable = queryParams.has("edit");
   const editingTimetableId = parseInt(queryParams.get("edit") ?? "0");
-  const newOfferingIds = form.watch("offeringIds") ?? [];
 
   const [createTimetable] = useCreateTimetableMutation();
   const [createEvent] = useCreateEventMutation();
-  const [updateEvent] = useUpdateEventMutation();
   const [deleteEvent] = useDeleteEventMutation();
   const [createRestriction] = useCreateRestrictionMutation();
+
+  const semesterStartDate = getSemesterStartAndEndDates(semester).start;
+  const semesterEndDate = getSemesterStartAndEndDates(semester).end;
 
   const { data: courseEventsData } = useGetOfferingEventsQuery({
     offering_ids: newOfferingIds.join(","),
     semester_start_date: semesterStartDate,
     semester_end_date: semesterEndDate,
   }) as { data: Event[] };
+
+  const { data: timetablesData } = useGetTimetablesQuery() as {
+    data: Timetable[];
+  };
+
   const courseEvents = courseEventsData ?? [];
+  const userEvents: Event[] = [];
 
   let index = 1;
   const courseEventsParsed = courseEvents.map((event) =>
@@ -109,6 +115,7 @@ function Calendar({
       createViewMonthGrid(),
       createViewMonthAgenda(),
     ],
+    selectedDate: semesterStartDate,
     defaultView: viewWeek.name,
     events: [...courseEventsParsed, ...userEventsParsed],
     calendars: {
@@ -143,15 +150,14 @@ function Calendar({
     ),
   ].sort((a, b) => a - b);
 
-  const semester = form.watch("semester") ?? "";
-  const [timetableTitle, setTimetableTitle] = useState("");
-
-  const selectedCourses = form.watch("courses") ?? [];
+  const timetableTitleRef = useRef<HTMLInputElement>(null);
   const selectedCourseIds = selectedCourses.map((course) => course.id);
+
   const { data: numberOfSectionsData } = useGetNumberOfCourseSectionsQuery({
     course_ids: selectedCourseIds.join(","),
     semester: semester,
   });
+
   const totalNumberOfSections =
     numberOfSectionsData?.totalNumberOfCourseSections ?? 0;
 
@@ -162,13 +168,11 @@ function Calendar({
     if (!isEditingTimetable) {
       return;
     }
-    setTimetableTitle(
-      timetablesData?.find((timetable) => timetable.id === editingTimetableId)
-        ?.timetable_title ?? "",
-    );
-  }, [timetablesData, editingTimetableId, timetableTitle, isEditingTimetable]);
+  }, [timetablesData, editingTimetableId, isEditingTimetable]);
 
   const handleCreate = async () => {
+    const timetableTitle = timetableTitleRef.current?.value ?? "";
+
     // Create timetable
     const { data, error } = await createTimetable({
       timetable_title: timetableTitle,
@@ -249,8 +253,9 @@ function Calendar({
         console.error(createError);
       }
     }
-
     form.setValue("offeringIds", newOfferingIds);
+
+    navigate("/home");
   };
 
   return (
@@ -281,7 +286,7 @@ function Calendar({
               <Input
                 id="timetableName"
                 placeholder="Placeholder name"
-                onChange={(e) => setTimetableTitle(e.target.value.trim())}
+                ref={timetableTitleRef}
               />
               <DialogFooter>
                 <DialogClose asChild>
@@ -290,7 +295,7 @@ function Calendar({
                 <DialogClose asChild>
                   <Button
                     onClick={handleCreate}
-                    disabled={timetableTitle === ""}
+                    disabled={timetableTitleRef.current?.value === ""}
                   >
                     Save
                   </Button>
@@ -319,6 +324,6 @@ function Calendar({
       <ScheduleXCalendar calendarApp={calendar} />
     </div>
   );
-}
+});
 
 export default Calendar;

@@ -51,22 +51,6 @@ type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
 const SEARCH_LIMIT = 1000;
 
-function getSemesterStartAndEndDates(semester: string) {
-  return {
-    start:
-      semester === "Summer 2025"
-        ? "2025-05-02"
-        : semester === "Fall 2025"
-          ? "2025-09-03"
-          : "2026-01-06",
-    end:
-      semester === "Summer 2025"
-        ? "2025-08-07"
-        : semester === "Fall 2025"
-          ? "2025-12-03"
-          : "2026-04-04",
-  };
-}
 
 /**
  * TimetableBuilder Component
@@ -122,7 +106,8 @@ const TimetableBuilder = () => {
   const enabledRestrictions = form.watch("restrictions") || [];
   const searchQuery = form.watch("search");
   const debouncedSearchQuery = useDebounceValue(searchQuery, 250);
-  const selectedSemester = form.getValues("semester");
+  const selectedSemester = form.watch("semester");
+  const offeringIds = form.watch("offeringIds");
 
   // console.log("Selected courses", selectedCourses);
   // console.log("Enabled restrictions", enabledRestrictions);
@@ -167,10 +152,6 @@ const TimetableBuilder = () => {
   }) as {
     data: TimetableEvents;
   };
-  const userEvents = timetableEventsData?.userEvents || [];
-
-  const semesterStartDate = getSemesterStartAndEndDates(selectedSemester).start;
-  const semesterEndDate = getSemesterStartAndEndDates(selectedSemester).end;
 
   const [loadedCourses, setLoadedCourses] = useState(false);
   const [loadedOfferingIds, setLoadedOfferingIds] = useState(false);
@@ -526,13 +507,7 @@ const TimetableBuilder = () => {
             </Form>
           </div>
           <div className="w-3/5">
-            <Calendar
-              timetablesData={timetablesData}
-              semesterStartDate={semesterStartDate}
-              semesterEndDate={semesterEndDate}
-              userEvents={userEvents}
-              form={form}
-            />
+            <Calendar semester={selectedSemester} selectedCourses={selectedCourses} newOfferingIds={offeringIds} />
           </div>
 
           {showFilters && (

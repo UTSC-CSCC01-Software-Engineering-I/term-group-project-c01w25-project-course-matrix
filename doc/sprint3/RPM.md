@@ -8,7 +8,7 @@
 
 - Develop enhanced scheduling features:
 
-  - Ability to insert, update, and delete timetable and events entries (course events for offered lectures, tutorial, etc and user events for users’ personal events) .
+  - Ability to insert, update, and delete timetables and events entries (course events for offered lectures, tutorials, etc and user events for users’ personal events) .
   - Automatic and customized timetable generation based on user constraints.
   - Custom colour customization for timetable entries.
   - Favourite timetable functionality.

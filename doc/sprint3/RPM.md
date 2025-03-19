@@ -91,6 +91,7 @@
 
 - **Performance**
   - AI output refinement. The AI chatbot responses need to be more reliable and cover more cases (e.g. querying for the year level of courses).
+  - Timetable generator algorithm returns suggested timetables based on users' input within 5-10 seconds for a standard course load of 5 courses.
 
 ### 2.5 Dependencies and Limitations
 

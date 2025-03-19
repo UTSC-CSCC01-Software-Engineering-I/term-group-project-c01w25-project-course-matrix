@@ -54,6 +54,7 @@ import { TimetableForm } from "@/models/timetable-form";
 import { getSemesterStartAndEndDates } from "@/utils/semester-utils";
 
 interface CalendarProps {
+  isChoosingSectionsManually: boolean;
   semester: string;
   selectedCourses: TimetableForm["courses"];
   newOfferingIds: number[];
@@ -81,7 +82,7 @@ function parseEvent(id: number, event: Event, calendarId: string) {
 }
 
 const Calendar = React.memo<CalendarProps>(
-  ({ semester, selectedCourses, newOfferingIds, restrictions }) => {
+  ({ semester, selectedCourses, newOfferingIds, restrictions, isChoosingSectionsManually }) => {
     const form = useForm<z.infer<typeof TimetableFormSchema>>();
 
     const navigate = useNavigate();
@@ -322,7 +323,7 @@ const Calendar = React.memo<CalendarProps>(
           <div>Your Timetable</div>
           {!isEditingTimetable ? (
             <Dialog>
-              {!allOfferingSectionsHaveBeenSelected && (
+              {isChoosingSectionsManually && !allOfferingSectionsHaveBeenSelected && (
                 <p className="text-sm text-red-500 pr-2">
                   Please select all LEC/TUT/PRA sections for your courses in
                   order to save your timetable.
@@ -366,7 +367,7 @@ const Calendar = React.memo<CalendarProps>(
             </Dialog>
           ) : (
             <>
-              {!allOfferingSectionsHaveBeenSelected && (
+              {isChoosingSectionsManually && !allOfferingSectionsHaveBeenSelected && (
                 <p className="text-sm text-red-500 pr-2">
                   Please select all LEC/TUT/PRA sections for your courses in
                   order to save your timetable.

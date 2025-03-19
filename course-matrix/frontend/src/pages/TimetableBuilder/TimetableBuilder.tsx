@@ -533,6 +533,7 @@ const TimetableBuilder = () => {
           </div>
           <div className="w-3/5">
             <Calendar
+              isChoosingSectionsManually={isChoosingSectionsManually}
               semester={selectedSemester}
               selectedCourses={selectedCourses}
               newOfferingIds={offeringIds}

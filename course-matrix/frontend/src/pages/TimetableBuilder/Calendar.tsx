@@ -29,7 +29,11 @@ import {
   useGetTimetablesQuery,
   useCreateTimetableMutation,
 } from "@/api/timetableApiSlice";
-import { useGetRestrictionsQuery, useCreateRestrictionMutation, useDeleteRestrictionMutation} from "@/api/restrictionsApiSlice";
+import {
+  useGetRestrictionsQuery,
+  useCreateRestrictionMutation,
+  useDeleteRestrictionMutation,
+} from "@/api/restrictionsApiSlice";
 import { z } from "zod";
 import React, { useEffect, useRef } from "react";
 import { useGetNumberOfCourseSectionsQuery } from "@/api/coursesApiSlice";
@@ -40,7 +44,12 @@ import {
 } from "@/api/eventsApiSlice";
 import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Event, Timetable, TimetableEvents, Restriction } from "@/utils/type-utils";
+import {
+  Event,
+  Timetable,
+  TimetableEvents,
+  Restriction,
+} from "@/utils/type-utils";
 import { TimetableForm } from "@/models/timetable-form";
 import { getSemesterStartAndEndDates } from "@/utils/semester-utils";
 
@@ -153,9 +162,12 @@ const Calendar = React.memo<CalendarProps>(
       ),
     ].sort((a, b) => a - b);
 
-    const { data: restrictionsData } = useGetRestrictionsQuery(editingTimetableId, {
-      skip: !isEditingTimetable,
-    }) as {
+    const { data: restrictionsData } = useGetRestrictionsQuery(
+      editingTimetableId,
+      {
+        skip: !isEditingTimetable,
+      },
+    ) as {
       data: Restriction[];
     };
 

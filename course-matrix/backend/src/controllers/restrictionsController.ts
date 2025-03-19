@@ -33,7 +33,11 @@ export default {
       }
 
       // Function to construct date in local time
-      if (!["Restrict Day", "Days Off"].includes(type) && !start_time && !end_time) {
+      if (
+        !["Restrict Day", "Days Off"].includes(type) &&
+        !start_time &&
+        !end_time
+      ) {
         return res
           .status(400)
           .json({ error: "Start time or end time must be provided" });
@@ -353,7 +357,9 @@ export default {
         return res.status(400).json({ error: restrictionError.message });
       }
 
-      return res.status(200).json({ message: "Restriction succesfully deleted" });
+      return res
+        .status(200)
+        .json({ message: "Restriction succesfully deleted" });
     } catch (error) {
       return res.status(500).send({ error });
     }

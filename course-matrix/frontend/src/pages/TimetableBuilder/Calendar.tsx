@@ -29,7 +29,7 @@ import {
   useGetTimetablesQuery,
   useCreateTimetableMutation,
 } from "@/api/timetableApiSlice";
-import { useCreateRestrictionMutation } from "@/api/restrictionsApiSlice";
+import { useGetRestrictionsQuery, useCreateRestrictionMutation, useDeleteRestrictionMutation} from "@/api/restrictionsApiSlice";
 import { z } from "zod";
 import React, { useEffect, useRef } from "react";
 import { useGetNumberOfCourseSectionsQuery } from "@/api/coursesApiSlice";
@@ -40,7 +40,7 @@ import {
 } from "@/api/eventsApiSlice";
 import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Event, Timetable, TimetableEvents } from "@/utils/type-utils";
+import { Event, Timetable, TimetableEvents, Restriction } from "@/utils/type-utils";
 import { TimetableForm } from "@/models/timetable-form";
 import { getSemesterStartAndEndDates } from "@/utils/semester-utils";
 
@@ -48,6 +48,7 @@ interface CalendarProps {
   semester: string;
   selectedCourses: TimetableForm["courses"];
   newOfferingIds: number[];
+  restrictions: TimetableForm["restrictions"];
 }
 
 function parseEvent(id: number, event: Event, calendarId: string) {
@@ -71,7 +72,7 @@ function parseEvent(id: number, event: Event, calendarId: string) {
 }
 
 const Calendar = React.memo<CalendarProps>(
-  ({ semester, selectedCourses, newOfferingIds }) => {
+  ({ semester, selectedCourses, newOfferingIds, restrictions }) => {
     const form = useForm<z.infer<typeof TimetableFormSchema>>();
 
     const navigate = useNavigate();
@@ -83,6 +84,7 @@ const Calendar = React.memo<CalendarProps>(
     const [createEvent] = useCreateEventMutation();
     const [deleteEvent] = useDeleteEventMutation();
     const [createRestriction] = useCreateRestrictionMutation();
+    const [deleteRestriction] = useDeleteRestrictionMutation();
 
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
     const semesterEndDate = getSemesterStartAndEndDates(semester).end;
@@ -139,16 +141,25 @@ const Calendar = React.memo<CalendarProps>(
       },
     });
 
-    const { data: oldTimetableEvents } = useGetEventsQuery(editingTimetableId, {
+    const { data: timetableEvents } = useGetEventsQuery(editingTimetableId, {
       skip: !isEditingTimetable,
     }) as {
       data: TimetableEvents;
     };
+
     const oldOfferingIds = [
       ...new Set(
-        oldTimetableEvents?.courseEvents.map((event) => event.offering_id),
+        timetableEvents?.courseEvents.map((event) => event.offering_id),
       ),
     ].sort((a, b) => a - b);
+
+    const { data: restrictionsData } = useGetRestrictionsQuery(editingTimetableId, {
+      skip: !isEditingTimetable,
+    }) as {
+      data: Restriction[];
+    };
+
+    const oldRestrictions = restrictionsData ?? [];
 
     const timetableTitleRef = useRef<HTMLInputElement>(null);
     const selectedCourseIds = selectedCourses.map((course) => course.id);
@@ -204,7 +215,6 @@ const Calendar = React.memo<CalendarProps>(
       }
 
       // Create restrictions for the newly created timetable
-      const restrictions = form.getValues("restrictions") ?? [];
       for (const restriction of restrictions) {
         const restrictionObject = {
           calendar_id: newTimetableId,
@@ -259,7 +269,37 @@ const Calendar = React.memo<CalendarProps>(
           console.error(createError);
         }
       }
+
       form.setValue("offeringIds", newOfferingIds);
+
+      // Delete restrictions
+      for (const restriction of oldRestrictions) {
+        const { error: deleteError } = await deleteRestriction({
+          id: restriction.id,
+          calendar_id: editingTimetableId,
+        });
+        if (deleteError) {
+          console.error(deleteError);
+        }
+      }
+
+      // Create restrictions
+      for (const restriction of restrictions) {
+        const restrictionObject = {
+          calendar_id: editingTimetableId,
+          type: restriction.type,
+          days: restriction.days,
+          start_time: restriction.startTime,
+          end_time: restriction.endTime,
+          disabled: restriction.disabled,
+          num_days: restriction.numDays,
+        };
+        const { error: restrictionError } =
+          await createRestriction(restrictionObject);
+        if (restrictionError) {
+          console.error(restrictionError);
+        }
+      }
 
       navigate("/home");
     };

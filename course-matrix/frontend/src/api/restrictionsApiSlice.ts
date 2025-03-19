@@ -30,9 +30,10 @@ export const restrictionsApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Restrictions"],
     }),
     deleteRestriction: builder.mutation({
-      query: (id) => ({
-        url: `${TIMETABLES_URL}/restrictions/${id}`,
+      query: (data) => ({
+        url: `${TIMETABLES_URL}/restrictions/${data.id}`,
         method: "DELETE",
+        params: data,
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",

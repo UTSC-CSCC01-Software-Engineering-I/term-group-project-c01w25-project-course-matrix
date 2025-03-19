@@ -191,11 +191,17 @@ const TimetableBuilder = () => {
       form.setValue("courses", existingCourses);
       setLoadedCourses(true);
 
+      // Parse restrictions data (For startTime and endTime, we just care about the time, so we use the random date of 2025-01-01 so that the date can be parsed correctly)
+      // We also add 1 hour (i.e. 60 * 60 * 1000 milliseconds) to the time to account for the timezone difference between the server and the client
       const parsedRestrictions = restrictionsData.map(
         (restriction: Restriction) => ({
-          ...restriction,
-          days: JSON.parse(restriction?.days),
-        }),
+            days: JSON.parse(restriction?.days) as string[],
+            disabled: restriction?.disabled,
+            startTime: restriction?.start_time ? new Date(new Date(`2025-01-01T${restriction.start_time}.00Z`).getTime() + 60 * 60 * 1000) : undefined,
+            endTime: restriction?.end_time ? new Date(new Date(`2025-01-01T${restriction.end_time}.00Z`).getTime() + 60 * 60 * 1000) : undefined,
+            type: restriction?.type,
+            numDays: restriction?.num_days,
+          }) as z.infer<typeof RestrictionSchema>,
       );
       form.setValue("restrictions", parsedRestrictions);
       setLoadedRestrictions(true);
@@ -380,7 +386,7 @@ const TimetableBuilder = () => {
                       {!isEditingTimetable ||
                       (isEditingTimetable &&
                         loadedCourses &&
-                        loadedOfferingIds) ? (
+                        loadedOfferingIds && selectedCourses) ? (
                         selectedCourses.map((course, index) => {
                           return (
                             <div key={index}>
@@ -460,7 +466,7 @@ const TimetableBuilder = () => {
                       )}
                     />
                     <div className="flex gap-2 flex-col">
-                      {enabledRestrictions.map((restric, index) => (
+                      {enabledRestrictions && enabledRestrictions.map((restric, index) => (
                         <div
                           key={index}
                           className="flex p-2 justify-between bg-red-100/50 text-xs rounded-md w-[64%]"
@@ -513,6 +519,7 @@ const TimetableBuilder = () => {
               semester={selectedSemester}
               selectedCourses={selectedCourses}
               newOfferingIds={offeringIds}
+              restrictions={enabledRestrictions}
             />
           </div>
 

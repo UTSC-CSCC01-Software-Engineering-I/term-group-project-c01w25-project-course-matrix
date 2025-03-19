@@ -359,7 +359,9 @@ const TimetableBuilder = () => {
                           <FormControl>
                             <CourseSearch
                               value={field.value}
-                              onChange={(value) => { field.onChange(value) }}
+                              onChange={(value) => {
+                                field.onChange(value);
+                              }}
                               data={coursesData} // TODO: Replace with variable data
                               isLoading={isLoading}
                               showFilter={() => setShowFilters(true)}

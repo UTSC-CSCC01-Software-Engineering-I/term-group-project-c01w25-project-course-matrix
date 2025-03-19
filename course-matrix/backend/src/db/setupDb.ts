@@ -13,4 +13,14 @@ export const supabase = createClient(
   config.DATABASE_KEY!,
 );
 
+export const supabaseServersideClient = createClient(
+  config.DATABASE_URL!,
+  config.DATABASE_KEY!,
+  {
+    auth: {
+      persistSession: false 
+    }
+  }
+);
+
 console.log("Connected to Supabase Client!");

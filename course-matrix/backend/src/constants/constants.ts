@@ -37,6 +37,10 @@ export const yearToCode = (year: number) => {
   }
 };
 
+// true - notifications will be tested by mocking current Date
+// false - normal application behavior
+export const TEST_NOTIFICATIONS = true;
+
 // Set minimum results wanted for a similarity search on the associated namespace.
 export const namespaceToMinResults = new Map();
 namespaceToMinResults.set("courses_v3", 10);

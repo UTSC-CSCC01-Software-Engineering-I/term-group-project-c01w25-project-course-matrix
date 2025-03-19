@@ -107,6 +107,42 @@ export default {
   }),
 
   /**
+   * Get a single timetable for a user
+   * @route GET /api/timetables/:id
+   */
+
+  getTimetable: asyncHandler(async (req: Request, res: Response) => {
+    try {
+      //Retrieve user_id and timetable_id
+      const user_id = (req as any).user.id;
+      const { id: timetable_id } = req.params;
+
+      // Retrieve based on user_id and timetable_id
+      let timeTableQuery = supabase
+        .schema("timetable")
+        .from("timetables")
+        .select()
+        .eq("user_id", user_id)
+        .eq("id", timetable_id);
+
+      const { data: timetableData, error: timetableError } =
+        await timeTableQuery;
+
+      if (timetableError)
+        return res.status(400).json({ error: timetableError.message });
+
+      //Validate timetable validity:
+      if (!timetableData) {
+        return res.status(404).json({ error: "Calendar id not found" });
+      }
+
+      return res.status(200).json(timetableData);
+    } catch (error) {
+      return res.status(500).send({ error });
+    }
+  }),
+
+  /**
    * Update a timetable
    * @route PUT /api/timetables/:id
    */
@@ -116,11 +152,21 @@ export default {
       const { id } = req.params;
 
       //Retrieve timetable title
-      const { timetable_title, semester, favorite } = req.body;
-      if (!timetable_title && !semester && favorite === undefined) {
+      const {
+        timetable_title,
+        semester,
+        favorite,
+        email_notifications_enabled,
+      } = req.body;
+      if (
+        !timetable_title &&
+        !semester &&
+        favorite === undefined &&
+        email_notifications_enabled === undefined
+      ) {
         return res.status(400).json({
           error:
-            "New timetable title or semester or updated favorite status is required when updating a timetable",
+            "New timetable title or semester or updated favorite status or email notifications enabled is required when updating a timetable",
         });
       }
 
@@ -146,6 +192,8 @@ export default {
       if (timetable_title) updateData.timetable_title = timetable_title;
       if (semester) updateData.semester = semester;
       if (favorite !== undefined) updateData.favorite = favorite;
+      if (email_notifications_enabled !== undefined)
+        updateData.email_notifications_enabled = email_notifications_enabled;
 
       //Update timetable title, for authenticated user only
       let updateTimetableQuery = supabase

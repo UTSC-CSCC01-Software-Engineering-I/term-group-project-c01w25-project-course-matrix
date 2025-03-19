@@ -51,7 +51,6 @@ type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
 const SEARCH_LIMIT = 1000;
 
-
 /**
  * TimetableBuilder Component
  *
@@ -507,7 +506,11 @@ const TimetableBuilder = () => {
             </Form>
           </div>
           <div className="w-3/5">
-            <Calendar semester={selectedSemester} selectedCourses={selectedCourses} newOfferingIds={offeringIds} />
+            <Calendar
+              semester={selectedSemester}
+              selectedCourses={selectedCourses}
+              newOfferingIds={offeringIds}
+            />
           </div>
 
           {showFilters && (

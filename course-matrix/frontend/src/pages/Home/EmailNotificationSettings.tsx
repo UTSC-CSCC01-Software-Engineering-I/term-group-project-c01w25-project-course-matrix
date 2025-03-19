@@ -31,7 +31,7 @@ export const EmailNotificationSettings = ({
   useEffect(() => {
     if (data) {
       const val = (data as TimetableModel[])[0]?.email_notifications_enabled;
-      if ( val !== undefined) {
+      if (val !== undefined) {
         setToggled(val);
       }
     }

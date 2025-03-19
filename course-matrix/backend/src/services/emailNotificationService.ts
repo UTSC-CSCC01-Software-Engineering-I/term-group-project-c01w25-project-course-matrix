@@ -120,7 +120,7 @@ export async function checkAndNotifyEvents() {
     // Send email notifications for each event
     for (const event of events) {
       // get timetable notif enabled
-      const { data: timetables, error: errorTimetable} = 
+      const { data: timetables, error: errorTimetable } =
         await supabaseServersideClient
           .schema("timetable")
           .from("timetables")
@@ -128,7 +128,7 @@ export async function checkAndNotifyEvents() {
           .eq("id", event.calendar_id)
           .eq("user_id", event.user_id)
           .limit(1);
-      
+
       if (errorTimetable) {
         console.error("Error fetching timetable: ", errorTimetable);
         return;
@@ -138,7 +138,7 @@ export async function checkAndNotifyEvents() {
         console.error("Timetable not found id:", event.offering_id);
         return;
       }
-      
+
       if (!timetables[0].email_notifications_enabled) {
         continue;
       }

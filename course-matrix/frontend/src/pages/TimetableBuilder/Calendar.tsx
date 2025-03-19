@@ -82,7 +82,13 @@ function parseEvent(id: number, event: Event, calendarId: string) {
 }
 
 const Calendar = React.memo<CalendarProps>(
-  ({ semester, selectedCourses, newOfferingIds, restrictions, isChoosingSectionsManually }) => {
+  ({
+    semester,
+    selectedCourses,
+    newOfferingIds,
+    restrictions,
+    isChoosingSectionsManually,
+  }) => {
     const form = useForm<z.infer<typeof TimetableFormSchema>>();
 
     const navigate = useNavigate();
@@ -323,12 +329,13 @@ const Calendar = React.memo<CalendarProps>(
           <div>Your Timetable</div>
           {!isEditingTimetable ? (
             <Dialog>
-              {isChoosingSectionsManually && !allOfferingSectionsHaveBeenSelected && (
-                <p className="text-sm text-red-500 pr-2">
-                  Please select all LEC/TUT/PRA sections for your courses in
-                  order to save your timetable.
-                </p>
-              )}
+              {isChoosingSectionsManually &&
+                !allOfferingSectionsHaveBeenSelected && (
+                  <p className="text-sm text-red-500 pr-2">
+                    Please select all LEC/TUT/PRA sections for your courses in
+                    order to save your timetable.
+                  </p>
+                )}
               <DialogTrigger asChild>
                 <Button
                   size="sm"
@@ -367,12 +374,13 @@ const Calendar = React.memo<CalendarProps>(
             </Dialog>
           ) : (
             <>
-              {isChoosingSectionsManually && !allOfferingSectionsHaveBeenSelected && (
-                <p className="text-sm text-red-500 pr-2">
-                  Please select all LEC/TUT/PRA sections for your courses in
-                  order to save your timetable.
-                </p>
-              )}
+              {isChoosingSectionsManually &&
+                !allOfferingSectionsHaveBeenSelected && (
+                  <p className="text-sm text-red-500 pr-2">
+                    Please select all LEC/TUT/PRA sections for your courses in
+                    order to save your timetable.
+                  </p>
+                )}
               <Button
                 size="sm"
                 disabled={!allOfferingSectionsHaveBeenSelected}

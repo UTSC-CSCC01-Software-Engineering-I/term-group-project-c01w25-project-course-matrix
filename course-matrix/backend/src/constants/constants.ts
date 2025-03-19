@@ -39,7 +39,10 @@ export const yearToCode = (year: number) => {
 
 // true - notifications will be tested by mocking current Date
 // false - normal application behavior
-export const TEST_NOTIFICATIONS = true;
+export const TEST_NOTIFICATIONS = false;
+// Mock the current date
+// Note: month index in date constructor is 0 indexed (0 - 11)
+export const TEST_DATE_NOW = new Date(2025, 4, 14, 8, 45, 1);
 
 // Set minimum results wanted for a similarity search on the associated namespace.
 export const namespaceToMinResults = new Map();

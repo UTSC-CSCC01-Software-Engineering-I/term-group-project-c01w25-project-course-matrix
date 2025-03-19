@@ -1,10 +1,44 @@
-import {
-  brevoApiInstance,
-  brevoSendSmtpEmail,
-} from "../config/setupEmailNotificationService";
-import { TEST_NOTIFICATIONS } from "../constants/constants";
+import { TEST_DATE_NOW, TEST_NOTIFICATIONS } from "../constants/constants";
 import { supabaseServersideClient } from "../db/setupDb";
 import { isDateBetween } from "../utils/compareDates";
+import axios from "axios";
+
+type EmaiLData = {
+  sender: {
+    email: string;
+    name: string;
+  };
+  to: {
+    email: string;
+    name: string;
+  }[];
+  subject: string;
+  htmlContent: string;
+};
+
+// Create a function to send emails via Brevo API
+async function sendBrevoEmail(emailData: EmaiLData) {
+  try {
+    const response = await axios({
+      method: "post",
+      url: "https://api.brevo.com/v3/smtp/email",
+      headers: {
+        accept: "application/json",
+        "Api-key": process.env.BREVO_API_KEY!,
+        "content-type": "application/json",
+      },
+      data: emailData,
+    });
+
+    return response?.data;
+  } catch (error: any) {
+    console.error(
+      "Error sending email:",
+      error?.response ? error?.response?.data : error?.message
+    );
+    throw error;
+  }
+}
 
 // Ensure offering is in current semester and current day of week
 export function correctDay(offering: any): boolean {
@@ -14,30 +48,37 @@ export function correctDay(offering: any): boolean {
 
   if (!semester || !day) return false;
 
-  const now = new Date();
+  let now;
+  if (TEST_NOTIFICATIONS) {
+    now = TEST_DATE_NOW;
+  } else {
+    now = new Date();
+  }
 
   let startDay;
   let endDay;
 
+  // console.log(offering)
+
   if (semester === "Summer 2025") {
-    startDay = new Date(2025, 5, 2);
-    endDay = new Date(2025, 8, 7);
+    startDay = new Date(2025, 4, 2);
+    endDay = new Date(2025, 7, 7);
   } else if (semester === "Fall 2025") {
-    startDay = new Date(2025, 9, 3);
-    endDay = new Date(2025, 12, 3);
+    startDay = new Date(2025, 8, 3);
+    endDay = new Date(2025, 11, 3);
   } else {
     // Winter 2026
-    startDay = new Date(2026, 1, 6);
-    endDay = new Date(2026, 4, 4);
+    startDay = new Date(2026, 0, 6);
+    endDay = new Date(2026, 3, 4);
   }
 
   if (!isDateBetween(now, startDay, endDay)) {
-    console.log(`${now.toDateString()} is not between ${startDay.toDateString()} and ${endDay.toDateString()}`)
+    // console.log(`${now.toDateString()} is not between ${startDay.toDateString()} and ${endDay.toDateString()}`)
     return false;
   }
 
   if (weekdays[now.getDay()] !== day) {
-    console.log(`${weekdays[now.getDay()]} is not equal to ${day}`)
+    // console.log(`${weekdays[now.getDay()]} is not equal to ${day}`)
     return false;
   }
 
@@ -49,9 +90,8 @@ export async function checkAndNotifyEvents() {
   console.log("Checking for upcoming events...");
   let now;
   if (TEST_NOTIFICATIONS) {
-    now = new Date(2025, 7, 5, 18, 45, 1);
-  }
-  else {
+    now = TEST_DATE_NOW;
+  } else {
     now = new Date();
   }
 
@@ -68,7 +108,7 @@ export async function checkAndNotifyEvents() {
       .from("course_events")
       .select("*")
       .gte("event_start", formattedStartTime)
-      .lte("event_end", formattedEndTime);
+      .lte("event_start", formattedEndTime);
 
     if (error) {
       console.error("Error fetching events:", error);
@@ -80,20 +120,21 @@ export async function checkAndNotifyEvents() {
     // Send email notifications for each event
     for (const event of events) {
       // Get offering
-      const { data: offerings, error: errorOffering } = await supabaseServersideClient
-        .schema("course")
-        .from("offerings")
-        .select("*")
-        .eq("id", event.offering_id)
-        .limit(1);
+      const { data: offerings, error: errorOffering } =
+        await supabaseServersideClient
+          .schema("course")
+          .from("offerings")
+          .select("*")
+          .eq("id", event.offering_id)
+          .limit(1);
 
       if (errorOffering) {
-        console.error("Error fetching user: ", errorOffering);
+        console.error("Error fetching offering: ", errorOffering);
         return;
       }
 
       if (!offerings || offerings.length === 0) {
-        console.error("Error fetching offeirng: ", errorOffering);
+        console.error("Offering not found id:", event.offering_id);
         return;
       }
 
@@ -103,59 +144,49 @@ export async function checkAndNotifyEvents() {
       }
 
       // Get user info
-      const { data: users, error } = await supabaseServersideClient
-        .schema("auth")
-        .from("users")
-        .select("*")
-        .eq("id", event.user_id)
-        .limit(1);
+      const { data: userData, error } =
+        await supabaseServersideClient.auth.admin.getUserById(event.user_id);
 
       if (error) {
         console.error("Error fetching user: ", error);
         return;
       }
 
-      if (!users || users.length === 0) {
-        console.error("User not found");
+      if (!userData) {
+        console.error("User not found id:", event.user_id);
         return;
       }
 
-      const user = users[0];
+      const user = userData?.user;
       const userEmail = user?.email;
-      const userName = user?.raw_user_meta_data?.username;
+      const userName = user?.user_metadata?.username;
 
-      // Prepare email content
-      brevoSendSmtpEmail.to = [{ email: userEmail, name: userName }];
-      brevoSendSmtpEmail.sender = {
-        email: process.env.SENDER_EMAIL,
-        name: process.env.SENDER_NAME || "Course Matrix Notifications",
-      };
-      brevoSendSmtpEmail.subject = `Reminder: ${event.event_name} starting soon`;
-      brevoSendSmtpEmail.htmlContent = `
-        <h2>Event Reminder</h2>
-        <p>Hello ${userName},</p>
-        <p>Your event "${
-          event.event_name
-        }" is starting in approximately 15 minutes.</p>
-        <p><strong>Start time:</strong> ${new Date(
-          event.event_start
-        ).toLocaleString()}</p>
-        <p><strong>Description:</strong> ${
-          event.event_description || "No description provided"
-        }</p>
-        <p>Thank you for using our calendar service!</p>
-      `;
+      console.log(`Sending email to ${userEmail} for ${event.event_name}`);
 
-      // Send email
       try {
-        const data = await brevoApiInstance.sendTransacEmail(
-          brevoSendSmtpEmail
-        );
-        console.log(
-          `Email sent to ${userEmail} for event ${event.id}. Message ID: ${data.messageId}`
-        );
-      } catch (emailError) {
-        console.error("Error sending email with Brevo:", emailError);
+        const email = {
+          sender: {
+            email: process.env.SENDER_EMAIL!,
+            name: process.env.SENDER_NAME || "Course Matrix Notifications",
+          },
+          to: [{ email: userEmail!, name: userName }],
+          subject: `Reminder: ${event.event_name} starting soon`,
+          htmlContent: `
+            <h2>Event Reminder</h2>
+            <p>Hello ${userName},</p>
+            <p>Your event "${event.event_name}" is starting soon</p>
+            <p><strong>Start time:</strong> ${event.event_start}</p>
+            <p><strong>Description:</strong> ${
+              event.event_description || "No description provided"
+            }</p>
+            <p>Thank you for using our calendar service!</p>
+          `,
+        };
+
+        const result = await sendBrevoEmail(email);
+        console.log("Email sent successfully:", result);
+      } catch (error) {
+        console.error("Failed to send email:", error);
       }
     }
   } catch (err) {

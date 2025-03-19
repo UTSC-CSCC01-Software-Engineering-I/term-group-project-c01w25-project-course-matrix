@@ -43,7 +43,9 @@ app.use("/api/offerings", offeringsRouter);
 app.use("/api/timetables", timetableRouter);
 app.use("/api/ai", aiRouter);
 
-cron.schedule('* * * * *', checkAndNotifyEvents);
+// Initialize cron job
+// Note: For testing purposes can set first argument to '*/15 * * * * *' to run every 15s
+cron.schedule("* * * * *", checkAndNotifyEvents);
 
 /**
  * Root route to test the backend server.
@@ -54,8 +56,8 @@ app.get(
   asyncHandler(async (_, response) =>
     response.json({
       info: "Testing course matrix backend server",
-    }),
-  ),
+    })
+  )
 );
 
 /**
@@ -72,7 +74,7 @@ app.get(
     } catch (err) {
       return res.status(500).send({ err });
     }
-  }),
+  })
 );
 
 server = app.listen(config.PORT, () => {

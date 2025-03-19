@@ -4,6 +4,7 @@ import TimetableCard from "./TimetableCard";
 import TimetableCompareButton from "./TimetableCompareButton";
 import TimetableCreateNewButton from "./TimetableCreateNewButton";
 import { useGetTimetablesQuery } from "../../api/timetableApiSlice";
+import { Link } from "react-router-dom";
 
 export interface Timetable {
   id: number;
@@ -72,14 +73,15 @@ const Home = () => {
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : (
             data.map((timetable) => (
-              <TimetableCard
-                refetch={refetch}
-                key={timetable.id}
-                timetableId={timetable.id}
-                title={timetable.timetable_title}
-                lastEditedDate={new Date(timetable.updated_at)}
-                owner={name}
-              />
+              <Link to={`/dashboard/timetable?edit=${timetable.id}`} key={timetable.id}>
+                <TimetableCard
+                  refetch={refetch}
+                  timetableId={timetable.id}
+                  title={timetable.timetable_title}
+                  lastEditedDate={new Date(timetable.updated_at)}
+                  owner={name}
+                />
+              </Link>
             ))
           )}
         </div>

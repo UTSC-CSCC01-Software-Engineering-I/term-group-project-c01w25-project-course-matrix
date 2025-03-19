@@ -28,6 +28,7 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
         providesTags: ["Event"],
         credentials: "include",
       }),
+      keepUnusedDataFor: 0,
     }),
     updateEvent: builder.mutation({
       query: (data) => ({

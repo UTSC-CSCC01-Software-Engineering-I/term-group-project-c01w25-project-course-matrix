@@ -72,7 +72,7 @@ In addition to their specific roles, all team members have a collective responsi
   - Time: 3/21/2025
   - Purposes:
     - Review features and deliverables implemented in sprint 3
-    - Determine changes that need to be made in sprint 3
+    - Determine changes that need to be made in sprint 4
 
 #### 1.3 Artifacts
 

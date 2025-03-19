@@ -379,21 +379,23 @@ const TimetableBuilder = () => {
                       <p className="text-sm">
                         Selected courses: {selectedCourses.length} (Max 8)
                       </p>
-                      {!isEditingTimetable && (<div className="flex items-center gap-2">
-                        <Checkbox
-                          id="manual-selection"
-                          checked={isChoosingSectionsManually}
-                          onCheckedChange={(checked) =>
-                            setIsChoosingSectionsManually(checked === true)
-                          }
-                        />
-                        <label
-                          htmlFor="manual-selection"
-                          className="text-sm font-medium"
-                        >
-                          Choose meeting sections manually?
-                        </label>
-                      </div>)}
+                      {!isEditingTimetable && (
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            id="manual-selection"
+                            checked={isChoosingSectionsManually}
+                            onCheckedChange={(checked) =>
+                              setIsChoosingSectionsManually(checked === true)
+                            }
+                          />
+                          <label
+                            htmlFor="manual-selection"
+                            className="text-sm font-medium"
+                          >
+                            Choose meeting sections manually?
+                          </label>
+                        </div>
+                      )}
                     </div>
                     <div className="flex gap-2 flex-col">
                       {!isEditingTimetable ||

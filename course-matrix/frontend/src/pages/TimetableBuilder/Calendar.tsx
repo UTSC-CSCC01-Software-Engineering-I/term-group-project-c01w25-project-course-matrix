@@ -170,9 +170,6 @@ const Calendar = React.memo<CalendarProps>(
     const allOfferingSectionsHaveBeenSelected =
       newOfferingIds.length === totalNumberOfSections;
 
-    console.log("TOTAL NUMBER OF SECTIONS", totalNumberOfSections);
-    console.log("NEW OFFERING IDS", newOfferingIds);
-
     useEffect(() => {
       if (!isEditingTimetable) {
         return;

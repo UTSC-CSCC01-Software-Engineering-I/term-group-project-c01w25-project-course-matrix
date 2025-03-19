@@ -154,12 +154,17 @@ const TimetableBuilder = () => {
     data: Offering[];
   };
   const offerings = offeringData || [];
-  const offeringIdToCourseIdMap = offerings.reduce((acc, offering) => {
-    acc[offering.id] = offering.course_id;
-    return acc;
-  }, {} as Record<number, number>);
+  const offeringIdToCourseIdMap = offerings.reduce(
+    (acc, offering) => {
+      acc[offering.id] = offering.course_id;
+      return acc;
+    },
+    {} as Record<number, number>,
+  );
 
-  const { data: timetableEventsData } = useGetEventsQuery(timetableId, { skip: !isEditingTimetable }) as {
+  const { data: timetableEventsData } = useGetEventsQuery(timetableId, {
+    skip: !isEditingTimetable,
+  }) as {
     data: TimetableEvents;
   };
   const userEvents = timetableEventsData?.userEvents || [];
@@ -171,7 +176,9 @@ const TimetableBuilder = () => {
   const [loadedOfferingIds, setLoadedOfferingIds] = useState(false);
   const [loadedRestrictions, setLoadedRestrictions] = useState(false);
 
-  const { data: restrictionsData } = useGetRestrictionsQuery(timetableId, { skip: !isEditingTimetable }) as {
+  const { data: restrictionsData } = useGetRestrictionsQuery(timetableId, {
+    skip: !isEditingTimetable,
+  }) as {
     data: Restriction[];
   };
 
@@ -385,47 +392,54 @@ const TimetableBuilder = () => {
                       </div>
                     </div>
                     <div className="flex gap-2 flex-col">
-                      {!isEditingTimetable || (isEditingTimetable && loadedCourses && loadedOfferingIds) ? (
-                      selectedCourses.map((course, index) => {
-                        return (
-                          <div key={index}>
-                            <div className="flex p-2 justify-between bg-green-100/50 text-xs rounded-md w-[80%]">
-                              <p>
-                                <strong>{course.code}:</strong> {course.name}
-                              </p>
-                              <div className="flex gap-4">
-                                <X
-                                  size={16}
-                                  className="hover:text-red-500 cursor-pointer"
-                                  onClick={() => {
-                                    handleRemoveCourse(course);
-                                    const newOfferingsIds = form
-                                      .getValues("offeringIds")
-                                      .filter(
-                                        (offeringId: number) =>
-                                          offeringIdToCourseIdMap[offeringId] !==
-                                          course.id,
+                      {!isEditingTimetable ||
+                      (isEditingTimetable &&
+                        loadedCourses &&
+                        loadedOfferingIds) ? (
+                        selectedCourses.map((course, index) => {
+                          return (
+                            <div key={index}>
+                              <div className="flex p-2 justify-between bg-green-100/50 text-xs rounded-md w-[80%]">
+                                <p>
+                                  <strong>{course.code}:</strong> {course.name}
+                                </p>
+                                <div className="flex gap-4">
+                                  <X
+                                    size={16}
+                                    className="hover:text-red-500 cursor-pointer"
+                                    onClick={() => {
+                                      handleRemoveCourse(course);
+                                      const newOfferingsIds = form
+                                        .getValues("offeringIds")
+                                        .filter(
+                                          (offeringId: number) =>
+                                            offeringIdToCourseIdMap[
+                                              offeringId
+                                            ] !== course.id,
+                                        );
+                                      form.setValue(
+                                        "offeringIds",
+                                        newOfferingsIds,
                                       );
-                                    form.setValue("offeringIds", newOfferingsIds);
-                                  }}
-                                />
+                                    }}
+                                  />
+                                </div>
                               </div>
+                              {isChoosingSectionsManually && (
+                                <OfferingInfo
+                                  course={course}
+                                  semester={selectedSemester}
+                                  form={form}
+                                />
+                              )}
                             </div>
-                            {isChoosingSectionsManually && (
-                              <OfferingInfo
-                                course={course}
-                                semester={selectedSemester}
-                                form={form}
-                              />
-                            )}
-                          </div>
-                        );
-                      })) : (
+                          );
+                        })
+                      ) : (
                         <p className="text-sm text-muted-foreground">
                           Loading courses...
                         </p>
-                      )
-                    }
+                      )}
                     </div>
                   </div>
 

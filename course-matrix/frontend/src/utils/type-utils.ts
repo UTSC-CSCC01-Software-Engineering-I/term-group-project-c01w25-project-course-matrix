@@ -30,7 +30,7 @@ export type Offering = {
   instructor: string;
   notes: string;
   code: string;
-}
+};
 
 export type TimetableEvents = {
   courseEvents: Event[];

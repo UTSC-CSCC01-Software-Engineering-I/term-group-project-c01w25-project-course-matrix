@@ -28,9 +28,9 @@
   - Project on update is automatically tested
   - Project auto redeploys on update
 
-- Unit Testing;
-  - Project functions will have unit tests written for them
-  - Project functions will pass unit tests written for them
+- Integration Test Cases:
+  - Project functions will have integration unit tests written for them
+  - Project functions will pass integration unit tests written for them
 
 ### 1.2 Metrics for Measurement
 
@@ -54,7 +54,7 @@
   - Project when updated is automatically unit tested
   - Project when updated and passing unit tests is auto-redeployed
 
-– **Unit Testing**
+– **Integration Testing / UnitTesting**
 
 - Project functions are unit tested so that their behaviour is clear and potential bugs are caught
 - Project functions passes unit tests so bug free functionality is ensured

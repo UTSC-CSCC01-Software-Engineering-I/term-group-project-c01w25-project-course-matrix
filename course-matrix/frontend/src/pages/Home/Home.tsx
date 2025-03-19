@@ -73,7 +73,10 @@ const Home = () => {
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : (
             data.map((timetable) => (
-              <Link to={`/dashboard/timetable?edit=${timetable.id}`} key={timetable.id}>
+              <Link
+                to={`/dashboard/timetable?edit=${timetable.id}`}
+                key={timetable.id}
+              >
                 <TimetableCard
                   refetch={refetch}
                   timetableId={timetable.id}

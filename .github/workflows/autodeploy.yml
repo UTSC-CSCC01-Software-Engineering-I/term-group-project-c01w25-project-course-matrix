@@ -43,27 +43,27 @@ jobs:
             cd course-matrix 
       
             cd frontend
-            cat <<EOF > .env
+            cat <<EOF_ENV > .env
             VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
             VITE_PUBLIC_ASSISTANT_BASE_URL=${{ secrets.VITE_PUBLIC_ASSISTANT_BASE_URL }}
             VITE_ASSISTANT_UI_KEY=${{ secrets.VITE_ASSISTANT_UI_KEY }}
-            EOF
+            EOF_ENV
             
             cd ../
             cd backend 
-            cat <<EOF > .env
+            cat <<EOF_ENV > .env
             NODE_ENV=development
             PORT=8081 
             CLIENT_APP_URL=http://localhost:5173
             DATABASE_URL=${{ secrets.DATABASE_URL }}
-            DATABASE_KEY=${{ secrets.DATABSE_KEY }}
+            DATABASE_KEY=${{ secrets.DATABASE_KEY }}
             OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
             PINECONE_API_KEY=${{ secrets.PINECONE_API_KEY }}
-            PINECONE_INDEX_NAME=course-matrix"
+            PINECONE_INDEX_NAME=course-matrix
             BREVO_API_KEY=${{ secrets.BREVO_API_KEY}}
             SENDER_EMAIL=${{ secrets.SENDER_EMAIL }}
             SENDER_NAME="Course Matrix Notifications"
-            EOF
+            EOF_ENV
 
             cd ../
             docker compose build

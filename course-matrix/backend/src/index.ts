@@ -4,7 +4,6 @@ import express, { Express } from "express";
 import { Server } from "http";
 import swaggerjsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-
 import config from "./config/config";
 import { swaggerOptions } from "./config/swaggerOptions";
 import { supabase } from "./db/setupDb";
@@ -50,8 +49,8 @@ app.get(
   asyncHandler(async (_, response) =>
     response.json({
       info: "Testing course matrix backend server",
-    }),
-  ),
+    })
+  )
 );
 
 /**
@@ -68,11 +67,14 @@ app.get(
     } catch (err) {
       return res.status(500).send({ err });
     }
-  }),
+  })
 );
 
 server = app.listen(config.PORT, () => {
-  console.log(`Server is running at http://${HOST}:${config.PORT}`);
+  if (process.env.NODE_ENV !== "test") {
+    // Correct the typo "NODE_EVN" to "NODE_ENV"
+    console.log(`Server is running at http://${HOST}:${config.PORT}`);
+  }
 });
 
 // graceful shutdown

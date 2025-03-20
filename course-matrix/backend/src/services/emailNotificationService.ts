@@ -100,7 +100,7 @@ export async function checkAndNotifyEvents() {
 
   const formattedStartTime = now.toTimeString().slice(0, 8);
   const formattedEndTime = fifteenMinutesFromNow.toTimeString().slice(0, 8);
-  const today = now.toISOString().split('T')[0];
+  const today = now.toISOString().split("T")[0];
   //console.log(today);
   try {
     // Get events that start between now and 15 minutes from now

@@ -76,7 +76,7 @@ const TimetableCard = ({
               value={timetableCardTitle}
               className={
                 !isEditingTitle
-                  ? "-ml-3 w-5/6 font-bold border-none"
+                  ? "-ml-3 font-bold border-none text-ellipsis"
                   : "w-5/6 font-bold"
               }
               onChange={(e) => setTimetableCardTitle(e.target.value)}

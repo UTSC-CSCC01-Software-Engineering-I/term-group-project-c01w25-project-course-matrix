@@ -1,0 +1,47 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ms/Scrun-130-Project-Deployment-dockerfiles
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH Connection
+        run: |
+          echo "${{ secrets.GCP_SSH_PRIVATE_KEY }}" > private_key
+          chmod 600 private_key
+
+      - name: Deploy to Google Cloud VM
+        run: |
+          ssh -i private_key -o StrictHostKeyChecking=no ${{ secrets.GCP_USERNAME }}@${{ secrets.GCP_VM_IP }} << 'EOF'
+            cd /var/www/myapp || (mkdir -p /var/www/myapp && cd /var/www/myapp)
+            git pull origin ms/Scrun-130-Project-Deployment-dockerfiles
+            docker-compose down
+            docker-compose build
+            docker-compose up -d --remove-orphans
+          EOF

@@ -235,10 +235,10 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Creating, reading, updating, and deleting user timetables based on natural language
         
             ## Your Capabilities
-            - Provide accurate information about UTSC courses, offerings, prerequisites, corequisites, and departments
-            - Answer questions about course descriptions, schedules, instructors, offerings, and requirements
-            - Explain degree program requirements and course relationships
-            - Answer questions about offerings of individual courses such as meeting section, time, day, instructor
+            - Create new timetables based on provided courses and restrictions
+            - Update timetable names and semesters
+            - Delete a user's timetables
+            - Retrieve timetables that the user owns
         
             ## Response Guidelines
             - Be concise and direct when answering course-related questions
@@ -248,9 +248,11 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - For unrelated questions, politely explain that you're specialized in UTSC academic information
 
             ## Tool call guidelines
-            - Include the timetable ID in all getTimetbles tool call responses
+            - Include the timetable ID in all getTimetables tool call responses
             - For every tool call, for each timetable that it gets/deletes/modifies/creates, include a link underneath it displayed as "View timetable" to ${process.env.CLIENT_APP_URL}/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
+            - If the user wants to create a timetable, first call getCourses to get course information on the requested courses, then call generateTimetable.
+            - For the response to create timetable, format as a table.
             `,
         messages,
         tools: {
@@ -284,21 +286,28 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
               return await availableFunctions.deleteTimetable(args, req);
             },
           }),
-          createTimetable: tool({
-            description:
-              "Create a timetable with the provided meeting sections",
-            parameters: CreateTimetableArgs,
-            execute: async (args) => {
-              return await availableFunctions.createTimetable(args, req);
-            },
-          }),
           generateTimetable: tool({
             description:
-              "Return a list of possible timetables based on provided courses and restrictions",
+              "Return a list of possible timetables based on provided courses and restrictions.",
             parameters: TimetableFormSchema,
             execute: async (args) => {
-              console.log("Args: ", args);
-              return await availableFunctions.generateTimetable(args, req);
+              // console.log("Args for generate: ", args)
+              // console.log("restrictions :", JSON.stringify(args.restrictions))
+              const data = await availableFunctions.generateTimetable(
+                args,
+                req
+              );
+              // console.log("Generated timetable: ", data)
+              return data;
+            },
+          }),
+          getCourses: tool({
+            description: "Return course info for all course codes provided.",
+            parameters: z.object({
+              courses: z.array(z.string()).describe("List of course codes"),
+            }),
+            execute: async (args) => {
+              return await availableFunctions.getCourses(args, req);
             },
           }),
         },
@@ -312,6 +321,8 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           if (NoSuchToolError.isInstance(error)) {
             return null; // do not attempt to fix invalid tool names
           }
+
+          console.log("Error: ", error);
 
           const tool = tools[toolCall.toolName as keyof typeof tools];
           console.log(
@@ -422,6 +433,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           - Include course codes when referencing specific courses
           - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
           - For unrelated questions, politely explain that you're specialized in UTSC academic information
+          - If a user prompt appears like a task that requires timetable operations (like create, read, update, delete a user's timetable) BUT the user prompt doesn't start with prefix "/timetable" then remind user to use "/timetable" in front of their prompt to access these capabilities
       
           ## Available Knowledge
           ${

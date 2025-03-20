@@ -13,6 +13,7 @@ import {
   ChevronRightIcon,
   CopyIcon,
   Info,
+  Lightbulb,
   PencilIcon,
   RefreshCwIcon,
   SendHorizontalIcon,
@@ -82,8 +83,8 @@ const ThreadWelcome: FC = () => {
             Hi my name is <span className="text-primary">Morpheus</span>. How
             can I help you today?
           </p>
-          <p className="mt-4 text-sm text-gray-300">
-            <strong>Tip: </strong> Use /timetable to work with your timetables
+          <p className="mt-4 text-sm text-gray-500">
+            <span className="flex gap-2 items-center"><Lightbulb size={16}/><strong>Tip: </strong> Use /timetable to work with your timetables</span>
           </p>
         </div>
         <ThreadWelcomeSuggestions />

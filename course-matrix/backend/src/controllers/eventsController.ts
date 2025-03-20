@@ -45,7 +45,7 @@ function getNextWeekDayOccurance(targetDay: string): string {
   return today.toISOString().split("T")[0];
 }
 
-function generateWeeklyCourseEvents(
+export function generateWeeklyCourseEvents(
   user_id: string,
   courseEventName: string,
   courseDay: string,

@@ -63,7 +63,7 @@ const TimetableCard = ({
     <Card className="w-full">
       <CardHeader>
         <img
-          src="../../public/img/default-timetable-card-image.png"
+          src="/img/default-timetable-card-image.png"
           alt="Timetable default image"
         />
         <div className="flex justify-between items-center">

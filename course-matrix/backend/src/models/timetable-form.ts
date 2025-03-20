@@ -65,15 +65,14 @@ export const RestrictionSchema = z.object({
   type: z
     .enum([
       "Restrict Before",
-      "Restrict AFter",
+      "Restrict After",
       "Restrict Between",
       "Restrict Day",
       "Days Off",
     ])
     .describe("The type of restriction being applied"),
   days: z
-    .array(z.string())
-    .optional()
+    .array(DayOfWeekEnum)
     .describe("Specific days of the week this restriction applies to"),
   numDays: z
     .number()
@@ -84,16 +83,16 @@ export const RestrictionSchema = z.object({
       "If type is Days Off, then this field is used and describes min number of days off per week."
     ),
   startTime: z
-    .date()
+    .string()
     .optional()
     .describe(
-      "If type is Restrict After, or Restrict Between, then this field describes the start boundary of the restricted time"
+      "If type is Restrict After, or Restrict Between, then this field describes the start time of the restricted time. Formatted HH:mm:ss"
     ),
   endTime: z
-    .date()
+    .string()
     .optional()
     .describe(
-      "If type is Restrict Before, or Restrict Between, then this field describes the end boundary of the restricted time"
+      "If type is Restrict Before, or Restrict Between, then this field describes the end time of the restricted time. Formatted HH:mm:ss"
     ),
   disabled: z
     .boolean()
@@ -107,9 +106,12 @@ export const TimetableFormSchema = z.object({
     .max(100, "Name cannot exceed 100 characters")
     .min(1, "Name cannot be empty")
     .describe("Title of timetable"),
-  date: z.date().describe("Creation time of timetable"),
+  date: z.string().describe("Creation time of timetable"),
   semester: SemesterEnum,
-  search: z.string().describe("Keeps track of search query. Only used in UI."),
+  search: z
+    .string()
+    .optional()
+    .describe("Keeps track of search query. Only used in UI."),
   courses: z.array(CourseSchema),
   restrictions: z.array(RestrictionSchema),
 });

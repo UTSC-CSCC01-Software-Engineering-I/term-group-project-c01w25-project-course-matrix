@@ -1,3 +1,4 @@
+import { generateWeeklyCourseEvents } from "../controllers/eventsController";
 import {
   categorizeValidOfferings,
   getMaxDays,
@@ -18,8 +19,8 @@ export type FunctionNames =
   | "getTimetables"
   | "updateTimetable"
   | "deleteTimetable"
-  | "createTimetable"
-  | "generateTimetable";
+  | "generateTimetable"
+  | "getCourses";
 
 type AvailableFunctions = {
   [K in FunctionNames]: (args: any, req: Request) => Promise<any>;
@@ -182,68 +183,6 @@ export const availableFunctions: AvailableFunctions = {
       return { status: 500, error: error };
     }
   },
-  createTimetable: async (args: any, req: Request) => {
-    try {
-      //Get user id from session authentication to insert in the user_id col
-      const user_id = (req as any).user.id;
-
-      //Retrieve timetable title
-      const { timetable_title, semester, favorite = false } = args;
-      if (!timetable_title || !semester) {
-        return {
-          status: 400,
-          error: "timetable title and semester are required",
-        };
-      }
-
-      // Check if a timetable with the same title already exist for this user
-      const { data: existingTimetable, error: existingTimetableError } =
-        await supabase
-          .schema("timetable")
-          .from("timetables")
-          .select("id")
-          .eq("user_id", user_id)
-          .eq("timetable_title", timetable_title)
-          .maybeSingle();
-
-      if (existingTimetableError) {
-        return { status: 400, error: existingTimetableError.message };
-      }
-
-      if (existingTimetable) {
-        return {
-          status: 400,
-          error: "A timetable with this title already exists",
-        };
-      }
-
-      //Create query to insert the user_id and timetable_title into the db
-      let insertTimetable = supabase
-        .schema("timetable")
-        .from("timetables")
-        .insert([
-          {
-            user_id,
-            timetable_title,
-            semester,
-            favorite,
-          },
-        ])
-        .select()
-        .single();
-
-      const { data: timetableData, error: timetableError } =
-        await insertTimetable;
-
-      if (timetableError) {
-        return { status: 400, error: timetableError.message };
-      }
-
-      return { status: 201, data: timetableData };
-    } catch (error) {
-      return { status: 500, error };
-    }
-  },
   generateTimetable: async (args: any, req: Request) => {
     try {
       // Extract event details and course information from the request
@@ -297,15 +236,169 @@ export const availableFunctions: AvailableFunctions = {
         return { status: 404, error: "No valid schedules found." };
       }
 
-      // MODIFIED FOR TOOL CALL: Return single schedule
-      return {
-        status: 200,
-        data: {
-          schedule: trim(validSchedules)[0],
-        },
-      };
+      // ------ CREATE FLOW ------
+
+      //Get user id from session authentication to insert in the user_id col
+      const user_id = (req as any).user.id;
+
+      //Retrieve timetable title
+      const schedule = trim(validSchedules)[0];
+      if (!name || !semester) {
+        return {
+          status: 400,
+          error: "timetable title and semester are required",
+        };
+      }
+
+      // Check if a timetable with the same title already exist for this user
+      const { data: existingTimetable, error: existingTimetableError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("id")
+          .eq("user_id", user_id)
+          .eq("timetable_title", name)
+          .maybeSingle();
+
+      if (existingTimetableError) {
+        return { status: 400, error: existingTimetableError.message };
+      }
+
+      if (existingTimetable) {
+        return {
+          status: 400,
+          error: "A timetable with this title already exists",
+        };
+      }
+
+      let favorite = false;
+
+      // Insert the user_id and timetable_title into the db
+      let insertTimetable = supabase
+        .schema("timetable")
+        .from("timetables")
+        .insert([
+          {
+            user_id,
+            timetable_title: name,
+            semester,
+            favorite,
+          },
+        ])
+        .select()
+        .single();
+
+      const { data: timetableData, error: timetableError } =
+        await insertTimetable;
+
+      if (timetableError) {
+        return { status: 400, error: timetableError.message };
+      }
+
+      // Insert events
+      for (const offering of schedule) {
+        //Query course offering information
+        const { data: offeringData, error: offeringError } = await supabase
+          .schema("course")
+          .from("offerings")
+          .select("*")
+          .eq("id", offering.id)
+          .maybeSingle();
+
+        if (offeringError) return { status: 400, error: offeringError.message };
+
+        if (!offeringData || offeringData.length === 0) {
+          return {
+            status: 400,
+            error: "Invalid offering_id or course offering not found.",
+          };
+        }
+
+        //Generate event details
+        const courseEventName = ` ${offeringData.code} - ${offeringData.meeting_section} `;
+        const courseDay = offeringData.day;
+        const courseStartTime = offeringData.start;
+        const courseEndTime = offeringData.end;
+
+        if (!courseDay || !courseStartTime || !courseEndTime) {
+          return {
+            status: 400,
+            error: "Incomplete offering data to generate course event",
+          };
+        }
+
+        let eventsToInsert: any[] = [];
+        let semester_start_date;
+        let semester_end_date;
+
+        if (semester === "Summer 2025") {
+          semester_start_date = "2025-05-02";
+          semester_end_date = "2025-08-07";
+        } else if (semester === "Fall 2025") {
+          semester_start_date = "2025-09-03";
+          semester_end_date = "2025-12-03";
+        } else {
+          // Winter 2026
+          semester_start_date = "2026-01-06";
+          semester_end_date = "2026-04-04";
+        }
+
+        if (semester_start_date && semester_end_date) {
+          eventsToInsert = generateWeeklyCourseEvents(
+            user_id,
+            courseEventName,
+            courseDay,
+            courseStartTime,
+            courseEndTime,
+            timetableData.id,
+            offering.id.toString(),
+            semester_start_date,
+            semester_end_date
+          );
+        }
+
+        //Each week lecture will be inputted as a separate events from sememseter start to end date
+        //Semester start & end dates are inputted by user
+        const { data: courseEventData, error: courseEventError } =
+          await supabase
+            .schema("timetable")
+            .from("course_events")
+            .insert(eventsToInsert)
+            .select("*");
+
+        if (courseEventError) {
+          return { status: 400, error: courseEventError.message };
+        }
+      }
+
+      return { status: 201, data: timetableData };
     } catch (error) {
       // Catch any error and return the error message
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      return { status: 500, error: errorMessage };
+    }
+  },
+  getCourses: async (args: any, req: Request) => {
+    const { courses } = args; // course codes
+    try {
+      const filterConditions = courses.map((prefix: string) => {
+        return `code.ilike.${prefix}%`;
+      });
+
+      // Get all courses that have any of the provided courses as its prefix
+      const { data, error } = await supabase
+        .schema("course")
+        .from("courses")
+        .select("*")
+        .or(filterConditions.join(","));
+
+      if (error) {
+        return { status: 400, error: error.message };
+      }
+
+      return { status: 200, data };
+    } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";
       return { status: 500, error: errorMessage };

@@ -1,8 +1,18 @@
 import exp from "constants";
 import { Request, Response } from "express";
 
-import {Offering, OfferingList, GroupedOfferingList} from "../types/generatorTypes"
-import {getMaxDays, groupOfferings, getValidOfferings, categorizeValidOfferings, trim} from "../utils/generatorHelpers"
+import {
+  Offering,
+  OfferingList,
+  GroupedOfferingList,
+} from "../types/generatorTypes";
+import {
+  getMaxDays,
+  groupOfferings,
+  getValidOfferings,
+  categorizeValidOfferings,
+  trim,
+} from "../utils/generatorHelpers";
 import getOfferings from "../services/getOfferings";
 import { getValidSchedules } from "../services/getValidSchedules";
 
@@ -13,7 +23,7 @@ export default {
   generateTimetable: asyncHandler(async (req: Request, res: Response) => {
     try {
       // Extract event details and course information from the request
-      const {semester, courses, restrictions } = req.body;
+      const { semester, courses, restrictions } = req.body;
       const courseOfferingsList: OfferingList[] = [];
       const validCourseOfferingsList: GroupedOfferingList[] = [];
       const maxdays = await getMaxDays(restrictions);
@@ -62,12 +72,10 @@ export default {
         return res.status(404).json({ error: "No valid schedules found." });
       }
       // Return the valid schedules
-      return res
-        .status(200)
-        .json({
-          amount: validSchedules.length,
-          schedules: trim(validSchedules),
-        });
+      return res.status(200).json({
+        amount: validSchedules.length,
+        schedules: trim(validSchedules),
+      });
     } catch (error) {
       // Catch any error and return the error message
       const errorMessage =

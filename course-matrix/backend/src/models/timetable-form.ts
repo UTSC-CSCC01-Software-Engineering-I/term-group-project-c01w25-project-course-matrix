@@ -56,7 +56,7 @@ export const CourseSchema = z.object({
     .max(8, "Invalid course code")
     .min(1, "Course code is required")
     .describe(
-      "The course code. Formatted like: CSCA08H3. Course codes cannot be provided without the H3 at the end."
+      "The course code. Formatted like: CSCA08H3. Course codes cannot be provided without the H3 at the end.",
     ),
   name: z.string().describe("The name of the course"),
 });
@@ -80,7 +80,7 @@ export const RestrictionSchema = z.object({
     .max(4, "Cannot block all days of the week")
     .optional()
     .describe(
-      "If type is Days Off, then this field is used and describes min number of days off per week."
+      "If type is Days Off, then this field is used and describes min number of days off per week.",
     ),
   startTime: z
     .string()

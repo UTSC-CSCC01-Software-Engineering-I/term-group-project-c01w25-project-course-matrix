@@ -200,9 +200,8 @@ export const availableFunctions: AvailableFunctions = {
         });
       }
 
-      const groupedOfferingsList: GroupedOfferingList[] = await groupOfferings(
-        courseOfferingsList
-      );
+      const groupedOfferingsList: GroupedOfferingList[] =
+        await groupOfferings(courseOfferingsList);
 
       // console.log(JSON.stringify(groupedOfferingsList, null, 2));
 
@@ -215,7 +214,7 @@ export const availableFunctions: AvailableFunctions = {
       }
 
       const categorizedOfferings = await categorizeValidOfferings(
-        validCourseOfferingsList
+        validCourseOfferingsList,
       );
 
       // console.log(typeof categorizedOfferings);
@@ -228,7 +227,7 @@ export const availableFunctions: AvailableFunctions = {
         [],
         0,
         categorizedOfferings.length,
-        maxdays
+        maxdays,
       );
 
       // Return error if no valid schedules are found

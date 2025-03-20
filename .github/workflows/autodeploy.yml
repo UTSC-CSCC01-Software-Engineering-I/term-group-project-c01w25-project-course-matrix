@@ -17,8 +17,10 @@ jobs:
         with:
           node-version: 18
 
-      - name: Run Tests
-        run: npm test
+      - name: Run frontend tests
+        run: cd course-matrix/frontend && npm install && npm run test
+      - name: Run backend tests
+        run: cd course-matrix/backend && npm install && npm run test
 
   deploy:
     needs: test

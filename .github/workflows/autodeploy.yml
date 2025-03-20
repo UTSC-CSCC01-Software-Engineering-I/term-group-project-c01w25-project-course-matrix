@@ -52,7 +52,7 @@ jobs:
             # Move to backend
             cd ../backend 
             rm -f .env # Delete the existing .env file
-            echo "NODE_ENV=development" > .env && \
+            echo "NODE_ENV=\"development\"" > .env && \
             echo "PORT=8081" >> .env && \
             echo "CLIENT_APP_URL=\"http://localhost:5173\"" >> .env && \
             echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" >> .env && \

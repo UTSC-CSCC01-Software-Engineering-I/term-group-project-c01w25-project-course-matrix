@@ -227,7 +227,9 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
                 <Select
                   value={selectedPractical?.id?.toString()}
-                  onOpenChange={(isOpen) => setIsEditingPracticalSection(isOpen)}
+                  onOpenChange={(isOpen) =>
+                    setIsEditingPracticalSection(isOpen)
+                  }
                   onValueChange={(value) => {
                     handleSelect(
                       initialSelectedLecture,

@@ -40,6 +40,7 @@ import { z } from "zod";
 import { analyzeQuery } from "../utils/analyzeQuery";
 import { includeFilters } from "../utils/includeFilters";
 import { TimetableFormSchema } from "../models/timetable-form";
+import { CreateTimetableArgs } from "../models/timetable-generate";
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -55,7 +56,7 @@ const pinecone = new Pinecone({
 });
 
 const index: Index<RecordMetadata> = pinecone.Index(
-  process.env.PINECONE_INDEX_NAME!,
+  process.env.PINECONE_INDEX_NAME!
 );
 
 console.log("Connected to OpenAI API");
@@ -64,7 +65,7 @@ export async function searchSelectedNamespaces(
   query: string,
   k: number,
   namespaces: string[],
-  filters?: Object,
+  filters?: Object
 ): Promise<Document[]> {
   let allResults: Document[] = [];
 
@@ -86,7 +87,7 @@ export async function searchSelectedNamespaces(
       const results = await namespaceStore.similaritySearch(
         query,
         Math.max(k, namespaceToMinResults.get(namespace)),
-        namespace === "courses_v3" ? filters : undefined,
+        namespace === "courses_v3" ? filters : undefined
       );
       console.log(`Found ${results.length} results in namespace: ${namespace}`);
       allResults = [...allResults, ...results];
@@ -107,7 +108,7 @@ export async function searchSelectedNamespaces(
 // Reformulate user query to make more concise query to database, taking into consideration context
 export async function reformulateQuery(
   latestQuery: string,
-  conversationHistory: any[],
+  conversationHistory: any[]
 ): Promise<string> {
   try {
     const openai2 = new OpenAI({
@@ -248,7 +249,8 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
 
             ## Tool call guidelines
             - Include the timetable ID in all getTimetbles tool call responses
-            - If the tool call is a getTimetables call, then at the end of each timetable listed, include a link displayed as "View timetable" to ${process.env.CLIENT_APP_URL}/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
+            - For every tool call, for each timetable that it gets/deletes/modifies/creates, include a link underneath it displayed as "View timetable" to ${process.env.CLIENT_APP_URL}/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
+            - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
             `,
         messages,
         tools: {
@@ -282,13 +284,23 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
               return await availableFunctions.deleteTimetable(args, req);
             },
           }),
+          createTimetable: tool({
+            description:
+              "Create a timetable with the provided meeting sections",
+            parameters: CreateTimetableArgs,
+            execute: async (args) => {
+              return await availableFunctions.createTimetable(args, req);
+            },
+          }),
           generateTimetable: tool({
-            description: "Generate a timetable based on selected courses and restrictions",
+            description:
+              "Return a list of possible timetables based on provided courses and restrictions",
             parameters: TimetableFormSchema,
             execute: async (args) => {
-              return await availableFunctions.generateTimetable(args, req)
-            }
-          })
+              console.log("Args: ", args);
+              return await availableFunctions.generateTimetable(args, req);
+            },
+          }),
         },
         maxSteps: CHATBOT_TOOL_CALL_MAX_STEPS, // Controls how many back and forths the model can take with user or calling multiple tools
         experimental_repairToolCall: async ({
@@ -305,10 +317,10 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           console.log(
             `The model tried to call the tool "${toolCall.toolName}"` +
               ` with the following arguments:`,
-            JSON.stringify(toolCall.args),
+            toolCall.args,
             `The tool accepts the following schema:`,
-            JSON.stringify(parameterSchema(toolCall)),
-            "Please fix the arguments.",
+            parameterSchema(toolCall),
+            "Please fix the arguments."
           );
 
           const { object: repairedArgs } = await generateObject({
@@ -343,7 +355,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       // Use GPT-4o to reformulate the query based on conversation history
       const reformulatedQuery = await reformulateQuery(
         latestMessage,
-        conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD), // last K messages
+        conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD) // last K messages
       );
       console.log(">>>> Original query:", latestMessage);
       console.log(">>>> Reformulated query:", reformulatedQuery);
@@ -357,8 +369,8 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       if (requiresSearch) {
         console.log(
           `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-            ", ",
-          )}`,
+            ", "
+          )}`
         );
 
         const filters = includeFilters(reformulatedQuery);
@@ -369,7 +381,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           reformulatedQuery,
           3,
           relevantNamespaces,
-          Object.keys(filters).length === 0 ? undefined : filters,
+          Object.keys(filters).length === 0 ? undefined : filters
         );
         // console.log("Search Results: ", searchResults);
 
@@ -379,7 +391,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
         }
       } else {
         console.log(
-          "Query does not require knowledge retrieval, skipping search",
+          "Query does not require knowledge retrieval, skipping search"
         );
       }
 
@@ -444,15 +456,15 @@ export const testSimilaritySearch = asyncHandler(
     if (requiresSearch) {
       console.log(
         `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-          ", ",
-        )}`,
+          ", "
+        )}`
       );
 
       // Search only the relevant namespaces
       const searchResults = await searchSelectedNamespaces(
         message,
         3,
-        relevantNamespaces,
+        relevantNamespaces
       );
       console.log("Search Results: ", searchResults);
 
@@ -462,11 +474,11 @@ export const testSimilaritySearch = asyncHandler(
       }
     } else {
       console.log(
-        "Query does not require knowledge retrieval, skipping search",
+        "Query does not require knowledge retrieval, skipping search"
       );
     }
 
     console.log("CONTEXT: ", context);
     res.status(200).send(context);
-  },
+  }
 );

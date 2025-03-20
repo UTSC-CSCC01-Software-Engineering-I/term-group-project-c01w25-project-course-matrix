@@ -1,3 +1,15 @@
+import {
+  categorizeValidOfferings,
+  getMaxDays,
+  getOfferings,
+  getValidOfferings,
+  getValidSchedules,
+  GroupedOfferingList,
+  groupOfferings,
+  Offering,
+  OfferingList,
+  trim,
+} from "../controllers/generatorController";
 import { supabase } from "../db/setupDb";
 import { Request } from "express";
 
@@ -6,6 +18,7 @@ export type FunctionNames =
   | "getTimetables"
   | "updateTimetable"
   | "deleteTimetable"
+  | "createTimetable"
   | "generateTimetable";
 
 type AvailableFunctions = {
@@ -169,7 +182,133 @@ export const availableFunctions: AvailableFunctions = {
       return { status: 500, error: error };
     }
   },
+  createTimetable: async (args: any, req: Request) => {
+    try {
+      //Get user id from session authentication to insert in the user_id col
+      const user_id = (req as any).user.id;
+
+      //Retrieve timetable title
+      const { timetable_title, semester, favorite = false } = args;
+      if (!timetable_title || !semester) {
+        return {
+          status: 400,
+          error: "timetable title and semester are required",
+        };
+      }
+
+      // Check if a timetable with the same title already exist for this user
+      const { data: existingTimetable, error: existingTimetableError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("id")
+          .eq("user_id", user_id)
+          .eq("timetable_title", timetable_title)
+          .maybeSingle();
+
+      if (existingTimetableError) {
+        return { status: 400, error: existingTimetableError.message };
+      }
+
+      if (existingTimetable) {
+        return {
+          status: 400,
+          error: "A timetable with this title already exists",
+        };
+      }
+
+      //Create query to insert the user_id and timetable_title into the db
+      let insertTimetable = supabase
+        .schema("timetable")
+        .from("timetables")
+        .insert([
+          {
+            user_id,
+            timetable_title,
+            semester,
+            favorite,
+          },
+        ])
+        .select()
+        .single();
+
+      const { data: timetableData, error: timetableError } =
+        await insertTimetable;
+
+      if (timetableError) {
+        return { status: 400, error: timetableError.message };
+      }
+
+      return { status: 201, data: timetableData };
+    } catch (error) {
+      return { status: 500, error };
+    }
+  },
   generateTimetable: async (args: any, req: Request) => {
-    
-  }
+    try {
+      // Extract event details and course information from the request
+      const { name, date, semester, search, courses, restrictions } = args;
+      const courseOfferingsList: OfferingList[] = [];
+      const validCourseOfferingsList: GroupedOfferingList[] = [];
+      const maxdays = await getMaxDays(restrictions);
+      const validSchedules: Offering[][] = [];
+      // Fetch offerings for each course
+      for (const course of courses) {
+        const { id } = course;
+        courseOfferingsList.push({
+          course_id: id,
+          offerings: (await getOfferings(id, semester)) ?? [],
+        });
+      }
+
+      const groupedOfferingsList: GroupedOfferingList[] = await groupOfferings(
+        courseOfferingsList
+      );
+
+      // console.log(JSON.stringify(groupedOfferingsList, null, 2));
+
+      // Filter out invalid offerings based on the restrictions
+      for (const { course_id, groups } of groupedOfferingsList) {
+        validCourseOfferingsList.push({
+          course_id: course_id,
+          groups: await getValidOfferings(groups, restrictions),
+        });
+      }
+
+      const categorizedOfferings = await categorizeValidOfferings(
+        validCourseOfferingsList
+      );
+
+      // console.log(typeof categorizedOfferings);
+      // console.log(JSON.stringify(categorizedOfferings, null, 2));
+
+      // Generate valid schedules for the given courses and restrictions
+      await getValidSchedules(
+        validSchedules,
+        categorizedOfferings,
+        [],
+        0,
+        categorizedOfferings.length,
+        maxdays
+      );
+
+      // Return error if no valid schedules are found
+      if (validSchedules.length === 0) {
+        return { status: 404, error: "No valid schedules found." };
+      }
+
+      // MODIFIED FOR TOOL CALL: Return single schedule
+      return {
+        status: 200,
+        data: {
+          schedule: trim(validSchedules)[0],
+        },
+      };
+    } catch (error) {
+      // Catch any error and return the error message
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      return { status: 500, error: errorMessage };
+    }
+  },
 };

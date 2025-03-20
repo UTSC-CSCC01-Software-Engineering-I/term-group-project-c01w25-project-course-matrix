@@ -45,7 +45,7 @@ app.use("/api/ai", aiRouter);
 
 // Initialize cron job
 // Note: For testing purposes can set first argument to '*/15 * * * * *' to run every 15s
-cron.schedule("* * * * *", checkAndNotifyEvents);
+cron.schedule("45 * * * *", checkAndNotifyEvents);
 
 /**
  * Root route to test the backend server.

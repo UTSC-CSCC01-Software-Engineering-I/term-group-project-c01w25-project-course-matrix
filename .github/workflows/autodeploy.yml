@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: develop
+    branches: ms/Scrun-130-Project-Deployment-dockerfiles
 
 jobs:
   test:
@@ -39,8 +39,33 @@ jobs:
         run: |
           ssh -i private_key -o StrictHostKeyChecking=no ${{ secrets.GCP_USERNAME }}@${{ secrets.GCP_VM_IP }} << 'EOF'
             cd /home/masahisasekita/term-group-project-c01w25-project-course-matrix || { echo "Error: Directory /root/myapp does not exist!"; exit 1; }
-            git pull develop
+            git pull ms/Scrun-130-Project-Deployment-dockerfiles
             cd course-matrix 
+      
+            cd frontend
+            cat <<EOF > .env
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
+            VITE_PUBLIC_ASSISTANT_BASE_URL=${{ secrets.VITE_PUBLIC_ASSISTANT_BASE_URL }}
+            VITE_ASSISTANT_UI_KEY=${{ secrets.VITE_ASSISTANT_UI_KEY }}
+            EOF
+            
+            cd ../
+            cd backend 
+            cat <<EOF > .env
+            NODE_ENV=development
+            PORT=8081 
+            CLIENT_APP_URL=http://localhost:5173
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            DATABASE_KEY=${{ secrets.DATABSE_KEY }}
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            PINECONE_API_KEY=${{ secrets.PINECONE_API_KEY }}
+            PINECONE_INDEX_NAME=course-matrix"
+            BREVO_API_KEY=${{ secrets.BREVO_API_KEY}}
+            SENDER_EMAIL=${{ secrets.SENDER_EMAIL }}
+            SENDER_NAME="Course Matrix Notifications"
+            EOF
+
+            cd ../
             docker compose build
             docker compose up -d --remove-orphans
           EOF

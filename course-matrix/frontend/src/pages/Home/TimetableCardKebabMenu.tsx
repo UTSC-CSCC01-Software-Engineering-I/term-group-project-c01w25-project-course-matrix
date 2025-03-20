@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { EllipsisVertical } from "lucide-react";
 import { useDeleteTimetableMutation } from "@/api/timetableApiSlice";
+import { EmailNotificationSettings } from "./EmailNotificationSettings";
 
 interface TimetableCardKebabMenuProps {
   refetch: () => void;
@@ -55,6 +56,9 @@ const TimetableCardKebabMenu = ({
           <Link to={`/dashboard/timetable?edit=${timetableId}`}>
             Edit Timetable
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+          <EmailNotificationSettings timetableId={timetableId} />
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <Dialog>

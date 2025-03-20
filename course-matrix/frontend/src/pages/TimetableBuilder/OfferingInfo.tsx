@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { Edit } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { TimetableFormSchema } from "@/models/timetable-form";
-import { z } from "zod";
+import { set, z } from "zod";
 
 interface OfferingInfoProps {
   course: Pick<CourseModel, "code" | "name" | "id">;
@@ -140,33 +140,36 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                 />
               </div>
             ) : (
-              <Select
-                value={selectedLecture?.id?.toString()}
-                onValueChange={(value) =>
-                  handleSelect(
-                    lectures?.find(
-                      (offering: OfferingModel) =>
-                        offering.id.toString() === value,
-                    ),
-                    initialSelectedTutorial,
-                    initialSelectedPractical,
-                  )
-                }
-              >
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Select LEC" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lectures?.map((offering: OfferingModel) => (
-                    <SelectItem
-                      key={offering.id}
-                      value={offering.id.toString()}
-                    >
-                      {`${offering.meeting_section} (${offering.day}, ${offering.start} - ${offering.end})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
+                <Select
+                  value={selectedLecture?.id?.toString()}
+                  onOpenChange={(isOpen) => setIsEditingLectureSection(isOpen)}
+                  onValueChange={(value) =>
+                    handleSelect(
+                      lectures?.find(
+                        (offering: OfferingModel) =>
+                          offering.id.toString() === value,
+                      ),
+                      initialSelectedTutorial,
+                      initialSelectedPractical,
+                    )
+                  }
+                >
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Select LEC" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lectures?.map((offering: OfferingModel) => (
+                      <SelectItem
+                        key={offering.id}
+                        value={offering.id.toString()}
+                      >
+                        {`${offering.meeting_section} (${offering.day}, ${offering.start} - ${offering.end})`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             ))}
           {tutorials?.length > 0 &&
             (!isEditingTutorialSection ? (
@@ -179,33 +182,36 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                 />
               </div>
             ) : (
-              <Select
-                value={selectedTutorial?.id?.toString()}
-                onValueChange={(value) => {
-                  handleSelect(
-                    initialSelectedLecture,
-                    tutorials?.find(
-                      (offering: OfferingModel) =>
-                        offering.id.toString() === value,
-                    ),
-                    initialSelectedPractical,
-                  );
-                }}
-              >
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Select TUT" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tutorials?.map((offering: OfferingModel) => (
-                    <SelectItem
-                      key={offering.id}
-                      value={offering.id.toString()}
-                    >
-                      {`${offering.meeting_section} (${offering.day}, ${offering.start} - ${offering.end})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
+                <Select
+                  value={selectedTutorial?.id?.toString()}
+                  onOpenChange={(isOpen) => setIsEditingTutorialSection(isOpen)}
+                  onValueChange={(value) => {
+                    handleSelect(
+                      initialSelectedLecture,
+                      tutorials?.find(
+                        (offering: OfferingModel) =>
+                          offering.id.toString() === value,
+                      ),
+                      initialSelectedPractical,
+                    );
+                  }}
+                >
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Select TUT" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tutorials?.map((offering: OfferingModel) => (
+                      <SelectItem
+                        key={offering.id}
+                        value={offering.id.toString()}
+                      >
+                        {`${offering.meeting_section} (${offering.day}, ${offering.start} - ${offering.end})`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             ))}
           {practicals?.length > 0 &&
             (!isEditingPracticalSection ? (
@@ -218,33 +224,36 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                 />
               </div>
             ) : (
-              <Select
-                value={selectedPractical?.id?.toString()}
-                onValueChange={(value) => {
-                  handleSelect(
-                    initialSelectedLecture,
-                    initialSelectedTutorial,
-                    practicals?.find(
-                      (offering: OfferingModel) =>
-                        offering.id.toString() === value,
-                    ),
-                  );
-                }}
-              >
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Select PRA" />
-                </SelectTrigger>
-                <SelectContent>
-                  {practicals?.map((offering: OfferingModel) => (
-                    <SelectItem
-                      key={offering.id}
-                      value={offering.id.toString()}
-                    >
-                      {`${offering.meeting_section} (${offering.day}, ${offering.start} - ${offering.end})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
+                <Select
+                  value={selectedPractical?.id?.toString()}
+                  onOpenChange={(isOpen) => setIsEditingPracticalSection(isOpen)}
+                  onValueChange={(value) => {
+                    handleSelect(
+                      initialSelectedLecture,
+                      initialSelectedTutorial,
+                      practicals?.find(
+                        (offering: OfferingModel) =>
+                          offering.id.toString() === value,
+                      ),
+                    );
+                  }}
+                >
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Select PRA" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {practicals?.map((offering: OfferingModel) => (
+                      <SelectItem
+                        key={offering.id}
+                        value={offering.id.toString()}
+                      >
+                        {`${offering.meeting_section} (${offering.day}, ${offering.start} - ${offering.end})`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             ))}
         </div>
       )}

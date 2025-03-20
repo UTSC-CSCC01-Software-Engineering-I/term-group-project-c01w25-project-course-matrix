@@ -207,10 +207,18 @@ const Calendar = React.memo<CalendarProps>(
     const totalNumberOfRequiredSections = !selectedCourses.length
       ? 0
       : (numberOfSectionsData?.totalNumberOfCourseSections ?? 0);
-    const totalNumberOfSelectedSections = [...new Set(offeringsData?.filter(
-      (offering) => newOfferingIds.includes(offering.id),
-    ).map((offering) => `${offering.code} ${offering.offering} ${offering.meeting_section}`))].length;
-    const allOfferingSectionsHaveBeenSelected = totalNumberOfSelectedSections === totalNumberOfRequiredSections;
+    const totalNumberOfSelectedSections = [
+      ...new Set(
+        offeringsData
+          ?.filter((offering) => newOfferingIds.includes(offering.id))
+          .map(
+            (offering) =>
+              `${offering.code} ${offering.offering} ${offering.meeting_section}`,
+          ),
+      ),
+    ].length;
+    const allOfferingSectionsHaveBeenSelected =
+      totalNumberOfSelectedSections === totalNumberOfRequiredSections;
 
     useEffect(() => {
       if (!isEditingTimetable) {

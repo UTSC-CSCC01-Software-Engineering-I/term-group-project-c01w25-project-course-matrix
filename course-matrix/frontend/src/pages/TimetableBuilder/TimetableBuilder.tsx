@@ -104,7 +104,7 @@ const TimetableBuilder = () => {
   const timetableId = parseInt(queryParams.get("edit") || "0");
 
   const [showLoadingPage, setShowLoadingPage] = useState(false);
-  
+
   const selectedCourses = form.watch("courses") || [];
   const enabledRestrictions = form.watch("restrictions") || [];
   const searchQuery = form.watch("search");
@@ -311,281 +311,279 @@ const TimetableBuilder = () => {
   return showLoadingPage ? (
     <LoadingPage />
   ) : (
-      <div className="w-full">
-        <div className="m-8">
-          <div className="mb-4 flex flex-row justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-medium tracking-tight mb-4">
-                {isEditingTimetable ? "Edit Timetable" : "New Timetable"}
-              </h1>
-              {isEditingTimetable && (
-                <p className="text-sm italic text-blue-500">
-                  The timetable you are editing is named:{" "}
-                  <strong>{currentTimetableTitle}</strong>
-                </p>
-              )}
-            </div>
-            <div className="flex gap-4 ">
-              <Button size="sm" variant="outline" onClick={handleReset}>
-                Reset
-              </Button>
-              <Button size="sm">Share</Button>
-            </div>
+    <div className="w-full">
+      <div className="m-8">
+        <div className="mb-4 flex flex-row justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-medium tracking-tight mb-4">
+              {isEditingTimetable ? "Edit Timetable" : "New Timetable"}
+            </h1>
+            {isEditingTimetable && (
+              <p className="text-sm italic text-blue-500">
+                The timetable you are editing is named:{" "}
+                <strong>{currentTimetableTitle}</strong>
+              </p>
+            )}
           </div>
-          <hr />
+          <div className="flex gap-4 ">
+            <Button size="sm" variant="outline" onClick={handleReset}>
+              Reset
+            </Button>
+            <Button size="sm">Share</Button>
+          </div>
         </div>
-
-        <div className="m-8 flex gap-12">
-          <div className="w-1/3">
-            <Form {...form}>
-              <FormContext.Provider value={form}>
-                <form
-                  onSubmit={form.handleSubmit(createTimetable)}
-                  className="space-y-8"
-                >
-                  <div className="flex gap-8 w-full">
-                    <FormField
-                      control={form.control}
-                      name="semester"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Semester</FormLabel>
-                          <FormControl>
-                            <Select
-                              onValueChange={(value) => {
-                                form.reset({ offeringIds: [], courses: [] });
-                                form.setValue("semester", value);
-                              }}
-                              value={field.value}
-                              defaultValue={field.value}
-                            >
-                              <SelectTrigger className="w-[140px]">
-                                <SelectValue placeholder="Select a semester" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Object.values(SemesterEnum.Values).map(
-                                  (value) => (
-                                    <SelectItem key={value} value={value}>
-                                      {value}
-                                    </SelectItem>
-                                  ),
-                                )}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="search"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>
-                            Pick a few courses you'd like to take
-                          </FormLabel>
-                          <FormControl>
-                            <CourseSearch
-                              value={field.value}
-                              onChange={(value) => {
-                                field.onChange(value);
-                              }}
-                              data={coursesData} // TODO: Replace with variable data
-                              isLoading={isLoading}
-                              showFilter={() => setShowFilters(true)}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <div className="flex justify-between items-center mb-6">
-                      <p className="text-sm">
-                        Selected courses: {selectedCourses.length} (Max 8)
-                      </p>
-                      {!isEditingTimetable && (
-                        <div className="flex items-center gap-2">
-                          <Checkbox
-                            id="manual-selection"
-                            checked={isChoosingSectionsManually}
-                            onCheckedChange={(checked) =>
-                              setIsChoosingSectionsManually(checked === true)
-                            }
-                          />
-                          <label
-                            htmlFor="manual-selection"
-                            className="text-sm font-medium"
-                          >
-                            Choose meeting sections manually?
-                          </label>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex gap-2 flex-col">
-                      {!isEditingTimetable ||
-                      (isEditingTimetable &&
-                        loadedCourses &&
-                        loadedOfferingIds &&
-                        selectedCourses) ? (
-                        selectedCourses.map((course, index) => {
-                          return (
-                            <div key={index}>
-                              <div className="flex p-2 justify-between bg-green-100/50 text-xs rounded-md w-[100%]">
-                                <p>
-                                  <strong>{course.code}:</strong> {course.name}
-                                </p>
-                                <div className="flex gap-4">
-                                  <X
-                                    size={16}
-                                    className="hover:text-red-500 cursor-pointer"
-                                    onClick={() => {
-                                      handleRemoveCourse(course);
-                                      const newOfferingsIds = form
-                                        .getValues("offeringIds")
-                                        .filter(
-                                          (offeringId: number) =>
-                                            offeringIdToCourseIdMap[
-                                              offeringId
-                                            ] !== course.id,
-                                        );
-                                      form.setValue(
-                                        "offeringIds",
-                                        newOfferingsIds,
-                                      );
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                              {isChoosingSectionsManually && (
-                                <OfferingInfo
-                                  course={course}
-                                  semester={selectedSemester}
-                                  form={form}
-                                />
-                              )}
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <p className="text-sm text-muted-foreground">
-                          Loading courses...
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex gap-12 items-end">
-                    <div className="flex flex-col gap-2">
-                      <h2 className="text-lg">Custom Settings</h2>
-                      <p className="text-sm text-gray-500">
-                        Add additional restrictions to your timetable to
-                        personalize it to your needs.
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      type="button"
-                      onClick={() => setIsCustomSettingsOpen(true)}
-                    >
-                      + Add new
-                    </Button>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <FormField
-                      control={form.control}
-                      name="restrictions"
-                      render={() => (
-                        <FormItem className="pb-2">
-                          <p className="text-sm">
-                            Enabled Restrictions: {enabledRestrictions.length}
-                          </p>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className="flex gap-2 flex-col">
-                      {enabledRestrictions &&
-                        enabledRestrictions.map((restric, index) => (
-                          <div
-                            key={index}
-                            className="flex p-2 justify-between bg-red-100/50 text-xs rounded-md w-[64%]"
-                          >
-                            {restric.type.startsWith("Restrict") ? (
-                              <p>
-                                <strong>{restric.type}:</strong>{" "}
-                                {restric.startTime
-                                  ? formatTime(restric.startTime)
-                                  : ""}{" "}
-                                {restric.type === "Restrict Between"
-                                  ? " - "
-                                  : ""}{" "}
-                                {restric.endTime
-                                  ? formatTime(restric.endTime)
-                                  : ""}{" "}
-                                {restric.days?.join(" ")}
-                              </p>
-                            ) : (
-                              <p>
-                                <strong>{restric.type}:</strong> At least{" "}
-                                {restric.numDays} days off
-                              </p>
-                            )}
-
-                            <X
-                              size={16}
-                              className="hover:text-red-500 cursor-pointer"
-                              onClick={() => handleRemoveRestriction(index)}
-                            />
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-
-                  {!isChoosingSectionsManually && (
-                    <Button type="submit">Generate</Button>
-                  )}
-                </form>
-
-                {isCustomSettingsOpen && (
-                  <CreateCustomSetting
-                    submitHandler={handleAddRestriction}
-                    closeHandler={() => setIsCustomSettingsOpen(false)}
-                  />
-                )}
-              </FormContext.Provider>
-            </Form>
-          </div>
-          <div className="w-2/3">
-            <Calendar
-              setShowLoadingPage={setShowLoadingPage}
-              isChoosingSectionsManually={isChoosingSectionsManually}
-              semester={selectedSemester}
-              selectedCourses={selectedCourses}
-              newOfferingIds={offeringIds}
-              restrictions={enabledRestrictions}
-            />
-          </div>
-
-          {showFilters && (
-            <SearchFilters
-              submitHandler={applyFilters}
-              closeHandler={() => setShowFilters(false)}
-              resetHandler={() => {
-                setFilters(null);
-                setShowFilters(false);
-                console.log("reset filters");
-              }}
-              filterForm={filterForm}
-            />
-          )}
-        </div>
+        <hr />
       </div>
+
+      <div className="m-8 flex gap-12">
+        <div className="w-1/3">
+          <Form {...form}>
+            <FormContext.Provider value={form}>
+              <form
+                onSubmit={form.handleSubmit(createTimetable)}
+                className="space-y-8"
+              >
+                <div className="flex gap-8 w-full">
+                  <FormField
+                    control={form.control}
+                    name="semester"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Semester</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => {
+                              form.reset({ offeringIds: [], courses: [] });
+                              form.setValue("semester", value);
+                            }}
+                            value={field.value}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue placeholder="Select a semester" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(SemesterEnum.Values).map(
+                                (value) => (
+                                  <SelectItem key={value} value={value}>
+                                    {value}
+                                  </SelectItem>
+                                ),
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="search"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>
+                          Pick a few courses you'd like to take
+                        </FormLabel>
+                        <FormControl>
+                          <CourseSearch
+                            value={field.value}
+                            onChange={(value) => {
+                              field.onChange(value);
+                            }}
+                            data={coursesData} // TODO: Replace with variable data
+                            isLoading={isLoading}
+                            showFilter={() => setShowFilters(true)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex justify-between items-center mb-6">
+                    <p className="text-sm">
+                      Selected courses: {selectedCourses.length} (Max 8)
+                    </p>
+                    {!isEditingTimetable && (
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="manual-selection"
+                          checked={isChoosingSectionsManually}
+                          onCheckedChange={(checked) =>
+                            setIsChoosingSectionsManually(checked === true)
+                          }
+                        />
+                        <label
+                          htmlFor="manual-selection"
+                          className="text-sm font-medium"
+                        >
+                          Choose meeting sections manually?
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 flex-col">
+                    {!isEditingTimetable ||
+                    (isEditingTimetable &&
+                      loadedCourses &&
+                      loadedOfferingIds &&
+                      selectedCourses) ? (
+                      selectedCourses.map((course, index) => {
+                        return (
+                          <div key={index}>
+                            <div className="flex p-2 justify-between bg-green-100/50 text-xs rounded-md w-[100%]">
+                              <p>
+                                <strong>{course.code}:</strong> {course.name}
+                              </p>
+                              <div className="flex gap-4">
+                                <X
+                                  size={16}
+                                  className="hover:text-red-500 cursor-pointer"
+                                  onClick={() => {
+                                    handleRemoveCourse(course);
+                                    const newOfferingsIds = form
+                                      .getValues("offeringIds")
+                                      .filter(
+                                        (offeringId: number) =>
+                                          offeringIdToCourseIdMap[
+                                            offeringId
+                                          ] !== course.id,
+                                      );
+                                    form.setValue(
+                                      "offeringIds",
+                                      newOfferingsIds,
+                                    );
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            {isChoosingSectionsManually && (
+                              <OfferingInfo
+                                course={course}
+                                semester={selectedSemester}
+                                form={form}
+                              />
+                            )}
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Loading courses...
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-12 items-end">
+                  <div className="flex flex-col gap-2">
+                    <h2 className="text-lg">Custom Settings</h2>
+                    <p className="text-sm text-gray-500">
+                      Add additional restrictions to your timetable to
+                      personalize it to your needs.
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    type="button"
+                    onClick={() => setIsCustomSettingsOpen(true)}
+                  >
+                    + Add new
+                  </Button>
+                </div>
+
+                <div className="flex flex-col">
+                  <FormField
+                    control={form.control}
+                    name="restrictions"
+                    render={() => (
+                      <FormItem className="pb-2">
+                        <p className="text-sm">
+                          Enabled Restrictions: {enabledRestrictions.length}
+                        </p>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex gap-2 flex-col">
+                    {enabledRestrictions &&
+                      enabledRestrictions.map((restric, index) => (
+                        <div
+                          key={index}
+                          className="flex p-2 justify-between bg-red-100/50 text-xs rounded-md w-[64%]"
+                        >
+                          {restric.type.startsWith("Restrict") ? (
+                            <p>
+                              <strong>{restric.type}:</strong>{" "}
+                              {restric.startTime
+                                ? formatTime(restric.startTime)
+                                : ""}{" "}
+                              {restric.type === "Restrict Between" ? " - " : ""}{" "}
+                              {restric.endTime
+                                ? formatTime(restric.endTime)
+                                : ""}{" "}
+                              {restric.days?.join(" ")}
+                            </p>
+                          ) : (
+                            <p>
+                              <strong>{restric.type}:</strong> At least{" "}
+                              {restric.numDays} days off
+                            </p>
+                          )}
+
+                          <X
+                            size={16}
+                            className="hover:text-red-500 cursor-pointer"
+                            onClick={() => handleRemoveRestriction(index)}
+                          />
+                        </div>
+                      ))}
+                  </div>
+                </div>
+
+                {!isChoosingSectionsManually && (
+                  <Button type="submit">Generate</Button>
+                )}
+              </form>
+
+              {isCustomSettingsOpen && (
+                <CreateCustomSetting
+                  submitHandler={handleAddRestriction}
+                  closeHandler={() => setIsCustomSettingsOpen(false)}
+                />
+              )}
+            </FormContext.Provider>
+          </Form>
+        </div>
+        <div className="w-2/3">
+          <Calendar
+            setShowLoadingPage={setShowLoadingPage}
+            isChoosingSectionsManually={isChoosingSectionsManually}
+            semester={selectedSemester}
+            selectedCourses={selectedCourses}
+            newOfferingIds={offeringIds}
+            restrictions={enabledRestrictions}
+          />
+        </div>
+
+        {showFilters && (
+          <SearchFilters
+            submitHandler={applyFilters}
+            closeHandler={() => setShowFilters(false)}
+            resetHandler={() => {
+              setFilters(null);
+              setShowFilters(false);
+              console.log("reset filters");
+            }}
+            filterForm={filterForm}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 

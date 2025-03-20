@@ -39,16 +39,48 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
     offering.meeting_section.startsWith("PRA"),
   );
 
-  const lectureSections: string[] = [...new Set(lectures?.map((lec: { meeting_section: string; }) => lec.meeting_section))] as string[];
-  const tutorialSections = [...new Set(tutorials?.map((tut: { meeting_section: string; }) => tut.meeting_section))] as string[];
-  const practicalSections = [...new Set(practicals?.map((pra: { meeting_section: string; }) => pra.meeting_section))] as string[];
-  const sections = [...new Set([...lectureSections, ...tutorialSections, ...practicalSections])];
+  const lectureSections: string[] = [
+    ...new Set(
+      lectures?.map((lec: { meeting_section: string }) => lec.meeting_section),
+    ),
+  ] as string[];
+  const tutorialSections = [
+    ...new Set(
+      tutorials?.map((tut: { meeting_section: string }) => tut.meeting_section),
+    ),
+  ] as string[];
+  const practicalSections = [
+    ...new Set(
+      practicals?.map(
+        (pra: { meeting_section: string }) => pra.meeting_section,
+      ),
+    ),
+  ] as string[];
+  const sections = [
+    ...new Set([...lectureSections, ...tutorialSections, ...practicalSections]),
+  ];
   const sectionsToOfferingIdsMap = new Map<string, number[]>();
   sections.forEach((section: string) => {
-    const lectureOfferingIds = lectures?.filter((lec: { meeting_section: string; }) => lec.meeting_section === section).map((lec: { id: number; }) => lec.id);
-    const tutorialOfferingIds = tutorials?.filter((tut: { meeting_section: string; }) => tut.meeting_section === section).map((tut: { id: number; }) => tut.id);
-    const practicalOfferingIds = practicals?.filter((pra: { meeting_section: string; }) => pra.meeting_section === section).map((pra: { id: number; }) => pra.id);
-    const offeringIds = [...lectureOfferingIds, ...tutorialOfferingIds, ...practicalOfferingIds];
+    const lectureOfferingIds = lectures
+      ?.filter(
+        (lec: { meeting_section: string }) => lec.meeting_section === section,
+      )
+      .map((lec: { id: number }) => lec.id);
+    const tutorialOfferingIds = tutorials
+      ?.filter(
+        (tut: { meeting_section: string }) => tut.meeting_section === section,
+      )
+      .map((tut: { id: number }) => tut.id);
+    const practicalOfferingIds = practicals
+      ?.filter(
+        (pra: { meeting_section: string }) => pra.meeting_section === section,
+      )
+      .map((pra: { id: number }) => pra.id);
+    const offeringIds = [
+      ...lectureOfferingIds,
+      ...tutorialOfferingIds,
+      ...practicalOfferingIds,
+    ];
     sectionsToOfferingIdsMap.set(section, offeringIds);
   });
 
@@ -56,32 +88,35 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
     offeringIds.includes(offering.id),
   );
 
-  const initialSelectedLecture = useMemo(() => 
-    selectedOfferingIds?.filter(
-      (offering: { meeting_section: string }) =>
+  const initialSelectedLecture = useMemo(
+    () =>
+      selectedOfferingIds?.filter((offering: { meeting_section: string }) =>
         offering.meeting_section.startsWith("LEC"),
-    ) ?? [],
+      ) ?? [],
     [selectedOfferingIds],
   );
-  const initialSelectedTutorial = useMemo(() =>
-    selectedOfferingIds?.filter(
-      (offering: { meeting_section: string }) =>
+  const initialSelectedTutorial = useMemo(
+    () =>
+      selectedOfferingIds?.filter((offering: { meeting_section: string }) =>
         offering.meeting_section.startsWith("TUT"),
-    ) ?? [],
+      ) ?? [],
     [selectedOfferingIds],
   );
-  const initialSelectedPractical = useMemo(() =>
-    selectedOfferingIds?.filter(
-      (offering: { meeting_section: string }) =>
+  const initialSelectedPractical = useMemo(
+    () =>
+      selectedOfferingIds?.filter((offering: { meeting_section: string }) =>
         offering.meeting_section.startsWith("PRA"),
-    ) ?? [],
+      ) ?? [],
     [selectedOfferingIds],
   );
 
   // Load initial selected lecture, tutorial, practical
-  const [loadedInitialSelectedLecture, setLoadedInitialSelectedLecture] = useState(false);
-  const [loadedInitialSelectedTutorial, setLoadedInitialSelectedTutorial] = useState(false);
-  const [loadedInitialSelectedPractical, setLoadedInitialSelectedPractical] = useState(false);
+  const [loadedInitialSelectedLecture, setLoadedInitialSelectedLecture] =
+    useState(false);
+  const [loadedInitialSelectedTutorial, setLoadedInitialSelectedTutorial] =
+    useState(false);
+  const [loadedInitialSelectedPractical, setLoadedInitialSelectedPractical] =
+    useState(false);
   useEffect(() => {
     if (!loadedInitialSelectedLecture && initialSelectedLecture.length > 0) {
       setSelectedLecture(initialSelectedLecture);
@@ -95,7 +130,10 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
     }
   }, [initialSelectedTutorial, loadedInitialSelectedTutorial]);
   useEffect(() => {
-    if (!loadedInitialSelectedPractical && initialSelectedPractical.length > 0) {
+    if (
+      !loadedInitialSelectedPractical &&
+      initialSelectedPractical.length > 0
+    ) {
       setSelectedPractical(initialSelectedPractical);
       setLoadedInitialSelectedPractical(true);
     }
@@ -103,9 +141,15 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
 
   const [selectedLecture, setSelectedLecture] = useState<OfferingModel[]>([]);
   const [selectedTutorial, setSelectedTutorial] = useState<OfferingModel[]>([]);
-  const [selectedPractical, setSelectedPractical] = useState<OfferingModel[]>([]);
+  const [selectedPractical, setSelectedPractical] = useState<OfferingModel[]>(
+    [],
+  );
 
-  const handleSelect = (lecture: OfferingModel[], tutorial: OfferingModel[], practical: OfferingModel[]) => {
+  const handleSelect = (
+    lecture: OfferingModel[],
+    tutorial: OfferingModel[],
+    practical: OfferingModel[],
+  ) => {
     if (lecture) {
       setSelectedLecture(lecture);
       setIsEditingLectureSection(false);
@@ -118,12 +162,16 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
       setSelectedPractical(practical);
       setIsEditingPracticalSection(false);
     }
-    const oldOfferingIds: number[] = [...selectedLecture, ...selectedTutorial, ...selectedPractical].map(
-      (offering: OfferingModel) => offering.id,
-    );
-    const newOfferingIds: number[] = [...lecture, ...tutorial, ...practical].map(
-      (offering: OfferingModel) => offering.id,
-    );
+    const oldOfferingIds: number[] = [
+      ...selectedLecture,
+      ...selectedTutorial,
+      ...selectedPractical,
+    ].map((offering: OfferingModel) => offering.id);
+    const newOfferingIds: number[] = [
+      ...lecture,
+      ...tutorial,
+      ...practical,
+    ].map((offering: OfferingModel) => offering.id);
 
     const filteredOfferingIds = offeringIds.filter(
       (id: number) => !oldOfferingIds.includes(id),
@@ -157,37 +205,53 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
             ) : (
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
                 <Select
-                  value={selectedLecture.map((lec: OfferingModel) => lec.id.toString()).join(",")}
+                  value={selectedLecture
+                    .map((lec: OfferingModel) => lec.id.toString())
+                    .join(",")}
                   onOpenChange={(isOpen) => setIsEditingLectureSection(isOpen)}
                   onValueChange={(value) => {
                     handleSelect(
-                      lectures?.filter(
-                        (offering: OfferingModel) =>
-                          value.split(",").includes(offering.id.toString()),
+                      lectures?.filter((offering: OfferingModel) =>
+                        value.split(",").includes(offering.id.toString()),
                       ),
                       initialSelectedTutorial,
                       initialSelectedPractical,
-                    )
+                    );
                   }}
                 >
                   <SelectTrigger className="w-[100%]">
                     <SelectValue placeholder="Select LEC" />
                   </SelectTrigger>
                   <SelectContent>
-                      {lectureSections?.map((section: string) =>  {
-                        const lectureOfferingIds = sectionsToOfferingIdsMap.get(section);
-                        if (!lectureOfferingIds) return null;
+                    {lectureSections?.map((section: string) => {
+                      const lectureOfferingIds =
+                        sectionsToOfferingIdsMap.get(section);
+                      if (!lectureOfferingIds) return null;
 
-                        return <SelectGroup>
-                            <SelectItem value={lectureOfferingIds.join(",")} className={"font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"}>
-                              {section}
-                            </SelectItem>
-                            {lectureOfferingIds.map((id: number) => {
-                              const offering = lectures?.find((offering: OfferingModel) => offering.id === id);
-                              return <SelectLabel key={id} className={"bg-yellow-100 font-light"}>{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
-                            })}
-                          </SelectGroup>
-                      })}
+                      return (
+                        <SelectGroup>
+                          <SelectItem
+                            value={lectureOfferingIds.join(",")}
+                            className={
+                              "font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"
+                            }
+                          >
+                            {section}
+                          </SelectItem>
+                          {lectureOfferingIds.map((id: number) => {
+                            const offering = lectures?.find(
+                              (offering: OfferingModel) => offering.id === id,
+                            );
+                            return (
+                              <SelectLabel
+                                key={id}
+                                className={"bg-yellow-100 font-light"}
+                              >{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
+                            );
+                          })}
+                        </SelectGroup>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -205,14 +269,15 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
             ) : (
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
                 <Select
-                  value={selectedTutorial.map((tut: OfferingModel) => tut.id.toString()).join(",")}
+                  value={selectedTutorial
+                    .map((tut: OfferingModel) => tut.id.toString())
+                    .join(",")}
                   onOpenChange={(isOpen) => setIsEditingTutorialSection(isOpen)}
                   onValueChange={(value) => {
                     handleSelect(
                       initialSelectedLecture,
-                      tutorials?.filter(
-                        (offering: OfferingModel) =>
-                          value.split(",").includes(offering.id.toString()),
+                      tutorials?.filter((offering: OfferingModel) =>
+                        value.split(",").includes(offering.id.toString()),
                       ),
                       initialSelectedPractical,
                     );
@@ -223,18 +288,33 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                   </SelectTrigger>
                   <SelectContent>
                     {tutorialSections?.map((section: string) => {
-                      const tutorialOfferingIds = sectionsToOfferingIdsMap.get(section);
+                      const tutorialOfferingIds =
+                        sectionsToOfferingIdsMap.get(section);
                       if (!tutorialOfferingIds) return null;
 
-                      return <SelectGroup>
-                        <SelectItem value={tutorialOfferingIds.join(",")} className={"font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"}>
-                          {section}
-                        </SelectItem>
-                        {tutorialOfferingIds.map((id: number) => {
-                          const offering = tutorials?.find((offering: OfferingModel) => offering.id === id);
-                          return <SelectLabel key={id} className={"bg-yellow-100 font-light"}>{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
-                        })}
-                      </SelectGroup>
+                      return (
+                        <SelectGroup>
+                          <SelectItem
+                            value={tutorialOfferingIds.join(",")}
+                            className={
+                              "font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"
+                            }
+                          >
+                            {section}
+                          </SelectItem>
+                          {tutorialOfferingIds.map((id: number) => {
+                            const offering = tutorials?.find(
+                              (offering: OfferingModel) => offering.id === id,
+                            );
+                            return (
+                              <SelectLabel
+                                key={id}
+                                className={"bg-yellow-100 font-light"}
+                              >{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
+                            );
+                          })}
+                        </SelectGroup>
+                      );
                     })}
                   </SelectContent>
                 </Select>
@@ -253,7 +333,9 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
             ) : (
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
                 <Select
-                  value={selectedPractical.map((pra: OfferingModel) => pra.id.toString()).join(",")}
+                  value={selectedPractical
+                    .map((pra: OfferingModel) => pra.id.toString())
+                    .join(",")}
                   onOpenChange={(isOpen) =>
                     setIsEditingPracticalSection(isOpen)
                   }
@@ -261,9 +343,8 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                     handleSelect(
                       initialSelectedLecture,
                       initialSelectedTutorial,
-                      practicals?.filter(
-                        (offering: OfferingModel) =>
-                          value.split(",").includes(offering.id.toString()),
+                      practicals?.filter((offering: OfferingModel) =>
+                        value.split(",").includes(offering.id.toString()),
                       ),
                     );
                   }}
@@ -273,18 +354,33 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                   </SelectTrigger>
                   <SelectContent>
                     {practicalSections?.map((section: string) => {
-                      const practicalOfferingIds = sectionsToOfferingIdsMap.get(section);
+                      const practicalOfferingIds =
+                        sectionsToOfferingIdsMap.get(section);
                       if (!practicalOfferingIds) return null;
 
-                      return <SelectGroup>
-                        <SelectItem value={practicalOfferingIds.join(",")} className={"font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"}>
-                          {section}
-                        </SelectItem>
-                        {practicalOfferingIds.map((id: number) => {
-                          const offering = practicals?.find((offering: OfferingModel) => offering.id === id);
-                          return <SelectLabel key={id} className={"bg-yellow-100 font-light"}>{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
-                        })}
-                      </SelectGroup>
+                      return (
+                        <SelectGroup>
+                          <SelectItem
+                            value={practicalOfferingIds.join(",")}
+                            className={
+                              "font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"
+                            }
+                          >
+                            {section}
+                          </SelectItem>
+                          {practicalOfferingIds.map((id: number) => {
+                            const offering = practicals?.find(
+                              (offering: OfferingModel) => offering.id === id,
+                            );
+                            return (
+                              <SelectLabel
+                                key={id}
+                                className={"bg-yellow-100 font-light"}
+                              >{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
+                            );
+                          })}
+                        </SelectGroup>
+                      );
                     })}
                   </SelectContent>
                 </Select>

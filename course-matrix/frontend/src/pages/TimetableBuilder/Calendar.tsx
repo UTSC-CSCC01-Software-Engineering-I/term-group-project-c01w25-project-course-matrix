@@ -153,7 +153,7 @@ const Calendar = React.memo<CalendarProps>(
           },
         },
       },
-      plugins: [createDragAndDropPlugin(), createEventModalPlugin()],
+      plugins: [createEventModalPlugin()],
       weekOptions: {
         gridHeight: 500,
       },

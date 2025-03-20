@@ -188,7 +188,8 @@ const TimetableBuilder = () => {
       setLoadedSemester(true);
     }
 
-    if (timetableEventsData &&
+    if (
+      timetableEventsData &&
       coursesData &&
       allCoursesData &&
       offeringIdToCourseIdMap &&
@@ -246,7 +247,19 @@ const TimetableBuilder = () => {
       form.setValue("restrictions", parsedRestrictions);
       setLoadedRestrictions(true);
     }
-  }, [timetableEventsData, coursesData, restrictionsData, loadedCourses, loadedOfferingIds, loadedRestrictions, form, allCoursesData, offeringIdToCourseIdMap, loadedSemester, currentTimetableSemester]);
+  }, [
+    timetableEventsData,
+    coursesData,
+    restrictionsData,
+    loadedCourses,
+    loadedOfferingIds,
+    loadedRestrictions,
+    form,
+    allCoursesData,
+    offeringIdToCourseIdMap,
+    loadedSemester,
+    currentTimetableSemester,
+  ]);
 
   useEffect(() => {
     if (searchQuery) {

@@ -49,8 +49,8 @@ app.get(
   asyncHandler(async (_, response) =>
     response.json({
       info: "Testing course matrix backend server",
-    })
-  )
+    }),
+  ),
 );
 
 /**
@@ -67,7 +67,7 @@ app.get(
     } catch (err) {
       return res.status(500).send({ err });
     }
-  })
+  }),
 );
 
 server = app.listen(config.PORT, () => {

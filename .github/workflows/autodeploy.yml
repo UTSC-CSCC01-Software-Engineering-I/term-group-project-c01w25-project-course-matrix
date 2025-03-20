@@ -38,9 +38,9 @@ jobs:
       - name: Deploy to Google Cloud VM
         run: |
           ssh -i private_key -o StrictHostKeyChecking=no ${{ secrets.GCP_USERNAME }}@${{ secrets.GCP_VM_IP }} << 'EOF' #this might be causing errors
-            cd /var/www/myapp || (mkdir -p /var/www/myapp && cd /var/www/myapp)
+            cd /root/term-group-project-c01w25-project-course-matrix || { echo "Error: Directory /root/myapp does not exist!"; exit 1; }
             git pull origin ms/Scrun-130-Project-Deployment-dockerfiles
-            docker-compose down
-            docker-compose build
-            docker-compose up -d --remove-orphans
+            cd course-matrix
+            docker compose build
+            docker compose up -d --remove-orphans
           EOF

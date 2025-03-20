@@ -227,6 +227,7 @@ const Calendar = React.memo<CalendarProps>(
     }, [timetablesData, editingTimetableId, isEditingTimetable]);
 
     const handleCreate = async () => {
+      setShowLoadingPage(true);
       const timetableTitle = timetableTitleRef.current?.value ?? "";
       // Create timetable
       const { data, error } = await createTimetable({

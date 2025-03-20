@@ -103,7 +103,7 @@ const TimetableBuilder = () => {
   const isEditingTimetable = queryParams.has("edit");
   const timetableId = parseInt(queryParams.get("edit") || "0");
 
-  const [showLoadingPage, setShowLoadingPage] = useState(false);
+  const [showLoadingPage, setShowLoadingPage] = useState(isEditingTimetable);
 
   const selectedCourses = form.watch("courses") || [];
   const enabledRestrictions = form.watch("restrictions") || [];
@@ -190,7 +190,6 @@ const TimetableBuilder = () => {
       form.setValue("semester", currentTimetableSemester);
       setLoadedSemester(true);
     }
-
     if (
       timetableEventsData &&
       coursesData &&
@@ -221,7 +220,6 @@ const TimetableBuilder = () => {
       );
       form.setValue("courses", existingCourses);
       setLoadedCourses(true);
-
       // Parse restrictions data (For startTime and endTime, we just care about the time, so we use the random date of 2025-01-01 so that the date can be parsed correctly)
       // We also add 1 hour (i.e. 60 * 60 * 1000 milliseconds) to the time to account for the timezone difference between the server and the client
       const parsedRestrictions = restrictionsData.map(
@@ -249,6 +247,7 @@ const TimetableBuilder = () => {
       );
       form.setValue("restrictions", parsedRestrictions);
       setLoadedRestrictions(true);
+      setShowLoadingPage(false);
     }
   }, [
     timetableEventsData,

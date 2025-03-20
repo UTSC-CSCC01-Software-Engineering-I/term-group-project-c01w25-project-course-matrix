@@ -100,7 +100,8 @@ export async function checkAndNotifyEvents() {
 
   const formattedStartTime = now.toTimeString().slice(0, 8);
   const formattedEndTime = fifteenMinutesFromNow.toTimeString().slice(0, 8);
-
+  const today = now.toISOString().split('T')[0];
+  //console.log(today);
   try {
     // Get events that start between now and 15 minutes from now
     const { data: events, error } = await supabaseServersideClient
@@ -108,7 +109,8 @@ export async function checkAndNotifyEvents() {
       .from("course_events")
       .select("*")
       .gte("event_start", formattedStartTime)
-      .lte("event_start", formattedEndTime);
+      .lte("event_start", formattedEndTime)
+      .eq("event_date", today);
 
     if (error) {
       console.error("Error fetching events:", error);

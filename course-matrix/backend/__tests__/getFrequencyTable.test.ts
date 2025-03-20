@@ -2,9 +2,9 @@ import { describe, expect, it, test } from "@jest/globals";
 
 import {
   createOffering,
-  Offering,
   getFrequencyTable,
-} from "../src/controllers/generatorController";
+} from "../src/utils/generatorHelpers";
+import {Offering} from "../src/types/generatorTypes"
 
 describe("getFrequencyTable", () => {
   test("should return a frequency map of days", () => {

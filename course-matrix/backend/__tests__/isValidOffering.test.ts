@@ -1,12 +1,10 @@
 import { describe, expect, it, test } from "@jest/globals";
 
 import {
-  createOffering,
-  isValidOffering,
-  Offering,
-  Restriction,
-  RestrictionType,
-} from "../src/controllers/generatorController";
+    createOffering,
+    isValidOffering
+  } from "../src/utils/generatorHelpers";
+  import {Offering, Restriction, RestrictionType} from "../src/types/generatorTypes"
 
 describe("isValidOffering", () => {
   const sampleOffering: Offering = createOffering({

@@ -30,6 +30,17 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 0,
     }),
+    getTimetable: builder.query<unknown, string | number>({
+      query: (id) => ({
+        url: `${TIMETABLES_URL}/${id}`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+        },
+        credentials: "include",
+      }),
+    }),
     updateTimetable: builder.mutation({
       query: (data) => ({
         url: `${TIMETABLES_URL}/${data.id}`,
@@ -60,6 +71,7 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetTimetablesQuery,
+  useGetTimetableQuery,
   useUpdateTimetableMutation,
   useCreateTimetableMutation,
   useDeleteTimetableMutation,

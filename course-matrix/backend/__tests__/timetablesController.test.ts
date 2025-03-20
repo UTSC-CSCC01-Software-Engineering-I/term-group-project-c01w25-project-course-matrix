@@ -15,7 +15,7 @@ jest.mock("@ai-sdk/openai", () => ({
 
 jest.mock("ai", () => ({
   streamText: jest.fn(() =>
-    Promise.resolve({ pipeDataStreamToResponse: jest.fn() })
+    Promise.resolve({ pipeDataStreamToResponse: jest.fn() }),
   ),
 }));
 
@@ -190,7 +190,7 @@ describe("GET /api/timetables", () => {
     (
       authHandler as jest.MockedFunction<typeof authHandler>
     ).mockImplementationOnce(
-      mockAuthHandler("testuser01-ab9e6877-f603-4c6a-9832-864e520e4d01")
+      mockAuthHandler("testuser01-ab9e6877-f603-4c6a-9832-864e520e4d01"),
     );
 
     const response = await request(app).get("/api/timetables");
@@ -205,7 +205,7 @@ describe("GET /api/timetables", () => {
     (
       authHandler as jest.MockedFunction<typeof authHandler>
     ).mockImplementationOnce(
-      mockAuthHandler("testuser02-1d3f02df-f926-4c1f-9f41-58ca50816a33")
+      mockAuthHandler("testuser02-1d3f02df-f926-4c1f-9f41-58ca50816a33"),
     );
 
     const response = await request(app).get("/api/timetables");

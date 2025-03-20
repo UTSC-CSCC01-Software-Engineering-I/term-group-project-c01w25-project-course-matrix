@@ -71,10 +71,7 @@ app.get(
 );
 
 server = app.listen(config.PORT, () => {
-  if (process.env.NODE_ENV !== "test") {
-    // Correct the typo "NODE_EVN" to "NODE_ENV"
-    console.log(`Server is running at http://${HOST}:${config.PORT}`);
-  }
+  console.log(`Server is running at http://${HOST}:${config.PORT}`);
 });
 
 // graceful shutdown

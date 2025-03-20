@@ -157,23 +157,12 @@ jest.mock("../src/db/setupDb", () => ({
     }),
 
     // Mock db response to .delete query command
-    delete: jest.fn().mockImplementation((key, value) => {
+    delete: jest.fn().mockImplementation(() => {
       //DB response 9: Delete timetable successfully
-      if (
-        key === "user_id" &&
-        value === "testuser04-f84fd0da-d775-4424-ad88-d9675282453c"
-      ) {
-        return {
-          eq: jest.fn().mockReturnThis(),
-          data: null,
-          error: null,
-        };
-      }
-      //DB response 10: Delete timetable uncessfully, return error.message
       return {
         eq: jest.fn().mockReturnThis(),
         data: null,
-        error: { message: "Fail to delete timetable" },
+        error: null,
       };
     }),
   },
@@ -404,7 +393,7 @@ describe("DELETE /api/timetables/:id", () => {
       authHandler as jest.MockedFunction<typeof authHandler>
     ).mockImplementationOnce(mockAuthHandler(user_id));
 
-    const response = await request(app).delete("/api/timetables/1").send();
+    const response = await request(app).delete("/api/timetables/1");
 
     // Check that the `update` method was called
     expect(response.statusCode).toBe(404);

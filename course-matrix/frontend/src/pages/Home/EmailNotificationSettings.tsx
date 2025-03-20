@@ -30,7 +30,7 @@ export const EmailNotificationSettings = ({
 
   const handleCancel = () => {
     setToggled((data as TimetableModel[])[0]?.email_notifications_enabled);
-  }
+  };
 
   useEffect(() => {
     if (data) {
@@ -83,7 +83,9 @@ export const EmailNotificationSettings = ({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
           </DialogClose>
           <DialogClose asChild>
             <Button onClick={handleUpdateEmailNotifications}>Save</Button>

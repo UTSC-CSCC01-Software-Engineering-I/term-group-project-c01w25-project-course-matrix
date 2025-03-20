@@ -19,7 +19,7 @@ services:
     build: 
       context: ./frontend
       args:
-        VITE_SERVER_URL: "http://backend:8081"
+        VITE_SERVER_URL: "http://34.130.253.243:8081"
     ports:
       - "5173:5173"
     volumes:

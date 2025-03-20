@@ -159,6 +159,7 @@ const TimetableBuilder = () => {
     data: TimetableEvents;
   };
 
+  const [loadedSemester, setLoadedSemester] = useState(false);
   const [loadedCourses, setLoadedCourses] = useState(false);
   const [loadedOfferingIds, setLoadedOfferingIds] = useState(false);
   const [loadedRestrictions, setLoadedRestrictions] = useState(false);
@@ -169,16 +170,32 @@ const TimetableBuilder = () => {
     data: Restriction[];
   };
 
+  const { data: timetablesData } = useGetTimetablesQuery() as {
+    data: Timetable[];
+  };
+  const timetables = timetablesData || [];
+  const currentTimetableTitle = timetables.find(
+    (timetable) => timetable.id === timetableId,
+  )?.timetable_title;
+  const currentTimetableSemester = timetables.find(
+    (timetable) => timetable.id === timetableId,
+  )?.semester;
+
   // Set the state variable courseEvents, and set the form values for 'offeringIds', 'courses', and 'restrictions'
   useEffect(() => {
-    if (
-      !loadedOfferingIds &&
-      timetableEventsData?.courseEvents &&
-      !loadedCourses &&
-      timetableEventsData?.courseEvents &&
+    if (!loadedSemester && currentTimetableSemester) {
+      form.setValue("semester", currentTimetableSemester);
+      setLoadedSemester(true);
+    }
+
+    if (timetableEventsData &&
+      coursesData &&
       allCoursesData &&
-      !loadedRestrictions &&
-      restrictionsData
+      offeringIdToCourseIdMap &&
+      restrictionsData &&
+      !loadedCourses &&
+      !loadedOfferingIds &&
+      !loadedRestrictions
     ) {
       const existingOfferingIds = [
         ...new Set(
@@ -229,25 +246,7 @@ const TimetableBuilder = () => {
       form.setValue("restrictions", parsedRestrictions);
       setLoadedRestrictions(true);
     }
-  }, [
-    timetableEventsData,
-    coursesData,
-    restrictionsData,
-    loadedCourses,
-    loadedOfferingIds,
-    loadedRestrictions,
-    form,
-    allCoursesData,
-    offeringIdToCourseIdMap,
-  ]);
-
-  const { data: timetablesData } = useGetTimetablesQuery() as {
-    data: Timetable[];
-  };
-  const timetables = timetablesData || [];
-  const currentTimetableTitle = timetables.find(
-    (timetable) => timetable.id === timetableId,
-  )?.timetable_title;
+  }, [timetableEventsData, coursesData, restrictionsData, loadedCourses, loadedOfferingIds, loadedRestrictions, form, allCoursesData, offeringIdToCourseIdMap, loadedSemester, currentTimetableSemester]);
 
   useEffect(() => {
     if (searchQuery) {

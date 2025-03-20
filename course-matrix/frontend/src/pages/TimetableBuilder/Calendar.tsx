@@ -134,6 +134,8 @@ const Calendar = React.memo<CalendarProps>(
         createViewMonthAgenda(),
       ],
       selectedDate: semesterStartDate,
+      minDate: semesterStartDate,
+      maxDate: semesterEndDate,
       defaultView: viewWeek.name,
       events: [...courseEventsParsed, ...userEventsParsed],
       calendars: {
@@ -153,7 +155,7 @@ const Calendar = React.memo<CalendarProps>(
       },
       plugins: [createDragAndDropPlugin(), createEventModalPlugin()],
       weekOptions: {
-        gridHeight: 1000,
+        gridHeight: 500,
       },
     });
 

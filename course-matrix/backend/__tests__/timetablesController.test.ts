@@ -1,10 +1,19 @@
 import request from "supertest";
 import timetablesController from "../src/controllers/timetablesController";
 import { Request, Response, NextFunction } from "express";
-import { jest, describe, test, expect, beforeEach, it } from "@jest/globals";
+import {
+  jest,
+  describe,
+  test,
+  expect,
+  beforeEach,
+  afterAll,
+} from "@jest/globals";
 import { authHandler } from "../src/middleware/authHandler";
+import { supabase } from "../src/db/setupDb";
 import { Json } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch/db_control";
 import app from "../src/index";
+import { server } from "../src/index";
 
 //Handle AI import from index.ts
 jest.mock("@ai-sdk/openai", () => ({
@@ -28,6 +37,10 @@ jest.mock("@pinecone-database/pinecone", () => ({
     })),
   })),
 }));
+
+afterAll(async () => {
+  server.close();
+});
 
 // Function to create authenticated session dynamically based as provided user_id
 const mockAuthHandler = (user_id: string) => {

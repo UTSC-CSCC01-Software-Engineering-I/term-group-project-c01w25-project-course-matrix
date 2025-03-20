@@ -29,15 +29,27 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
 
   const offeringIds = form.watch("offeringIds") ?? [];
 
-  const lectures = offeringsData?.filter((offering: OfferingModel) =>
-    offering.meeting_section.startsWith("LEC"),
-  ).sort((a: OfferingModel, b: OfferingModel) => a.meeting_section < b.meeting_section ? -1 : 1);
-  const tutorials = offeringsData?.filter((offering: OfferingModel) =>
-    offering.meeting_section.startsWith("TUT"),
-  ).sort((a: OfferingModel, b: OfferingModel) => a.meeting_section < b.meeting_section ? -1 : 1);
-  const practicals = offeringsData?.filter((offering: OfferingModel) =>
-    offering.meeting_section.startsWith("PRA"),
-  ).sort((a: OfferingModel, b: OfferingModel) => a.meeting_section < b.meeting_section ? -1 : 1);
+  const lectures = offeringsData
+    ?.filter((offering: OfferingModel) =>
+      offering.meeting_section.startsWith("LEC"),
+    )
+    .sort((a: OfferingModel, b: OfferingModel) =>
+      a.meeting_section < b.meeting_section ? -1 : 1,
+    );
+  const tutorials = offeringsData
+    ?.filter((offering: OfferingModel) =>
+      offering.meeting_section.startsWith("TUT"),
+    )
+    .sort((a: OfferingModel, b: OfferingModel) =>
+      a.meeting_section < b.meeting_section ? -1 : 1,
+    );
+  const practicals = offeringsData
+    ?.filter((offering: OfferingModel) =>
+      offering.meeting_section.startsWith("PRA"),
+    )
+    .sort((a: OfferingModel, b: OfferingModel) =>
+      a.meeting_section < b.meeting_section ? -1 : 1,
+    );
 
   const lectureSections: string[] = [
     ...new Set(

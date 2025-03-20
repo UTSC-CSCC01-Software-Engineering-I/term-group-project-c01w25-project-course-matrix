@@ -408,12 +408,10 @@ export default {
         return res.status(404).json({ error: "No valid schedules found." });
       }
       // Return the valid schedules
-      return res
-        .status(200)
-        .json({
-          amount: validSchedules.length,
-          schedules: trim(validSchedules),
-        });
+      return res.status(200).json({
+        amount: validSchedules.length,
+        schedules: trim(validSchedules),
+      });
     } catch (error) {
       // Catch any error and return the error message
       const errorMessage =

@@ -56,7 +56,7 @@ const pinecone = new Pinecone({
 });
 
 const index: Index<RecordMetadata> = pinecone.Index(
-  process.env.PINECONE_INDEX_NAME!
+  process.env.PINECONE_INDEX_NAME!,
 );
 
 console.log("Connected to OpenAI API");
@@ -65,7 +65,7 @@ export async function searchSelectedNamespaces(
   query: string,
   k: number,
   namespaces: string[],
-  filters?: Object
+  filters?: Object,
 ): Promise<Document[]> {
   let allResults: Document[] = [];
 
@@ -87,7 +87,7 @@ export async function searchSelectedNamespaces(
       const results = await namespaceStore.similaritySearch(
         query,
         Math.max(k, namespaceToMinResults.get(namespace)),
-        namespace === "courses_v3" ? filters : undefined
+        namespace === "courses_v3" ? filters : undefined,
       );
       console.log(`Found ${results.length} results in namespace: ${namespace}`);
       allResults = [...allResults, ...results];
@@ -108,7 +108,7 @@ export async function searchSelectedNamespaces(
 // Reformulate user query to make more concise query to database, taking into consideration context
 export async function reformulateQuery(
   latestQuery: string,
-  conversationHistory: any[]
+  conversationHistory: any[],
 ): Promise<string> {
   try {
     const openai2 = new OpenAI({
@@ -320,7 +320,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             toolCall.args,
             `The tool accepts the following schema:`,
             parameterSchema(toolCall),
-            "Please fix the arguments."
+            "Please fix the arguments.",
           );
 
           const { object: repairedArgs } = await generateObject({
@@ -355,7 +355,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       // Use GPT-4o to reformulate the query based on conversation history
       const reformulatedQuery = await reformulateQuery(
         latestMessage,
-        conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD) // last K messages
+        conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD), // last K messages
       );
       console.log(">>>> Original query:", latestMessage);
       console.log(">>>> Reformulated query:", reformulatedQuery);
@@ -369,8 +369,8 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       if (requiresSearch) {
         console.log(
           `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-            ", "
-          )}`
+            ", ",
+          )}`,
         );
 
         const filters = includeFilters(reformulatedQuery);
@@ -381,7 +381,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           reformulatedQuery,
           3,
           relevantNamespaces,
-          Object.keys(filters).length === 0 ? undefined : filters
+          Object.keys(filters).length === 0 ? undefined : filters,
         );
         // console.log("Search Results: ", searchResults);
 
@@ -391,7 +391,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
         }
       } else {
         console.log(
-          "Query does not require knowledge retrieval, skipping search"
+          "Query does not require knowledge retrieval, skipping search",
         );
       }
 
@@ -456,15 +456,15 @@ export const testSimilaritySearch = asyncHandler(
     if (requiresSearch) {
       console.log(
         `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-          ", "
-        )}`
+          ", ",
+        )}`,
       );
 
       // Search only the relevant namespaces
       const searchResults = await searchSelectedNamespaces(
         message,
         3,
-        relevantNamespaces
+        relevantNamespaces,
       );
       console.log("Search Results: ", searchResults);
 
@@ -474,11 +474,11 @@ export const testSimilaritySearch = asyncHandler(
       }
     } else {
       console.log(
-        "Query does not require knowledge retrieval, skipping search"
+        "Query does not require knowledge retrieval, skipping search",
       );
     }
 
     console.log("CONTEXT: ", context);
     res.status(200).send(context);
-  }
+  },
 );

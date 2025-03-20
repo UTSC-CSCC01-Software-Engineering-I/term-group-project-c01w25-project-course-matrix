@@ -2,16 +2,18 @@ import { useGetOfferingsQuery } from "@/api/offeringsApiSlice";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { CourseModel, OfferingModel } from "@/models/models";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Edit } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { TimetableFormSchema } from "@/models/timetable-form";
-import { set, z } from "zod";
+import { z } from "zod";
 
 interface OfferingInfoProps {
   course: Pick<CourseModel, "code" | "name" | "id">;
@@ -20,73 +22,90 @@ interface OfferingInfoProps {
 }
 
 const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
-  const { data, isLoading } = useGetOfferingsQuery({
+  const { data: offeringsData, isLoading } = useGetOfferingsQuery({
     course_code: course.code,
     semester: semester,
   });
 
   const offeringIds = form.watch("offeringIds") ?? [];
 
-  const lectures = data?.filter((offering: OfferingModel) =>
+  const lectures = offeringsData?.filter((offering: OfferingModel) =>
     offering.meeting_section.startsWith("LEC"),
   );
-  const tutorials = data?.filter((offering: OfferingModel) =>
+  const tutorials = offeringsData?.filter((offering: OfferingModel) =>
     offering.meeting_section.startsWith("TUT"),
   );
-  const practicals = data?.filter((offering: OfferingModel) =>
+  const practicals = offeringsData?.filter((offering: OfferingModel) =>
     offering.meeting_section.startsWith("PRA"),
   );
 
-  const selectedOfferingIds = data?.filter((offering: OfferingModel) =>
+  const lectureSections: string[] = [...new Set(lectures?.map((lec: { meeting_section: string; }) => lec.meeting_section))] as string[];
+  const tutorialSections = [...new Set(tutorials?.map((tut: { meeting_section: string; }) => tut.meeting_section))] as string[];
+  const practicalSections = [...new Set(practicals?.map((pra: { meeting_section: string; }) => pra.meeting_section))] as string[];
+  const sections = [...new Set([...lectureSections, ...tutorialSections, ...practicalSections])];
+  const sectionsToOfferingIdsMap = new Map<string, number[]>();
+  sections.forEach((section: string) => {
+    const lectureOfferingIds = lectures?.filter((lec: { meeting_section: string; }) => lec.meeting_section === section).map((lec: { id: number; }) => lec.id);
+    const tutorialOfferingIds = tutorials?.filter((tut: { meeting_section: string; }) => tut.meeting_section === section).map((tut: { id: number; }) => tut.id);
+    const practicalOfferingIds = practicals?.filter((pra: { meeting_section: string; }) => pra.meeting_section === section).map((pra: { id: number; }) => pra.id);
+    const offeringIds = [...lectureOfferingIds, ...tutorialOfferingIds, ...practicalOfferingIds];
+    sectionsToOfferingIdsMap.set(section, offeringIds);
+  });
+
+  const selectedOfferingIds = offeringsData?.filter((offering: OfferingModel) =>
     offeringIds.includes(offering.id),
   );
-  const initialSelectedLecture = selectedOfferingIds?.find(
-    (offering: { meeting_section: string }) =>
-      offering.meeting_section.startsWith("LEC"),
+
+  const initialSelectedLecture = useMemo(() => 
+    selectedOfferingIds?.filter(
+      (offering: { meeting_section: string }) =>
+        offering.meeting_section.startsWith("LEC"),
+    ) ?? [],
+    [selectedOfferingIds],
   );
-  const initialSelectedTutorial = selectedOfferingIds?.find(
-    (offering: { meeting_section: string }) =>
-      offering.meeting_section.startsWith("TUT"),
+  const initialSelectedTutorial = useMemo(() =>
+    selectedOfferingIds?.filter(
+      (offering: { meeting_section: string }) =>
+        offering.meeting_section.startsWith("TUT"),
+    ) ?? [],
+    [selectedOfferingIds],
   );
-  const initialSelectedPractical = selectedOfferingIds?.find(
-    (offering: { meeting_section: string }) =>
-      offering.meeting_section.startsWith("PRA"),
+  const initialSelectedPractical = useMemo(() =>
+    selectedOfferingIds?.filter(
+      (offering: { meeting_section: string }) =>
+        offering.meeting_section.startsWith("PRA"),
+    ) ?? [],
+    [selectedOfferingIds],
   );
 
-  // console.log(`LECTURES for course ${course.code}`, lectures);
-  // console.log(`TUTORIALS for course ${course.code}`, tutorials);
-  // console.log(`PRACTICALS for course ${course.code}`, practicals);
-  // console.log("OFFERING IDS", form.getValues("offeringIds"));
-  // console.log(`SELECTED OFFERING IDS for course ${course.code}`, selectedOfferingIds);
-  // console.log(`INITIAL SELECTED LECTURE for course ${course.code}`, initialSelectedLecture);
-  // console.log(`INITIAL SELECTED TUTORIAL for course ${course.code}`, initialSelectedTutorial);
-  // console.log(`INITIAL SELECTED PRACTICAL for course ${course.code}`, initialSelectedPractical);
-
-  const [selectedLecture, setSelectedLecture] = useState<
-    OfferingModel | undefined
-  >();
-  const [selectedTutorial, setSelectedTutorial] = useState<
-    OfferingModel | undefined
-  >();
-  const [selectedPractical, setSelectedPractical] = useState<
-    OfferingModel | undefined
-  >();
-
+  // Load initial selected lecture, tutorial, practical
+  const [loadedInitialSelectedLecture, setLoadedInitialSelectedLecture] = useState(false);
+  const [loadedInitialSelectedTutorial, setLoadedInitialSelectedTutorial] = useState(false);
+  const [loadedInitialSelectedPractical, setLoadedInitialSelectedPractical] = useState(false);
   useEffect(() => {
-    setSelectedLecture(initialSelectedLecture);
-    setSelectedTutorial(initialSelectedTutorial);
-    setSelectedPractical(initialSelectedPractical);
-  }, [
-    initialSelectedLecture,
-    initialSelectedTutorial,
-    initialSelectedPractical,
-  ]);
+    if (!loadedInitialSelectedLecture && initialSelectedLecture.length > 0) {
+      setSelectedLecture(initialSelectedLecture);
+      setLoadedInitialSelectedLecture(true);
+    }
+  }, [initialSelectedLecture, loadedInitialSelectedLecture]);
+  useEffect(() => {
+    if (!loadedInitialSelectedTutorial && initialSelectedTutorial.length > 0) {
+      setSelectedTutorial(initialSelectedTutorial);
+      setLoadedInitialSelectedTutorial(true);
+    }
+  }, [initialSelectedTutorial, loadedInitialSelectedTutorial]);
+  useEffect(() => {
+    if (!loadedInitialSelectedPractical && initialSelectedPractical.length > 0) {
+      setSelectedPractical(initialSelectedPractical);
+      setLoadedInitialSelectedPractical(true);
+    }
+  }, [initialSelectedPractical, loadedInitialSelectedPractical]);
 
-  const handleSelect = (
-    lecture: OfferingModel | undefined,
-    tutorial: OfferingModel | undefined,
-    practical: OfferingModel | undefined,
-  ) => {
+  const [selectedLecture, setSelectedLecture] = useState<OfferingModel[]>([]);
+  const [selectedTutorial, setSelectedTutorial] = useState<OfferingModel[]>([]);
+  const [selectedPractical, setSelectedPractical] = useState<OfferingModel[]>([]);
+
+  const handleSelect = (lecture: OfferingModel[], tutorial: OfferingModel[], practical: OfferingModel[]) => {
     if (lecture) {
       setSelectedLecture(lecture);
       setIsEditingLectureSection(false);
@@ -99,18 +118,14 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
       setSelectedPractical(practical);
       setIsEditingPracticalSection(false);
     }
-    const oldOfferingIds: number[] = [
-      initialSelectedLecture?.id,
-      initialSelectedTutorial?.id,
-      initialSelectedPractical?.id,
-    ].filter(Boolean) as number[];
-    const newOfferingIds: number[] = [
-      lecture?.id,
-      tutorial?.id,
-      practical?.id,
-    ].filter(Boolean) as number[];
-    const formOfferingIds = form.getValues("offeringIds") ?? [];
-    const filteredOfferingIds = formOfferingIds.filter(
+    const oldOfferingIds: number[] = [...selectedLecture, ...selectedTutorial, ...selectedPractical].map(
+      (offering: OfferingModel) => offering.id,
+    );
+    const newOfferingIds: number[] = [...lecture, ...tutorial, ...practical].map(
+      (offering: OfferingModel) => offering.id,
+    );
+
+    const filteredOfferingIds = offeringIds.filter(
       (id: number) => !oldOfferingIds.includes(id),
     );
     const resultOfferingIds = [...filteredOfferingIds, ...newOfferingIds];
@@ -128,11 +143,11 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading...</p>
       ) : (
-        <div className="flex gap-2 p-4 justify-between bg-green-100/50 w-[80%] text-xs">
+        <div className="flex gap-2 p-4 justify-between bg-green-100/50 w-[100%] text-xs">
           {lectures?.length > 0 &&
             (!isEditingLectureSection ? (
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
-                {selectedLecture?.meeting_section ?? "No LEC selected"}
+                {selectedLecture[0]?.meeting_section ?? "No LEC selected"}
                 <Edit
                   size={16}
                   className="hover:text-blue-500 cursor-pointer"
@@ -142,31 +157,37 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
             ) : (
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
                 <Select
-                  value={selectedLecture?.id?.toString()}
+                  value={selectedLecture.map((lec: OfferingModel) => lec.id.toString()).join(",")}
                   onOpenChange={(isOpen) => setIsEditingLectureSection(isOpen)}
-                  onValueChange={(value) =>
+                  onValueChange={(value) => {
                     handleSelect(
-                      lectures?.find(
+                      lectures?.filter(
                         (offering: OfferingModel) =>
-                          offering.id.toString() === value,
+                          value.split(",").includes(offering.id.toString()),
                       ),
                       initialSelectedTutorial,
                       initialSelectedPractical,
                     )
-                  }
+                  }}
                 >
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-[100%]">
                     <SelectValue placeholder="Select LEC" />
                   </SelectTrigger>
                   <SelectContent>
-                    {lectures?.map((offering: OfferingModel) => (
-                      <SelectItem
-                        key={offering.id}
-                        value={offering.id.toString()}
-                      >
-                        {`${offering.meeting_section} (${offering.day}, ${offering.start} - ${offering.end})`}
-                      </SelectItem>
-                    ))}
+                      {lectureSections?.map((section: string) =>  {
+                        const lectureOfferingIds = sectionsToOfferingIdsMap.get(section);
+                        if (!lectureOfferingIds) return null;
+
+                        return <SelectGroup>
+                            <SelectItem value={lectureOfferingIds.join(",")} className={"font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"}>
+                              {section}
+                            </SelectItem>
+                            {lectureOfferingIds.map((id: number) => {
+                              const offering = lectures?.find((offering: OfferingModel) => offering.id === id);
+                              return <SelectLabel key={id} className={"bg-yellow-100 font-light"}>{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
+                            })}
+                          </SelectGroup>
+                      })}
                   </SelectContent>
                 </Select>
               </div>
@@ -174,7 +195,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
           {tutorials?.length > 0 &&
             (!isEditingTutorialSection ? (
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
-                {selectedTutorial?.meeting_section ?? "No TUT selected"}
+                {selectedTutorial[0]?.meeting_section ?? "No TUT selected"}
                 <Edit
                   size={16}
                   className="hover:text-blue-500 cursor-pointer"
@@ -184,31 +205,37 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
             ) : (
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
                 <Select
-                  value={selectedTutorial?.id?.toString()}
+                  value={selectedTutorial.map((tut: OfferingModel) => tut.id.toString()).join(",")}
                   onOpenChange={(isOpen) => setIsEditingTutorialSection(isOpen)}
                   onValueChange={(value) => {
                     handleSelect(
                       initialSelectedLecture,
-                      tutorials?.find(
+                      tutorials?.filter(
                         (offering: OfferingModel) =>
-                          offering.id.toString() === value,
+                          value.split(",").includes(offering.id.toString()),
                       ),
                       initialSelectedPractical,
                     );
                   }}
                 >
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-[100%]">
                     <SelectValue placeholder="Select TUT" />
                   </SelectTrigger>
                   <SelectContent>
-                    {tutorials?.map((offering: OfferingModel) => (
-                      <SelectItem
-                        key={offering.id}
-                        value={offering.id.toString()}
-                      >
-                        {`${offering.meeting_section} (${offering.day}, ${offering.start} - ${offering.end})`}
-                      </SelectItem>
-                    ))}
+                    {tutorialSections?.map((section: string) => {
+                      const tutorialOfferingIds = sectionsToOfferingIdsMap.get(section);
+                      if (!tutorialOfferingIds) return null;
+
+                      return <SelectGroup>
+                        <SelectItem value={tutorialOfferingIds.join(",")} className={"font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"}>
+                          {section}
+                        </SelectItem>
+                        {tutorialOfferingIds.map((id: number) => {
+                          const offering = tutorials?.find((offering: OfferingModel) => offering.id === id);
+                          return <SelectLabel key={id} className={"bg-yellow-100 font-light"}>{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
+                        })}
+                      </SelectGroup>
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -216,7 +243,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
           {practicals?.length > 0 &&
             (!isEditingPracticalSection ? (
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
-                {selectedPractical?.meeting_section ?? "No PRA selected"}
+                {selectedPractical[0]?.meeting_section ?? "No PRA selected"}
                 <Edit
                   size={16}
                   className="hover:text-blue-500 cursor-pointer"
@@ -226,7 +253,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
             ) : (
               <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
                 <Select
-                  value={selectedPractical?.id?.toString()}
+                  value={selectedPractical.map((pra: OfferingModel) => pra.id.toString()).join(",")}
                   onOpenChange={(isOpen) =>
                     setIsEditingPracticalSection(isOpen)
                   }
@@ -234,25 +261,31 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                     handleSelect(
                       initialSelectedLecture,
                       initialSelectedTutorial,
-                      practicals?.find(
+                      practicals?.filter(
                         (offering: OfferingModel) =>
-                          offering.id.toString() === value,
+                          value.split(",").includes(offering.id.toString()),
                       ),
                     );
                   }}
                 >
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-[100%]">
                     <SelectValue placeholder="Select PRA" />
                   </SelectTrigger>
                   <SelectContent>
-                    {practicals?.map((offering: OfferingModel) => (
-                      <SelectItem
-                        key={offering.id}
-                        value={offering.id.toString()}
-                      >
-                        {`${offering.meeting_section} (${offering.day}, ${offering.start} - ${offering.end})`}
-                      </SelectItem>
-                    ))}
+                    {practicalSections?.map((section: string) => {
+                      const practicalOfferingIds = sectionsToOfferingIdsMap.get(section);
+                      if (!practicalOfferingIds) return null;
+
+                      return <SelectGroup>
+                        <SelectItem value={practicalOfferingIds.join(",")} className={"font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"}>
+                          {section}
+                        </SelectItem>
+                        {practicalOfferingIds.map((id: number) => {
+                          const offering = practicals?.find((offering: OfferingModel) => offering.id === id);
+                          return <SelectLabel key={id} className={"bg-yellow-100 font-light"}>{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
+                        })}
+                      </SelectGroup>
+                    })}
                   </SelectContent>
                 </Select>
               </div>

@@ -7,7 +7,7 @@ import {
   createViewWeek,
   viewWeek,
 } from "@schedule-x/calendar";
-import { createDragAndDropPlugin } from "@schedule-x/drag-and-drop";
+// import { createDragAndDropPlugin } from "@schedule-x/drag-and-drop";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
 import "@schedule-x/theme-default/dist/index.css";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,7 @@ import {
   useGetEventsQuery,
   useDeleteEventMutation,
 } from "@/api/eventsApiSlice";
+import { useGetOfferingsQuery } from "@/api/offeringsApiSlice";
 import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -49,11 +50,13 @@ import {
   Timetable,
   TimetableEvents,
   Restriction,
+  Offering,
 } from "@/utils/type-utils";
 import { TimetableForm } from "@/models/timetable-form";
 import { getSemesterStartAndEndDates } from "@/utils/semester-utils";
 
 interface CalendarProps {
+  setShowLoadingPage: React.Dispatch<React.SetStateAction<boolean>>;
   isChoosingSectionsManually: boolean;
   semester: string;
   selectedCourses: TimetableForm["courses"];
@@ -83,6 +86,7 @@ function parseEvent(id: number, event: Event, calendarId: string) {
 
 const Calendar = React.memo<CalendarProps>(
   ({
+    setShowLoadingPage,
     semester,
     selectedCourses,
     newOfferingIds,
@@ -104,6 +108,10 @@ const Calendar = React.memo<CalendarProps>(
 
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
     const semesterEndDate = getSemesterStartAndEndDates(semester).end;
+
+    const { data: offeringsData } = useGetOfferingsQuery({}) as {
+      data: Offering[];
+    };
 
     const { data: courseEventsData } = useGetOfferingEventsQuery({
       offering_ids: newOfferingIds.join(","),
@@ -196,12 +204,13 @@ const Calendar = React.memo<CalendarProps>(
       },
     );
 
-    const totalNumberOfSections = !selectedCourses.length
+    const totalNumberOfRequiredSections = !selectedCourses.length
       ? 0
       : (numberOfSectionsData?.totalNumberOfCourseSections ?? 0);
-
-    const allOfferingSectionsHaveBeenSelected =
-      newOfferingIds.length === totalNumberOfSections;
+    const totalNumberOfSelectedSections = [...new Set(offeringsData?.filter(
+      (offering) => newOfferingIds.includes(offering.id),
+    ).map((offering) => `${offering.code} ${offering.offering} ${offering.meeting_section}`))].length;
+    const allOfferingSectionsHaveBeenSelected = totalNumberOfSelectedSections === totalNumberOfRequiredSections;
 
     useEffect(() => {
       if (!isEditingTimetable) {
@@ -211,7 +220,6 @@ const Calendar = React.memo<CalendarProps>(
 
     const handleCreate = async () => {
       const timetableTitle = timetableTitleRef.current?.value ?? "";
-
       // Create timetable
       const { data, error } = await createTimetable({
         timetable_title: timetableTitle,
@@ -221,7 +229,6 @@ const Calendar = React.memo<CalendarProps>(
         console.error(error);
         return;
       }
-
       // Create course events for the newly created timetable
       const newTimetableId = data?.id;
       for (const offeringId of newOfferingIds) {
@@ -235,7 +242,6 @@ const Calendar = React.memo<CalendarProps>(
           console.error(offeringError);
         }
       }
-
       // Create restrictions for the newly created timetable
       for (const restriction of restrictions) {
         const restrictionObject = {
@@ -253,19 +259,18 @@ const Calendar = React.memo<CalendarProps>(
           console.error(restrictionError);
         }
       }
-
       // Redirect to the home page to see the newly created timetable
       navigate("/home");
     };
 
     const handleUpdate = async () => {
+      setShowLoadingPage(true);
       const offeringIdsToDelete = oldOfferingIds.filter(
         (offeringId) => !newOfferingIds.includes(offeringId),
       );
       const offeringIdsToAdd = newOfferingIds.filter(
         (offeringId) => !oldOfferingIds.includes(offeringId),
       );
-
       // Delete course events
       for (const offeringId of offeringIdsToDelete) {
         const { error: deleteError } = await deleteEvent({
@@ -278,7 +283,6 @@ const Calendar = React.memo<CalendarProps>(
           console.error(deleteError);
         }
       }
-
       // Create course events
       for (const offeringId of offeringIdsToAdd) {
         const { error: createError } = await createEvent({
@@ -291,9 +295,7 @@ const Calendar = React.memo<CalendarProps>(
           console.error(createError);
         }
       }
-
       form.setValue("offeringIds", newOfferingIds);
-
       // Delete restrictions
       for (const restriction of oldRestrictions) {
         const { error: deleteError } = await deleteRestriction({
@@ -304,7 +306,6 @@ const Calendar = React.memo<CalendarProps>(
           console.error(deleteError);
         }
       }
-
       // Create restrictions
       for (const restriction of restrictions) {
         const restrictionObject = {
@@ -322,7 +323,6 @@ const Calendar = React.memo<CalendarProps>(
           console.error(restrictionError);
         }
       }
-
       navigate("/home");
     };
 

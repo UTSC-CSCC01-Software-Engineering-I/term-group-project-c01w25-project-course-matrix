@@ -47,6 +47,7 @@ import { useSearchParams } from "react-router-dom";
 import OfferingInfo from "./OfferingInfo";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CourseModel } from "@/models/models";
+import LoadingPage from "@/pages/Loading/LoadingPage";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -102,6 +103,8 @@ const TimetableBuilder = () => {
   const isEditingTimetable = queryParams.has("edit");
   const timetableId = parseInt(queryParams.get("edit") || "0");
 
+  const [showLoadingPage, setShowLoadingPage] = useState(false);
+  
   const selectedCourses = form.watch("courses") || [];
   const enabledRestrictions = form.watch("restrictions") || [];
   const searchQuery = form.watch("search");
@@ -305,8 +308,9 @@ const TimetableBuilder = () => {
     console.log("Apply filters", values);
   };
 
-  return (
-    <>
+  return showLoadingPage ? (
+    <LoadingPage />
+  ) : (
       <div className="w-full">
         <div className="m-8">
           <div className="mb-4 flex flex-row justify-between items-center">
@@ -430,7 +434,7 @@ const TimetableBuilder = () => {
                         selectedCourses.map((course, index) => {
                           return (
                             <div key={index}>
-                              <div className="flex p-2 justify-between bg-green-100/50 text-xs rounded-md w-[80%]">
+                              <div className="flex p-2 justify-between bg-green-100/50 text-xs rounded-md w-[100%]">
                                 <p>
                                   <strong>{course.code}:</strong> {course.name}
                                 </p>
@@ -559,6 +563,7 @@ const TimetableBuilder = () => {
           </div>
           <div className="w-2/3">
             <Calendar
+              setShowLoadingPage={setShowLoadingPage}
               isChoosingSectionsManually={isChoosingSectionsManually}
               semester={selectedSemester}
               selectedCourses={selectedCourses}
@@ -581,7 +586,6 @@ const TimetableBuilder = () => {
           )}
         </div>
       </div>
-    </>
   );
 };
 

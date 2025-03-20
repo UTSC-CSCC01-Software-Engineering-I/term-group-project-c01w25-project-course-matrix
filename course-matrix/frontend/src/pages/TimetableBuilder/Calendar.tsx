@@ -155,8 +155,9 @@ const Calendar = React.memo<CalendarProps>(
       },
       plugins: [createEventModalPlugin()],
       weekOptions: {
-        gridHeight: 500,
+        gridHeight: 1000,
       },
+      isResponsive: false,
     });
 
     const { data: timetableEvents } = useGetEventsQuery(editingTimetableId, {

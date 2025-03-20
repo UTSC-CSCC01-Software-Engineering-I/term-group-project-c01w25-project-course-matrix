@@ -332,7 +332,7 @@ const TimetableBuilder = () => {
         </div>
 
         <div className="m-8 flex gap-12">
-          <div className="w-2/5">
+          <div className="w-1/3">
             <Form {...form}>
               <FormContext.Provider value={form}>
                 <form
@@ -557,7 +557,7 @@ const TimetableBuilder = () => {
               </FormContext.Provider>
             </Form>
           </div>
-          <div className="w-3/5">
+          <div className="w-2/3">
             <Calendar
               isChoosingSectionsManually={isChoosingSectionsManually}
               semester={selectedSemester}

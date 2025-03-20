@@ -352,7 +352,7 @@ export const availableFunctions: AvailableFunctions = {
             timetableData.id,
             offering.id.toString(),
             semester_start_date,
-            semester_end_date
+            semester_end_date,
           );
         }
 

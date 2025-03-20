@@ -295,7 +295,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
               // console.log("restrictions :", JSON.stringify(args.restrictions))
               const data = await availableFunctions.generateTimetable(
                 args,
-                req
+                req,
               );
               // console.log("Generated timetable: ", data)
               return data;

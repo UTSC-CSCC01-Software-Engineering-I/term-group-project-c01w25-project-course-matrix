@@ -86,13 +86,13 @@ export const RestrictionSchema = z.object({
     .string()
     .optional()
     .describe(
-      "If type is Restrict After, or Restrict Between, then this field describes the start time of the restricted time. Formatted HH:mm:ss"
+      "If type is Restrict After, or Restrict Between, then this field describes the start time of the restricted time. Formatted HH:mm:ss",
     ),
   endTime: z
     .string()
     .optional()
     .describe(
-      "If type is Restrict Before, or Restrict Between, then this field describes the end time of the restricted time. Formatted HH:mm:ss"
+      "If type is Restrict Before, or Restrict Between, then this field describes the end time of the restricted time. Formatted HH:mm:ss",
     ),
   disabled: z
     .boolean()

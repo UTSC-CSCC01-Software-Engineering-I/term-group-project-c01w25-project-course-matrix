@@ -61,7 +61,7 @@ export const CreateTimetableArgs = z.object({
           notes: z.string().optional(),
           code: z.string().describe("Course code"),
         })
-        .describe("A course event")
+        .describe("A course event"),
     )
     .describe("List of meeting sections"),
 });

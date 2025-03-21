@@ -74,9 +74,9 @@ export function isValidOffering(
         break;
 
       case RestrictionType.RestrictAfter:
-        console.log("====");
-        console.log(offering.end);
-        console.log(restriction.endTime);
+        // console.log("====");
+        // console.log(offering.end);
+        // console.log(restriction.endTime);
         if (offering.end > restriction.startTime) return false;
         break;
 
@@ -97,7 +97,7 @@ export function isValidOffering(
     }
   }
 
-  console.log(offering);
+  // console.log(offering);
   return true;
 }
 
@@ -189,7 +189,7 @@ export async function canInsertList(
   toInsertList: Offering[],
   curList: Offering[],
 ) {
-  console.log(toInsertList);
+  // console.log(toInsertList);
   return toInsertList.every((x) => canInsert(x, curList));
 }
 

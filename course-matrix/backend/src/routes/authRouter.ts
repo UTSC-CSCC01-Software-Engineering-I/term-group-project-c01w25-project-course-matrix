@@ -11,6 +11,7 @@ import {
   accountDelete,
   updateUsername,
 } from "../controllers/userController";
+import { authHandler } from "../middleware/authHandler";
 
 export const authRouter = express.Router();
 
@@ -66,4 +67,4 @@ authRouter.delete("/accountDelete", accountDelete);
  * Route to request to update username
  * @route POST /updateUsername
  */
-authRouter.post("/updateUsername", updateUsername);
+authRouter.post("/updateUsername", authHandler, updateUsername);

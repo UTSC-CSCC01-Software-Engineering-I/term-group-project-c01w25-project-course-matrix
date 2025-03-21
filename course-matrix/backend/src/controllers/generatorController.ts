@@ -24,6 +24,7 @@ export default {
     try {
       // Extract event details and course information from the request
       const { semester, courses, restrictions } = req.body;
+
       const courseOfferingsList: OfferingList[] = [];
       const validCourseOfferingsList: GroupedOfferingList[] = [];
       const maxdays = await getMaxDays(restrictions);

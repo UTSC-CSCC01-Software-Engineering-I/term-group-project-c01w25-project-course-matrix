@@ -65,7 +65,7 @@ const TimetableCard = ({
       <CardHeader>
         <Link to={`/dashboard/timetable?edit=${timetableId}`}>
           <img
-            src="../../public/img/default-timetable-card-image.png"
+            src="/img/default-timetable-card-image.png"
             alt="Timetable default image"
           />
         </Link>

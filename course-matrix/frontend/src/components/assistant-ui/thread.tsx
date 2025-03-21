@@ -12,6 +12,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CopyIcon,
+  Info,
+  Lightbulb,
   PencilIcon,
   RefreshCwIcon,
   SendHorizontalIcon,
@@ -81,6 +83,12 @@ const ThreadWelcome: FC = () => {
             Hi my name is <span className="text-primary">Morpheus</span>. How
             can I help you today?
           </p>
+          <p className="mt-4 text-sm text-gray-500">
+            <span className="flex gap-2 items-center">
+              <Lightbulb size={16} />
+              <strong>Tip: </strong> Use /timetable to work with your timetables
+            </span>
+          </p>
         </div>
         <ThreadWelcomeSuggestions />
       </div>
@@ -109,6 +117,16 @@ const ThreadWelcomeSuggestions: FC = () => {
       >
         <span className="line-clamp-2 text-ellipsis text-sm font-semibold">
           What is Course Matrix?
+        </span>
+      </ThreadPrimitive.Suggestion>
+      <ThreadPrimitive.Suggestion
+        className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-lg border p-3 transition-colors ease-in"
+        prompt="/timetable show my timetables"
+        method="replace"
+        autoSend
+      >
+        <span className="line-clamp-2 text-ellipsis text-sm font-semibold">
+          <span className="text-green-500">/timetable</span> show my timetables
         </span>
       </ThreadPrimitive.Suggestion>
     </div>

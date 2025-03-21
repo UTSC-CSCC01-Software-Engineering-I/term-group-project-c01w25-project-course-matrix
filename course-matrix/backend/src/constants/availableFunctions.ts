@@ -1,8 +1,18 @@
 import { generateWeeklyCourseEvents } from "../controllers/eventsController";
 import { supabase } from "../db/setupDb";
 import { Request } from "express";
-import { GroupedOfferingList, Offering, OfferingList } from "../types/generatorTypes";
-import { categorizeValidOfferings, getMaxDays, getValidOfferings, groupOfferings, trim } from "../utils/generatorHelpers";
+import {
+  GroupedOfferingList,
+  Offering,
+  OfferingList,
+} from "../types/generatorTypes";
+import {
+  categorizeValidOfferings,
+  getMaxDays,
+  getValidOfferings,
+  groupOfferings,
+  trim,
+} from "../utils/generatorHelpers";
 import getOfferings from "../services/getOfferings";
 import { getValidSchedules } from "../services/getValidSchedules";
 
@@ -252,7 +262,10 @@ export const availableFunctions: AvailableFunctions = {
           .maybeSingle();
 
       if (existingTimetableError) {
-        return { status: 400, error: `Existing timetable with name: ${name}. Please rename timetable.`};
+        return {
+          status: 400,
+          error: `Existing timetable with name: ${name}. Please rename timetable.`,
+        };
       }
 
       if (existingTimetable) {
@@ -283,9 +296,12 @@ export const availableFunctions: AvailableFunctions = {
         await insertTimetable;
 
       if (timetableError) {
-        return { status: 400, error: "Timetable error" + timetableError.message };
+        return {
+          status: 400,
+          error: "Timetable error" + timetableError.message,
+        };
       }
-      console.log("1")
+      console.log("1");
       // Insert events
       for (const offering of schedule) {
         //Query course offering information
@@ -296,7 +312,11 @@ export const availableFunctions: AvailableFunctions = {
           .eq("id", offering.id)
           .maybeSingle();
 
-        if (offeringError) return { status: 400, error: `Offering error id: ${offering.id} ` + offeringError.message };
+        if (offeringError)
+          return {
+            status: 400,
+            error: `Offering error id: ${offering.id} ` + offeringError.message,
+          };
 
         if (!offeringData || offeringData.length === 0) {
           return {
@@ -358,7 +378,10 @@ export const availableFunctions: AvailableFunctions = {
             .select("*");
 
         if (courseEventError) {
-          return { status: 400, error: "Coruse event error " + courseEventError.message };
+          return {
+            status: 400,
+            error: "Coruse event error " + courseEventError.message,
+          };
         }
       }
 

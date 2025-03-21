@@ -293,12 +293,12 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             parameters: TimetableFormSchema,
             execute: async (args) => {
               // console.log("Args for generate: ", args)
-              console.log("restrictions :", JSON.stringify(args.restrictions))
+              console.log("restrictions :", JSON.stringify(args.restrictions));
               const data = await availableFunctions.generateTimetable(
                 args,
                 req,
               );
-              console.log("Generated timetable: ", data)
+              console.log("Generated timetable: ", data);
               return data;
             },
           }),

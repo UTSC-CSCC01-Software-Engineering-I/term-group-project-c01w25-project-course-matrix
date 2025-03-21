@@ -17,7 +17,21 @@ export const coursesApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+    getNumberOfCourseSections: builder.query({
+      query: (params) => ({
+        url: `${COURSES_URL}/total-sections`,
+        method: "GET",
+        params: params,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+        },
+        providesTags: ["Course"],
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
-export const { useGetCoursesQuery } = coursesApiSlice;
+export const { useGetCoursesQuery, useGetNumberOfCourseSectionsQuery } =
+  coursesApiSlice;

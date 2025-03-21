@@ -246,13 +246,14 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Include course codes when referencing specific courses
             - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
             - For unrelated questions, politely explain that you're specialized in UTSC academic information
+            - Format long lists of timetables as a table
 
             ## Tool call guidelines
             - Include the timetable ID in all getTimetables tool call responses
-            - For every tool call, for each timetable that it gets/deletes/modifies/creates, include a link underneath it displayed as "View timetable" to ${process.env.CLIENT_APP_URL}/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
+            - Link: For every tool call, for each timetable that it gets/deletes/modifies/creates, include a link with it displayed as "View Timetable" to ${process.env.CLIENT_APP_URL}/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
             - If the user wants to create a timetable, first call getCourses to get course information on the requested courses, then call generateTimetable.
-            - For the response to create timetable, format as a table.
+            - Do not make up fake courses or offerings. 
             `,
         messages,
         tools: {
@@ -430,6 +431,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           ## Response Guidelines
           - Be concise and direct when answering course-related questions
           - Use bullet points for listing multiple pieces of information
+          - Use tables for listing multiple offerings, courses, or other information that could be better viewed in tabular fashion
           - Include course codes when referencing specific courses
           - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
           - For unrelated questions, politely explain that you're specialized in UTSC academic information

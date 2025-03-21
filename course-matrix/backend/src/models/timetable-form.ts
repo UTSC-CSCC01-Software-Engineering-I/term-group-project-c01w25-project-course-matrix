@@ -45,7 +45,7 @@ export const daysOfWeek = [
   },
 ] as const;
 
-export const DayOfWeekEnum = z.enum(["SU", "MO", "TU", "WE", "TH", "FR", "SA"]);
+export const DayOfWeekEnum = z.enum(["MO", "TU", "WE", "TH", "FR"]);
 
 export const SemesterEnum = z.enum(["Summer 2025", "Fall 2025", "Winter 2026"]);
 
@@ -56,7 +56,7 @@ export const CourseSchema = z.object({
     .max(8, "Invalid course code")
     .min(1, "Course code is required")
     .describe(
-      "The course code. Formatted like: CSCA08H3. Course codes cannot be provided without the H3 at the end.",
+      "The course code. Formatted like: CSCA08H3. Course codes cannot be provided without the H3 at the end."
     ),
   name: z.string().describe("The name of the course"),
 });
@@ -70,10 +70,12 @@ export const RestrictionSchema = z.object({
       "Restrict Day",
       "Days Off",
     ])
-    .describe("The type of restriction being applied"),
+    .describe(
+      "The type of restriction being applied. Restrict before restricts all times before 'endTime', Restrict Before restricts all times after 'startTime', Restrict Between restricts all times between 'startTime' and 'endTime', Restrict Day restricts the entirety of each day in field 'days', and Days Off enforces as least 'numDays' days off per week."
+    ),
   days: z
     .array(DayOfWeekEnum)
-    .default(["SU", "MO", "TU", "WE", "TH", "FR", "SA"])
+    .default(["MO", "TU", "WE", "TH", "FR"])
     .describe("Specific days of the week this restriction applies to"),
   numDays: z
     .number()
@@ -81,19 +83,19 @@ export const RestrictionSchema = z.object({
     .max(4, "Cannot block all days of the week")
     .optional()
     .describe(
-      "If type is Days Off, then this field is used and describes min number of days off per week.",
+      "If type is Days Off, then this field is used and describes min number of days off per week. For example, if set to 2, and 'type' is Days Off, then this means we want at least 2 days off per week."
     ),
   startTime: z
     .string()
     .optional()
     .describe(
-      "If type is Restrict After, or Restrict Between, then this field describes the start time of the restricted time. Formatted HH:mm:ss",
+      "If type is Restrict After, or Restrict Between, then this field describes the start time of the restricted time. Formatted HH:mm:ss"
     ),
   endTime: z
     .string()
     .optional()
     .describe(
-      "If type is Restrict Before, or Restrict Between, then this field describes the end time of the restricted time. Formatted HH:mm:ss",
+      "If type is Restrict Before, or Restrict Between, then this field describes the end time of the restricted time. Formatted HH:mm:ss"
     ),
   disabled: z
     .boolean()

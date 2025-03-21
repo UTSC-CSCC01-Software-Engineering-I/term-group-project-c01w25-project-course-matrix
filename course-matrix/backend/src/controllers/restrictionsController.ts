@@ -44,8 +44,8 @@ export default {
         .schema("timetable")
         .from("timetables")
         .select("*")
-        .eq("id", calendar_id)
         .eq("user_id", user_id)
+        .eq("id", calendar_id)
         .maybeSingle();
 
       if (timetableError)
@@ -131,8 +131,8 @@ export default {
         .schema("timetable")
         .from("timetables")
         .select("*")
-        .eq("id", calendar_id)
         .eq("user_id", user_id)
+        .eq("id", calendar_id)
         .maybeSingle();
 
       if (timetableError)
@@ -156,8 +156,8 @@ export default {
         .schema("timetable")
         .from("restriction")
         .select()
-        .eq("calendar_id", calendar_id)
-        .eq("user_id", user_id);
+        .eq("user_id", user_id)
+        .eq("calendar_id", calendar_id);
 
       if (restrictionError) {
         return res.status(400).json({ error: restrictionError.message });
@@ -192,9 +192,9 @@ export default {
           .schema("timetable")
           .from("restriction")
           .select("*")
-          .eq("id", id)
           .eq("user_id", user_id)
           .eq("calendar_id", calendar_id)
+          .eq("id", id)
           .maybeSingle();
 
       if (restrictionCurrError)
@@ -222,8 +222,8 @@ export default {
         .schema("timetable")
         .from("timetables")
         .select("*")
-        .eq("id", calendar_id)
         .eq("user_id", user_id)
+        .eq("id", calendar_id)
         .maybeSingle();
 
       if (timetableError)
@@ -260,9 +260,9 @@ export default {
         .schema("timetable")
         .from("restriction")
         .update(updateData)
-        .eq("id", id)
         .eq("user_id", user_id)
         .eq("calendar_id", calendar_id)
+        .eq("id", id)
         .select();
 
       if (restrictionError) {
@@ -300,9 +300,9 @@ export default {
           .schema("timetable")
           .from("restriction")
           .select("*")
-          .eq("id", id)
           .eq("user_id", user_id)
           .eq("calendar_id", calendar_id)
+          .eq("id", id)
           .maybeSingle();
 
       if (restrictionCurrError) {
@@ -318,8 +318,8 @@ export default {
         .schema("timetable")
         .from("timetables")
         .select("*")
-        .eq("id", calendar_id)
         .eq("user_id", user_id)
+        .eq("id", calendar_id)
         .maybeSingle();
 
       if (timetableError) {
@@ -351,15 +351,17 @@ export default {
         .schema("timetable")
         .from("restriction")
         .delete()
-        .eq("id", id)
         .eq("user_id", user_id)
-        .eq("calendar_id", calendar_id);
+        .eq("calendar_id", calendar_id)
+        .eq("id", id);
 
       if (restrictionError) {
         return res.status(400).json({ error: restrictionError.message });
       }
 
-      return res.status(200).send("Restriction successfully deleted");
+      return res
+        .status(200)
+        .json({ message: "Restriction successfully deleted" });
     } catch (error) {
       return res.status(500).send({ error });
     }

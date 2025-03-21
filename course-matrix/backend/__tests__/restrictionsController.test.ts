@@ -28,7 +28,7 @@ jest.mock("@ai-sdk/openai", () => ({
 
 jest.mock("ai", () => ({
   streamText: jest.fn(() =>
-    Promise.resolve({ pipeDataStreamToResponse: jest.fn() })
+    Promise.resolve({ pipeDataStreamToResponse: jest.fn() }),
   ),
 }));
 
@@ -299,7 +299,7 @@ describe("GET /api/timetables/restrictions/:id", () => {
     (
       authHandler as jest.MockedFunction<typeof authHandler>
     ).mockImplementationOnce(
-      mockAuthHandler("testuser04-f84fd0da-d775-4424-ad88-d9675282453c")
+      mockAuthHandler("testuser04-f84fd0da-d775-4424-ad88-d9675282453c"),
     );
 
     const response = await request(app).get("/api/timetables/restrictions/1");
@@ -314,7 +314,7 @@ describe("GET /api/timetables/restrictions/:id", () => {
     (
       authHandler as jest.MockedFunction<typeof authHandler>
     ).mockImplementationOnce(
-      mockAuthHandler("testuser03-f84fd0da-d775-4424-ad88-d9675282453c")
+      mockAuthHandler("testuser03-f84fd0da-d775-4424-ad88-d9675282453c"),
     );
 
     const response = await request(app).get("/api/timetables/restrictions/1");
@@ -515,7 +515,7 @@ describe("DELETE /api/timetables/:id", () => {
     ).mockImplementationOnce(mockAuthHandler(user_id));
 
     const response = await request(app).delete(
-      "/api/timetables/restrictions/1?calendar_id=1"
+      "/api/timetables/restrictions/1?calendar_id=1",
     );
 
     // Check that the `update` method was called
@@ -535,7 +535,7 @@ describe("DELETE /api/timetables/:id", () => {
     ).mockImplementationOnce(mockAuthHandler(user_id));
 
     const response = await request(app).delete(
-      "/api/timetables/restrictions/1?calendar_id=1"
+      "/api/timetables/restrictions/1?calendar_id=1",
     );
 
     // Check that the `update` method was called

@@ -53,7 +53,10 @@ import {
   Offering,
 } from "@/utils/type-utils";
 import { TimetableForm } from "@/models/timetable-form";
-import { getSemesterStartAndEndDates, getSemesterStartAndEndDatesPlusOneWeek } from "@/utils/semester-utils";
+import {
+  getSemesterStartAndEndDates,
+  getSemesterStartAndEndDatesPlusOneWeek,
+} from "@/utils/semester-utils";
 import { courseEventStyles } from "@/constants/calendarConstants";
 
 interface CalendarProps {
@@ -108,7 +111,8 @@ const Calendar = React.memo<CalendarProps>(
     const [deleteRestriction] = useDeleteRestrictionMutation();
 
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
-    const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } = getSemesterStartAndEndDatesPlusOneWeek(semester);
+    const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
+      getSemesterStartAndEndDatesPlusOneWeek(semester);
 
     const { data: offeringsData } = useGetOfferingsQuery({}) as {
       data: Offering[];
@@ -148,15 +152,15 @@ const Calendar = React.memo<CalendarProps>(
       defaultView: viewWeek.name,
       events: [...courseEventsParsed, ...userEventsParsed],
       calendars: {
-        courseEvent: courseEventStyles
+        courseEvent: courseEventStyles,
       },
       plugins: [createEventModalPlugin()],
       weekOptions: {
         gridHeight: 600,
       },
       dayBoundaries: {
-        start: '06:00',
-        end: '21:00',
+        start: "06:00",
+        end: "21:00",
       },
       isResponsive: false,
     });
@@ -342,11 +346,14 @@ const Calendar = React.memo<CalendarProps>(
                   </p>
                 )}
               <DialogTrigger asChild>
-              {isChoosingSectionsManually && (
-                <Button size="sm" disabled={!allOfferingSectionsHaveBeenSelected}>
-                  Create Timetable
-                </Button>
-              )}
+                {isChoosingSectionsManually && (
+                  <Button
+                    size="sm"
+                    disabled={!allOfferingSectionsHaveBeenSelected}
+                  >
+                    Create Timetable
+                  </Button>
+                )}
               </DialogTrigger>
               <DialogContent className="gap-5">
                 <DialogHeader>

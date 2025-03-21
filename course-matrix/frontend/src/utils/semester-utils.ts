@@ -15,7 +15,6 @@ export function getSemesterStartAndEndDates(semester: string) {
   };
 }
 
-
 export function getSemesterStartAndEndDatesPlusOneWeek(semester: string) {
   // Note: We make the start date 1 week after actual in order to not trunacte first week of calendar
   return {

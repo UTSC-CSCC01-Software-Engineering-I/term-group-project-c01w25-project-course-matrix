@@ -30,7 +30,10 @@ import CreateCustomSetting from "./CreateCustomSetting";
 import { formatTime } from "@/utils/format-date-time";
 import { FilterForm, FilterFormSchema } from "@/models/filter-form";
 import { useGetCoursesQuery } from "@/api/coursesApiSlice";
-import { useGenerateTimetableMutation, useGetTimetablesQuery } from "@/api/timetableApiSlice";
+import {
+  useGenerateTimetableMutation,
+  useGetTimetablesQuery,
+} from "@/api/timetableApiSlice";
 import { useGetEventsQuery } from "@/api/eventsApiSlice";
 import { useGetOfferingsQuery } from "@/api/offeringsApiSlice";
 import { useGetRestrictionsQuery } from "@/api/restrictionsApiSlice";
@@ -123,7 +126,8 @@ const TimetableBuilder = () => {
   const [isChoosingSectionsManually, setIsChoosingSectionsManually] =
     useState(isEditingTimetable);
   const [isGeneratingTimetables, setIsGeneratingTimetables] = useState(false);
-  const [generatedTimetables, setGeneratedTimetables] = useState<TimetableGenerateResponseModel>();
+  const [generatedTimetables, setGeneratedTimetables] =
+    useState<TimetableGenerateResponseModel>();
 
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;
@@ -142,7 +146,8 @@ const TimetableBuilder = () => {
     ...filters,
   });
 
-  const [ generateTimetable, { isLoading: isGenerateLoading } ] = useGenerateTimetableMutation();
+  const [generateTimetable, { isLoading: isGenerateLoading }] =
+    useGenerateTimetableMutation();
 
   const { data: allCoursesData } = useGetCoursesQuery({
     limit: 10000,
@@ -275,17 +280,18 @@ const TimetableBuilder = () => {
     }
   }, [debouncedSearchQuery]);
 
-  const handleGenerate = async (values: z.infer<typeof TimetableFormSchema>) => {
+  const handleGenerate = async (
+    values: z.infer<typeof TimetableFormSchema>,
+  ) => {
     console.log(">> Timetable options:", values);
     try {
       const res = await generateTimetable(values);
-      const data: TimetableGenerateResponseModel = res.data; 
+      const data: TimetableGenerateResponseModel = res.data;
       setIsGeneratingTimetables(true);
       setGeneratedTimetables(data);
     } catch (error) {
-      console.error("Error generating timetables: ", error)
+      console.error("Error generating timetables: ", error);
     }
-
   };
 
   const handleReset = () => {
@@ -335,8 +341,7 @@ const TimetableBuilder = () => {
                 </h1>
                 {isEditingTimetable && (
                   <p className="text-sm italic text-blue-500">
-                    Editing:{" "}
-                    <strong>{currentTimetableTitle}</strong>
+                    Editing: <strong>{currentTimetableTitle}</strong>
                   </p>
                 )}
               </div>
@@ -344,7 +349,9 @@ const TimetableBuilder = () => {
                 <Button size="sm" variant="outline" onClick={handleReset}>
                   Reset
                 </Button>
-                <Button size="sm" variant="outline">Share</Button>
+                <Button size="sm" variant="outline">
+                  Share
+                </Button>
               </div>
             </div>
             <hr />
@@ -559,8 +566,13 @@ const TimetableBuilder = () => {
 
                 {!isChoosingSectionsManually && (
                   <div className="w-[100px]">
-                    {isGenerateLoading ? <Spinner /> : (
-                      <Button type="submit"><div>Generate</div><WandSparkles/></Button>
+                    {isGenerateLoading ? (
+                      <Spinner />
+                    ) : (
+                      <Button type="submit">
+                        <div>Generate</div>
+                        <WandSparkles />
+                      </Button>
                     )}
                   </div>
                 )}
@@ -577,7 +589,7 @@ const TimetableBuilder = () => {
         </div>
         <div className="w-2/3">
           {isGeneratingTimetables ? (
-            <GeneratedCalendars 
+            <GeneratedCalendars
               setShowLoadingPage={setShowLoadingPage}
               setIsGeneratingTimetables={setIsGeneratingTimetables}
               semester={selectedSemester}

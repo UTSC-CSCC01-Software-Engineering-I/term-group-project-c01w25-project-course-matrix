@@ -71,16 +71,20 @@ const Home = () => {
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : (
-            [...data].sort((a: Timetable, b: Timetable) => (b?.updated_at.localeCompare(a?.updated_at))).map((timetable) => (
-              <TimetableCard
-                refetch={refetch}
-                key={timetable.id}
-                timetableId={timetable.id}
-                title={timetable.timetable_title}
-                lastEditedDate={new Date(timetable.updated_at)}
-                owner={name}
-              />
-            ))
+            [...data]
+              .sort((a: Timetable, b: Timetable) =>
+                b?.updated_at.localeCompare(a?.updated_at),
+              )
+              .map((timetable) => (
+                <TimetableCard
+                  refetch={refetch}
+                  key={timetable.id}
+                  timetableId={timetable.id}
+                  title={timetable.timetable_title}
+                  lastEditedDate={new Date(timetable.updated_at)}
+                  owner={name}
+                />
+              ))
           )}
         </div>
       </div>

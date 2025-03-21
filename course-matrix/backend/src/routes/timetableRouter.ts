@@ -1,5 +1,4 @@
 import express from "express";
-
 import eventController from "../controllers/eventsController";
 import generatorController from "../controllers/generatorController";
 import restrictionsController from "../controllers/restrictionsController";
@@ -8,6 +7,7 @@ import timetableController from "../controllers/timetablesController";
 import { authHandler } from "../middleware/authHandler";
 
 export const timetableRouter = express.Router();
+
 /**
  * Route to create a new timetable
  * @route POST /api/timetables
@@ -128,6 +128,7 @@ timetableRouter.post(
   authHandler,
   generatorController.generateTimetable,
 );
+
 /**
  * Route to create shared entry
  * @route POST /api/timetables/shared

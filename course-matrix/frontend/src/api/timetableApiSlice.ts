@@ -66,6 +66,18 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Timetable"],
     }),
+    generateTimetable: builder.mutation({
+      query: (data) => ({
+        url: `${TIMETABLES_URL}/generate`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+        },
+        body: data,
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -75,4 +87,5 @@ export const {
   useUpdateTimetableMutation,
   useCreateTimetableMutation,
   useDeleteTimetableMutation,
+  useGenerateTimetableMutation,
 } = timetableApiSlice;

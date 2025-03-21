@@ -50,7 +50,7 @@ html {
     --popover-foreground: 240 10% 3.9%;
     --primary: 142.1 76.2% 36.3%;
     --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
+    --secondary: 240 4.8% 91%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
@@ -136,4 +136,21 @@ input:-webkit-autofill:focus {
   background-color: white !important; 
   -webkit-box-shadow: 0 0 0px 1000px white inset !important;
   caret-color: black !important; /* Ensures the cursor is visible */
+}
+
+/* Prevent schedule X animations*/
+.sx__event-drag, 
+.sx__time-grid-event,
+.sx__month-grid-event,
+.sx__event-calendar-popover,
+.sx__calendar-sidebar,
+.sx__event-modal {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Target any other animated elements */
+[class*="sx__"] {
+  transition-duration: 0s !important;
+  animation-duration: 0s !important;
 }

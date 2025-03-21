@@ -1,8 +1,9 @@
 import express from "express";
-import timetableController from "../controllers/timetablesController";
 import eventController from "../controllers/eventsController";
+import generatorController from "../controllers/generatorController";
 import restrictionsController from "../controllers/restrictionsController";
 import sharesController from "../controllers/sharesController";
+import timetableController from "../controllers/timetablesController";
 import { authHandler } from "../middleware/authHandler";
 
 export const timetableRouter = express.Router();
@@ -120,6 +121,12 @@ timetableRouter.delete(
   "/restrictions/:id",
   authHandler,
   restrictionsController.deleteRestriction,
+);
+
+timetableRouter.post(
+  "/generate",
+  authHandler,
+  generatorController.generateTimetable,
 );
 
 /**

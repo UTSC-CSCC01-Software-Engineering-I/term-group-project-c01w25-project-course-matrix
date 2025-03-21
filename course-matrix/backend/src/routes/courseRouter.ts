@@ -1,4 +1,5 @@
 import express from "express";
+
 import coursesController from "../controllers/coursesController";
 import departmentsController from "../controllers/departmentsController";
 import offeringsController from "../controllers/offeringsController";

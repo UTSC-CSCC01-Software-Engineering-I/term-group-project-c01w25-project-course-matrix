@@ -16,7 +16,12 @@ const config: Config = {
     ],
     "^.+\\.(js|jsx)$": "babel-jest",
   },
-  modulePathIgnorePatterns: ["<rootDir>/dist/", "<rootDir>/node_modules/", "<rootDir>/__tests__/integration-tests/", "<rootDir>/__tests__/unit-tests/"],
+  modulePathIgnorePatterns: [
+    "<rootDir>/dist/",
+    "<rootDir>/node_modules/",
+    "<rootDir>/__tests__/integration-tests/",
+    "<rootDir>/__tests__/unit-tests/",
+  ],
 };
 
 export default config;

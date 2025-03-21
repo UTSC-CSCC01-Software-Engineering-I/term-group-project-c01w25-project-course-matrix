@@ -73,6 +73,7 @@ export const RestrictionSchema = z.object({
     .describe("The type of restriction being applied"),
   days: z
     .array(DayOfWeekEnum)
+    .default(["SU", "MO", "TU", "WE", "TH", "FR", "SA"])
     .describe("Specific days of the week this restriction applies to"),
   numDays: z
     .number()

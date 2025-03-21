@@ -33,7 +33,11 @@ export default {
       }
 
       // Function to construct date in local time
-      if (!start_time && !end_time) {
+      if (
+        !["Restrict Day", "Days Off"].includes(type) &&
+        !start_time &&
+        !end_time
+      ) {
         return res
           .status(400)
           .json({ error: "Start time or end time must be provided" });
@@ -76,12 +80,6 @@ export default {
       if (end_time) {
         let restriction_end_time = new Date(end_time);
         endTime = restriction_end_time.toISOString().split("T")[1];
-      }
-
-      if (!start_time && !end_time) {
-        return res
-          .status(400)
-          .json({ error: "Start time or end time must be provided" });
       }
 
       const { data: restrictionData, error: restrictionError } = await supabase
@@ -362,6 +360,7 @@ export default {
       return res
         .status(200)
         .json({ message: "Restriction successfully deleted" });
+
     } catch (error) {
       return res.status(500).send({ error });
     }

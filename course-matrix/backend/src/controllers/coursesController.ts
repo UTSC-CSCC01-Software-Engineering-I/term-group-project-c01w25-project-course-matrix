@@ -101,4 +101,65 @@ export default {
       return res.status(500).send({ err });
     }
   }),
+
+  /**
+   * Gets the total number of sections for a list of courses.
+   *
+   * @param {Request} req - The request object containing query parameters.
+   * @param {Response} res - The response object to send the total number of sections.
+   * @returns {Promise<Response>} - The response object with the total number of sections.
+   *
+   */
+  getNumberOfSections: asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const { course_ids, semester } = req.query;
+
+      if (!semester) {
+        return res.status(400).send({ error: "Semester is required" });
+      }
+
+      if (!course_ids) {
+        return res.status(200).send({ totalNumberOfCourseSections: 0 });
+      }
+
+      const course_ids_array = (course_ids as string).split(",");
+
+      let totalNumberOfCourseSections = 0;
+      const promises = course_ids_array.map(async (course_id) => {
+        const { data: courseOfferingsData, error: courseOfferingsError } =
+          await supabase
+            .schema("course")
+            .from("offerings")
+            .select()
+            .eq("course_id", course_id)
+            .eq("offering", semester);
+
+        const offerings = courseOfferingsData || [];
+
+        const hasLectures = offerings.some((offering) =>
+          offering.meeting_section.startsWith("LEC"),
+        );
+        const hasTutorials = offerings.some((offering) =>
+          offering.meeting_section.startsWith("TUT"),
+        );
+        const hasPracticals = offerings.some((offering) =>
+          offering.meeting_section.startsWith("PRA"),
+        );
+        if (hasLectures) {
+          totalNumberOfCourseSections += 1;
+        }
+        if (hasTutorials) {
+          totalNumberOfCourseSections += 1;
+        }
+        if (hasPracticals) {
+          totalNumberOfCourseSections += 1;
+        }
+      });
+
+      await Promise.all(promises);
+      return res.status(200).send({ totalNumberOfCourseSections });
+    } catch (err) {
+      return res.status(500).send({ err });
+    }
+  }),
 };

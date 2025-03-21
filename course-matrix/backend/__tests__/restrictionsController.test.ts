@@ -42,6 +42,11 @@ jest.mock("@pinecone-database/pinecone", () => ({
   })),
 }));
 
+jest.mock("node-cron", () => ({
+  schedule: jest.fn(), // Mock the `schedule` function
+}));
+
+
 afterAll(async () => {
   server.close();
 });

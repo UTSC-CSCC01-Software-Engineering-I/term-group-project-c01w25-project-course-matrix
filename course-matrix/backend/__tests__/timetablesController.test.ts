@@ -38,6 +38,10 @@ jest.mock("@pinecone-database/pinecone", () => ({
   })),
 }));
 
+jest.mock("node-cron", () => ({
+  schedule: jest.fn(), // Mock the `schedule` function
+}));
+
 afterAll(async () => {
   server.close();
 });
@@ -329,7 +333,7 @@ describe("PUT /api/timetables/:id", () => {
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({
       error:
-        "New timetable title or semester or updated favorite status is required when updating a timetable",
+        "New timetable title or semester or updated favorite status or email notifications enabled is required when updating a timetable",
     });
   });
 

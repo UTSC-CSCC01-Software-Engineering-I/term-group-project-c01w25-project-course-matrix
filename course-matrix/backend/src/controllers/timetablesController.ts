@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
+import { coreToolMessageSchema } from "ai";
 
 export default {
   /**
@@ -44,7 +45,6 @@ export default {
           .status(400)
           .json({ error: "A timetable with this title already exists" });
       }
-
       //Create query to insert the user_id and timetable_title into the db
       let insertTimetable = supabase
         .schema("timetable")
@@ -57,8 +57,7 @@ export default {
             favorite,
           },
         ])
-        .select()
-        .single();
+        .select("*");
 
       const { data: timetableData, error: timetableError } =
         await insertTimetable;
@@ -179,8 +178,8 @@ export default {
           .schema("timetable")
           .from("timetables")
           .select("*")
-          .eq("id", id)
           .eq("user_id", user_id)
+          .eq("id", id)
           .maybeSingle();
 
       if (timetableUserError)
@@ -203,8 +202,8 @@ export default {
         .schema("timetable")
         .from("timetables")
         .update(updateData)
-        .eq("id", id)
         .eq("user_id", user_id)
+        .eq("id", id)
         .select()
         .single();
 
@@ -243,8 +242,8 @@ export default {
           .schema("timetable")
           .from("timetables")
           .select("*")
-          .eq("id", id)
           .eq("user_id", user_id)
+          .eq("id", id)
           .maybeSingle();
 
       if (timetableUserError)
@@ -260,15 +259,17 @@ export default {
         .schema("timetable")
         .from("timetables")
         .delete()
-        .eq("id", id)
-        .eq("user_id", user_id);
+        .eq("user_id", user_id)
+        .eq("id", id);
 
       const { error: timetableError } = await deleteTimetableQuery;
 
       if (timetableError)
         return res.status(400).json({ error: timetableError.message });
 
-      return res.status(200).send("Timetable successfully deleted");
+      return res
+        .status(200)
+        .json({ message: "Timetable successfully deleted" });
     } catch (error) {
       return res.status(500).send({ error });
     }

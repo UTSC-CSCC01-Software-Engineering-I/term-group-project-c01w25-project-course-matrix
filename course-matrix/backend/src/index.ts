@@ -4,7 +4,6 @@ import express, { Express } from "express";
 import { Server } from "http";
 import swaggerjsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-
 import config from "./config/config";
 import { swaggerOptions } from "./config/swaggerOptions";
 import { supabase } from "./db/setupDb";
@@ -101,4 +100,5 @@ const unexpectedErrorHandler = (error: unknown) => {
 process.on("uncaughtException", unexpectedErrorHandler);
 process.on("unhandledRejection", unexpectedErrorHandler);
 
+export { server };
 export default app;

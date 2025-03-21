@@ -1,4 +1,5 @@
 import asyncHandler from "../middleware/asyncHandler";
+import "openai/shims/node";
 import { Request, Response } from "express";
 import { createOpenAI } from "@ai-sdk/openai";
 import {

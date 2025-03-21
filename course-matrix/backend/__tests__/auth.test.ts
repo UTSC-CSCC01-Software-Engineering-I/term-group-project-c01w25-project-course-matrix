@@ -5,6 +5,7 @@ import app from "../src/index";
 describe("Authentication API", () => {
   // The unit tests below are currently commented out because they require a database connection.
   // They will be uncommented out once all the necessary mocks are in place.
+
   // describe('POST /auth/login', () => {
   //     it('should return 200 and a token for valid credentials', async () => {
   //         const response = await request(app)
@@ -74,4 +75,7 @@ describe("Authentication API", () => {
   //         expect(response.body).toHaveProperty('error', 'Unauthorized');
   //     });
   // });
+  it ("template test", () => {
+    expect(2 + 3).toEqual(5);
+  });
 });

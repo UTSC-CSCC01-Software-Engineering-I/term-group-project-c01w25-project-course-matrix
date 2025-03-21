@@ -36,11 +36,11 @@ jobs:
         run: |
           cd course-matrix
           # Build the frontend image
-          docker-compose -f docker-compose.yml build frontend
+          docker compose -f docker-compose.yml build frontend
           docker tag frontend:latest course-matrix/frontend:latest  # Tag frontend with the Docker Hub repository
         
           # Build the backend image
-          docker-compose -f docker-compose.yml build backend
+          docker compose -f docker-compose.yml build backend
           docker tag backend:latest course-matrix/backend:latest  # Tag backend with the Docker Hub repository
 
       # Step 5: Push Docker images to Docker Hub

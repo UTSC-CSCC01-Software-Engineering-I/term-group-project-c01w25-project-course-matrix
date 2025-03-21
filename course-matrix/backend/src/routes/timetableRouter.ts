@@ -22,6 +22,13 @@ timetableRouter.post("/", authHandler, timetableController.createTimetable);
 timetableRouter.get("/", authHandler, timetableController.getTimetables);
 
 /**
+ * Route to get a single tiemtable for a user
+ * @route GET /api/timetables/:id
+ * @middleware authHandler - Middleware to check if the user is authenticated.
+ */
+timetableRouter.get("/:id", authHandler, timetableController.getTimetable);
+
+/**
  * Route to update a timetable
  * @route PUT /api/timetable/:id
  * @middleware authHandler - Middleware to check if the user is authenticated.

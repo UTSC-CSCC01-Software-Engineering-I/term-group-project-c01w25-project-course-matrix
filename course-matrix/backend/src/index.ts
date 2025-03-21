@@ -18,6 +18,8 @@ import {
 } from "./routes/courseRouter";
 import { timetableRouter } from "./routes/timetableRouter";
 import { aiRouter } from "./routes/aiRouter";
+import cron from "node-cron";
+import { checkAndNotifyEvents } from "./services/emailNotificationService";
 
 const app: Express = express();
 const HOST = "localhost";
@@ -40,6 +42,10 @@ app.use("/api/departments", departmentsRouter);
 app.use("/api/offerings", offeringsRouter);
 app.use("/api/timetables", timetableRouter);
 app.use("/api/ai", aiRouter);
+
+// Initialize cron job
+// Note: For testing purposes can set first argument to '*/15 * * * * *' to run every 15s
+cron.schedule("45 * * * *", checkAndNotifyEvents);
 
 /**
  * Root route to test the backend server.

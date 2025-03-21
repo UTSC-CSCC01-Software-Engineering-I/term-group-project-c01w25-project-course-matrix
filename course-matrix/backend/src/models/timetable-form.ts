@@ -17,8 +17,8 @@ export type RestrictionForm = {
   type: string;
   days?: string[];
   numDays?: number;
-  startTime?: Date;
-  endTime?: Date;
+  startTime?: string;
+  endTime?: string;
   disabled?: boolean;
 };
 

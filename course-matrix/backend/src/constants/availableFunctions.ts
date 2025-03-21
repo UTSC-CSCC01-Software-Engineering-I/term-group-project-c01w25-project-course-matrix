@@ -15,6 +15,8 @@ import {
 } from "../utils/generatorHelpers";
 import getOfferings from "../services/getOfferings";
 import { getValidSchedules } from "../services/getValidSchedules";
+import { RestrictionForm } from "../models/timetable-form";
+import { convertTimeStringToDate } from "../utils/convert-time-string";
 
 // Add all possible function names here
 export type FunctionNames =
@@ -382,6 +384,42 @@ export const availableFunctions: AvailableFunctions = {
             status: 400,
             error: "Coruse event error " + courseEventError.message,
           };
+        }
+      }
+
+      // Save restrictions
+      for (const restriction of (restrictions as RestrictionForm[])) {
+        let startTime: String | null = null;
+        let endTime: String | null = null;
+
+        if (restriction.startTime) {
+          let restriction_start_time = convertTimeStringToDate(restriction.startTime);
+          startTime = restriction_start_time.toISOString().split("T")[1];
+        }
+
+        if (restriction.endTime) {
+          let restriction_end_time = convertTimeStringToDate(restriction.endTime);
+          endTime = restriction_end_time.toISOString().split("T")[1];
+        }
+        const { data: restrictionData, error: restrictionError } = await supabase
+          .schema("timetable")
+          .from("restriction")
+          .insert([
+            {
+              user_id,
+              type: restriction?.type,
+              days: restriction?.days,
+              start_time: startTime,
+              end_time: endTime,
+              disabled: restriction?.disabled,
+              num_days: restriction?.numDays,
+              calendar_id: timetableData?.id,
+            },
+          ])
+          .select();
+
+        if (restrictionError) {
+          return { status: 400, error: restrictionError.message };
         }
       }
 

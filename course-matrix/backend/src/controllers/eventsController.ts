@@ -16,7 +16,7 @@ import { start } from "repl";
  * @returns An array of event objects ready to be inserted.
  */
 
-function getNextWeekDayOccurance(targetDay: string): string {
+export function getNextWeekDayOccurance(targetDay: string): string {
   //Map weekday code to JS day number
   const weekdayMap: { [key: string]: number } = {
     SU: 0,
@@ -45,7 +45,7 @@ function getNextWeekDayOccurance(targetDay: string): string {
   return today.toISOString().split("T")[0];
 }
 
-function generateWeeklyCourseEvents(
+export function generateWeeklyCourseEvents(
   user_id: string,
   courseEventName: string,
   courseDay: string,
@@ -482,20 +482,23 @@ export default {
           });
         }
 
-        const { data: courseEventData, error: courseEventError } =
-          await supabase
-            .schema("timetable")
-            .from("course_events")
-            .select("*")
-            .eq("id", id)
-            .eq("user_id", user_id)
-            .eq("calendar_id", calendar_id)
-            .maybeSingle();
+        if (!old_offering_id && !new_offering_id) {
+          const { data: courseEventData, error: courseEventError } =
+            await supabase
+              .schema("timetable")
+              .from("course_events")
+              .select("*")
+              .eq("id", id)
+              .eq("user_id", user_id)
+              .eq("calendar_id", calendar_id)
+              .maybeSingle();
 
-        if (courseEventData.calendar_id !== timetableData.id) {
-          return res.status(400).json({
-            error: "Restriction id does not belong to the provided calendar id",
-          });
+          if (courseEventData.calendar_id !== timetableData.id) {
+            return res.status(400).json({
+              error:
+                "Restriction id does not belong to the provided calendar id",
+            });
+          }
         }
 
         const courseEventName = `${newofferingData.code} - ${newofferingData.meeting_section}`;
@@ -714,16 +717,19 @@ export default {
         if (courseEventError)
           return res.status(400).json({ error: courseEventError.message });
 
-        if (!courseEventData || courseEventData.length === 0) {
-          return res
-            .status(400)
-            .json({ error: "Provided note ID is invalid or does not exist" });
-        }
+        if (!offering_id) {
+          if (!courseEventData || courseEventData.length === 0) {
+            return res
+              .status(400)
+              .json({ error: "Provided note ID is invalid or does not exist" });
+          }
 
-        if (courseEventData.calendar_id !== timetableData.id) {
-          return res.status(400).json({
-            error: "Restriction id does not belong to the provided calendar id",
-          });
+          if (courseEventData.calendar_id !== timetableData.id) {
+            return res.status(400).json({
+              error:
+                "Restriction id does not belong to the provided calendar id",
+            });
+          }
         }
 
         //Build the delete query
@@ -741,14 +747,13 @@ export default {
           deleteQuery = deleteQuery.eq("id", id);
         }
 
-        const { error: deleteError } = await deleteQuery
+        const { data: deleteData, error: deleteError } = await deleteQuery
           .eq("calendar_id", calendar_id)
           .eq("user_id", user_id)
           .select("*");
         if (deleteError)
           return res.status(400).json({ error: deleteError.message });
-
-        return res.status(200).send("Event successfully deleted");
+        return res.status(200).json("Event successfully deleted");
       } else if (event_type === "user") {
         //Validate note availability
         const { data: userEventData, error: userEventError } = await supabase

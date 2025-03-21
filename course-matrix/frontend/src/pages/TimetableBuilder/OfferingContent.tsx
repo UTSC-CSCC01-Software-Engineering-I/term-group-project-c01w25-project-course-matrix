@@ -72,22 +72,25 @@ const OfferingContent = ({ item, semester }: OfferingContentProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(data as OfferingModel[]).map((offering, index) => (
-                <TableRow>
-                  <TableCell className="font-medium">
-                    {offering.meeting_section}
-                  </TableCell>
-                  <TableCell>{offering.day ?? ""}</TableCell>
-                  <TableCell>{`${offering.start ?? ""} - ${offering.end ?? ""}`}</TableCell>
-                  <TableCell>{offering.location ?? ""}</TableCell>
-                  <TableCell>{offering.current ?? ""}</TableCell>
-                  <TableCell>{offering.max ?? ""}</TableCell>
-                  <TableCell>{offering.is_waitlisted ? "N" : "Y"}</TableCell>
-                  <TableCell>{offering.delivery_mode ?? ""}</TableCell>
-                  <TableCell>{offering.instructor ?? ""}</TableCell>
-                  <TableCell>{offering.notes ?? ""}</TableCell>
-                </TableRow>
-              ))}
+              {(data as OfferingModel[]).map((offering, index) => {
+                console.log("offering", offering);
+                return (
+                  <TableRow>
+                    <TableCell className="font-medium">
+                      {offering.meeting_section}
+                    </TableCell>
+                    <TableCell>{offering.day ?? ""}</TableCell>
+                    <TableCell>{`${offering.start ?? ""} - ${offering.end ?? ""}`}</TableCell>
+                    <TableCell>{offering.location ?? ""}</TableCell>
+                    <TableCell>{offering.current ?? ""}</TableCell>
+                    <TableCell>{offering.max ?? ""}</TableCell>
+                    <TableCell>{offering.is_waitlisted ? "N" : "Y"}</TableCell>
+                    <TableCell>{offering.delivery_mode ?? ""}</TableCell>
+                    <TableCell>{offering.instructor ?? ""}</TableCell>
+                    <TableCell>{offering.notes ?? ""}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

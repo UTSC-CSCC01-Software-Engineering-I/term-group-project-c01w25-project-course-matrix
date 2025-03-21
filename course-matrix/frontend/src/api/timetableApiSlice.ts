@@ -15,6 +15,7 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Timetable"],
     }),
     getTimetables: builder.query<unknown, void>({
       query: () => ({
@@ -27,6 +28,7 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
         providesTags: ["Timetable"],
         credentials: "include",
       }),
+      keepUnusedDataFor: 0,
     }),
     getTimetable: builder.query<unknown, string | number>({
       query: (id) => ({
@@ -47,10 +49,10 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        invalidatesTags: ["Timetable"],
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Timetable"],
     }),
     deleteTimetable: builder.mutation({
       query: (id) => ({
@@ -60,9 +62,9 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        invalidatesTags: ["Timetable"],
         credentials: "include",
       }),
+      invalidatesTags: ["Timetable"],
     }),
   }),
 });

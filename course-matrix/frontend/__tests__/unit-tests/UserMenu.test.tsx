@@ -83,6 +83,6 @@ describe("UserMenu Component", () => {
     fireEvent.click(screen.getByText("John Doe"));
     fireEvent.click(screen.getByText("Logout"));
 
-    // Add assertions to check if the user is logged out
+    expect(localStorage.getItem("userInfo")).toBeNull();
   });
 });

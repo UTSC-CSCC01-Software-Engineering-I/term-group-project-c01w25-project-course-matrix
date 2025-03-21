@@ -5,12 +5,12 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { expect, test } from "@jest/globals";
-import App from "../src/App";
-import SignupPage from "../src/pages/Signup/SignUpPage";
-import LoginPage from "../src/pages/Login/LoginPage";
-import Dashboard from "../src/pages/Dashboard/Dashboard";
-import TimetableBuilder from "../src/pages/TimetableBuilder/TimetableBuilder";
-import Home from "../src/pages/Home/Home";
+import App from "../../src/App";
+import SignupPage from "../../src/pages/Signup/SignUpPage";
+import LoginPage from "../../src/pages/Login/LoginPage";
+import Dashboard from "../../src/pages/Dashboard/Dashboard";
+import TimetableBuilder from "../../src/pages/TimetableBuilder/TimetableBuilder";
+import Home from "../../src/pages/Home/Home";
 
 test("typical flow for creating an account and logging in", () => {
   render(<App />, { wrapper: MemoryRouter });

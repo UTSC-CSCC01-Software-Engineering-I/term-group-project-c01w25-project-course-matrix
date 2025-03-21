@@ -1,8 +1,8 @@
+import "@testing-library/jest-dom/jest-globals";
 import "@testing-library/jest-dom";
-import "@testing-library/jest-dom/extend-expect";
 
 import configureStore from "redux-mock-store";
-import { UserMenu } from "../src/components/UserMenu";
+import { UserMenu } from "../../src/components/UserMenu";
 import { afterEach, beforeEach, describe, expect, test } from "@jest/globals";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { Router } from "lucide-react";

@@ -1,3 +1,6 @@
+import "@testing-library/jest-dom/jest-globals";
+import "@testing-library/jest-dom";
+
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import {
@@ -10,7 +13,7 @@ import {
   expect,
   MockedFunction,
 } from "vitest";
-import TimetableBuilder from "../src/pages/TimetableBuilder/TimetableBuilder";
+import TimetableBuilder from "../../src/pages/TimetableBuilder/TimetableBuilder";
 import { useForm, UseFormWatch } from "react-hook-form";
 import { z } from "zod";
 import React from "react";

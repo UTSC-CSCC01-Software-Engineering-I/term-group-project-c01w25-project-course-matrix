@@ -75,7 +75,7 @@ describe("Authentication API", () => {
   //         expect(response.body).toHaveProperty('error', 'Unauthorized');
   //     });
   // });
-  it ("template test", () => {
+  it("template test", () => {
     expect(2 + 3).toEqual(5);
   });
 });

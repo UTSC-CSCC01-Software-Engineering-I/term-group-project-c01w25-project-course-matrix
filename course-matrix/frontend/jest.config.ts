@@ -2,7 +2,7 @@ import type { Config } from "jest";
 
 const config: Config = {
   preset: "ts-jest",
-  moduleNameMapper: { "\\.(css|scss)$": "identity-obj-proxy" },
+  moduleNameMapper: { "@/(.*)$": "<rootDir>/src/$1" },
   // to obtain access to the matchers.
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   modulePaths: ["<rootDir>"],

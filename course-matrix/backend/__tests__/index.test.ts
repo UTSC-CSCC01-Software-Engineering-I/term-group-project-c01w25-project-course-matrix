@@ -7,12 +7,3 @@ describe("Sum function", () => {
     expect(2 + 3).toEqual(5);
   });
 });
-
-// Will finish the rest of the tests below in Sprint 3
-
-// describe("GET /auth/session", () => {
-// 	test("It should respond with 200 status", async () => {
-// 		const response = await request(app).get("/auth/session");
-// 		expect(response.statusCode).toBe(200);
-// 	});
-// });

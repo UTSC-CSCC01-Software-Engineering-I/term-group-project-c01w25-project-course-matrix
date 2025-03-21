@@ -34,6 +34,7 @@ jobs:
       # Build and push frontend Docker image
       - name: Build Docker Image
         run: |
+          cd course-matrix
           # Build the frontend image
           docker-compose -f docker-compose.yml build frontend
           docker tag frontend:latest course-matrix/frontend:latest  # Tag frontend with the Docker Hub repository

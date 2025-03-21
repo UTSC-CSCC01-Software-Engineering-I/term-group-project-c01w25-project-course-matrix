@@ -203,10 +203,10 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading...</p>
       ) : (
-        <div className="flex gap-2 p-4 justify-between bg-green-100/50 w-[100%] text-xs">
+        <div className="flex gap-2 p-2 bg-white border outline-2 w-[100%] text-xs">
           {lectures?.length > 0 &&
             (!isEditingLectureSection ? (
-              <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
+              <div className="flex justify-between items-center p-2 gap-4 bg-white border">
                 {selectedLecture[0]?.meeting_section ?? "No LEC selected"}
                 <Edit
                   size={16}
@@ -215,7 +215,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                 />
               </div>
             ) : (
-              <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
+              <div className="flex justify-between items-center gap-4 bg-white border">
                 <Select
                   value={selectedLecture
                     .map((lec: OfferingModel) => lec.id.toString())
@@ -270,7 +270,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
             ))}
           {tutorials?.length > 0 &&
             (!isEditingTutorialSection ? (
-              <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
+              <div className="flex justify-between items-center p-2 gap-4 bg-white border">
                 {selectedTutorial[0]?.meeting_section ?? "No TUT selected"}
                 <Edit
                   size={16}
@@ -279,7 +279,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                 />
               </div>
             ) : (
-              <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
+              <div className="flex justify-between items-center gap-4 bg-white border">
                 <Select
                   value={selectedTutorial
                     .map((tut: OfferingModel) => tut.id.toString())
@@ -334,7 +334,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
             ))}
           {practicals?.length > 0 &&
             (!isEditingPracticalSection ? (
-              <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
+              <div className="flex justify-between items-center p-2 gap-4 bg-white border">
                 {selectedPractical[0]?.meeting_section ?? "No PRA selected"}
                 <Edit
                   size={16}
@@ -343,7 +343,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                 />
               </div>
             ) : (
-              <div className="flex justify-between align-items p-4 gap-4 bg-blue-100/50">
+              <div className="flex justify-between items-center gap-4 bg-white border">
                 <Select
                   value={selectedPractical
                     .map((pra: OfferingModel) => pra.id.toString())

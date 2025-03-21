@@ -198,3 +198,13 @@ export interface TimetableModel {
   /** Has user enabled email notifications for this timetable */
   email_notifications_enabled: boolean;
 }
+
+export type GenerateTimetableOffering = Omit<OfferingModel, "created_at" | "updated_at">
+
+/**
+ * Response data of generate timetable call
+ */
+export interface TimetableGenerateResponseModel {
+  amount: number;
+  schedules: GenerateTimetableOffering[][]
+}

@@ -53,7 +53,8 @@ import {
   Offering,
 } from "@/utils/type-utils";
 import { TimetableForm } from "@/models/timetable-form";
-import { getSemesterStartAndEndDates } from "@/utils/semester-utils";
+import { getSemesterStartAndEndDates, getSemesterStartAndEndDatesPlusOneWeek } from "@/utils/semester-utils";
+import { courseEventStyles } from "@/constants/calendarConstants";
 
 interface CalendarProps {
   setShowLoadingPage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -107,7 +108,7 @@ const Calendar = React.memo<CalendarProps>(
     const [deleteRestriction] = useDeleteRestrictionMutation();
 
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
-    const semesterEndDate = getSemesterStartAndEndDates(semester).end;
+    const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } = getSemesterStartAndEndDatesPlusOneWeek(semester);
 
     const { data: offeringsData } = useGetOfferingsQuery({}) as {
       data: Offering[];
@@ -141,29 +142,21 @@ const Calendar = React.memo<CalendarProps>(
         createViewMonthGrid(),
         createViewMonthAgenda(),
       ],
-      selectedDate: semesterStartDate,
+      selectedDate: semesterStartDatePlusOneWeek,
       minDate: semesterStartDate,
       maxDate: semesterEndDate,
       defaultView: viewWeek.name,
       events: [...courseEventsParsed, ...userEventsParsed],
       calendars: {
-        courseEvent: {
-          colorName: "courseEvent",
-          lightColors: {
-            main: "#1c7df9",
-            container: "#d2e7ff",
-            onContainer: "#002859",
-          },
-          darkColors: {
-            main: "#c0dfff",
-            onContainer: "#dee6ff",
-            container: "#426aa2",
-          },
-        },
+        courseEvent: courseEventStyles
       },
       plugins: [createEventModalPlugin()],
       weekOptions: {
-        gridHeight: 1000,
+        gridHeight: 600,
+      },
+      dayBoundaries: {
+        start: '06:00',
+        end: '21:00',
       },
       isResponsive: false,
     });
@@ -337,8 +330,8 @@ const Calendar = React.memo<CalendarProps>(
 
     return (
       <div>
-        <h1 className="text-4xl flex flex-row justify-between font-medium tracking-tight mb-8">
-          <div>Your Timetable</div>
+        <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-8">
+          <div>Your Timetable </div>
           {!isEditingTimetable ? (
             <Dialog>
               {isChoosingSectionsManually &&
@@ -349,12 +342,11 @@ const Calendar = React.memo<CalendarProps>(
                   </p>
                 )}
               <DialogTrigger asChild>
-                <Button
-                  size="sm"
-                  disabled={!allOfferingSectionsHaveBeenSelected}
-                >
+              {isChoosingSectionsManually && (
+                <Button size="sm" disabled={!allOfferingSectionsHaveBeenSelected}>
                   Create Timetable
                 </Button>
+              )}
               </DialogTrigger>
               <DialogContent className="gap-5">
                 <DialogHeader>

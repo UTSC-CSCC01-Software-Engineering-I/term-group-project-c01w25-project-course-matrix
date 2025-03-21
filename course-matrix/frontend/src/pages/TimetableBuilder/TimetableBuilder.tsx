@@ -13,7 +13,7 @@ import {
   TimetableFormSchema,
   baseTimetableForm,
 } from "@/models/timetable-form";
-import { X } from "lucide-react";
+import { WandSparkles, X } from "lucide-react";
 import { createContext, useEffect, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +30,7 @@ import CreateCustomSetting from "./CreateCustomSetting";
 import { formatTime } from "@/utils/format-date-time";
 import { FilterForm, FilterFormSchema } from "@/models/filter-form";
 import { useGetCoursesQuery } from "@/api/coursesApiSlice";
-import { useGetTimetablesQuery } from "@/api/timetableApiSlice";
+import { useGenerateTimetableMutation, useGetTimetablesQuery } from "@/api/timetableApiSlice";
 import { useGetEventsQuery } from "@/api/eventsApiSlice";
 import { useGetOfferingsQuery } from "@/api/offeringsApiSlice";
 import { useGetRestrictionsQuery } from "@/api/restrictionsApiSlice";
@@ -43,11 +43,13 @@ import {
   Timetable,
   Restriction,
 } from "@/utils/type-utils";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import OfferingInfo from "./OfferingInfo";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CourseModel } from "@/models/models";
+import { CourseModel, TimetableGenerateResponseModel } from "@/models/models";
 import LoadingPage from "@/pages/Loading/LoadingPage";
+import { GeneratedCalendars } from "./GeneratedCalendars";
+import { Spinner } from "@/components/ui/spinner";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -120,6 +122,8 @@ const TimetableBuilder = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [isChoosingSectionsManually, setIsChoosingSectionsManually] =
     useState(isEditingTimetable);
+  const [isGeneratingTimetables, setIsGeneratingTimetables] = useState(false);
+  const [generatedTimetables, setGeneratedTimetables] = useState<TimetableGenerateResponseModel>();
 
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;
@@ -137,6 +141,8 @@ const TimetableBuilder = () => {
     semester: selectedSemester,
     ...filters,
   });
+
+  const [ generateTimetable, { isLoading: isGenerateLoading } ] = useGenerateTimetableMutation();
 
   const { data: allCoursesData } = useGetCoursesQuery({
     limit: 10000,
@@ -269,9 +275,17 @@ const TimetableBuilder = () => {
     }
   }, [debouncedSearchQuery]);
 
-  const createTimetable = (values: z.infer<typeof TimetableFormSchema>) => {
-    console.log(values);
-    // TODO Send request to /api/timetable/create
+  const handleGenerate = async (values: z.infer<typeof TimetableFormSchema>) => {
+    console.log(">> Timetable options:", values);
+    try {
+      const res = await generateTimetable(values);
+      const data: TimetableGenerateResponseModel = res.data; 
+      setIsGeneratingTimetables(true);
+      setGeneratedTimetables(data);
+    } catch (error) {
+      console.error("Error generating timetables: ", error)
+    }
+
   };
 
   const handleReset = () => {
@@ -311,35 +325,34 @@ const TimetableBuilder = () => {
     <LoadingPage />
   ) : (
     <div className="w-full">
-      <div className="m-8">
-        <div className="mb-4 flex flex-row justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-medium tracking-tight mb-4">
-              {isEditingTimetable ? "Edit Timetable" : "New Timetable"}
-            </h1>
-            {isEditingTimetable && (
-              <p className="text-sm italic text-blue-500">
-                The timetable you are editing is named:{" "}
-                <strong>{currentTimetableTitle}</strong>
-              </p>
-            )}
-          </div>
-          <div className="flex gap-4 ">
-            <Button size="sm" variant="outline" onClick={handleReset}>
-              Reset
-            </Button>
-            <Button size="sm">Share</Button>
-          </div>
-        </div>
-        <hr />
-      </div>
-
       <div className="m-8 flex gap-12">
         <div className="w-1/3">
+          <div className="mb-4">
+            <div className="mb-4 flex flex-row justify-between">
+              <div>
+                <h1 className="text-2xl font-medium tracking-tight mb-4">
+                  {isEditingTimetable ? "Edit Timetable" : "New Timetable"}
+                </h1>
+                {isEditingTimetable && (
+                  <p className="text-sm italic text-blue-500">
+                    Editing:{" "}
+                    <strong>{currentTimetableTitle}</strong>
+                  </p>
+                )}
+              </div>
+              <div className="flex gap-2 ">
+                <Button size="sm" variant="outline" onClick={handleReset}>
+                  Reset
+                </Button>
+                <Button size="sm" variant="outline">Share</Button>
+              </div>
+            </div>
+            <hr />
+          </div>
           <Form {...form}>
             <FormContext.Provider value={form}>
               <form
-                onSubmit={form.handleSubmit(createTimetable)}
+                onSubmit={form.handleSubmit(handleGenerate)}
                 className="space-y-8"
               >
                 <div className="flex gap-8 w-full">
@@ -545,7 +558,11 @@ const TimetableBuilder = () => {
                 </div>
 
                 {!isChoosingSectionsManually && (
-                  <Button type="submit">Generate</Button>
+                  <div className="w-[100px]">
+                    {isGenerateLoading ? <Spinner /> : (
+                      <Button type="submit"><div>Generate</div><WandSparkles/></Button>
+                    )}
+                  </div>
                 )}
               </form>
 
@@ -559,14 +576,24 @@ const TimetableBuilder = () => {
           </Form>
         </div>
         <div className="w-2/3">
-          <Calendar
-            setShowLoadingPage={setShowLoadingPage}
-            isChoosingSectionsManually={isChoosingSectionsManually}
-            semester={selectedSemester}
-            selectedCourses={selectedCourses}
-            newOfferingIds={offeringIds}
-            restrictions={enabledRestrictions}
-          />
+          {isGeneratingTimetables ? (
+            <GeneratedCalendars 
+              setShowLoadingPage={setShowLoadingPage}
+              setIsGeneratingTimetables={setIsGeneratingTimetables}
+              semester={selectedSemester}
+              generatedTimetables={generatedTimetables}
+              restrictions={enabledRestrictions}
+            />
+          ) : (
+            <Calendar
+              setShowLoadingPage={setShowLoadingPage}
+              isChoosingSectionsManually={isChoosingSectionsManually}
+              semester={selectedSemester}
+              selectedCourses={selectedCourses}
+              newOfferingIds={offeringIds}
+              restrictions={enabledRestrictions}
+            />
+          )}
         </div>
 
         {showFilters && (

@@ -360,7 +360,6 @@ export default {
       return res
         .status(200)
         .json({ message: "Restriction successfully deleted" });
-
     } catch (error) {
       return res.status(500).send({ error });
     }

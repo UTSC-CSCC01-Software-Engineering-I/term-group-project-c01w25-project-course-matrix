@@ -37,9 +37,16 @@ export const yearToCode = (year: number) => {
   }
 };
 
+// true - notifications will be tested by mocking current Date
+// false - normal application behavior
+export const TEST_NOTIFICATIONS = false;
+// Mock the current date
+// Note: month index in date constructor is 0 indexed (0 - 11)
+export const TEST_DATE_NOW = new Date(2025, 4, 14, 8, 45, 1);
+
 // Set minimum results wanted for a similarity search on the associated namespace.
 export const namespaceToMinResults = new Map();
-namespaceToMinResults.set("courses_v2", 10);
+namespaceToMinResults.set("courses_v3", 10);
 namespaceToMinResults.set("offerings", 16); // Typically, more offering info is wanted.
 namespaceToMinResults.set("prerequisites", 5);
 namespaceToMinResults.set("corequisites", 5);
@@ -48,3 +55,7 @@ namespaceToMinResults.set("programs", 5);
 
 // Consider the last X messages in history to influence vector DB query
 export const CHATBOT_MEMORY_THRESHOLD = 3;
+
+export const CHATBOT_TIMETABLE_CMD = "/timetable";
+
+export const CHATBOT_TOOL_CALL_MAX_STEPS = 5;

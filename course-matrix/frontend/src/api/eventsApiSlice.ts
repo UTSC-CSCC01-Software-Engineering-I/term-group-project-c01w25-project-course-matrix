@@ -1,4 +1,3 @@
-import { data } from "react-router-dom";
 import { apiSlice } from "./baseApiSlice";
 import { EVENTS_URL } from "./config";
 
@@ -13,10 +12,10 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        providesTags: ["Event"],
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Event"],
     }),
     getEvents: builder.query<unknown, number>({
       query: (id) => ({
@@ -29,6 +28,7 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
         providesTags: ["Event"],
         credentials: "include",
       }),
+      keepUnusedDataFor: 0,
     }),
     updateEvent: builder.mutation({
       query: (data) => ({
@@ -38,22 +38,23 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        providesTags: ["Event"],
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Event"],
     }),
     deleteEvent: builder.mutation({
-      query: (id) => ({
-        url: `${EVENTS_URL}/${id}`,
+      query: (data) => ({
+        url: `${EVENTS_URL}/${data.id}`,
         method: "DELETE",
+        params: data,
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        providesTags: ["Event"],
         credentials: "include",
       }),
+      invalidatesTags: ["Event"],
     }),
   }),
 });

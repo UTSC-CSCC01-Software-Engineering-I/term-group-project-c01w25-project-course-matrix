@@ -1,6 +1,6 @@
 // Keywords related to each namespace
 export const NAMESPACE_KEYWORDS = {
-  courses_v2: [
+  courses_v3: [
     "course",
     "class",
     "description",
@@ -59,6 +59,41 @@ export const NAMESPACE_KEYWORDS = {
   ],
   departments: ["department", "faculty", "division"],
   programs: ["program", "major", "minor", "specialist", "degree", "stream"],
+};
+
+export const BREADTH_REQUIREMENT_KEYWORDS = {
+  ART_LIT_LANG: [
+    "art_lit_lang",
+    "art literature",
+    "arts literature",
+    "art language",
+    "arts language",
+    "literature language",
+    "art literature language",
+    "arts literature language",
+  ],
+  HIS_PHIL_CUL: [
+    "his_phil_cul",
+    "history philosophy culture",
+    "history, philosophy, culture",
+    "history, philosophy, and culture",
+    "history, philosophy",
+    "history philosophy",
+    "philosophy culture",
+    "philosophy, culture",
+    "history culture",
+    "History, Philosophy and Cultural Studies",
+  ],
+  SOCIAL_SCI: ["social_sci", "social science", "social sciences"],
+  NAT_SCI: ["nat_sci", "natural science", "natural sciences"],
+  QUANT: ["quant", "quantitative reasoning", "quantitative"],
+};
+
+export const YEAR_LEVEL_KEYWORDS = {
+  first_year: ["first year", "first-year", "a-level", "a level", "1st year"],
+  second_year: ["second year", "second-year", "b-level", "b level", "2nd year"],
+  third_year: ["third year", "third-year", "c-level", "c level", "3rd year"],
+  fourth_year: ["fourth year", "fourth-year", "d-level", "d level", "4th year"],
 };
 
 // General academic terms that might indicate a search is needed

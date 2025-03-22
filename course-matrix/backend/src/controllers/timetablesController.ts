@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
+import { coreToolMessageSchema } from "ai";
 
 export default {
   /**
@@ -18,26 +19,49 @@ export default {
       const user_id = (req as any).user.id;
 
       //Retrieve timetable title
-      const { timetable_title, semester } = req.body;
-      if (!timetable_title) {
-        return res.status(400).json({ error: "timetable title is required" });
-      }
-
-      if (!semester) {
+      const { timetable_title, semester, favorite = false } = req.body;
+      if (!timetable_title || !semester) {
         return res
           .status(400)
-          .json({ error: "timetable semester is required" });
+          .json({ error: "timetable title and semester are required" });
       }
 
+      // Check if a timetable with the same title already exist for this user
+      const { data: existingTimetable, error: existingTimetableError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("id")
+          .eq("user_id", user_id)
+          .eq("timetable_title", timetable_title)
+          .maybeSingle();
+
+      if (existingTimetableError) {
+        return res.status(400).json({ error: existingTimetableError.message });
+      }
+
+      if (existingTimetable) {
+        return res
+          .status(400)
+          .json({ error: "A timetable with this title already exists" });
+      }
       //Create query to insert the user_id and timetable_title into the db
       let insertTimetable = supabase
         .schema("timetable")
         .from("timetables")
-        .insert([{ user_id, timetable_title, semester }])
-        .select();
+        .insert([
+          {
+            user_id,
+            timetable_title,
+            semester,
+            favorite,
+          },
+        ])
+        .select("*");
 
       const { data: timetableData, error: timetableError } =
         await insertTimetable;
+
       if (timetableError) {
         return res.status(400).json({ error: timetableError.message });
       }
@@ -82,6 +106,42 @@ export default {
   }),
 
   /**
+   * Get a single timetable for a user
+   * @route GET /api/timetables/:id
+   */
+
+  getTimetable: asyncHandler(async (req: Request, res: Response) => {
+    try {
+      //Retrieve user_id and timetable_id
+      const user_id = (req as any).user.id;
+      const { id: timetable_id } = req.params;
+
+      // Retrieve based on user_id and timetable_id
+      let timeTableQuery = supabase
+        .schema("timetable")
+        .from("timetables")
+        .select()
+        .eq("user_id", user_id)
+        .eq("id", timetable_id);
+
+      const { data: timetableData, error: timetableError } =
+        await timeTableQuery;
+
+      if (timetableError)
+        return res.status(400).json({ error: timetableError.message });
+
+      //Validate timetable validity:
+      if (!timetableData) {
+        return res.status(404).json({ error: "Calendar id not found" });
+      }
+
+      return res.status(200).json(timetableData);
+    } catch (error) {
+      return res.status(500).send({ error });
+    }
+  }),
+
+  /**
    * Update a timetable
    * @route PUT /api/timetables/:id
    */
@@ -91,11 +151,21 @@ export default {
       const { id } = req.params;
 
       //Retrieve timetable title
-      const { timetable_title, semester } = req.body;
-      if (!timetable_title && !semester) {
+      const {
+        timetable_title,
+        semester,
+        favorite,
+        email_notifications_enabled,
+      } = req.body;
+      if (
+        !timetable_title &&
+        !semester &&
+        favorite === undefined &&
+        email_notifications_enabled === undefined
+      ) {
         return res.status(400).json({
           error:
-            "New timetable title or semester is required when updating a timetable",
+            "New timetable title or semester or updated favorite status or email notifications enabled is required when updating a timetable",
         });
       }
 
@@ -108,11 +178,9 @@ export default {
           .schema("timetable")
           .from("timetables")
           .select("*")
-          .eq("id", id)
           .eq("user_id", user_id)
+          .eq("id", id)
           .maybeSingle();
-
-      const timetable_user_id = timetableUserData?.user_id;
 
       if (timetableUserError)
         return res.status(400).json({ error: timetableUserError.message });
@@ -122,25 +190,22 @@ export default {
         return res.status(404).json({ error: "Calendar id not found" });
       }
 
-      //Validate user access
-      if (user_id !== timetable_user_id) {
-        return res
-          .status(401)
-          .json({ error: "Unauthorized access to timetable events" });
-      }
-
       let updateData: any = {};
       if (timetable_title) updateData.timetable_title = timetable_title;
       if (semester) updateData.semester = semester;
+      if (favorite !== undefined) updateData.favorite = favorite;
+      if (email_notifications_enabled !== undefined)
+        updateData.email_notifications_enabled = email_notifications_enabled;
 
       //Update timetable title, for authenticated user only
       let updateTimetableQuery = supabase
         .schema("timetable")
         .from("timetables")
         .update(updateData)
-        .eq("id", id)
         .eq("user_id", user_id)
-        .select();
+        .eq("id", id)
+        .select()
+        .single();
 
       const { data: timetableData, error: timetableError } =
         await updateTimetableQuery;
@@ -177,10 +242,9 @@ export default {
           .schema("timetable")
           .from("timetables")
           .select("*")
-          .eq("id", id)
           .eq("user_id", user_id)
+          .eq("id", id)
           .maybeSingle();
-      const timetable_user_id = timetableUserData?.user_id;
 
       if (timetableUserError)
         return res.status(400).json({ error: timetableUserError.message });
@@ -190,27 +254,22 @@ export default {
         return res.status(404).json({ error: "Calendar id not found" });
       }
 
-      //Validate user access
-      if (user_id !== timetable_user_id) {
-        return res
-          .status(401)
-          .json({ error: "Unauthorized access to timetable events" });
-      }
-
       // Delete only if the timetable belongs to the authenticated user
       let deleteTimetableQuery = supabase
         .schema("timetable")
         .from("timetables")
         .delete()
-        .eq("id", id)
-        .eq("user_id", user_id);
+        .eq("user_id", user_id)
+        .eq("id", id);
 
       const { error: timetableError } = await deleteTimetableQuery;
 
       if (timetableError)
         return res.status(400).json({ error: timetableError.message });
 
-      return res.status(200).send("Timetable successfully deleted");
+      return res
+        .status(200)
+        .json({ message: "Timetable successfully deleted" });
     } catch (error) {
       return res.status(500).send({ error });
     }

@@ -125,7 +125,7 @@ export function UserMenu() {
           {username}
           <Avatar>
             {/* Avatar Image is the profile picture of the user. The default avatar is used as a placeholder for now. */}
-            <AvatarImage src="../../public/img/default-avatar.png" />
+            <AvatarImage src="/img/default-avatar.png" />
             {/* Avatar Fallback is the initials of the user. Avatar Fallback will be used if Avatar Image fails to load */}
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>

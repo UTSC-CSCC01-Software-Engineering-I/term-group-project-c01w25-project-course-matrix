@@ -5,6 +5,16 @@ import TimetableCompareButton from "./TimetableCompareButton";
 import TimetableCreateNewButton from "./TimetableCreateNewButton";
 import { useGetTimetablesQuery } from "../../api/timetableApiSlice";
 
+export interface Timetable {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  user_id: string;
+  semester: string;
+  timetable_title: string;
+  favorite: boolean;
+}
+
 /**
  * Home component that displays the user's timetables and provides options to create or compare timetables.
  * @returns {JSX.Element} The rendered component.
@@ -15,7 +25,11 @@ const Home = () => {
     (user_metadata?.user?.user_metadata?.username as string) ??
     (user_metadata?.user?.email as string);
 
-  const { data, isLoading, refetch } = useGetTimetablesQuery();
+  const { data, isLoading, refetch } = useGetTimetablesQuery() as {
+    data: Timetable[];
+    isLoading: boolean;
+    refetch: () => void;
+  };
 
   return (
     <div className="w-full">
@@ -53,20 +67,24 @@ const Home = () => {
           </div>
         </div>
         <hr />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 justify-between mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 justify-between mt-4">
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : (
-            data?.map((timetable, index) => (
-              <TimetableCard
-                refetch={refetch}
-                key={index}
-                timetableId={timetable.id}
-                title={timetable.timetable_title}
-                lastEditedDate={new Date(timetable.updated_at)}
-                owner={name}
-              />
-            ))
+            [...data]
+              .sort((a: Timetable, b: Timetable) =>
+                b?.updated_at.localeCompare(a?.updated_at),
+              )
+              .map((timetable) => (
+                <TimetableCard
+                  refetch={refetch}
+                  key={timetable.id}
+                  timetableId={timetable.id}
+                  title={timetable.timetable_title}
+                  lastEditedDate={new Date(timetable.updated_at)}
+                  owner={name}
+                />
+              ))
           )}
         </div>
       </div>

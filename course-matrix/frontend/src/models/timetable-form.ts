@@ -1,4 +1,5 @@
 import { z, ZodType } from "zod";
+import { OfferingModel } from "./models";
 
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
@@ -12,6 +13,7 @@ export type TimetableForm = {
     code: string;
     name: string;
   }[];
+  offeringIds: number[];
   restrictions: RestrictionForm[];
 };
 
@@ -56,6 +58,36 @@ export const CourseSchema = z.object({
     .max(8, "Invalid course code")
     .min(1, "Course code is required"),
   name: z.string(),
+});
+
+export const TimetableSchema = z.object({
+  id: z.number(),
+  created_at: z.string(),
+  updated_at: z.string(),
+  user_id: z.string(),
+  semester: z.string(),
+  timetable_title: SemesterEnum,
+  favorite: z.boolean(),
+});
+
+export const OfferingSchema = z.object({
+  id: z.number(),
+  created_at: z.string(),
+  updated_at: z.string(),
+  course_id: z.number(),
+  code: z.string(),
+  meeting_section: z.string(),
+  offering: z.string(),
+  day: z.string(),
+  start: z.string(),
+  end: z.string(),
+  location: z.string(),
+  current: z.string(),
+  max: z.string(),
+  is_waitlisted: z.boolean(),
+  delivery_mode: z.string(),
+  instructor: z.string(),
+  notes: z.string().optional(),
 });
 
 export const RestrictionSchema = z
@@ -177,6 +209,40 @@ export const RestrictionSchema = z
       message: "Number must be at least 1",
       path: ["numDays"],
     },
+  )
+  .refine(
+    (data) => {
+      if (
+        data.type &&
+        data.type === "Restrict Before" &&
+        data.endTime?.getHours() === 0 &&
+        data.endTime?.getMinutes() === 0
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Cannot restrict whole day",
+      path: ["endTime"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (
+        data.type &&
+        data.type === "Restrict After" &&
+        data.startTime?.getHours() === 0 &&
+        data.startTime?.getMinutes() === 0
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Cannot restrict whole day",
+      path: ["startTime"],
+    },
   );
 
 export const TimetableFormSchema: ZodType<TimetableForm> = z
@@ -189,6 +255,7 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z
     semester: SemesterEnum,
     search: z.string(),
     courses: z.array(CourseSchema),
+    offeringIds: z.array(z.number()),
     restrictions: z.array(RestrictionSchema),
   })
   .refine(
@@ -208,6 +275,26 @@ export const TimetableFormSchema: ZodType<TimetableForm> = z
       message: "Cannot pick more than 8 courses",
       path: ["search"],
     },
+  )
+  .refine(
+    (data) => {
+      return !(
+        data.restrictions.filter((r) => r.type === "Days Off").length > 1
+      );
+    },
+    {
+      message: "Already added minimum days off per week",
+      path: ["restrictions"],
+    },
+  )
+  .refine(
+    (data) => {
+      return !hasDuplicate(data.restrictions);
+    },
+    {
+      message: "Duplicate restriction detected. Please remove.",
+      path: ["restrictions"],
+    },
   );
 
 export const baseTimetableForm: TimetableForm = {
@@ -217,6 +304,7 @@ export const baseTimetableForm: TimetableForm = {
   search: "",
   courses: [],
   restrictions: [],
+  offeringIds: [],
 };
 
 export const baseRestrictionForm: RestrictionForm = {
@@ -224,3 +312,23 @@ export const baseRestrictionForm: RestrictionForm = {
   days: [],
   disabled: false,
 };
+
+function hasDuplicate(restrictions: RestrictionForm[]) {
+  const seen: RestrictionForm[] = [];
+  for (const r of restrictions) {
+    if (
+      seen.some(
+        (s) =>
+          s.type === r.type &&
+          ((s.numDays && r.numDays && s.numDays === r.numDays) ||
+            (s.days?.sort().join(" ") === r.days?.sort().join(" ") &&
+              s.startTime?.getHours() === r.startTime?.getHours() &&
+              s.endTime?.getHours() === s.endTime?.getHours())),
+      )
+    ) {
+      return true;
+    }
+    seen.push(r);
+  }
+  return false;
+}

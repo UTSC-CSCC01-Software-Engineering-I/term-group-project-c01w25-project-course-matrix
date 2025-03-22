@@ -4,10 +4,9 @@ const config: Config = {
   preset: "ts-jest",
   moduleNameMapper: {
     "\\.(css|scss)$": "identity-obj-proxy",
-    "^.+\\.svg": "<rootDir>/tests/mocks/svgMock.tsx",
+    "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   // to obtain access to the matchers.
-  setupFilesAfterEnv: ["<rootDir>/tests/setupTests.ts"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   modulePaths: ["<rootDir>"],
   testEnvironment: "jsdom",
@@ -20,6 +19,10 @@ const config: Config = {
     ],
     "^.+\\.(js|jsx)$": "babel-jest",
   },
+  transformIgnorePatterns: [
+    "/node_modules/(?!(node-cron|uuid)/)", // Keep transforming `node-cron`
+  ],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 };
 
 export default config;

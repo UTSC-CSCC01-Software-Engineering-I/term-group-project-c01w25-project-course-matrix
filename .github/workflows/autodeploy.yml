@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: ms/Scrun-130-Project-Deployment-dockerfiles
+    branches: develop
 jobs:
   CI-PIPELINE:
     runs-on: ubuntu-latest

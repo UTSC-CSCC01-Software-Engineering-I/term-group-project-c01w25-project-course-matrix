@@ -133,7 +133,7 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
         return;
       }
       // Create course events for the newly created timetable
-      const newTimetableId = data?.id;
+      const newTimetableId = data[0].id;
       for (const offering of currentTimetableOfferings) {
         const offeringId = offering.id;
         const { error: offeringError } = await createEvent({

@@ -135,4 +135,8 @@ jobs:
 
             # Confirm running containers
             docker ps 
+
+            # Run post deployment tests
+            docker exec -it ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:master npm test
+            docker exec -it ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:master npm test
           EOF

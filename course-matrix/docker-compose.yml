@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   backend:
+    image: course-matrix/backend:latest
     build: 
       context: ./backend
     ports:
@@ -16,6 +17,7 @@ services:
       - course-matrix-net
 
   frontend:
+    image: course-matrix/frontend:latest
     build: 
       context: ./frontend
       args:

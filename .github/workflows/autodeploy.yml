@@ -63,6 +63,9 @@ jobs:
           cd course-matrix
           docker compose build
       
+      - name: List Docker Images (Debugging)
+        run: docker images  # Check if images exist before tagging
+      
       - name: Tag Images
         run: |
           docker tag course-matrix/frontend:latest course-matrix/frontend:${{ github.sha }}

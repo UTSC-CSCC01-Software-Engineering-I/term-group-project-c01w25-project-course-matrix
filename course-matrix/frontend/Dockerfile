@@ -14,6 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the frontend port
+EXPOSE 8081
 EXPOSE 5173
 
 # Start the application

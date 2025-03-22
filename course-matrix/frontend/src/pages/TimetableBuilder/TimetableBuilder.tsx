@@ -363,7 +363,7 @@ const TimetableBuilder = () => {
                 className="space-y-8"
               >
                 <div className="flex gap-8 w-full">
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="semester"
                     render={({ field }) => (
@@ -395,7 +395,7 @@ const TimetableBuilder = () => {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
 
                   <FormField
                     control={form.control}

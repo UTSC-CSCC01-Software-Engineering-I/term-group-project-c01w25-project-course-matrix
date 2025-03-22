@@ -4,9 +4,10 @@ on:
   push:
     branches: ms/Scrun-130-Project-Deployment-dockerfiles
 jobs:
-  test:
+  CI-PIPELINE:
     runs-on: ubuntu-latest
-
+    
+    # Installs needed dependencies
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -15,16 +16,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-
+      
+      # Tests code too ensure it passes all tests
       - name: Run frontend tests
         run: cd course-matrix/frontend && npm install && npm run test
       - name: Run backend tests
         run: cd course-matrix/backend && npm install && npm run test
       
-      # Step 2: Set up Docker Buildx (optional for multi-platform support)
+      # Set up Docker Buildx 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
+      # Sets our our application's environment
       - name: setup application env
         run: |
           cd course-matrix 
@@ -35,7 +38,7 @@ jobs:
           echo "VITE_PUBLIC_ASSISTANT_BASE_URL=\"${{ secrets.VITE_PUBLIC_ASSISTANT_BASE_URL }}\"" >> .env && \
           echo "VITE_ASSISTANT_UI_KEY=\"${{ secrets.VITE_ASSISTANT_UI_KEY }}\"" >> .env
 
-          # Move to backend
+          # Update backend .env
           cd ../backend 
           echo "NODE_ENV=\"development\"" > .env && \
           echo "PORT=8081" >> .env && \
@@ -50,45 +53,50 @@ jobs:
           echo "SENDER_NAME=\"Course Matrix Notifications\"" >> .env 
 
           cd ../
-      
+
+      # Logging in to dockerhub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Build and push frontend Docker image
+      # Build all required doccker images
       - name: Build Docker Image
         run: |
           cd course-matrix
           docker compose build
       
+      # Check if images exist before tagging
       - name: List Docker Images (Debugging)
-        run: docker images  # Check if images exist before tagging
+        run: docker images  
       
+      # Tags created images with version using github commit tags
       - name: Tag Images With Version
         run: |
           docker tag course-matrix/frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:${{ github.sha }}
           docker tag course-matrix/backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:${{ github.sha }}
 
-      # Step 5: Push Docker images to Docker Hub
+      # Push Docker images version to Docker Hub
       - name: Push Docker images version to Docker Hub
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:${{ github.sha }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:${{ github.sha }}
-
+      
+      # Tags created images for the master branch
       - name: Tag Images for Master Branch
         run: |
           docker tag course-matrix/frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:master
           docker tag course-matrix/backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:master
-
+      
+      # Push Docker images to Docker Hub master branch
       - name: Push images to Master Branch
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:master
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:master
           
-  deploy:
-    needs: test
+  CD-PIPELINE:
+    needs: CI-PIPELINE
     runs-on: ubuntu-latest
 
     steps:

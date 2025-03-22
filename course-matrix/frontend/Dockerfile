@@ -13,8 +13,8 @@ RUN npm install
 # Copy the rest of the application files
 COPY . .
 
-# Expose the backend port
-EXPOSE 8081
+# Expose the frontend port
+EXPOSE 5173
 
 # Start the application
 CMD ["npm", "run", "dev"]

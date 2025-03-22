@@ -68,8 +68,8 @@ jobs:
       
       - name: Tag Images
         run: |
-          docker tag course-matrix/frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:${{ github.sha }}
-          docker tag course-matrix/backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:${{ github.sha }}
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:${{ github.sha }}
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:${{ github.sha }}
 
       # Step 5: Push Docker images to Docker Hub
       - name: Push Docker images to Docker Hub

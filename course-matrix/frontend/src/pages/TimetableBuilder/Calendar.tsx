@@ -236,7 +236,7 @@ const Calendar = React.memo<CalendarProps>(
         return;
       }
       // Create course events for the newly created timetable
-      const newTimetableId = data?.id;
+      const newTimetableId = data[0].id;
       for (const offeringId of newOfferingIds) {
         const { error: offeringError } = await createEvent({
           calendar_id: newTimetableId,

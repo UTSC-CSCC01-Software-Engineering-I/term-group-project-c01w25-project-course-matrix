@@ -3,7 +3,7 @@ name: Run Tests
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Format the code"]
+    workflows: [Format the code]
     types:
       - completed
 

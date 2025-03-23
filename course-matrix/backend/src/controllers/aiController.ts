@@ -296,7 +296,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
               "Return a list of possible timetables based on provided courses and restrictions.",
             parameters: TimetableFormSchema,
             execute: async (args) => {
-              console.log("Args for generate: ", args)
+              console.log("Args for generate: ", args);
               console.log("restrictions :", JSON.stringify(args.restrictions));
               const data = await availableFunctions.generateTimetable(
                 args,

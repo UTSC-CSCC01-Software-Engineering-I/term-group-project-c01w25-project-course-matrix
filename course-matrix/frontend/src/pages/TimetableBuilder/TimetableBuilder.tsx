@@ -53,6 +53,7 @@ import { CourseModel, TimetableGenerateResponseModel } from "@/models/models";
 import LoadingPage from "@/pages/Loading/LoadingPage";
 import { GeneratedCalendars } from "./GeneratedCalendars";
 import { Spinner } from "@/components/ui/spinner";
+import { convertRestrictionTimes } from "@/utils/convert-restriction-times";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -283,9 +284,10 @@ const TimetableBuilder = () => {
   const handleGenerate = async (
     values: z.infer<typeof TimetableFormSchema>,
   ) => {
-    console.log(">> Timetable options:", values);
     try {
-      const res = await generateTimetable(values);
+      const newValues = convertRestrictionTimes(values);
+      console.log(">> Timetable options:", newValues);
+      const res = await generateTimetable(newValues);
       const data: TimetableGenerateResponseModel = res.data;
       setIsGeneratingTimetables(true);
       setGeneratedTimetables(data);

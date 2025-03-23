@@ -139,6 +139,9 @@ jest.mock("../src/db/setupDb", () => ({
       ) {
         return {
           eq: jest.fn().mockReturnThis(), // Allow further chaining of eq if required
+          neq: jest.fn().mockImplementation(() => ({
+            maybeSingle: jest.fn().mockImplementation(() => ({ data: null, error: null })),
+          })),
           maybeSingle: jest.fn().mockImplementation(() => {
             return { data: mockTimetables1, error: null };
           }),

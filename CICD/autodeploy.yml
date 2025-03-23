@@ -1,0 +1,135 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: develop
+jobs:
+  CI-PIPELINE:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Installs needed dependencies to set up our code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      
+      # Step 2: Tests code too ensure it passes all tests
+      - name: Run frontend tests
+        run: cd course-matrix/frontend && npm install && npm run test
+      - name: Run backend tests
+        run: cd course-matrix/backend && npm install && npm run test
+      
+      # Step 3: Set up Docker Buildx 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      # Step 4: Sets our our application's environment
+      - name: setup application env
+        run: |
+          cd course-matrix 
+      
+          # Update frontend .env
+          cd frontend
+          echo "VITE_SERVER_URL=\"http://34.130.253.243:8081\"" > .env && \
+          echo "VITE_PUBLIC_ASSISTANT_BASE_URL=\"${{ secrets.VITE_PUBLIC_ASSISTANT_BASE_URL }}\"" >> .env && \
+          echo "VITE_ASSISTANT_UI_KEY=\"${{ secrets.VITE_ASSISTANT_UI_KEY }}\"" >> .env
+
+          # Update backend .env
+          cd ../backend 
+          echo "NODE_ENV=\"development\"" > .env && \
+          echo "PORT=8081" >> .env && \
+          echo "CLIENT_APP_URL=\"http://34.130.253.243:5173\"" >> .env && \
+          echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" >> .env && \
+          echo "DATABASE_KEY=\"${{ secrets.DATABASE_KEY }}\"" >> .env && \
+          echo "OPENAI_API_KEY=\"${{ secrets.OPENAI_API_KEY }}\"" >> .env && \
+          echo "PINECONE_API_KEY=\"${{ secrets.PINECONE_API_KEY }}\"" >> .env && \
+          echo "PINECONE_INDEX_NAME=\"course-matrix\"" >> .env && \
+          echo "BREVO_API_KEY=\"${{ secrets.BREVO_API_KEY }}\"" >> .env && \
+          echo "SENDER_EMAIL=\"${{ secrets.SENDER_EMAIL }}\"" >> .env && \
+          echo "SENDER_NAME=\"Course Matrix Notifications\"" >> .env 
+
+          cd ../
+
+      # Step 5: Logging in to dockerhub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Step 6: Build all required doccker images
+      - name: Build Docker Image
+        run: |
+          cd course-matrix
+          docker compose build
+      
+      # Step 7: Check if images exist before tagging
+      - name: List Docker Images (Debugging)
+        run: docker images  
+      
+      # Step 8: Tags created images with version using github commit tags
+      - name: Tag Images With Version
+        run: |
+          docker tag course-matrix/frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:${{ github.sha }}
+          docker tag course-matrix/backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:${{ github.sha }}
+
+      # Step 9: Push Docker images version to Docker Hub
+      - name: Push Docker images version to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:${{ github.sha }}
+      
+      # Step 10: Tags created images for the master branch
+      - name: Tag Images for Master Branch
+        run: |
+          docker tag course-matrix/frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:master
+          docker tag course-matrix/backend:latest ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:master
+      
+      # Step 11: Push Docker images to Docker Hub master branch
+      - name: Push images to Master Branch
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:master
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:master
+          
+  CD-PIPELINE:
+    needs: CI-PIPELINE
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      
+      # Step 12: Connect to virtual machine
+      - name: Setup SSH Connection
+        run: |
+          echo "${{ secrets.GCP_SSH_PRIVATE_KEY }}" > private_key
+          chmod 600 private_key
+
+      - name: Deploy to Google Cloud VM
+        run: |
+          ssh -i private_key -o StrictHostKeyChecking=no ${{ secrets.GCP_USERNAME }}@${{ secrets.GCP_VM_IP }} << 'EOF'
+            cd /home/masahisasekita/term-group-project-c01w25-project-course-matrix || { echo "Error: Directory /root/myapp does not exist!"; exit 1; }
+
+            # Step 13: Clears deployment environment
+            sudo docker rmi -f $(sudo docker images -q)
+            sudo docker system prune -a --volumes -f
+            
+            # Step 14: Pull the latest images
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:master
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:master
+
+            # Step 15: Run the docker containers
+            docker run -d -p 5173:5173 ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:master
+            docker run -d -p 8081:8081 ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:master
+
+            # Step 16: Run post deployment tests
+            docker compose down
+            docker compose up -d --pull always
+            docker ps 
+            docker exec -it ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:master npm test
+            docker exec -it ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:master npm test
+          EOF

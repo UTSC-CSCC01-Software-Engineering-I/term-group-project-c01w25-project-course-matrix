@@ -360,7 +360,7 @@ const TimetableBuilder = () => {
             <FormContext.Provider value={form}>
               <form
                 onSubmit={form.handleSubmit(handleGenerate, (errors) => {
-                  console.error('Form submission errors:', errors);
+                  console.error("Form submission errors:", errors);
                 })}
                 className="space-y-8"
               >
@@ -374,8 +374,8 @@ const TimetableBuilder = () => {
                         <FormControl>
                           <Select
                             onValueChange={(value) => {
-                              form.setValue('offeringIds', []);
-                              form.setValue('courses', []);
+                              form.setValue("offeringIds", []);
+                              form.setValue("courses", []);
                               form.setValue("semester", value);
                             }}
                             value={field.value}

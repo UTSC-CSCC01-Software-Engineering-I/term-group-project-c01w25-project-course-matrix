@@ -16,7 +16,7 @@ export default {
 
       const courseOfferingsList: OfferingList[] = [];
       const validCourseOfferingsList: GroupedOfferingList[] = [];
-      const maxdays = await getMaxDays(restrictions);
+      const maxdays = getMaxDays(restrictions);
       const validSchedules: Offering[][] = [];
       // Fetch offerings for each course
       for (const course of courses) {
@@ -26,17 +26,16 @@ export default {
           offerings: (await getOfferings(id, semester)) ?? []
         });
       }
-
       const groupedOfferingsList: GroupedOfferingList[] =
-          await groupOfferings(courseOfferingsList);
+          groupOfferings(courseOfferingsList);
 
       // console.log(JSON.stringify(groupedOfferingsList, null, 2));
-
+      console.log(restrictions);
       // Filter out invalid offerings based on the restrictions
       for (const {course_id, groups, lectures, tutorials, practicals} of
                groupedOfferingsList) {
         const group: Record<string, Offering[]> =
-            await getValidOfferings(groups, restrictions);
+            getValidOfferings(groups, restrictions);
         let groupedOfferings = {
           course_id: course_id,
           groups: group,
@@ -45,23 +44,29 @@ export default {
           practicals: 0
         };
         groupedOfferings = getFreq(groupedOfferings);
+        console.log(groupedOfferings);
+        console.log(groups);
+        console.log('%d %d', lectures, groupedOfferings.lectures);
+        console.log('%d %d', tutorials, groupedOfferings.tutorials);
+        console.log('%d %d', practicals, groupedOfferings.practicals);
         if ((lectures != 0 && groupedOfferings.lectures == 0) ||
             (tutorials != 0 && groupedOfferings.tutorials == 0) ||
             (practicals != 0 && groupedOfferings.practicals == 0)) {
-          console.log('Here');
           return res.status(404).json(
               {error: 'No valid schedules found. (restriction)'});
         }
+
+        validCourseOfferingsList.push(groupedOfferings);
       }
 
       // console.log(JSON.stringify(validCourseOfferingsList, null, 2));
-      const categorizedOfferings = await categorizeValidOfferings(
+      const categorizedOfferings = categorizeValidOfferings(
           validCourseOfferingsList,
       );
-
-      // console.log(typeof categorizedOfferings);
-      // console.log(JSON.stringify(categorizedOfferings, null, 2));
-
+      console.log('=======');
+      console.log('CategorizedOfferings');
+      console.log(JSON.stringify(categorizedOfferings, null, 2));
+      console.log('=======');
       // Generate valid schedules for the given courses and restrictions
       await getValidSchedules(
           validSchedules,

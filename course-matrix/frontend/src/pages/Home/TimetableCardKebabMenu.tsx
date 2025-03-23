@@ -16,8 +16,8 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import { EllipsisVertical} from "lucide-react";
-import { useDeleteTimetableMutation} from "@/api/timetableApiSlice";
+import { EllipsisVertical } from "lucide-react";
+import { useDeleteTimetableMutation } from "@/api/timetableApiSlice";
 import { EmailNotificationSettings } from "./EmailNotificationSettings";
 
 interface TimetableCardKebabMenuProps {
@@ -33,11 +33,7 @@ const TimetableCardKebabMenu = ({
   refetch,
   timetableId,
 }: TimetableCardKebabMenuProps) => {
-  
   const [deleteTimetable] = useDeleteTimetableMutation();
-  
-  
-  
 
   const handleDelete = async () => {
     try {

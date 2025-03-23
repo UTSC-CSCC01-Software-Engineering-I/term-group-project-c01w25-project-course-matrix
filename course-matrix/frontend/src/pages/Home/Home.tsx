@@ -4,6 +4,8 @@ import TimetableCard from "./TimetableCard";
 import TimetableCompareButton from "./TimetableCompareButton";
 import TimetableCreateNewButton from "./TimetableCreateNewButton";
 import { useGetTimetablesQuery } from "../../api/timetableApiSlice";
+import { useState } from "react";
+import TimetableErrorDialog from "../TimetableBuilder/TimetableErrorDialog";
 
 export interface Timetable {
   id: number;
@@ -31,6 +33,8 @@ const Home = () => {
     refetch: () => void;
   };
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   return (
     <div className="w-full">
       <div className="m-8">
@@ -38,6 +42,7 @@ const Home = () => {
           <h1 className="text-2xl font-medium tracking-tight">My Timetables</h1>
           <Pin size={24} className="text-blue-500" />
         </div>
+        <TimetableErrorDialog isCreating={false} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />
         <div className="mb-4 flex flex-row justify-between items-center">
           <div className="flex gap-4">
             <Button
@@ -78,6 +83,7 @@ const Home = () => {
               .map((timetable) => (
                 <TimetableCard
                   refetch={refetch}
+                  setErrorMessage={setErrorMessage}
                   key={timetable.id}
                   timetableId={timetable.id}
                   title={timetable.timetable_title}

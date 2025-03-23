@@ -45,6 +45,8 @@ import { useCreateTimetableMutation } from "@/api/timetableApiSlice";
 import { useCreateEventMutation } from "@/api/eventsApiSlice";
 import { useCreateRestrictionMutation } from "@/api/restrictionsApiSlice";
 import { TimetableForm } from "@/models/timetable-form";
+import { set } from "zod";
+import TimetableErrorDialog from "./TimetableErrorDialog";
 
 interface GeneratedCalendarsProps {
   setShowLoadingPage: (_: boolean) => void;
@@ -120,8 +122,9 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
         parseEvent(index + 1, event, "courseEvent"),
       ) ?? [];
 
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const handleCreate = async () => {
-      setShowLoadingPage(true);
       const timetableTitle = timetableTitleRef.current?.value ?? "";
       // Create timetable
       const { data, error } = await createTimetable({
@@ -129,9 +132,11 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
         semester: semester,
       });
       if (error) {
-        console.error(error);
+        const errorData = (error as { data?: { error?: string } }).data;
+        setErrorMessage(errorData?.error ?? "Unknown error occurred");
         return;
-      }
+      } 
+      setShowLoadingPage(true);
       // Create course events for the newly created timetable
       const newTimetableId = data[0].id;
       for (const offering of currentTimetableOfferings) {
@@ -210,6 +215,11 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
               >
                 Cancel Generating
               </Button>
+              <TimetableErrorDialog
+                isCreating={true}
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
+              />
               <Dialog>
                 <DialogTrigger asChild>
                   <Button size="sm" onClick={() => {}}>

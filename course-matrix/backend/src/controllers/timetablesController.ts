@@ -190,6 +190,27 @@ export default {
         return res.status(404).json({ error: "Calendar id not found" });
       }
 
+      // Check if another timetable with the same title already exist for this user
+      const { data: existingTimetable, error: existingTimetableError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("id")
+          .eq("user_id", user_id)
+          .eq("timetable_title", timetable_title)
+          .neq("id", id)
+          .maybeSingle();
+      
+      if (existingTimetableError) {
+        return res.status(400).json({ error: existingTimetableError.message });
+      }
+
+      if (existingTimetable) {
+        return res
+          .status(400)
+          .json({ error: "Another timetable with this title already exists" });
+      }
+
       let updateData: any = {};
       if (timetable_title) updateData.timetable_title = timetable_title;
       if (semester) updateData.semester = semester;

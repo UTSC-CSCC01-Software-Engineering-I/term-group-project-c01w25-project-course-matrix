@@ -135,7 +135,7 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
         const errorData = (error as { data?: { error?: string } }).data;
         setErrorMessage(errorData?.error ?? "Unknown error occurred");
         return;
-      } 
+      }
       setShowLoadingPage(true);
       // Create course events for the newly created timetable
       const newTimetableId = data[0].id;

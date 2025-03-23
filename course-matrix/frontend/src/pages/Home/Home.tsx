@@ -42,7 +42,11 @@ const Home = () => {
           <h1 className="text-2xl font-medium tracking-tight">My Timetables</h1>
           <Pin size={24} className="text-blue-500" />
         </div>
-        <TimetableErrorDialog isCreating={false} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />
+        <TimetableErrorDialog
+          isCreating={false}
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
+        />
         <div className="mb-4 flex flex-row justify-between items-center">
           <div className="flex gap-4">
             <Button

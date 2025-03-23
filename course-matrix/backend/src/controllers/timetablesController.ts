@@ -200,7 +200,7 @@ export default {
           .eq("timetable_title", timetable_title)
           .neq("id", id)
           .maybeSingle();
-      
+
       if (existingTimetableError) {
         return res.status(400).json({ error: existingTimetableError.message });
       }

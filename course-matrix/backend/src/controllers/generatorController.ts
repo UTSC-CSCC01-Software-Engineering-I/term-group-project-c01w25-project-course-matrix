@@ -5,7 +5,7 @@ import asyncHandler from '../middleware/asyncHandler'; // Middleware to handle a
 import getOfferings from '../services/getOfferings';
 import {getValidSchedules} from '../services/getValidSchedules';
 import {GroupedOfferingList, Offering, OfferingList,} from '../types/generatorTypes';
-import {categorizeValidOfferings, getFreq, getMaxDays, getValidOfferings, groupOfferings, trim} from '../utils/generatorHelpers';
+import {categorizeValidOfferings, getFreq, getMaxDays, getValidOfferings, groupOfferings, trim,} from '../utils/generatorHelpers';
 
 // Express route handler to generate timetables based on user input
 export default {
@@ -23,7 +23,7 @@ export default {
         const {id} = course;
         courseOfferingsList.push({
           course_id: id,
-          offerings: (await getOfferings(id, semester)) ?? []
+          offerings: (await getOfferings(id, semester)) ?? [],
         });
       }
       const groupedOfferingsList: GroupedOfferingList[] =
@@ -41,7 +41,7 @@ export default {
           groups: group,
           lectures: 0,
           tutorials: 0,
-          practicals: 0
+          practicals: 0,
         };
         groupedOfferings = getFreq(groupedOfferings);
         console.log(groupedOfferings);

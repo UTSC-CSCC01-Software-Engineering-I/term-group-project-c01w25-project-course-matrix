@@ -44,7 +44,7 @@ export function groupOfferings(courseOfferingsList: OfferingList[]) {
       groups: {},
       lectures: 0,
       tutorials: 0,
-      practicals: 0
+      practicals: 0,
     };
     offering.offerings.forEach((offering) => {
       if (!groupedOfferings.groups[offering.meeting_section]) {

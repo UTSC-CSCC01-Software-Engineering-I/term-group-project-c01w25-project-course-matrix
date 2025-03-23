@@ -359,11 +359,13 @@ const TimetableBuilder = () => {
           <Form {...form}>
             <FormContext.Provider value={form}>
               <form
-                onSubmit={form.handleSubmit(handleGenerate)}
+                onSubmit={form.handleSubmit(handleGenerate, (errors) => {
+                  console.error('Form submission errors:', errors);
+                })}
                 className="space-y-8"
               >
                 <div className="flex gap-8 w-full">
-                  {/* <FormField
+                  <FormField
                     control={form.control}
                     name="semester"
                     render={({ field }) => (
@@ -372,7 +374,8 @@ const TimetableBuilder = () => {
                         <FormControl>
                           <Select
                             onValueChange={(value) => {
-                              form.reset({ offeringIds: [], courses: [] });
+                              form.setValue('offeringIds', []);
+                              form.setValue('courses', []);
                               form.setValue("semester", value);
                             }}
                             value={field.value}
@@ -395,7 +398,7 @@ const TimetableBuilder = () => {
                         <FormMessage />
                       </FormItem>
                     )}
-                  /> */}
+                  />
 
                   <FormField
                     control={form.control}

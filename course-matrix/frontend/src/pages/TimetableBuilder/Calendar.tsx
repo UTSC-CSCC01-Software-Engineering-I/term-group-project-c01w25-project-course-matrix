@@ -35,7 +35,7 @@ import {
   useDeleteRestrictionMutation,
 } from "@/api/restrictionsApiSlice";
 import { z } from "zod";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGetNumberOfCourseSectionsQuery } from "@/api/coursesApiSlice";
 import {
   useCreateEventMutation,
@@ -58,6 +58,7 @@ import {
   getSemesterStartAndEndDatesPlusOneWeek,
 } from "@/utils/semester-utils";
 import { courseEventStyles } from "@/constants/calendarConstants";
+import TimetableErrorDialog from "./TimetableErrorDialog";
 
 interface CalendarProps {
   setShowLoadingPage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -109,6 +110,8 @@ const Calendar = React.memo<CalendarProps>(
     const [deleteEvent] = useDeleteEventMutation();
     const [createRestriction] = useCreateRestrictionMutation();
     const [deleteRestriction] = useDeleteRestrictionMutation();
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
     const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
@@ -224,7 +227,6 @@ const Calendar = React.memo<CalendarProps>(
     }, [timetablesData, editingTimetableId, isEditingTimetable]);
 
     const handleCreate = async () => {
-      setShowLoadingPage(true);
       const timetableTitle = timetableTitleRef.current?.value ?? "";
       // Create timetable
       const { data, error } = await createTimetable({
@@ -232,9 +234,11 @@ const Calendar = React.memo<CalendarProps>(
         semester: semester,
       });
       if (error) {
-        console.error(error);
+        const errorData = (error as { data?: { error?: string } }).data;
+        setErrorMessage(errorData?.error ?? "Unknown error occurred");
         return;
       }
+      setShowLoadingPage(true);
       // Create course events for the newly created timetable
       const newTimetableId = data[0].id;
       for (const offeringId of newOfferingIds) {
@@ -336,6 +340,10 @@ const Calendar = React.memo<CalendarProps>(
       <div>
         <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-8">
           <div>Your Timetable </div>
+          <TimetableErrorDialog
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
+          />
           {!isEditingTimetable ? (
             <Dialog>
               {isChoosingSectionsManually &&

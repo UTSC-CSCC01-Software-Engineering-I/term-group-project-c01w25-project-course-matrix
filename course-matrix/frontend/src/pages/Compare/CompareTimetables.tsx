@@ -8,20 +8,25 @@ import { useGetEventsQuery } from "@/api/eventsApiSlice";
 import { Spinner } from "@/components/ui/spinner";
 
 export const CompareTimetables = () => {
-
   const [queryParams] = useSearchParams();
   const validParams = queryParams.has("id1") && queryParams.has("id2");
 
   if (!validParams) {
     return (
-      <div className="w-full text-red-500 text-center mt-10">You have not selected two timetables to compare. Please try again.</div>
-    )
+      <div className="w-full text-red-500 text-center mt-10">
+        You have not selected two timetables to compare. Please try again.
+      </div>
+    );
   }
   const timetableId1 = parseInt(queryParams.get("id1") || "0");
   const timetableId2 = parseInt(queryParams.get("id2") || "0");
 
-  const { data: data1} = useGetTimetableQuery(timetableId1) as { data: Timetable[]};
-  const { data: data2} = useGetTimetableQuery(timetableId2) as { data: Timetable[]};
+  const { data: data1 } = useGetTimetableQuery(timetableId1) as {
+    data: Timetable[];
+  };
+  const { data: data2 } = useGetTimetableQuery(timetableId2) as {
+    data: Timetable[];
+  };
 
   const { data: timetableEventsData1 } = useGetEventsQuery(timetableId1) as {
     data: TimetableEvents;
@@ -34,18 +39,17 @@ export const CompareTimetables = () => {
   const [timetable2, setTimetable2] = useState<Timetable | null>(null);
   const [offeringIds1, setOfferingIds1] = useState<number[]>([]);
   const [offeringIds2, setOfferingIds2] = useState<number[]>([]);
-  
 
   useEffect(() => {
     if (data1) {
-      setTimetable1(data1[0])
+      setTimetable1(data1[0]);
     }
-  }, [data1])
-  useEffect(()=> {
+  }, [data1]);
+  useEffect(() => {
     if (data2) {
-      setTimetable2(data2[0])
+      setTimetable2(data2[0]);
     }
-  }, [data2])
+  }, [data2]);
 
   // get unique offeringIds for calendar
   useEffect(() => {
@@ -53,26 +57,26 @@ export const CompareTimetables = () => {
       const uniqueOfferingIds = new Set<number>();
       for (const event of timetableEventsData1.courseEvents) {
         if (!uniqueOfferingIds.has(event.offering_id))
-          uniqueOfferingIds.add(event.offering_id)
+          uniqueOfferingIds.add(event.offering_id);
       }
-      setOfferingIds1(Array.from(uniqueOfferingIds))
+      setOfferingIds1(Array.from(uniqueOfferingIds));
     }
-    
-  }, [timetableEventsData1])
+  }, [timetableEventsData1]);
 
   useEffect(() => {
     if (timetableEventsData2) {
       const uniqueOfferingIds = new Set<number>();
       for (const event of timetableEventsData2.courseEvents) {
         if (!uniqueOfferingIds.has(event.offering_id))
-          uniqueOfferingIds.add(event.offering_id)
+          uniqueOfferingIds.add(event.offering_id);
       }
-      setOfferingIds2(Array.from(uniqueOfferingIds))
+      setOfferingIds2(Array.from(uniqueOfferingIds));
     }
-  }, [timetableEventsData2])
+  }, [timetableEventsData2]);
 
-  return <>
-    <div className="w-full">
+  return (
+    <>
+      <div className="w-full">
         <div className="mb-4 p-8">
           <div className="mb-2 flex flex-row justify-between">
             <div>
@@ -88,10 +92,12 @@ export const CompareTimetables = () => {
               </Link>
             </div>
           </div>
-          <hr className="mb-4"/>
+          <hr className="mb-4" />
           <div className="flex gap-4">
             <div className="w-1/2">
-              {offeringIds1.length === 0 ? <Spinner/> : (
+              {offeringIds1.length === 0 ? (
+                <Spinner />
+              ) : (
                 <Calendar
                   setShowLoadingPage={() => {}}
                   isChoosingSectionsManually={false}
@@ -102,24 +108,25 @@ export const CompareTimetables = () => {
                   header={timetable1?.timetable_title}
                 />
               )}
-              
             </div>
             <div className="w-1/2">
-              {offeringIds2.length === 0 ? <Spinner/> : (
+              {offeringIds2.length === 0 ? (
+                <Spinner />
+              ) : (
                 <Calendar
-                    setShowLoadingPage={() => {}}
-                    isChoosingSectionsManually={false}
-                    semester={timetable2?.semester ?? "Fall 2025"}
-                    selectedCourses={[]}
-                    newOfferingIds={offeringIds2}
-                    restrictions={[]}
-                    header={timetable2?.timetable_title}
-                  />
+                  setShowLoadingPage={() => {}}
+                  isChoosingSectionsManually={false}
+                  semester={timetable2?.semester ?? "Fall 2025"}
+                  selectedCourses={[]}
+                  newOfferingIds={offeringIds2}
+                  restrictions={[]}
+                  header={timetable2?.timetable_title}
+                />
               )}
             </div>
           </div>
         </div>
-
-    </div>
-  </>
-}
+      </div>
+    </>
+  );
+};

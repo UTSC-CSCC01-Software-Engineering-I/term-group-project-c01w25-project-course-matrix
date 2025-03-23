@@ -10,10 +10,23 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Timetable } from "@/utils/type-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GitCompareArrows } from "lucide-react";
@@ -25,7 +38,7 @@ import { z } from "zod";
 const CompareFormSchema = z.object({
   timetable1: z.number().positive(),
   timetable2: z.number().positive(),
-})
+});
 
 interface TimetableCompareDialogProps {
   timetables: Timetable[];
@@ -34,26 +47,30 @@ interface TimetableCompareDialogProps {
  * Component for the "Compare" button that opens a dialog to compare timetables.
  * @returns {JSX.Element} The rendered component.
  */
-export const TimetableCompareButton = ({ timetables }: TimetableCompareDialogProps) => {
+export const TimetableCompareButton = ({
+  timetables,
+}: TimetableCompareDialogProps) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  
+
   const compareForm = useForm<z.infer<typeof CompareFormSchema>>({
     resolver: zodResolver(CompareFormSchema),
   });
 
   const onSubmit = (values: z.infer<typeof CompareFormSchema>) => {
-    console.log("Comapare Form submitted:", values); 
-    setOpen(false); 
-    navigate(`/dashboard/compare?id1=${values.timetable1}&id2=${values.timetable2}`)
-  }
+    console.log("Comapare Form submitted:", values);
+    setOpen(false);
+    navigate(
+      `/dashboard/compare?id1=${values.timetable1}&id2=${values.timetable2}`,
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="secondary" size="sm" className="px-5">
           Compare
-          <GitCompareArrows/>
+          <GitCompareArrows />
         </Button>
       </DialogTrigger>
       <DialogContent className="gap-5">
@@ -61,26 +78,37 @@ export const TimetableCompareButton = ({ timetables }: TimetableCompareDialogPro
           <DialogTitle>Compare Timetables</DialogTitle>
           <DialogDescription>View timetables side by side. </DialogDescription>
         </DialogHeader>
-        
+
         <Form {...compareForm}>
-          <form onSubmit={compareForm.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={compareForm.handleSubmit(onSubmit)}
+            className="space-y-6"
+          >
             <FormField
               control={compareForm.control}
               name="timetable1"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Timetable 1</FormLabel>
-                  <Select onValueChange={(value) => field.onChange(Number(value))}>
+                  <Select
+                    onValueChange={(value) => field.onChange(Number(value))}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a timetable" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {timetables.map(timetable => (
-                        <SelectItem key={timetable.id} value={timetable.id.toString()}>
+                      {timetables.map((timetable) => (
+                        <SelectItem
+                          key={timetable.id}
+                          value={timetable.id.toString()}
+                        >
                           <div className="flex items-center gap-2">
-                            <SemesterIcon semester={timetable.semester} size={18}/>
+                            <SemesterIcon
+                              semester={timetable.semester}
+                              size={18}
+                            />
                             <span>{timetable.timetable_title}</span>
                           </div>
                         </SelectItem>
@@ -98,17 +126,25 @@ export const TimetableCompareButton = ({ timetables }: TimetableCompareDialogPro
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Timetable 2</FormLabel>
-                  <Select onValueChange={(value) => field.onChange(Number(value))}>
+                  <Select
+                    onValueChange={(value) => field.onChange(Number(value))}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a timetable" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {timetables.map(timetable => (
-                        <SelectItem key={timetable.id} value={timetable.id.toString()}>
+                      {timetables.map((timetable) => (
+                        <SelectItem
+                          key={timetable.id}
+                          value={timetable.id.toString()}
+                        >
                           <div className="flex items-center gap-2">
-                            <SemesterIcon semester={timetable.semester} size={18}/>
+                            <SemesterIcon
+                              semester={timetable.semester}
+                              size={18}
+                            />
                             <span>{timetable.timetable_title}</span>
                           </div>
                         </SelectItem>
@@ -121,7 +157,11 @@ export const TimetableCompareButton = ({ timetables }: TimetableCompareDialogPro
             />
 
             <DialogFooter>
-              <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit">Submit</Button>

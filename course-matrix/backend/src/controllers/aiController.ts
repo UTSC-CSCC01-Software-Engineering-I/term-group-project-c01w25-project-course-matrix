@@ -257,6 +257,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Do not make up fake courses or offerings. 
             - For delete timetable requests, ask for user confirmation with command "/timetable confirm" before proceeding
             - Do not create multiple timetables for a single user query. Each user query can create at most 1 timetable
+            - If you try to update or create a timetable but you get an error saying a timetable with the same name already exists, then ask the user to rename
             `,
         messages,
         tools: {
@@ -295,7 +296,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
               "Return a list of possible timetables based on provided courses and restrictions.",
             parameters: TimetableFormSchema,
             execute: async (args) => {
-              // console.log("Args for generate: ", args)
+              console.log("Args for generate: ", args)
               console.log("restrictions :", JSON.stringify(args.restrictions));
               const data = await availableFunctions.generateTimetable(
                 args,

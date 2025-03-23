@@ -11,19 +11,13 @@ import {
 import React from "react";
 
 interface TimetableErrorDialogProps {
-  isCreating: boolean;
   errorMessage: string | null;
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const TimetableErrorDialog: React.FC<TimetableErrorDialogProps> = ({
-  isCreating,
-  errorMessage,
-  setErrorMessage,
-}) => {
-  const dialogTitle = isCreating
-    ? "An error occurred while creating your timetable"
-    : "An error occurred while updating your timetable";
+const TimetableErrorDialog: React.FC<TimetableErrorDialogProps> = ({ errorMessage, setErrorMessage }) => {
+  const dialogTitle = errorMessage !== null ? errorMessage : "Unknown error occurred";
+  const dialogDescription = errorMessage?.includes("title already exists") ? "Please choose another title for your timetable" : null;
 
   return (
     <Dialog
@@ -33,7 +27,7 @@ const TimetableErrorDialog: React.FC<TimetableErrorDialogProps> = ({
       <DialogContent className="gap-5">
         <DialogHeader>
           <DialogTitle className="text-red-500">{dialogTitle}</DialogTitle>
-          <DialogDescription>{errorMessage}</DialogDescription>
+          <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>

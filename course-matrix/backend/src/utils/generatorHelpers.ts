@@ -1,32 +1,39 @@
-import {CategorizedOfferingList, GroupedOfferingList, Offering, OfferingList, Restriction, RestrictionType,} from '../types/generatorTypes';
+import {
+  CategorizedOfferingList,
+  GroupedOfferingList,
+  Offering,
+  OfferingList,
+  Restriction,
+  RestrictionType,
+} from "../types/generatorTypes";
 
 // Utility function to create an Offering object with optional overrides
 export function createOffering(overrides: Partial<Offering> = {}): Offering {
   return {
     id: overrides.id ?? -1,
     course_id: overrides.course_id ?? -1,
-    meeting_section: overrides.meeting_section ?? 'No Section',
-    offering: overrides.offering ?? 'No Offering',
-    day: overrides.day ?? 'N/A',
-    start: overrides.start ?? '00:00:00',
-    end: overrides.end ?? '00:00:00',
-    location: overrides.location ?? 'No Room',
+    meeting_section: overrides.meeting_section ?? "No Section",
+    offering: overrides.offering ?? "No Offering",
+    day: overrides.day ?? "N/A",
+    start: overrides.start ?? "00:00:00",
+    end: overrides.end ?? "00:00:00",
+    location: overrides.location ?? "No Room",
     current: overrides.current ?? -1,
     max: overrides.max ?? -1,
     is_waitlisted: overrides.is_waitlisted ?? false,
-    delivery_mode: overrides.delivery_mode ?? 'N/A',
-    instructor: overrides.instructor ?? 'N/A',
-    notes: overrides.notes ?? 'N/A',
-    code: overrides.code ?? 'N/A',
+    delivery_mode: overrides.delivery_mode ?? "N/A",
+    instructor: overrides.instructor ?? "N/A",
+    notes: overrides.notes ?? "N/A",
+    code: overrides.code ?? "N/A",
   };
 }
 
 export function getFreq(groupedOfferings: GroupedOfferingList) {
   for (const [groupKey, offerings] of Object.entries(groupedOfferings.groups)) {
-    console.log('groupKey: %s', groupKey);
-    if (groupKey && groupKey.startsWith('PRA')) {
+    console.log("groupKey: %s", groupKey);
+    if (groupKey && groupKey.startsWith("PRA")) {
       groupedOfferings.practicals++;
-    } else if (groupKey && groupKey.startsWith('TUT')) {
+    } else if (groupKey && groupKey.startsWith("TUT")) {
       groupedOfferings.tutorials++;
     } else {
       groupedOfferings.lectures++;
@@ -44,7 +51,7 @@ export async function groupOfferings(courseOfferingsList: OfferingList[]) {
       groups: {},
       lectures: 0,
       tutorials: 0,
-      practicals: 0
+      practicals: 0,
     };
     offering.offerings.forEach((offering) => {
       if (!groupedOfferings.groups[offering.meeting_section]) {
@@ -64,18 +71,16 @@ export async function getMaxDays(restrictions: Restriction[]) {
   for (const restriction of restrictions) {
     if (restriction.disabled) continue;
     if (restriction.type == RestrictionType.RestrictDaysOff) {
-      return 5 -
-          restriction
-              .numDays;  // Subtract the restricted days from the total days
+      return 5 - restriction.numDays; // Subtract the restricted days from the total days
     }
   }
-  return 5;  // Default to 5 days if no restrictions
+  return 5; // Default to 5 days if no restrictions
 }
 
 // Function to check if an offering satisfies the restrictions
 export function isValidOffering(
-    offering: Offering,
-    restrictions: Restriction[],
+  offering: Offering,
+  restrictions: Restriction[],
 ) {
   for (const restriction of restrictions) {
     if (restriction.disabled) continue;
@@ -94,8 +99,10 @@ export function isValidOffering(
         break;
 
       case RestrictionType.RestrictBetween:
-        if (offering.start < restriction.endTime &&
-            restriction.startTime < offering.end) {
+        if (
+          offering.start < restriction.endTime &&
+          restriction.startTime < offering.end
+        ) {
           return false;
         }
         break;
@@ -114,16 +121,16 @@ export function isValidOffering(
 
 // Function to get valid offerings by filtering them based on the restrictions
 export async function getValidOfferings(
-    groups: Record<string, Offering[]>,
-    restrictions: Restriction[],
+  groups: Record<string, Offering[]>,
+  restrictions: Restriction[],
 ) {
   const validGroups: Record<string, Offering[]> = {};
 
   // Loop through each group in the groups object
   for (const [groupKey, offerings] of Object.entries(groups)) {
     // Check if all offerings in the group are valid
-    const allValid = offerings.every(
-        (offering) => isValidOffering(offering, restrictions),
+    const allValid = offerings.every((offering) =>
+      isValidOffering(offering, restrictions),
     );
 
     // Only add the group to validGroups if all offerings are valid
@@ -138,33 +145,33 @@ export async function getValidOfferings(
 
 // Function to categorize offerings into lectures, tutorials, and practicals
 export async function categorizeValidOfferings(
-    offerings: GroupedOfferingList[],
+  offerings: GroupedOfferingList[],
 ) {
   const lst: CategorizedOfferingList[] = [];
 
   for (const offering of offerings) {
     const lectures: CategorizedOfferingList = {
       course_id: offering.course_id,
-      category: 'LEC',
+      category: "LEC",
       offerings: {},
     };
     const tutorials: CategorizedOfferingList = {
       course_id: offering.course_id,
-      category: 'TUT',
+      category: "TUT",
       offerings: {},
     };
     const practicals: CategorizedOfferingList = {
       course_id: offering.course_id,
-      category: 'PRA',
+      category: "PRA",
       offerings: {},
     };
 
     for (const [meeting_section, offerings] of Object.entries(
-             offering.groups,
-             )) {
-      if (meeting_section && meeting_section.startsWith('PRA')) {
+      offering.groups,
+    )) {
+      if (meeting_section && meeting_section.startsWith("PRA")) {
         practicals.offerings[meeting_section] = offerings;
-      } else if (meeting_section && meeting_section.startsWith('TUT')) {
+      } else if (meeting_section && meeting_section.startsWith("TUT")) {
         tutorials.offerings[meeting_section] = offerings;
       } else {
         lectures.offerings[meeting_section] = offerings;
@@ -193,26 +200,32 @@ function minString(a: string, b: string): string {
 export async function canInsert(toInsert: Offering, curList: Offering[]) {
   for (const offering of curList) {
     if (offering.day == toInsert.day) {
-      if (maxString(offering.start, toInsert.start) <
-          minString(offering.end, toInsert.end)) {
-        return false;  // Check if the time overlaps
+      if (
+        maxString(offering.start, toInsert.start) <
+        minString(offering.end, toInsert.end)
+      ) {
+        return false; // Check if the time overlaps
       }
-      if (offering.start == '18:00:00' && offering.end == '19:00:00') {
+      if (offering.start == "18:00:00" && offering.end == "19:00:00") {
         console.log(
-            'Interval (%s, %s) doesn\'t overlap with Interval (%s, %s)\n',
-            offering.start, offering.end, toInsert.start, toInsert.end);
+          "Interval (%s, %s) doesn't overlap with Interval (%s, %s)\n",
+          offering.start,
+          offering.end,
+          toInsert.start,
+          toInsert.end,
+        );
       }
     }
   }
 
-  return true;  // No conflict found
+  return true; // No conflict found
 }
 
 // Function to check if an ever offerings in toInstList can be inserted into
 // the current list of offerings without conflicts
 export async function canInsertList(
-    toInsertList: Offering[],
-    curList: Offering[],
+  toInsertList: Offering[],
+  curList: Offering[],
 ) {
   // console.log(toInsertList);
   return toInsertList.every((x) => canInsert(x, curList));

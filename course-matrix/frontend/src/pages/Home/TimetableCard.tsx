@@ -87,14 +87,9 @@ const TimetableCard = ({
       console.log("Favourite success!");
       setToggled(!toggled);
       console.log(!toggled);
-      handleReload();
     } catch (error) {
       console.error("Failed to favourite timetable:", error);
     }
-  };
-
-  const handleReload = () => {
-    window.location.reload(); // Reloads the page
   };
 
   return (

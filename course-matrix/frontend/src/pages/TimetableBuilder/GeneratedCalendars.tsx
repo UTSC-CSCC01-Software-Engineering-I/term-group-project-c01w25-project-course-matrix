@@ -215,7 +215,10 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
               >
                 Cancel Generating
               </Button>
-              <TimetableErrorDialog errorMessage={errorMessage} setErrorMessage={setErrorMessage} />
+              <TimetableErrorDialog
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
+              />
               <Dialog>
                 <DialogTrigger asChild>
                   <Button size="sm" onClick={() => {}}>

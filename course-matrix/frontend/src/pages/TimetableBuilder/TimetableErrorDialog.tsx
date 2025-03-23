@@ -15,9 +15,15 @@ interface TimetableErrorDialogProps {
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const TimetableErrorDialog: React.FC<TimetableErrorDialogProps> = ({ errorMessage, setErrorMessage }) => {
-  const dialogTitle = errorMessage !== null ? errorMessage : "Unknown error occurred";
-  const dialogDescription = errorMessage?.includes("title already exists") ? "Please choose another title for your timetable" : null;
+const TimetableErrorDialog: React.FC<TimetableErrorDialogProps> = ({
+  errorMessage,
+  setErrorMessage,
+}) => {
+  const dialogTitle =
+    errorMessage !== null ? errorMessage : "Unknown error occurred";
+  const dialogDescription = errorMessage?.includes("title already exists")
+    ? "Please choose another title for your timetable"
+    : null;
 
   return (
     <Dialog

@@ -340,7 +340,10 @@ const Calendar = React.memo<CalendarProps>(
       <div>
         <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-8">
           <div>Your Timetable </div>
-          <TimetableErrorDialog errorMessage={errorMessage} setErrorMessage={setErrorMessage} />
+          <TimetableErrorDialog
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
+          />
           {!isEditingTimetable ? (
             <Dialog>
               {isChoosingSectionsManually &&

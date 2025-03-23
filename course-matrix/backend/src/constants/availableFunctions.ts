@@ -174,7 +174,7 @@ export const availableFunctions: AvailableFunctions = {
   generateTimetable: async (args: any, req: Request) => {
     try {
       // Extract event details and course information from the request
-      const {name, semester, courses, restrictions} = req.body;
+      const {name, semester, courses, restrictions} = args;
 
       const courseOfferingsList: OfferingList[] = [];
       const validCourseOfferingsList: GroupedOfferingList[] = [];

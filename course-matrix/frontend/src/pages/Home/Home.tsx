@@ -72,9 +72,11 @@ const Home = () => {
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : (
             [...data]
-              .sort((a: Timetable, b: Timetable) =>
-                b?.updated_at.localeCompare(a?.updated_at),
-              )
+              .sort((a: Timetable, b: Timetable) => {
+                if(a.favorite) return 1;
+                if(b.favorite) return -1;
+                return b?.updated_at.localeCompare(a?.updated_at);
+              })
               .map((timetable) => (
                 <TimetableCard
                   refetch={refetch}
@@ -82,6 +84,7 @@ const Home = () => {
                   timetableId={timetable.id}
                   title={timetable.timetable_title}
                   lastEditedDate={new Date(timetable.updated_at)}
+                  favorite={timetable.favorite}
                   owner={name}
                 />
               ))

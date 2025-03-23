@@ -7,11 +7,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pencil } from "lucide-react";
-import { useState } from "react";
+import { Star, Pencil } from "lucide-react";
+import { useState,useEffect } from "react";
 import TimetableCardKebabMenu from "./TimetableCardKebabMenu";
-import { useUpdateTimetableMutation } from "@/api/timetableApiSlice";
+import { useUpdateTimetableMutation, useGetTimetableQuery} from "@/api/timetableApiSlice";
 import { Link } from "react-router-dom";
+import { TimetableModel } from "@/models/models";
 
 interface TimetableCardProps {
   refetch: () => void;
@@ -19,6 +20,7 @@ interface TimetableCardProps {
   title: string;
   lastEditedDate: Date;
   owner: string;
+  favorite: boolean;
 }
 
 /**
@@ -32,8 +34,11 @@ const TimetableCard = ({
   title,
   lastEditedDate,
   owner,
+  favorite
 }: TimetableCardProps) => {
   const [updateTimetable] = useUpdateTimetableMutation();
+
+
 
   const lastEditedDateArray = lastEditedDate
     .toISOString()
@@ -47,6 +52,8 @@ const TimetableCard = ({
 
   const [timetableCardTitle, setTimetableCardTitle] = useState(title);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const { data } = useGetTimetableQuery(timetableId);
+  const [toggled, setToggled] = useState(favorite);
 
   const handleSave = async () => {
     try {
@@ -60,6 +67,35 @@ const TimetableCard = ({
     }
   };
 
+  useEffect(() => {
+    if (data) {
+      const val = (data as TimetableModel[])[0]?.favorite;
+      if (val !== undefined) {
+        setToggled(val);
+      }
+    }
+  }, [data]);
+
+   const handleFavourite = async () => {
+      try {
+        await updateTimetable({
+          id: timetableId,
+          favorite: !toggled,
+        }).unwrap();
+        refetch();
+        console.log("Favourite success!");
+        setToggled(!toggled);
+        console.log(!toggled);
+        handleReload();
+      } catch (error) {
+        console.error("Failed to favourite timetable:", error);
+      }
+    };
+  
+    const handleReload = () => {
+      window.location.reload(); // Reloads the page
+    };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -70,6 +106,7 @@ const TimetableCard = ({
           />
         </Link>
         <div className="flex justify-between items-center">
+
           <CardTitle>
             <Input
               disabled={!isEditingTitle}
@@ -82,6 +119,10 @@ const TimetableCard = ({
               onChange={(e) => setTimetableCardTitle(e.target.value)}
             />
           </CardTitle>
+
+          <Star className={`w-6 h-6 transition-colors ${
+          toggled ? "fill-none text-gray-500" : "fill-yellow-500 text-yellow-500"
+        }`}  onClick={() => handleFavourite()}/>
           <div className="flex justify-between">
             {!isEditingTitle && (
               <>

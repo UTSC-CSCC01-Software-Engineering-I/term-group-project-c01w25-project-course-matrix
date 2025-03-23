@@ -33,7 +33,7 @@ const Home = () => {
     refetch: () => void;
   };
 
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   return (
     <div className="w-full">

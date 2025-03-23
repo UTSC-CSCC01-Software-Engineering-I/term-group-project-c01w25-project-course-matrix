@@ -1,3 +1,4 @@
+import { SemesterIcon } from "@/components/semester-icon";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,39 +10,125 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Timetable } from "@/utils/type-utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { GitCompareArrows } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 
+const CompareFormSchema = z.object({
+  timetable1: z.number().positive(),
+  timetable2: z.number().positive(),
+})
+
+interface TimetableCompareDialogProps {
+  timetables: Timetable[];
+}
 /**
  * Component for the "Compare" button that opens a dialog to compare timetables.
  * @returns {JSX.Element} The rendered component.
  */
-const TimetableCompareDialog = () => (
-  <Dialog>
-    <DialogTrigger asChild>
-      <Button size="sm" className="px-5">
-        Compare
-      </Button>
-    </DialogTrigger>
-    <DialogContent className="gap-5">
-      <DialogHeader>
-        <DialogTitle>Compare Timetables</DialogTitle>
-        <DialogDescription>Compare 2 of your timetables</DialogDescription>
-      </DialogHeader>
-      <Label htmlFor="timetable1">First Timetable Name</Label>
-      <Input id="timetable1" placeholder="Placeholder name" disabled />
-      <Label htmlFor="timetable2">Second Timetable Name</Label>
-      <Input id="timetable2" placeholder="Placeholder name" disabled />
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button variant="secondary">Cancel</Button>
-        </DialogClose>
-        <DialogClose asChild>
-          <Button>Compare</Button>
-        </DialogClose>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
-);
+export const TimetableCompareButton = ({ timetables }: TimetableCompareDialogProps) => {
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  
+  const compareForm = useForm<z.infer<typeof CompareFormSchema>>({
+    resolver: zodResolver(CompareFormSchema),
+  });
 
-export default TimetableCompareDialog;
+  const onSubmit = (values: z.infer<typeof CompareFormSchema>) => {
+    console.log("Comapare Form submitted:", values); 
+    setOpen(false); 
+    navigate(`/dashboard/compare?id1=${values.timetable1}&id2=${values.timetable2}`)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="secondary" size="sm" className="px-5">
+          Compare
+          <GitCompareArrows/>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="gap-5">
+        <DialogHeader>
+          <DialogTitle>Compare Timetables</DialogTitle>
+          <DialogDescription>View timetables side by side. </DialogDescription>
+        </DialogHeader>
+        
+        <Form {...compareForm}>
+          <form onSubmit={compareForm.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={compareForm.control}
+              name="timetable1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Timetable 1</FormLabel>
+                  <Select onValueChange={(value) => field.onChange(Number(value))}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a timetable" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {timetables.map(timetable => (
+                        <SelectItem key={timetable.id} value={timetable.id.toString()}>
+                          <div className="flex items-center gap-2">
+                            <SemesterIcon semester={timetable.semester} size={18}/>
+                            <span>{timetable.timetable_title}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={compareForm.control}
+              name="timetable2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Timetable 2</FormLabel>
+                  <Select onValueChange={(value) => field.onChange(Number(value))}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a timetable" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {timetables.map(timetable => (
+                        <SelectItem key={timetable.id} value={timetable.id.toString()}>
+                          <div className="flex items-center gap-2">
+                            <SemesterIcon semester={timetable.semester} size={18}/>
+                            <span>{timetable.timetable_title}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter>
+              <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Submit</Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};

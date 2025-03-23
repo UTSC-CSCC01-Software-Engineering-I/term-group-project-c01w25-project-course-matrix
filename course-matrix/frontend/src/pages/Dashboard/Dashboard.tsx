@@ -19,6 +19,7 @@ import TimetableBuilder from "../TimetableBuilder/TimetableBuilder";
 import AssistantPage from "../Assistant/AssistantPage";
 import { RuntimeProvider } from "../Assistant/runtime-provider";
 import Home from "../Home/Home";
+import { CompareTimetables } from "../Compare/CompareTimetables";
 
 /**
  * Dashboard Component
@@ -61,9 +62,9 @@ const Dashboard = () => {
                             </Link>
                           ) : location.pathname === "/dashboard/assistant" ? (
                             <Link to="/dashboard/assistant">AI Assistant</Link>
-                          ) : (
-                            <></>
-                          )}
+                          ) : location.pathname.startsWith("/dashboard/compare") ? (
+                            <>Compare Timeatables</>
+                          ) : <></>}
                         </BreadcrumbItem>
                         {/* <BreadcrumbSeparator className="hidden md:block" /> */}
                         {/* <BreadcrumbItem>
@@ -81,6 +82,7 @@ const Dashboard = () => {
                     <Route path="/home" element={<Home />} />
                     <Route path="/timetable" element={<TimetableBuilder />} />
                     <Route path="/assistant" element={<AssistantPage />} />
+                    <Route path="/compare" element={<CompareTimetables/>} />
                   </Routes>
                 </div>
               </SidebarInset>

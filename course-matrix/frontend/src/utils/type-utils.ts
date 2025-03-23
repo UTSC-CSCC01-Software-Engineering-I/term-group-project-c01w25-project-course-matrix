@@ -39,11 +39,12 @@ export type TimetableEvents = {
 
 export type Timetable = {
   id: number;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
   semester: string;
   timetable_title: string;
   user_id: string;
+  favorite: boolean;
 };
 
 export type Restriction = {

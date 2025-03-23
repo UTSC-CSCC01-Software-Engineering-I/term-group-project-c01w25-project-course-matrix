@@ -8,9 +8,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Star, Pencil } from "lucide-react";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import TimetableCardKebabMenu from "./TimetableCardKebabMenu";
-import { useUpdateTimetableMutation, useGetTimetableQuery} from "@/api/timetableApiSlice";
+import {
+  useUpdateTimetableMutation,
+  useGetTimetableQuery,
+} from "@/api/timetableApiSlice";
 import { Link } from "react-router-dom";
 import { TimetableModel } from "@/models/models";
 
@@ -34,11 +37,9 @@ const TimetableCard = ({
   title,
   lastEditedDate,
   owner,
-  favorite
+  favorite,
 }: TimetableCardProps) => {
   const [updateTimetable] = useUpdateTimetableMutation();
-
-
 
   const lastEditedDateArray = lastEditedDate
     .toISOString()
@@ -76,25 +77,25 @@ const TimetableCard = ({
     }
   }, [data]);
 
-   const handleFavourite = async () => {
-      try {
-        await updateTimetable({
-          id: timetableId,
-          favorite: !toggled,
-        }).unwrap();
-        refetch();
-        console.log("Favourite success!");
-        setToggled(!toggled);
-        console.log(!toggled);
-        handleReload();
-      } catch (error) {
-        console.error("Failed to favourite timetable:", error);
-      }
-    };
-  
-    const handleReload = () => {
-      window.location.reload(); // Reloads the page
-    };
+  const handleFavourite = async () => {
+    try {
+      await updateTimetable({
+        id: timetableId,
+        favorite: !toggled,
+      }).unwrap();
+      refetch();
+      console.log("Favourite success!");
+      setToggled(!toggled);
+      console.log(!toggled);
+      handleReload();
+    } catch (error) {
+      console.error("Failed to favourite timetable:", error);
+    }
+  };
+
+  const handleReload = () => {
+    window.location.reload(); // Reloads the page
+  };
 
   return (
     <Card className="w-full">
@@ -106,7 +107,6 @@ const TimetableCard = ({
           />
         </Link>
         <div className="flex justify-between items-center">
-
           <CardTitle>
             <Input
               disabled={!isEditingTitle}
@@ -120,9 +120,14 @@ const TimetableCard = ({
             />
           </CardTitle>
 
-          <Star className={`w-6 h-6 transition-colors ${
-          toggled ? "fill-none text-gray-500" : "fill-yellow-500 text-yellow-500"
-        }`}  onClick={() => handleFavourite()}/>
+          <Star
+            className={`w-6 h-6 transition-colors ${
+              toggled
+                ? "fill-none text-gray-500"
+                : "fill-yellow-500 text-yellow-500"
+            }`}
+            onClick={() => handleFavourite()}
+          />
           <div className="flex justify-between">
             {!isEditingTitle && (
               <>

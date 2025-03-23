@@ -115,6 +115,7 @@ jobs:
             cd /home/masahisasekita/term-group-project-c01w25-project-course-matrix || { echo "Error: Directory /root/myapp does not exist!"; exit 1; }
 
             # Step 13: Clears deployment environment
+            sudo docker stop $(sudo docker ps -q)
             sudo docker rmi -f $(sudo docker images -q)
             sudo docker system prune -a --volumes -f
             
@@ -130,6 +131,5 @@ jobs:
             docker compose down
             docker compose up -d --pull always
             docker ps 
-            docker exec -it ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-frontend:master npm test
-            docker exec -it ${{ secrets.DOCKERHUB_USERNAME }}/course-matrix-backend:master npm test
+            docker ps -q | xargs -I {} docker exec {} npm test
           EOF

@@ -429,7 +429,7 @@ const TimetableBuilder = () => {
                     <p className="text-sm">
                       Selected courses: {selectedCourses.length} (Max 8)
                     </p>
-                    {!isEditingTimetable && (
+                    {!isEditingTimetable && !isGeneratingTimetables && (
                       <div className="flex items-center gap-2">
                         <Checkbox
                           id="manual-selection"

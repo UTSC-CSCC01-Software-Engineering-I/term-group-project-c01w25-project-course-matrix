@@ -27,7 +27,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
     semester: semester,
   });
 
-    const offeringIds = form.watch("offeringIds") ?? [];
+  const offeringIds = form.watch("offeringIds") ?? [];
 
   const lectures = offeringsData
     ?.filter((offering: OfferingModel) =>

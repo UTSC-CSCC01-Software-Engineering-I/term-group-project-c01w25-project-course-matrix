@@ -1,5 +1,14 @@
 name: Run Tests
-on: push
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Format the code"]
+    types:
+      - completed
+  pull_request:
+  push:
+
 jobs:
   build:
     runs-on: ubuntu-latest

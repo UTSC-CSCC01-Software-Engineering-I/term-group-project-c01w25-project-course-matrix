@@ -19,11 +19,11 @@ export interface Offering {
 
 // Enum to define different types of restrictions for offerings
 export enum RestrictionType {
-  RestrictBefore = "Restrict Before",
-  RestrictAfter = "Restrict After",
-  RestrictBetween = "Restrict Between",
-  RestrictDay = "Restrict Day",
-  RestrictDaysOff = "Days Off",
+  RestrictBefore = 'Restrict Before',
+  RestrictAfter = 'Restrict After',
+  RestrictBetween = 'Restrict Between',
+  RestrictDay = 'Restrict Day',
+  RestrictDaysOff = 'Days Off',
 }
 
 // Interface for the restriction object
@@ -40,6 +40,9 @@ export interface Restriction {
 export interface GroupedOfferingList {
   course_id: number;
   groups: Record<string, Offering[]>;
+  lectures: number;
+  tutorials: number;
+  practicals: number;
 }
 
 // Interface for organizing offerings by course ID
@@ -52,6 +55,6 @@ export interface OfferingList {
 // course (LEC, TUT, PRA)
 export interface CategorizedOfferingList {
   course_id: number;
-  category: "LEC" | "TUT" | "PRA";
+  category: 'LEC'|'TUT'|'PRA';
   offerings: Record<string, Offering[]>;
 }

@@ -6,7 +6,7 @@ export function dateToTimeString(date: Date) {
 }
 
 export function convertRestrictionTimes(
-  values: z.infer<typeof TimetableFormSchema>
+  values: z.infer<typeof TimetableFormSchema>,
 ) {
   let newValues: any = { ...values };
   let newRestrictions: any[] = [];
@@ -14,11 +14,11 @@ export function convertRestrictionTimes(
     let newRestriction: any = { ...restriction };
     if (restriction.endTime) {
       newRestriction.endTime = dateToTimeString(restriction.endTime);
-      console.log(newRestriction.endTime)
+      console.log(newRestriction.endTime);
     }
     if (restriction.startTime) {
       newRestriction.startTime = dateToTimeString(restriction.startTime);
-      console.log(newRestriction.startTime)
+      console.log(newRestriction.startTime);
     }
     newRestrictions.push(newRestriction);
   }

@@ -1,5 +1,6 @@
-import { Offering, CategorizedOfferingList } from "../types/generatorTypes";
-import { getFrequencyTable, canInsertList } from "../utils/generatorHelpers";
+import { CategorizedOfferingList, Offering } from "../types/generatorTypes";
+import { canInsertList, getFrequencyTable } from "../utils/generatorHelpers";
+
 // Function to generate all valid schedules based on offerings and restrictions
 
 export async function getValidSchedules(

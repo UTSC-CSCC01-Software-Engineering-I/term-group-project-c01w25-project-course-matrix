@@ -1,22 +1,24 @@
+import { Request } from "express";
+
 import { generateWeeklyCourseEvents } from "../controllers/eventsController";
 import { supabase } from "../db/setupDb";
-import { Request } from "express";
+import { RestrictionForm } from "../models/timetable-form";
+import getOfferings from "../services/getOfferings";
+import { getValidSchedules } from "../services/getValidSchedules";
 import {
   GroupedOfferingList,
   Offering,
   OfferingList,
 } from "../types/generatorTypes";
+import { convertTimeStringToDate } from "../utils/convert-time-string";
 import {
   categorizeValidOfferings,
+  getFreq,
   getMaxDays,
   getValidOfferings,
   groupOfferings,
   trim,
 } from "../utils/generatorHelpers";
-import getOfferings from "../services/getOfferings";
-import { getValidSchedules } from "../services/getValidSchedules";
-import { RestrictionForm } from "../models/timetable-form";
-import { convertTimeStringToDate } from "../utils/convert-time-string";
 
 // Add all possible function names here
 export type FunctionNames =
@@ -34,10 +36,10 @@ type AvailableFunctions = {
 export const availableFunctions: AvailableFunctions = {
   getTimetables: async (args: any, req: Request) => {
     try {
-      //Retrieve user_id
+      // Retrieve user_id
       const user_id = (req as any).user.id;
 
-      //Retrieve user timetable item based on user_id
+      // Retrieve user timetable item based on user_id
       let timeTableQuery = supabase
         .schema("timetable")
         .from("timetables")
@@ -49,7 +51,8 @@ export const availableFunctions: AvailableFunctions = {
 
       if (timetableError) return { status: 400, error: timetableError.message };
 
-      // If no records were updated due to non-existence timetable or it doesn't belong to the user.
+      // If no records were updated due to non-existence timetable or it doesn't
+      // belong to the user.
       if (!timetableData || timetableData.length === 0) {
         return {
           status: 404,
@@ -75,10 +78,10 @@ export const availableFunctions: AvailableFunctions = {
         };
       }
 
-      //Retrieve the authenticated user
+      // Retrieve the authenticated user
       const user_id = (req as any).user.id;
 
-      //Retrieve users allowed to access the timetable
+      // Retrieve users allowed to access the timetable
       const { data: timetableUserData, error: timetableUserError } =
         await supabase
           .schema("timetable")
@@ -93,12 +96,12 @@ export const availableFunctions: AvailableFunctions = {
       if (timetableUserError)
         return { status: 400, error: timetableUserError.message };
 
-      //Validate timetable validity:
+      // Validate timetable validity:
       if (!timetableUserData || timetableUserData.length === 0) {
         return { status: 404, error: "Calendar id not found" };
       }
 
-      //Validate user access
+      // Validate user access
       if (user_id !== timetable_user_id) {
         return {
           status: 401,
@@ -110,7 +113,7 @@ export const availableFunctions: AvailableFunctions = {
       if (timetable_title) updateData.timetable_title = timetable_title;
       if (semester) updateData.semester = semester;
 
-      //Update timetable title, for authenticated user only
+      // Update timetable title, for authenticated user only
       let updateTimetableQuery = supabase
         .schema("timetable")
         .from("timetables")
@@ -124,7 +127,8 @@ export const availableFunctions: AvailableFunctions = {
 
       if (timetableError) return { status: 400, error: timetableError.message };
 
-      // If no records were updated due to non-existence timetable or it doesn't belong to the user.
+      // If no records were updated due to non-existence timetable or it doesn't
+      // belong to the user.
       if (!timetableData || timetableData.length === 0) {
         return {
           status: 404,
@@ -143,7 +147,7 @@ export const availableFunctions: AvailableFunctions = {
       // Retrieve the authenticated user
       const user_id = (req as any).user.id;
 
-      //Retrieve users allowed to access the timetable
+      // Retrieve users allowed to access the timetable
       const { data: timetableUserData, error: timetableUserError } =
         await supabase
           .schema("timetable")
@@ -157,12 +161,12 @@ export const availableFunctions: AvailableFunctions = {
       if (timetableUserError)
         return { status: 400, error: timetableUserError.message };
 
-      //Validate timetable validity:
+      // Validate timetable validity:
       if (!timetableUserData || timetableUserData.length === 0) {
         return { status: 404, error: "Calendar id not found" };
       }
 
-      //Validate user access
+      // Validate user access
       if (user_id !== timetable_user_id) {
         return {
           status: 401,
@@ -190,10 +194,11 @@ export const availableFunctions: AvailableFunctions = {
   generateTimetable: async (args: any, req: Request) => {
     try {
       // Extract event details and course information from the request
-      const { name, date, semester, search, courses, restrictions } = args;
+      const { name, semester, courses, restrictions } = args;
+
       const courseOfferingsList: OfferingList[] = [];
       const validCourseOfferingsList: GroupedOfferingList[] = [];
-      const maxdays = await getMaxDays(restrictions);
+      const maxdays = getMaxDays(restrictions);
       const validSchedules: Offering[][] = [];
       // Fetch offerings for each course
       for (const course of courses) {
@@ -203,27 +208,45 @@ export const availableFunctions: AvailableFunctions = {
           offerings: (await getOfferings(id, semester)) ?? [],
         });
       }
-
       const groupedOfferingsList: GroupedOfferingList[] =
-        await groupOfferings(courseOfferingsList);
+        groupOfferings(courseOfferingsList);
 
-      // console.log(JSON.stringify(groupedOfferingsList, null, 2));
-
-      // Filter out invalid offerings based on the restrictions
-      for (const { course_id, groups } of groupedOfferingsList) {
-        validCourseOfferingsList.push({
+      for (const {
+        course_id,
+        groups,
+        lectures,
+        tutorials,
+        practicals,
+      } of groupedOfferingsList) {
+        const group: Record<string, Offering[]> = getValidOfferings(
+          groups,
+          restrictions,
+        );
+        let groupedOfferings = {
           course_id: course_id,
-          groups: await getValidOfferings(groups, restrictions),
-        });
+          groups: group,
+          lectures: 0,
+          tutorials: 0,
+          practicals: 0,
+        };
+        groupedOfferings = getFreq(groupedOfferings);
+        if (
+          (lectures != 0 && groupedOfferings.lectures == 0) ||
+          (tutorials != 0 && groupedOfferings.tutorials == 0) ||
+          (practicals != 0 && groupedOfferings.practicals == 0)
+        ) {
+          return {
+            status: 404,
+            error: "No valid schedules found. (Restriction)",
+          };
+        }
+
+        validCourseOfferingsList.push(groupedOfferings);
       }
 
-      const categorizedOfferings = await categorizeValidOfferings(
+      const categorizedOfferings = categorizeValidOfferings(
         validCourseOfferingsList,
       );
-
-      // console.log(typeof categorizedOfferings);
-      // console.log(JSON.stringify(categorizedOfferings, null, 2));
-
       // Generate valid schedules for the given courses and restrictions
       await getValidSchedules(
         validSchedules,
@@ -241,10 +264,10 @@ export const availableFunctions: AvailableFunctions = {
 
       // ------ CREATE FLOW ------
 
-      //Get user id from session authentication to insert in the user_id col
+      // Get user id from session authentication to insert in the user_id col
       const user_id = (req as any).user.id;
 
-      //Retrieve timetable title
+      // Retrieve timetable title
       const schedule = trim(validSchedules)[0];
       if (!name || !semester) {
         return {
@@ -266,7 +289,8 @@ export const availableFunctions: AvailableFunctions = {
       if (existingTimetableError) {
         return {
           status: 400,
-          error: `Existing timetable with name: ${name}. Please rename timetable.`,
+          error: `Existing timetable with name: ${name}. Please rename
+timetable.`,
         };
       }
 
@@ -303,10 +327,10 @@ export const availableFunctions: AvailableFunctions = {
           error: "Timetable error" + timetableError.message,
         };
       }
-      console.log("1");
+
       // Insert events
       for (const offering of schedule) {
-        //Query course offering information
+        // Query course offering information
         const { data: offeringData, error: offeringError } = await supabase
           .schema("course")
           .from("offerings")
@@ -327,8 +351,9 @@ export const availableFunctions: AvailableFunctions = {
           };
         }
 
-        //Generate event details
-        const courseEventName = ` ${offeringData.code} - ${offeringData.meeting_section} `;
+        // Generate event details
+        const courseEventName = ` ${offeringData.code} -
+${offeringData.meeting_section} `;
         const courseDay = offeringData.day;
         const courseStartTime = offeringData.start;
         const courseEndTime = offeringData.end;
@@ -370,8 +395,9 @@ export const availableFunctions: AvailableFunctions = {
           );
         }
 
-        //Each week lecture will be inputted as a separate events from sememseter start to end date
-        //Semester start & end dates are inputted by user
+        // Each week lecture will be inputted as a separate events from
+        // sememseter start to end date Semester start & end dates are inputted
+        // by user
         const { data: courseEventData, error: courseEventError } =
           await supabase
             .schema("timetable")

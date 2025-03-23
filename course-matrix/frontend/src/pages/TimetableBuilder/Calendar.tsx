@@ -339,7 +339,7 @@ const Calendar = React.memo<CalendarProps>(
     return (
       <div>
         <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-8">
-          <div>Your Timetable </div>
+            <div>Your Timetable </div>
           <TimetableErrorDialog
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}

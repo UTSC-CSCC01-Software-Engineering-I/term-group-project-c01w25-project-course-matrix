@@ -7,7 +7,7 @@ import getOfferings from '../services/getOfferings';
 import {getValidSchedules} from '../services/getValidSchedules';
 import {GroupedOfferingList, Offering, OfferingList,} from '../types/generatorTypes';
 import {convertTimeStringToDate} from '../utils/convert-time-string';
-import {categorizeValidOfferings, getFreq, getMaxDays, getValidOfferings, groupOfferings, trim} from '../utils/generatorHelpers';
+import {categorizeValidOfferings, getFreq, getMaxDays, getValidOfferings, groupOfferings, trim,} from '../utils/generatorHelpers';
 
 // Add all possible function names here
 export type FunctionNames =|'getTimetables'|'updateTimetable'|'deleteTimetable'|
@@ -19,7 +19,6 @@ type AvailableFunctions = {
 
 // Functions used for OpenAI function calling
 export const availableFunctions: AvailableFunctions = {
-
   getTimetables: async (args: any, req: Request) => {
     try {
       // Retrieve user_id
@@ -215,7 +214,7 @@ export const availableFunctions: AvailableFunctions = {
             (practicals != 0 && groupedOfferings.practicals == 0)) {
           return {
             status: 404,
-            error: 'No valid schedules found. (Restriction)'
+            error: 'No valid schedules found. (Restriction)',
           };
         }
 
@@ -234,8 +233,6 @@ export const availableFunctions: AvailableFunctions = {
           categorizedOfferings.length,
           maxdays,
       );
-
-
 
       // Return error if no valid schedules are found
       if (validSchedules.length === 0) {
@@ -305,7 +302,7 @@ timetable.`,
           error: 'Timetable error' + timetableError.message,
         };
       }
-      console.log('1');
+
       // Insert events
       for (const offering of schedule) {
         // Query course offering information

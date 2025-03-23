@@ -1,17 +1,31 @@
-import {Request} from 'express';
+import { Request } from "express";
 
-import {generateWeeklyCourseEvents} from '../controllers/eventsController';
-import {supabase} from '../db/setupDb';
-import {RestrictionForm} from '../models/timetable-form';
-import getOfferings from '../services/getOfferings';
-import {getValidSchedules} from '../services/getValidSchedules';
-import {GroupedOfferingList, Offering, OfferingList,} from '../types/generatorTypes';
-import {convertTimeStringToDate} from '../utils/convert-time-string';
-import {categorizeValidOfferings, getMaxDays, getValidOfferings, groupOfferings, trim,} from '../utils/generatorHelpers';
+import { generateWeeklyCourseEvents } from "../controllers/eventsController";
+import { supabase } from "../db/setupDb";
+import { RestrictionForm } from "../models/timetable-form";
+import getOfferings from "../services/getOfferings";
+import { getValidSchedules } from "../services/getValidSchedules";
+import {
+  GroupedOfferingList,
+  Offering,
+  OfferingList,
+} from "../types/generatorTypes";
+import { convertTimeStringToDate } from "../utils/convert-time-string";
+import {
+  categorizeValidOfferings,
+  getMaxDays,
+  getValidOfferings,
+  groupOfferings,
+  trim,
+} from "../utils/generatorHelpers";
 
 // Add all possible function names here
-export type FunctionNames =|'getTimetables'|'updateTimetable'|'deleteTimetable'|
-    'generateTimetable'|'getCourses';
+export type FunctionNames =
+  | "getTimetables"
+  | "updateTimetable"
+  | "deleteTimetable"
+  | "generateTimetable"
+  | "getCourses";
 
 type AvailableFunctions = {
   [K in FunctionNames]: (args: any, req: Request) => Promise<any>;
@@ -23,7 +37,7 @@ export const availableFunctions: AvailableFunctions = {
   updateTimetable: async (args: any, req: Request) => {},
   deleteTimetable: async (args: any, req: Request) => {},
   generateTimetable: async (args: any, req: Request) => {},
-  getCourses: async (args: any, req: Request) => {}
+  getCourses: async (args: any, req: Request) => {},
 };
 /*getTimetables: async (args: any, req: Request) => {
   try {

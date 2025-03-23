@@ -123,8 +123,8 @@ const TimetableCard = ({
           <Star
             className={`w-6 h-6 transition-colors ${
               toggled
-                ? "fill-none text-gray-500"
-                : "fill-yellow-500 text-yellow-500"
+                ? "fill-yellow-500 text-yellow-500"
+                : "fill-none text-gray-500"
             }`}
             onClick={() => handleFavourite()}
           />

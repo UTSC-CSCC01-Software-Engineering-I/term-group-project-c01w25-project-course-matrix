@@ -75,8 +75,8 @@ const Home = () => {
               .sort((a: Timetable, b: Timetable) => {
                 if (a.favorite == b.favorite)
                   return b?.updated_at.localeCompare(a?.updated_at);
-                if (a.favorite) return 1;
-                if (b.favorite) return -1;
+                if (a.favorite) return -1;
+                if (b.favorite) return 1;
                 return 0;
               })
               .map((timetable) => (

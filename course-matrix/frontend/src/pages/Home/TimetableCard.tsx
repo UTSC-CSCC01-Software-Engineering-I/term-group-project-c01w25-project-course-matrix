@@ -122,11 +122,10 @@ const TimetableCard = ({
             } `}
             onClick={() => handleFavourite()}
           />
-          
+
           <div className="flex justify-around">
             {!isEditingTitle && (
               <>
-                
                 <Button
                   size="sm"
                   variant="ghost"

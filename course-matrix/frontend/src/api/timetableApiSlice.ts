@@ -1,5 +1,5 @@
-import {apiSlice} from './baseApiSlice';
-import {TIMETABLES_URL} from './config';
+import { apiSlice } from "./baseApiSlice";
+import { TIMETABLES_URL } from "./config";
 
 // Endpoints for /api/timetables
 export const timetableApiSlice = apiSlice.injectEndpoints({
@@ -7,76 +7,76 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
     createTimetable: builder.mutation({
       query: (data) => ({
         url: `${TIMETABLES_URL}`,
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/plain, */*',
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
         },
         body: data,
-        credentials: 'include',
+        credentials: "include",
       }),
-      invalidatesTags: ['Timetable'],
+      invalidatesTags: ["Timetable"],
     }),
     getTimetables: builder.query<unknown, void>({
       query: () => ({
         url: `${TIMETABLES_URL}`,
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/plain, */*',
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
         },
-        providesTags: ['Timetable'],
-        credentials: 'include',
+        providesTags: ["Timetable"],
+        credentials: "include",
       }),
       keepUnusedDataFor: 0,
     }),
-    getTimetable: builder.query<unknown, string|number>({
+    getTimetable: builder.query<unknown, string | number>({
       query: (id) => ({
         url: `${TIMETABLES_URL}/${id}`,
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/plain, */*',
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
         },
-        credentials: 'include',
+        credentials: "include",
       }),
-      keepUnusedDataFor: 0
+      keepUnusedDataFor: 0,
     }),
     updateTimetable: builder.mutation({
       query: (data) => ({
         url: `${TIMETABLES_URL}/${data.id}`,
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/plain, */*',
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
         },
         body: data,
-        credentials: 'include',
+        credentials: "include",
       }),
-      invalidatesTags: ['Timetable'],
+      invalidatesTags: ["Timetable"],
     }),
     deleteTimetable: builder.mutation({
       query: (id) => ({
         url: `${TIMETABLES_URL}/${id}`,
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/plain, */*',
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
         },
-        credentials: 'include',
+        credentials: "include",
       }),
-      invalidatesTags: ['Timetable'],
+      invalidatesTags: ["Timetable"],
     }),
     generateTimetable: builder.mutation({
       query: (data) => ({
         url: `${TIMETABLES_URL}/generate`,
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/plain, */*',
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
         },
         body: data,
-        credentials: 'include',
+        credentials: "include",
       }),
     }),
   }),

@@ -557,14 +557,16 @@ const TimetableBuilder = () => {
                                 : ""}{" "}
                               {restric.days?.join(" ")}
                             </p>
-                          ) : (
-                            restric.type.startsWith("Days")?(<p>
+                          ) : restric.type.startsWith("Days") ? (
+                            <p>
                               <strong>{restric.type}:</strong> At least{" "}
                               {restric.numDays} days off
-                            </p>):(<p>
-                              <strong>{restric.type}:</strong> {" "}
-                              {restric.maxGap} {" "} hours
-                            </p>)
+                            </p>
+                          ) : (
+                            <p>
+                              <strong>{restric.type}:</strong> {restric.maxGap}{" "}
+                              hours
+                            </p>
                           )}
 
                           <X

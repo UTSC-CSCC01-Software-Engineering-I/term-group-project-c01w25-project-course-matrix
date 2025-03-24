@@ -40,6 +40,7 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
         },
         credentials: "include",
       }),
+      keepUnusedDataFor: 0,
     }),
     updateTimetable: builder.mutation({
       query: (data) => ({

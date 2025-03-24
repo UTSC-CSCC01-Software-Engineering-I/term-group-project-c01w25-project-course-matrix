@@ -1,47 +1,25 @@
-import asyncHandler from "../middleware/asyncHandler";
-import "openai/shims/node";
-import { Request, Response } from "express";
-import { createOpenAI } from "@ai-sdk/openai";
-import {
-  CoreMessage,
-  generateObject,
-  InvalidToolArgumentsError,
-  NoSuchToolError,
-  streamText,
-  tool,
-  ToolExecutionError,
-} from "ai";
-import { Index, Pinecone, RecordMetadata } from "@pinecone-database/pinecone";
-import { PineconeStore } from "@langchain/pinecone";
-import { OpenAIEmbeddings } from "@langchain/openai";
-import { Document } from "langchain/document";
-import {
-  NAMESPACE_KEYWORDS,
-  GENERAL_ACADEMIC_TERMS,
-  DEPARTMENT_CODES,
-  ASSISTANT_TERMS,
-  USEFUL_INFO,
-  BREADTH_REQUIREMENT_KEYWORDS,
-  YEAR_LEVEL_KEYWORDS,
-} from "../constants/promptKeywords";
-import {
-  CHATBOT_MEMORY_THRESHOLD,
-  CHATBOT_TIMETABLE_CMD,
-  CHATBOT_TOOL_CALL_MAX_STEPS,
-} from "../constants/constants";
-import { namespaceToMinResults } from "../constants/constants";
-import OpenAI from "openai";
-import { convertBreadthRequirement } from "../utils/convert-breadth-requirement";
-import { convertYearLevel } from "../utils/convert-year-level";
-import {
-  availableFunctions,
-  FunctionNames,
-} from "../constants/availableFunctions";
-import { z } from "zod";
-import { analyzeQuery } from "../utils/analyzeQuery";
-import { includeFilters } from "../utils/includeFilters";
-import { TimetableFormSchema } from "../models/timetable-form";
-import { CreateTimetableArgs } from "../models/timetable-generate";
+import 'openai/shims/node';
+
+import {createOpenAI} from '@ai-sdk/openai';
+import {OpenAIEmbeddings} from '@langchain/openai';
+import {PineconeStore} from '@langchain/pinecone';
+import {Index, Pinecone, RecordMetadata} from '@pinecone-database/pinecone';
+import {CoreMessage, generateObject, InvalidToolArgumentsError, NoSuchToolError, streamText, tool, ToolExecutionError,} from 'ai';
+import {Request, Response} from 'express';
+import {Document} from 'langchain/document';
+import OpenAI from 'openai';
+import {z} from 'zod';
+
+import {availableFunctions, FunctionNames,} from '../constants/availableFunctions';
+import {CHATBOT_MEMORY_THRESHOLD, CHATBOT_TIMETABLE_CMD, CHATBOT_TOOL_CALL_MAX_STEPS, namespaceToMinResults,} from '../constants/constants';
+import {ASSISTANT_TERMS, BREADTH_REQUIREMENT_KEYWORDS, DEPARTMENT_CODES, GENERAL_ACADEMIC_TERMS, NAMESPACE_KEYWORDS, USEFUL_INFO, YEAR_LEVEL_KEYWORDS,} from '../constants/promptKeywords';
+import asyncHandler from '../middleware/asyncHandler';
+import {TimetableFormSchema} from '../models/timetable-form';
+import {CreateTimetableArgs} from '../models/timetable-generate';
+import {analyzeQuery} from '../utils/analyzeQuery';
+import {convertBreadthRequirement} from '../utils/convert-breadth-requirement';
+import {convertYearLevel} from '../utils/convert-year-level';
+import {includeFilters} from '../utils/includeFilters';
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -57,17 +35,17 @@ const pinecone = new Pinecone({
 });
 
 const index: Index<RecordMetadata> = pinecone.Index(
-  process.env.PINECONE_INDEX_NAME!,
+    process.env.PINECONE_INDEX_NAME!,
 );
 
-console.log("Connected to OpenAI API");
+console.log('Connected to OpenAI API');
 
 export async function searchSelectedNamespaces(
-  query: string,
-  k: number,
-  namespaces: string[],
-  filters?: Object,
-): Promise<Document[]> {
+    query: string,
+    k: number,
+    namespaces: string[],
+    filters?: Object,
+    ): Promise<Document[]> {
   let allResults: Document[] = [];
 
   if (namespaces.length === 0) {
@@ -79,16 +57,17 @@ export async function searchSelectedNamespaces(
   for (const namespace of namespaces) {
     const namespaceStore = await PineconeStore.fromExistingIndex(embeddings, {
       pineconeIndex: index as any,
-      textKey: "text",
+      textKey: 'text',
       namespace: namespace,
     });
 
     try {
-      // Search results count given by the min result count for a given namespace (or k if k is greater)
+      // Search results count given by the min result count for a given
+      // namespace (or k if k is greater)
       const results = await namespaceStore.similaritySearch(
-        query,
-        Math.max(k, namespaceToMinResults.get(namespace)),
-        namespace === "courses_v3" ? filters : undefined,
+          query,
+          Math.max(k, namespaceToMinResults.get(namespace)),
+          namespace === 'courses_v3' ? filters : undefined,
       );
       console.log(`Found ${results.length} results in namespace: ${namespace}`);
       allResults = [...allResults, ...results];
@@ -106,11 +85,12 @@ export async function searchSelectedNamespaces(
   return allResults;
 }
 
-// Reformulate user query to make more concise query to database, taking into consideration context
+// Reformulate user query to make more concise query to database, taking into
+// consideration context
 export async function reformulateQuery(
-  latestQuery: string,
-  conversationHistory: any[],
-): Promise<string> {
+    latestQuery: string,
+    conversationHistory: any[],
+    ): Promise<string> {
   try {
     const openai2 = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -121,8 +101,9 @@ export async function reformulateQuery(
     // Create messages array with the correct type structure
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       {
-        role: "system",
-        content: `IMPORTANT: You are NOT a conversational assistant. You are a query transformation tool.
+        role: 'system',
+        content:
+            `IMPORTANT: You are NOT a conversational assistant. You are a query transformation tool.
 
           Your ONLY job is to convert a user's question into a self-contained search query. 
 
@@ -176,43 +157,51 @@ export async function reformulateQuery(
 
     // Add the latest query
     messages.push({
-      role: "user",
+      role: 'user',
       content: latestQuery,
     });
 
     const response = await openai2.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: 'gpt-4o-mini',
       messages: messages,
-      temperature: 0.1, // Lower temperature for more consistent, focused queries
-      max_tokens: latestQuery.length * 3, // Limit response length. Proportional to user input.
-      top_p: 0.5, // Reduced top_p for more focused outputs
+      temperature:
+          0.1,  // Lower temperature for more consistent, focused queries
+      max_tokens: latestQuery.length *
+          3,       // Limit response length. Proportional to user input.
+      top_p: 0.5,  // Reduced top_p for more focused outputs
     });
 
     return response.choices[0].message.content?.trim() || latestQuery;
   } catch (error) {
-    console.error("Error reformulating query:", error);
+    console.error('Error reformulating query:', error);
     // Fallback to original query if reformulation fails
     return latestQuery;
   }
 }
 
 /**
- * @description Handles user queries and generates responses using GPT-4o, with optional knowledge retrieval.
+ * @description Handles user queries and generates responses using GPT-4o, with
+ * optional knowledge retrieval.
  *
  * @param {Request} req - The Express request object, containing:
- *   @param {Object[]} req.body.messages - Array of message objects representing the conversation history.
- *   @param {string} req.body.messages[].role - The role of the message sender (e.g., "user", "assistant").
- *   @param {Object[]} req.body.messages[].content - An array containing message content objects.
- *   @param {string} req.body.messages[].content[].text - The actual text of the message.
+ *   @param {Object[]} req.body.messages - Array of message objects representing
+ * the conversation history.
+ *   @param {string} req.body.messages[].role - The role of the message sender
+ * (e.g., "user", "assistant").
+ *   @param {Object[]} req.body.messages[].content - An array containing message
+ * content objects.
+ *   @param {string} req.body.messages[].content[].text - The actual text of the
+ * message.
  *
- * @param {Response} res - The Express response object used to stream the generated response.
+ * @param {Response} res - The Express response object used to stream the
+ *     generated response.
  *
  * @returns {void} Responds with a streamed text response of the AI output
  *
  * @throws {Error} If query reformulation or knowledge retrieval fails.
  */
 export const chat = asyncHandler(async (req: Request, res: Response) => {
-  const { messages } = req.body;
+  const {messages} = req.body;
 
   try {
     const latestMessage = messages[messages.length - 1].content[0].text;
@@ -222,7 +211,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
 
       // Get a new response from the model with all the tool responses
       const result = streamText({
-        model: openai("gpt-4o-mini"),
+        model: openai('gpt-4o-mini'),
         system: `# Morpheus - Course Matrix Assistant
         
             ## Identity & Purpose
@@ -251,7 +240,9 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
 
             ## Tool call guidelines
             - Include the timetable ID in all getTimetables tool call responses
-            - Link: For every tool call, for each timetable that it gets/deletes/modifies/creates, include a link with it displayed as "View Timetable" to ${process.env.CLIENT_APP_URL}/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
+            - Link: For every tool call, for each timetable that it gets/deletes/modifies/creates, include a link with it displayed as "View Timetable" to ${
+            process.env
+                .CLIENT_APP_URL}/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
             - If the user wants to create a timetable, first call getCourses to get course information on the requested courses, then call generateTimetable.
             - Do not make up fake courses or offerings. 
@@ -260,27 +251,26 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
         tools: {
           getTimetables: tool({
             description:
-              "Get all the timetables of the currently logged in user.",
+                'Get all the timetables of the currently logged in user.',
             parameters: z.object({}),
             execute: async (args) => {
               return await availableFunctions.getTimetables(args, req);
             },
           }),
           updateTimetable: tool({
-            description: "Update a user's timetable by title and/or semester",
+            description: 'Update a user\'s timetable by title and/or semester',
             parameters: z.object({
               id: z.number().positive(),
               timetable_title: z.string().optional(),
-              semester: z
-                .enum(["Fall 2025", "Summer 2025", "Winter 2026"])
-                .optional(),
+              semester: z.enum(['Fall 2025', 'Summer 2025', 'Winter 2026'])
+                            .optional(),
             }),
             execute: async (args) => {
               return await availableFunctions.updateTimetable(args, req);
             },
           }),
           deleteTimetable: tool({
-            description: "Delete a user's timetable",
+            description: 'Delete a user\'s timetable',
             parameters: z.object({
               id: z.number().positive(),
             }),
@@ -290,30 +280,34 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           }),
           generateTimetable: tool({
             description:
-              "Return a list of possible timetables based on provided courses and restrictions.",
+                'Return a list of possible timetables based on provided courses and restrictions.',
             parameters: TimetableFormSchema,
             execute: async (args) => {
               // console.log("Args for generate: ", args)
-              console.log("restrictions :", JSON.stringify(args.restrictions));
+              console.log('courses :', JSON.stringify(args.courses));
+              console.log('restrictions :', JSON.stringify(args.restrictions));
               const data = await availableFunctions.generateTimetable(
-                args,
-                req,
+                  args,
+                  req,
               );
-              console.log("Generated timetable: ", data);
+              console.log('Generated timetable: ', data);
               return data;
             },
           }),
           getCourses: tool({
-            description: "Return course info for all course codes provided.",
+            description: 'Return course info for all course codes provided.',
             parameters: z.object({
-              courses: z.array(z.string()).describe("List of course codes"),
+              courses: z.array(z.string()).describe('List of course codes'),
             }),
             execute: async (args) => {
               return await availableFunctions.getCourses(args, req);
             },
           }),
         },
-        maxSteps: CHATBOT_TOOL_CALL_MAX_STEPS, // Controls how many back and forths the model can take with user or calling multiple tools
+        maxSteps:
+            CHATBOT_TOOL_CALL_MAX_STEPS,  // Controls how many back and forths
+                                          // the model can take with user or
+                                          // calling multiple tools
         experimental_repairToolCall: async ({
           toolCall,
           tools,
@@ -321,35 +315,35 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           error,
         }) => {
           if (NoSuchToolError.isInstance(error)) {
-            return null; // do not attempt to fix invalid tool names
+            return null;  // do not attempt to fix invalid tool names
           }
 
-          console.log("Error: ", error);
+          console.log('Error: ', error);
 
           const tool = tools[toolCall.toolName as keyof typeof tools];
           console.log(
-            `The model tried to call the tool "${toolCall.toolName}"` +
-              ` with the following arguments:`,
-            toolCall.args,
-            `The tool accepts the following schema:`,
-            parameterSchema(toolCall),
-            "Please fix the arguments.",
+              `The model tried to call the tool "${toolCall.toolName}"` +
+                  ` with the following arguments:`,
+              toolCall.args,
+              `The tool accepts the following schema:`,
+              parameterSchema(toolCall),
+              'Please fix the arguments.',
           );
 
-          const { object: repairedArgs } = await generateObject({
-            model: openai("gpt-4o", { structuredOutputs: true }),
+          const {object: repairedArgs} = await generateObject({
+            model: openai('gpt-4o', {structuredOutputs: true}),
             schema: tool.parameters,
             prompt: [
               `The model tried to call the tool "${toolCall.toolName}"` +
-                ` with the following arguments:`,
+                  ` with the following arguments:`,
               JSON.stringify(toolCall.args),
               `The tool accepts the following schema:`,
               JSON.stringify(parameterSchema(toolCall)),
-              "Please fix the arguments.",
-            ].join("\n"),
+              'Please fix the arguments.',
+            ].join('\n'),
           });
 
-          return { ...toolCall, args: JSON.stringify(repairedArgs) };
+          return {...toolCall, args: JSON.stringify(repairedArgs)};
         },
       });
 
@@ -358,32 +352,34 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       // ----- Flow 2 - Answer query -----
 
       // Get conversation history (excluding the latest message)
-      const conversationHistory = (messages as any[])
-        .slice(0, -1)
-        .map((msg) => ({
-          role: msg?.role,
-          content: msg?.content[0]?.text,
-        }));
+      const conversationHistory =
+          (messages as any[]).slice(0, -1).map((msg) => ({
+                                                 role: msg?.role,
+                                                 content: msg?.content[0]?.text,
+                                               }));
 
       // Use GPT-4o to reformulate the query based on conversation history
       const reformulatedQuery = await reformulateQuery(
-        latestMessage,
-        conversationHistory.slice(-CHATBOT_MEMORY_THRESHOLD), // last K messages
+          latestMessage,
+          conversationHistory.slice(
+              -CHATBOT_MEMORY_THRESHOLD),  // last K messages
       );
-      console.log(">>>> Original query:", latestMessage);
-      console.log(">>>> Reformulated query:", reformulatedQuery);
+      console.log('>>>> Original query:', latestMessage);
+      console.log('>>>> Reformulated query:', reformulatedQuery);
 
-      // Analyze the query to determine if search is needed and which namespaces to search
-      const { requiresSearch, relevantNamespaces } =
-        analyzeQuery(reformulatedQuery);
+      // Analyze the query to determine if search is needed and which namespaces
+      // to search
+      const {requiresSearch, relevantNamespaces} =
+          analyzeQuery(reformulatedQuery);
 
-      let context = "[No context provided]";
+      let context = '[No context provided]';
 
       if (requiresSearch) {
         console.log(
-          `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-            ", ",
-          )}`,
+            `Query requires knowledge retrieval, searching namespaces: ${
+                relevantNamespaces.join(
+                    ', ',
+                    )}`,
         );
 
         const filters = includeFilters(reformulatedQuery);
@@ -391,27 +387,27 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
 
         // Search only relevant namespaces
         const searchResults = await searchSelectedNamespaces(
-          reformulatedQuery,
-          3,
-          relevantNamespaces,
-          Object.keys(filters).length === 0 ? undefined : filters,
+            reformulatedQuery,
+            3,
+            relevantNamespaces,
+            Object.keys(filters).length === 0 ? undefined : filters,
         );
         // console.log("Search Results: ", searchResults);
 
         // Format context from search results into plaintext
         if (searchResults.length > 0) {
-          context = searchResults.map((doc) => doc.pageContent).join("\n\n");
+          context = searchResults.map((doc) => doc.pageContent).join('\n\n');
         }
       } else {
         console.log(
-          "Query does not require knowledge retrieval, skipping search",
+            'Query does not require knowledge retrieval, skipping search',
         );
       }
 
       // console.log("CONTEXT: ", context);
 
       const result = streamText({
-        model: openai("gpt-4o-mini"),
+        model: openai('gpt-4o-mini'),
         system: `# Morpheus - Course Matrix Assistant
       
           ## Identity & Purpose
@@ -440,11 +436,10 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       
           ## Available Knowledge
           ${
-            context === "[No context provided]"
-              ? "No specific course information is available for this query. Answer based on general knowledge about the Course Matrix platform."
-              : "Use the following information to inform your response. Also use conversation history to inform response as well.\n\n" +
-                context
-          }
+            context === '[No context provided]' ?
+                'No specific course information is available for this query. Answer based on general knowledge about the Course Matrix platform.' :
+                'Use the following information to inform your response. Also use conversation history to inform response as well.\n\n' +
+                    context}
           `,
         messages,
       });
@@ -452,48 +447,50 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       result.pipeDataStreamToResponse(res);
     }
   } catch (error: any) {
-    console.error("Error:", error);
-    res.status(500).json({ error: error?.message });
+    console.error('Error:', error);
+    res.status(500).json({error: error?.message});
   }
 });
 
 // Test Similarity search
 // Usage: provide user prompt in req.body
 export const testSimilaritySearch = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { message } = req.body;
+    async (req: Request, res: Response) => {
+      const {message} = req.body;
 
-    // Analyze the query to determine if search is needed and which namespaces to search
-    const { requiresSearch, relevantNamespaces } = analyzeQuery(message);
+      // Analyze the query to determine if search is needed and which namespaces
+      // to search
+      const {requiresSearch, relevantNamespaces} = analyzeQuery(message);
 
-    let context = "[No context provided]";
+      let context = '[No context provided]';
 
-    if (requiresSearch) {
-      console.log(
-        `Query requires knowledge retrieval, searching namespaces: ${relevantNamespaces.join(
-          ", ",
-        )}`,
-      );
+      if (requiresSearch) {
+        console.log(
+            `Query requires knowledge retrieval, searching namespaces: ${
+                relevantNamespaces.join(
+                    ', ',
+                    )}`,
+        );
 
-      // Search only the relevant namespaces
-      const searchResults = await searchSelectedNamespaces(
-        message,
-        3,
-        relevantNamespaces,
-      );
-      console.log("Search Results: ", searchResults);
+        // Search only the relevant namespaces
+        const searchResults = await searchSelectedNamespaces(
+            message,
+            3,
+            relevantNamespaces,
+        );
+        console.log('Search Results: ', searchResults);
 
-      // Format context from search results into plaintext
-      if (searchResults.length > 0) {
-        context = searchResults.map((doc) => doc.pageContent).join("\n\n");
+        // Format context from search results into plaintext
+        if (searchResults.length > 0) {
+          context = searchResults.map((doc) => doc.pageContent).join('\n\n');
+        }
+      } else {
+        console.log(
+            'Query does not require knowledge retrieval, skipping search',
+        );
       }
-    } else {
-      console.log(
-        "Query does not require knowledge retrieval, skipping search",
-      );
-    }
 
-    console.log("CONTEXT: ", context);
-    res.status(200).send(context);
-  },
+      console.log('CONTEXT: ', context);
+      res.status(200).send(context);
+    },
 );

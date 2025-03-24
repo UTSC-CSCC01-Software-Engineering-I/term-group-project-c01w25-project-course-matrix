@@ -225,11 +225,11 @@ export const availableFunctions: AvailableFunctions = {
       const categorizedOfferings = categorizeValidOfferings(
           validCourseOfferingsList,
       );
+      // console.log(JSON.stringify(categorizedOfferings));
       // Generate valid schedules for the given courses and restrictions
       getValidSchedules(
           validSchedules, categorizedOfferings, [], 0,
           categorizedOfferings.length, maxdays, maxhours);
-
       // Return error if no valid schedules are found
       if (validSchedules.length === 0) {
         return {status: 404, error: 'No valid schedules found.'};
@@ -414,6 +414,7 @@ ${offeringData.meeting_section} `;
                     disabled: restriction?.disabled,
                     num_days: restriction?.numDays,
                     calendar_id: timetableData?.id,
+                    max_gap: restriction?.maxGap
                   },
                 ])
                 .select();

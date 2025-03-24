@@ -255,6 +255,7 @@ const TimetableBuilder = () => {
               : undefined,
             type: restriction?.type,
             numDays: restriction?.num_days,
+            maxGap: restriction?.max_gap
           }) as z.infer<typeof RestrictionSchema>,
       );
       form.setValue("restrictions", parsedRestrictions);

@@ -344,7 +344,7 @@ const CreateCustomSetting = ({
                         name="maxGap"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Max gap allowed between lectures/tutorials/practicals</FormLabel>
+                            <FormLabel>Max gap allowed between lectures/tutorials/practicals (hours)</FormLabel>
                             <FormControl>
                               <Input
                                 type="number"

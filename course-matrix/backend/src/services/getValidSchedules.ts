@@ -3,7 +3,7 @@ import {canInsertList, getFrequencyTable, getMinHour} from '../utils/generatorHe
 
 // Function to generate all valid schedules based on offerings and restrictions
 
-export async function getValidSchedules(
+export function getValidSchedules(
     validSchedules: Offering[][],
     courseOfferingsList: CategorizedOfferingList[], curList: Offering[],
     cur: number, len: number, maxdays: number, maxhours: number) {
@@ -14,6 +14,7 @@ export async function getValidSchedules(
     // If the number of unique days is within the allowed limit, add the current
     // schedule to the list, also checks if max gap is being violated
     if (freq.size <= maxdays && getMinHour(curList) <= maxhours) {
+      console.log()
       validSchedules.push([...curList]);  // Push a copy of the current list
     }
     return;
@@ -25,12 +26,12 @@ export async function getValidSchedules(
   for (const [groupKey, offerings] of Object.entries(
            offeringsForCourse.offerings,
            )) {
-    if (await canInsertList(offerings, curList)) {
+    if (canInsertList(offerings, curList)) {
       const count = offerings.length;
       curList.push(...offerings);  // Add offering to the current list
 
       // Recursively generate schedules for the next course
-      await getValidSchedules(
+      getValidSchedules(
           validSchedules, courseOfferingsList, curList, cur + 1, len, maxdays,
           maxhours);
 

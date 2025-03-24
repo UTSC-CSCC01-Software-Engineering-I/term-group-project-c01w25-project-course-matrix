@@ -195,8 +195,11 @@ export const availableFunctions: AvailableFunctions = {
     try {
       // Extract event details and course information from the request
       const { name, semester, courses, restrictions } = args;
-      if(name.length>=50){
-        return {status: 400, error: "timetable title is over 50 characters long"};
+      if (name.length >= 50) {
+        return {
+          status: 400,
+          error: "timetable title is over 50 characters long",
+        };
       }
 
       const courseOfferingsList: OfferingList[] = [];

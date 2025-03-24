@@ -443,7 +443,8 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
           - For unrelated questions, politely explain that you're specialized in UTSC academic information
           - If a user prompt appears like a task that requires timetable operations (like create, read, update, delete a user's timetable) BUT the user prompt doesn't start with prefix "/timetable" then remind user to use "/timetable" in front of their prompt to access these capabilities
-      
+          - If a user asks about a course that you do not know of, acknowledge this.
+
           ## Available Knowledge
           ${
             context === "[No context provided]"

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import Logo from "./logo";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Calendar, Bot } from "lucide-react";
+import { Home, Calendar, Bot, GitCompareIcon } from "lucide-react";
 
 const checkIfActive = (url: string, current: string) => {
   return url === current;
@@ -56,6 +56,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             url: "/dashboard/assistant",
             isActive: checkIfActive("/dashboard/assistant", location.pathname),
             icon: Bot,
+          },
+          {
+            title: "Timetable Compare",
+            url: "/dashboard/compare",
+            isActive: checkIfActive("/dashboard/compare", location.pathname),
+            icon: GitCompareIcon,
           },
         ],
       },

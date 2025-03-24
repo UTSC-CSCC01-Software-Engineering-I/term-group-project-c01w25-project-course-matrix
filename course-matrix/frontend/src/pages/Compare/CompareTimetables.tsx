@@ -1,4 +1,4 @@
-import { useGetTimetableQuery } from "@/api/timetableApiSlice";
+import { useGetTimetableQuery, useGetTimetablesQuery } from "@/api/timetableApiSlice";
 import { Button } from "@/components/ui/button";
 import { Timetable, TimetableEvents } from "@/utils/type-utils";
 import { useEffect, useState } from "react";
@@ -6,50 +6,78 @@ import { Link, useSearchParams } from "react-router-dom";
 import Calendar from "../TimetableBuilder/Calendar";
 import { useGetEventsQuery } from "@/api/eventsApiSlice";
 import { Spinner } from "@/components/ui/spinner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { CompareFormSchema } from "../Home/TimetableCompareButton";
+import { format } from "path";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SemesterIcon } from "@/components/semester-icon";
+import { GitCompareArrows } from "lucide-react";
 
 export const CompareTimetables = () => {
+
+  const [timetable1, setTimetable1] = useState<Timetable>();
+  const [timetable2, setTimetable2] = useState<Timetable>();
+  const [offeringIds1, setOfferingIds1] = useState<number[]>();
+  const [offeringIds2, setOfferingIds2] = useState<number[]>();
   const [queryParams] = useSearchParams();
-  const validParams = queryParams.has("id1") && queryParams.has("id2");
 
-  if (!validParams) {
-    return (
-      <div className="w-full text-red-500 text-center mt-10">
-        You have not selected two timetables to compare. Please try again.
-      </div>
-    );
-  }
-  const timetableId1 = parseInt(queryParams.get("id1") || "0");
-  const timetableId2 = parseInt(queryParams.get("id2") || "0");
-
-  const { data: data1 } = useGetTimetableQuery(timetableId1) as {
-    data: Timetable[];
-  };
-  const { data: data2 } = useGetTimetableQuery(timetableId2) as {
-    data: Timetable[];
+  const compareForm = useForm<z.infer<typeof CompareFormSchema>>({
+    resolver: zodResolver(CompareFormSchema),
+  });
+  
+  const onSubmit = (values: z.infer<typeof CompareFormSchema>) => {
+    console.log("Compare Form submitted:", values);
+    const timetableId1 = compareForm.getValues("timetable1");
+    const timetableId2 = compareForm.getValues("timetable2");
+    setTimetable1(timetables.find(t => t.id === timetableId1))
+    refetchEvents1()
+    setTimetable2(timetables.find(t => t.id === timetableId2))
+    refetchEvents2()
   };
 
-  const { data: timetableEventsData1 } = useGetEventsQuery(timetableId1) as {
+  const { data: timetables, isLoading, refetch } = useGetTimetablesQuery() as {
+      data: Timetable[];
+      isLoading: boolean;
+      refetch: () => void;
+    };
+
+  const { data: timetableEventsData1, refetch: refetchEvents1 } = useGetEventsQuery(
+    compareForm.getValues("timetable1") ?? undefined, 
+    {
+      skip: compareForm.getValues("timetable1") === undefined
+    }
+  ) as {
     data: TimetableEvents;
+    refetch: () => void;
   };
-  const { data: timetableEventsData2 } = useGetEventsQuery(timetableId2) as {
+  const { data: timetableEventsData2, refetch: refetchEvents2 } = useGetEventsQuery(
+    compareForm.getValues("timetable2"),
+    {
+      skip: compareForm.getValues("timetable2") === undefined
+    }
+  ) as {
     data: TimetableEvents;
+    refetch: () => void;
   };
-
-  const [timetable1, setTimetable1] = useState<Timetable | null>(null);
-  const [timetable2, setTimetable2] = useState<Timetable | null>(null);
-  const [offeringIds1, setOfferingIds1] = useState<number[]>([]);
-  const [offeringIds2, setOfferingIds2] = useState<number[]>([]);
 
   useEffect(() => {
-    if (data1) {
-      setTimetable1(data1[0]);
+    if (queryParams.has("id1") && timetables) {
+      const id = parseInt(queryParams.get("id1") || "0");
+      compareForm.setValue("timetable1", id);
+      setTimetable1(timetables.find(t => t.id === id));
     }
-  }, [data1]);
+  }, [timetables]);
+
   useEffect(() => {
-    if (data2) {
-      setTimetable2(data2[0]);
+    if (queryParams.has("id2") && timetables) {
+      const id = parseInt(queryParams.get("id2") || "0");
+      compareForm.setValue("timetable2", id);
+      setTimetable2(timetables.find(t => t.id === id));
     }
-  }, [data2]);
+  }, [timetables]);
 
   // get unique offeringIds for calendar
   useEffect(() => {
@@ -77,14 +105,93 @@ export const CompareTimetables = () => {
   return (
     <>
       <div className="w-full">
-        <div className="mb-4 p-8">
-          <div className="mb-2 flex flex-row justify-between">
+        <div className="mb-2 p-8 pt-4">
+          <div className="mb-2 flex flex-row items-center justify-between">
             <div>
-              <h1 className="text-2xl font-medium tracking-tight mb-4">
+              <h1 className="text-2xl font-medium tracking-tight">
                 Comparing Timetables
               </h1>
             </div>
-            <div className="flex gap-2 ">
+            <Form {...compareForm}>
+              <form
+                onSubmit={compareForm.handleSubmit(onSubmit)}
+                className="flex flex-row gap-4 items-center"
+              >
+                <FormField
+                  control={compareForm.control}
+                  name="timetable1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={(value) => field.onChange(Number(value))}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a timetable" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {timetables && timetables.map((timetable) => (
+                            <SelectItem
+                              key={timetable.id}
+                              value={timetable.id.toString()}
+                            >
+                              <div className="flex items-center gap-2">
+                                <SemesterIcon
+                                  semester={timetable.semester}
+                                  size={18}
+                                />
+                                <span>{timetable.timetable_title}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button size="sm" className="px-5">
+                  Compare
+                  <GitCompareArrows />
+                </Button>
+                <FormField
+                  control={compareForm.control}
+                  name="timetable2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={(value) => field.onChange(Number(value))}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a timetable" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {timetables && timetables.map((timetable) => (
+                            <SelectItem
+                              key={timetable.id}
+                              value={timetable.id.toString()}
+                            >
+                              <div className="flex items-center gap-2">
+                                <SemesterIcon
+                                  semester={timetable.semester}
+                                  size={18}
+                                />
+                                <span>{timetable.timetable_title}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+            <div className="flex gap-2 ml-[7rem]">
               <Link to="/dashboard/home">
                 <Button size="sm" variant="outline" onClick={() => {}}>
                   Back to Home
@@ -95,8 +202,10 @@ export const CompareTimetables = () => {
           <hr className="mb-4" />
           <div className="flex gap-4">
             <div className="w-1/2">
-              {offeringIds1.length === 0 ? (
-                <Spinner />
+              {!offeringIds1 ? (
+                <>
+                  {queryParams.has("id1") ? <Spinner /> : <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">Select a timetable to compare</div>}
+                </>
               ) : (
                 <Calendar
                   setShowLoadingPage={() => {}}
@@ -110,8 +219,10 @@ export const CompareTimetables = () => {
               )}
             </div>
             <div className="w-1/2">
-              {offeringIds2.length === 0 ? (
-                <Spinner />
+              {!offeringIds2 ? (
+                <>
+                  {queryParams.has("id2") ? <Spinner /> : <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">Select a timetable to compare</div>}
+                </>
               ) : (
                 <Calendar
                   setShowLoadingPage={() => {}}

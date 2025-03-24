@@ -35,7 +35,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
-const CompareFormSchema = z.object({
+export const CompareFormSchema = z.object({
   timetable1: z.number().positive(),
   timetable2: z.number().positive(),
 });

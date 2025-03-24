@@ -255,6 +255,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
             - If the user wants to create a timetable, first call getCourses to get course information on the requested courses, then call generateTimetable.
             - Do not make up fake courses or offerings. 
+            - You can only edit title of the timetable, nothing else. If a user tries to edit something else, acknowledge this limitation.
             `,
         messages,
         tools: {
@@ -267,13 +268,10 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             },
           }),
           updateTimetable: tool({
-            description: "Update a user's timetable by title and/or semester",
+            description: "Update a user's timetable's title",
             parameters: z.object({
               id: z.number().positive(),
               timetable_title: z.string().optional(),
-              semester: z
-                .enum(["Fall 2025", "Summer 2025", "Winter 2026"])
-                .optional(),
             }),
             execute: async (args) => {
               return await availableFunctions.updateTimetable(args, req);

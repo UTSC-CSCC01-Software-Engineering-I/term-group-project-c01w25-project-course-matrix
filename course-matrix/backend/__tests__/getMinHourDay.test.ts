@@ -32,9 +32,9 @@ describe("getMinHourDay function", () => {
     });
     const schedule: Offering[] = [offering1, offering2, offering3];
 
-    const result = getMinHourDay(schedule);
+    const result = getMinHourDay(schedule,0);
 
-    expect(result).toBe(0); // No overlap, should return true
+    expect(result).toBe(true); 
   });
 
   it("courses that has a max gap of 4 hours", async () => {
@@ -61,9 +61,9 @@ describe("getMinHourDay function", () => {
     });
     const schedule: Offering[] = [offering3, offering2, offering1];
 
-    const result = getMinHourDay(schedule);
+    const result = getMinHourDay(schedule, 3);
 
-    expect(result).toBe(4);
+    expect(result).toBe(false);
   });
 
   it("only 1 offering in list, return 0", async () => {
@@ -76,9 +76,9 @@ describe("getMinHourDay function", () => {
     });
     const schedule: Offering[] = [offering1];
 
-    const result = getMinHourDay(schedule);
+    const result = getMinHourDay(schedule, 23);
 
-    expect(result).toBe(0);
+    expect(result).toBe(true);
   });
 
   it("getMinHour test", async () => {
@@ -131,8 +131,63 @@ describe("getMinHourDay function", () => {
       );
     }
 
-    const result = getMinHour(schedule);
+    const result = getMinHour(schedule, 4);
 
-    expect(result).toEqual(4);
+    expect(result).toEqual(true);
+  });
+
+  it("getMinHour test 2", async () => {
+    const arr_day = [
+      "MO",
+      "MO",
+      "TU",
+      "TH",
+      "FR",
+      "MO",
+      "TU",
+      "TH",
+      "MO",
+      "MO",
+    ];
+    const arr_start = [
+      "09:00:00",
+      "10:00:00",
+      "09:00:00",
+      "12:00:00",
+      "13:00:00",
+      "12:00:00",
+      "14:00:00",
+      "16:00:00",
+      "13:00:00",
+      "15:00:00",
+    ];
+    const arr_end = [
+      "10:00:00",
+      "11:00:00",
+      "10:00:00",
+      "15:00:00",
+      "16:00:00",
+      "13:00:00",
+      "19:00:00",
+      "18:00:00",
+      "14:00:00",
+      "18:00:00",
+    ];
+    const schedule: Offering[] = [];
+    for (let i = 0; i < 10; i++) {
+      schedule.push(
+        createOffering({
+          id: i,
+          course_id: 100 + i,
+          day: arr_day[i],
+          start: arr_start[i],
+          end: arr_end[i],
+        }),
+      );
+    }
+
+    const result = getMinHour(schedule, 3);
+
+    expect(result).toEqual(false);
   });
 });

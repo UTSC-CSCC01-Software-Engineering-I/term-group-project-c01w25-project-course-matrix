@@ -248,19 +248,21 @@ export function trim(schedules: Offering[][]) {
   return trim_schedule;
 }
 
-export function getMinHourDay(schedule: Offering[]): number {
-  if (schedule.length <= 1) return 0;
+export function getMinHourDay(schedule: Offering[], maxhours:number): boolean {
+  if (schedule.length <= 1) return true;
   schedule.sort((a, b) => a.start.localeCompare(b.start));
-  let res = 0;
   for (let i = 1; i < schedule.length; i++) {
     const cur = parseInt(schedule[i].start.split(":")[0]);
     const prev = parseInt(schedule[i - 1].end.split(":")[0]);
-    res = Math.max(res, cur - prev);
+    if(cur - prev > maxhours){
+      return false;
+    }
   }
-  return res;
+  return true;
 }
 
-export function getMinHour(schedule: Offering[]) {
+export function getMinHour(schedule: Offering[], maxhours:number): boolean{
+  if(maxhours==24) return true;
   const scheduleByDay: Record<string, Offering[]> = {};
   schedule.forEach((offering) => {
     if (!scheduleByDay[offering.day]) {
@@ -268,5 +270,15 @@ export function getMinHour(schedule: Offering[]) {
     }
     scheduleByDay[offering.day].push(offering);
   });
-  return Math.max(...Object.values(scheduleByDay).map(getMinHourDay));
+  return Object.values(scheduleByDay).every((x) => getMinHourDay(x, maxhours));
+}
+
+
+export function shuffle(array: CategorizedOfferingList[]): CategorizedOfferingList[] {
+  const shuffled = [...array]; // Create a copy to avoid mutating the original array
+  for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
+  }
+  return shuffled;
 }

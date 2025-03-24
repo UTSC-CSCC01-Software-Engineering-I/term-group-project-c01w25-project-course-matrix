@@ -19,6 +19,7 @@ import {
   getValidOfferings,
   groupOfferings,
   trim,
+  shuffle
 } from "../utils/generatorHelpers";
 
 // Add all possible function names here
@@ -246,11 +247,12 @@ export const availableFunctions: AvailableFunctions = {
         validCourseOfferingsList.push(groupedOfferings);
       }
 
-      const categorizedOfferings = categorizeValidOfferings(
+      let categorizedOfferings = categorizeValidOfferings(
         validCourseOfferingsList,
       );
       // console.log(JSON.stringify(categorizedOfferings));
       // Generate valid schedules for the given courses and restrictions
+      categorizedOfferings = shuffle(categorizedOfferings);
       getValidSchedules(
         validSchedules,
         categorizedOfferings,
@@ -259,6 +261,7 @@ export const availableFunctions: AvailableFunctions = {
         categorizedOfferings.length,
         maxdays,
         maxhours,
+        false
       );
       // Return error if no valid schedules are found
       if (validSchedules.length === 0) {

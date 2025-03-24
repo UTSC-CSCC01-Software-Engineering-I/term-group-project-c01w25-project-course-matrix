@@ -17,6 +17,7 @@ import {
   getValidOfferings,
   groupOfferings,
   trim,
+  shuffle
 } from "../utils/generatorHelpers";
 
 // Express route handler to generate timetables based on user input
@@ -74,10 +75,12 @@ export default {
         validCourseOfferingsList.push(groupedOfferings);
       }
 
-      const categorizedOfferings = categorizeValidOfferings(
+      let categorizedOfferings = categorizeValidOfferings(
         validCourseOfferingsList,
       );
       // Generate valid schedules for the given courses and restrictions
+      categorizedOfferings = shuffle(categorizedOfferings);
+      
       await getValidSchedules(
         validSchedules,
         categorizedOfferings,
@@ -86,6 +89,7 @@ export default {
         categorizedOfferings.length,
         maxdays,
         maxhours,
+        false
       );
 
       // Return error if no valid schedules are found
@@ -93,11 +97,11 @@ export default {
         return res.status(404).json({ error: "No valid schedules found." });
       }
       // Return the valid schedules
+      console.log("Total timetables generated", validSchedules.length);
       const returnVal = {
         amount: validSchedules.length,
         schedules: trim(validSchedules),
       };
-      console.log(returnVal);
       return res.status(200).json(returnVal);
     } catch (error) {
       // Catch any error and return the error message

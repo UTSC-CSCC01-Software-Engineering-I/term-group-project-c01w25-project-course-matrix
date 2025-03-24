@@ -380,6 +380,7 @@ const TimetableBuilder = () => {
                             }}
                             value={field.value}
                             defaultValue={field.value}
+                            disabled={isEditingTimetable}
                           >
                             <SelectTrigger className="w-[140px]">
                               <SelectValue placeholder="Select a semester" />

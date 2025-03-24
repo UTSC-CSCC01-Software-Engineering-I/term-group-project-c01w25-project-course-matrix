@@ -118,14 +118,14 @@ const CreateCustomSetting = ({
     if (
       value === "Restrict Before" ||
       value === "Restrict After" ||
-      value === "Restrict Between"  
+      value === "Restrict Between"
     ) {
       return "time";
     } else if (value === "Restrict Day") {
       return "day";
     } else if (value === "Days Off") {
       return "days off";
-    } else if (value === "Max Gap"){
+    } else if (value === "Max Gap") {
       return "hours";
     }
   };
@@ -192,9 +192,9 @@ const CreateCustomSetting = ({
                             >
                               Enforce Minimum Days Off Per Week
                             </SelectItem>
-                            <SelectItem 
-                            value="Max Gap"
-                            disabled={isMaxGapRestrictionApplied()}
+                            <SelectItem
+                              value="Max Gap"
+                              disabled={isMaxGapRestrictionApplied()}
                             >
                               Max Gap Between Offerings
                             </SelectItem>
@@ -312,33 +312,33 @@ const CreateCustomSetting = ({
                         />
                       )}
                   </>
+                ) : restrictionType &&
+                  getRestrictionType(restrictionType) === "days off" ? (
+                  <>
+                    <FormField
+                      control={restrictionForm.control}
+                      name="numDays"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Minimum no. days off per week</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              value={field.value ?? ""}
+                              onChange={(e) =>
+                                field.onChange(e.target.valueAsNumber)
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
                 ) : (
                   restrictionType &&
-                  getRestrictionType(restrictionType) === "days off" ? (
+                  getRestrictionType(restrictionType) === "hours" && (
                     <>
-                      <FormField
-                        control={restrictionForm.control}
-                        name="numDays"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Minimum no. days off per week</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                value={field.value ?? ""}
-                                onChange={(e) =>
-                                  field.onChange(e.target.valueAsNumber)
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </>
-                  ) : (
-                    restrictionType &&
-                  getRestrictionType(restrictionType) === "hours" && (<>
                       <FormField
                         control={restrictionForm.control}
                         name="maxGap"
@@ -356,10 +356,10 @@ const CreateCustomSetting = ({
                             </FormControl>
                             <FormMessage />
                           </FormItem>
-                    )}
+                        )}
                       />
                     </>
-                  ))
+                  )
                 )}
               </div>
 

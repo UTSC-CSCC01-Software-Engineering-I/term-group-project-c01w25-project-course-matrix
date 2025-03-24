@@ -255,6 +255,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
             - If the user wants to create a timetable, first call getCourses to get course information on the requested courses, then call generateTimetable.
             - Do not make up fake courses or offerings. 
+            - If a user asks about a course that you do not know of, acknowledge this.
             - For delete timetable requests, if the user asks to delete an ambiguous timetable name (i.e many with similar name exist) then ask them to clarify which one
             - For delete timetable requests, first check that the timetable the user is refering to exists 
             - For delete timetable requests, ask for user confirmation with command "/timetable confirm" before proceeding. If their next message is anything other than "/timetable confim" then cancel the deletion. 

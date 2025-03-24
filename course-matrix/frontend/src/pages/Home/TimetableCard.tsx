@@ -115,14 +115,14 @@ const TimetableCard = ({
             />
           </CardTitle>
           <div className="p-2">
-          <Star
-            className={`cursor-pointer h-5 w-5 transition-colors ${
-              toggled
-                ? "fill-yellow-500 text-yellow-500"
-                : "fill-none text-gray-500"
-            } `}
-            onClick={() => handleFavourite()}
-          />
+            <Star
+              className={`cursor-pointer h-5 w-5 transition-colors ${
+                toggled
+                  ? "fill-yellow-500 text-yellow-500"
+                  : "fill-none text-gray-500"
+              } `}
+              onClick={() => handleFavourite()}
+            />
           </div>
 
           <div className="flex justify-around">

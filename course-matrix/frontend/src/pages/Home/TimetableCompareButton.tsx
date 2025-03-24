@@ -76,28 +76,19 @@ export const TimetableCompareButton = ({
       <DialogContent className="gap-5">
         <DialogHeader>
           <DialogTitle>Compare Timetables</DialogTitle>
-          <DialogDescription >
+          <DialogDescription>
             <div className="mt-2">View timetables side by side.</div>
             <div className="flex gap-4 mt-2">
               <div className="flex items-center gap-2">
-                <SemesterIcon
-                  semester="Summer 2025"
-                  size={18}
-                />
+                <SemesterIcon semester="Summer 2025" size={18} />
                 <span>Summer 2025</span>
               </div>
               <div className="flex items-center gap-2">
-                <SemesterIcon
-                  semester="Fall 2025"
-                  size={18}
-                />
+                <SemesterIcon semester="Fall 2025" size={18} />
                 <span>Fall 2025</span>
               </div>
               <div className="flex items-center gap-2">
-                <SemesterIcon
-                  semester="Winter 2026"
-                  size={18}
-                />
+                <SemesterIcon semester="Winter 2026" size={18} />
                 <span>Winter 2026</span>
               </div>
             </div>

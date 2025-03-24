@@ -40,6 +40,9 @@ export interface Restriction {
 export interface GroupedOfferingList {
   course_id: number;
   groups: Record<string, Offering[]>;
+  lectures: number;
+  tutorials: number;
+  practicals: number;
 }
 
 // Interface for organizing offerings by course ID

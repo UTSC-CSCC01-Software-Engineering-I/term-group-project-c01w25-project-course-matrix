@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 
 interface TimetableCardProps {
   refetch: () => void;
+  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
   timetableId: number;
   title: string;
   lastEditedDate: Date;
@@ -28,6 +29,7 @@ interface TimetableCardProps {
  */
 const TimetableCard = ({
   refetch,
+  setErrorMessage,
   timetableId,
   title,
   lastEditedDate,
@@ -56,7 +58,9 @@ const TimetableCard = ({
       }).unwrap();
       setIsEditingTitle(false);
     } catch (error) {
-      console.error("Failed to update timetable title:", error);
+      const errorData = (error as { data?: { error?: string } }).data;
+      setErrorMessage(errorData?.error ?? "Unknown error occurred");
+      return;
     }
   };
 

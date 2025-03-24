@@ -53,6 +53,7 @@ import { CourseModel, TimetableGenerateResponseModel } from "@/models/models";
 import LoadingPage from "@/pages/Loading/LoadingPage";
 import { GeneratedCalendars } from "./GeneratedCalendars";
 import { Spinner } from "@/components/ui/spinner";
+import { convertRestrictionTimes } from "@/utils/convert-restriction-times";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -128,7 +129,7 @@ const TimetableBuilder = () => {
   const [isGeneratingTimetables, setIsGeneratingTimetables] = useState(false);
   const [generatedTimetables, setGeneratedTimetables] =
     useState<TimetableGenerateResponseModel>();
-
+  const [errorMsg, setErrorMsg] = useState("");
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;
   };
@@ -283,14 +284,23 @@ const TimetableBuilder = () => {
   const handleGenerate = async (
     values: z.infer<typeof TimetableFormSchema>,
   ) => {
-    console.log(">> Timetable options:", values);
     try {
-      const res = await generateTimetable(values);
+      const newValues = convertRestrictionTimes(values);
+      console.log(">> Timetable options:", newValues);
+      const res = await generateTimetable(newValues);
       const data: TimetableGenerateResponseModel = res.data;
+
+      // RTK Query does NOT throw errors, so check for `error`
+      if ("error" in res) {
+        console.error("Mutation failed:", res.error);
+        throw new Error("not found");
+      }
       setIsGeneratingTimetables(true);
       setGeneratedTimetables(data);
+      setErrorMsg("");
     } catch (error) {
-      console.error("Error generating timetables: ", error);
+      setIsGeneratingTimetables(false);
+      setErrorMsg("No valid timetables found");
     }
   };
 
@@ -581,7 +591,7 @@ const TimetableBuilder = () => {
                   </div>
                 )}
               </form>
-
+              <div className="text-red-500 font-bold mt-2">{errorMsg}</div>
               {isCustomSettingsOpen && (
                 <CreateCustomSetting
                   submitHandler={handleAddRestriction}

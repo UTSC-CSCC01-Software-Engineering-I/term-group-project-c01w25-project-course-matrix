@@ -1,7 +1,11 @@
 import { describe, expect, it, test } from "@jest/globals";
 
-import { createOffering, canInsert } from "../src/utils/generatorHelpers";
 import { Offering } from "../src/types/generatorTypes";
+import {
+  canInsert,
+  canInsertList,
+  createOffering,
+} from "../src/utils/generatorHelpers";
 
 describe("canInsert function", () => {
   const offering1: Offering = createOffering({
@@ -114,5 +118,53 @@ describe("canInsert function", () => {
     const result = await canInsert(toInsert, curList);
 
     expect(result).toBe(true); // Different day, no overlap
+  });
+
+  it("special case", async () => {
+    const toInsert: Offering = createOffering({
+      id: 1069,
+      course_id: 1271,
+      day: "TH",
+      start: "05:00:00",
+      end: "17:00:00",
+    });
+    const offering11: Offering = createOffering({
+      id: 414,
+      course_id: 337,
+      day: "TU",
+      start: "15:00:00",
+      end: "16:00:00",
+    });
+    const offering12: Offering = createOffering({
+      id: 415,
+      course_id: 337,
+      day: "TH",
+      start: "15:00:00",
+      end: "17:00:00",
+    });
+    const offering13: Offering = createOffering({
+      id: 1052,
+      course_id: 1271,
+      day: "TU",
+      start: "10:00:00",
+      end: "11:00:00",
+    });
+    const offering14: Offering = createOffering({
+      id: 1053,
+      course_id: 1271,
+      day: "TU",
+      start: "09:00:00",
+      end: "11:00:00",
+    });
+    const curList: Offering[] = [
+      offering11,
+      offering12,
+      offering13,
+      offering14,
+    ];
+
+    const result = await canInsertList([toInsert], curList);
+
+    expect(result).toBe(false); // Special bug-causing case
   });
 });

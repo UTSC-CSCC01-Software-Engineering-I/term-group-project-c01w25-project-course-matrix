@@ -114,18 +114,19 @@ const TimetableCard = ({
               onChange={(e) => setTimetableCardTitle(e.target.value)}
             />
           </CardTitle>
-
           <Star
-            className={`w-6 h-6 transition-colors ${
+            className={`cursor-pointer h-5 w-5 transition-colors ${
               toggled
                 ? "fill-yellow-500 text-yellow-500"
                 : "fill-none text-gray-500"
-            }`}
+            } `}
             onClick={() => handleFavourite()}
           />
-          <div className="flex justify-between">
+          
+          <div className="flex justify-around">
             {!isEditingTitle && (
               <>
+                
                 <Button
                   size="sm"
                   variant="ghost"

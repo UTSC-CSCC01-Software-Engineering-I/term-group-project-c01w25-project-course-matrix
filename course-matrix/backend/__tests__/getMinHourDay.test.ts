@@ -32,9 +32,9 @@ describe("getMinHourDay function", () => {
     });
     const schedule: Offering[] = [offering1, offering2, offering3];
 
-    const result = getMinHourDay(schedule,0);
+    const result = getMinHourDay(schedule, 0);
 
-    expect(result).toBe(true); 
+    expect(result).toBe(true);
   });
 
   it("courses that has a max gap of 4 hours", async () => {

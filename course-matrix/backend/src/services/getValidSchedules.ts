@@ -15,15 +15,14 @@ export function getValidSchedules(
   len: number,
   maxdays: number,
   maxhours: number,
-  exit: boolean, 
+  exit: boolean,
 ) {
   // Base case: if all courses have been considered
   if (cur == len) {
-    if(validSchedules.length>200) {
+    if (validSchedules.length > 200) {
       exit = true;
       return;
     }
-
 
     const freq: Map<string, number> = getFrequencyTable(curList);
     // If the number of unique days is within the allowed limit, add the current
@@ -53,9 +52,9 @@ export function getValidSchedules(
         len,
         maxdays,
         maxhours,
-        exit
+        exit,
       );
-      if(exit) return;
+      if (exit) return;
       // Backtrack: remove the last offering if no valid schedule was found
       for (let i = 0; i < count; i++) curList.pop();
     }

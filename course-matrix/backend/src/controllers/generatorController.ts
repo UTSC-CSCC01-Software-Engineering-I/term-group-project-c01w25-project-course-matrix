@@ -17,7 +17,7 @@ import {
   getValidOfferings,
   groupOfferings,
   trim,
-  shuffle
+  shuffle,
 } from "../utils/generatorHelpers";
 
 // Express route handler to generate timetables based on user input
@@ -80,7 +80,7 @@ export default {
       );
       // Generate valid schedules for the given courses and restrictions
       categorizedOfferings = shuffle(categorizedOfferings);
-      
+
       await getValidSchedules(
         validSchedules,
         categorizedOfferings,
@@ -89,7 +89,7 @@ export default {
         categorizedOfferings.length,
         maxdays,
         maxhours,
-        false
+        false,
       );
 
       // Return error if no valid schedules are found

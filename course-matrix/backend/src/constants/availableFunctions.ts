@@ -19,7 +19,7 @@ import {
   getValidOfferings,
   groupOfferings,
   trim,
-  shuffle
+  shuffle,
 } from "../utils/generatorHelpers";
 
 // Add all possible function names here
@@ -261,7 +261,7 @@ export const availableFunctions: AvailableFunctions = {
         categorizedOfferings.length,
         maxdays,
         maxhours,
-        false
+        false,
       );
       // Return error if no valid schedules are found
       if (validSchedules.length === 0) {

@@ -25,6 +25,12 @@ export default {
           .status(400)
           .json({ error: "timetable title and semester are required" });
       }
+      // Timetables cannot be longer than 50 characters.
+      if (timetable_title.length > 50) {
+        return res
+          .status(400)
+          .json({ error: "Timetable Title cannot be over 50 characters long" });
+      }
 
       // Check if a timetable with the same title already exist for this user
       const { data: existingTimetable, error: existingTimetableError } =
@@ -167,6 +173,13 @@ export default {
           error:
             "New timetable title or semester or updated favorite status or email notifications enabled is required when updating a timetable",
         });
+      }
+
+      // Timetables cannot be longer than 50 characters.
+      if (timetable_title.length > 50) {
+        return res
+          .status(400)
+          .json({ error: "Timetable Title cannot be over 50 characters long" });
       }
 
       //Retrieve the authenticated user

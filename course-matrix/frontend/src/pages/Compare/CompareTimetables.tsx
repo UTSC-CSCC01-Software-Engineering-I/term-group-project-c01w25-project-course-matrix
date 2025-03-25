@@ -1,4 +1,7 @@
-import { useGetTimetableQuery, useGetTimetablesQuery } from "@/api/timetableApiSlice";
+import {
+  useGetTimetableQuery,
+  useGetTimetablesQuery,
+} from "@/api/timetableApiSlice";
 import { Button } from "@/components/ui/button";
 import { Timetable, TimetableEvents } from "@/utils/type-utils";
 import { useEffect, useState } from "react";
@@ -11,13 +14,25 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CompareFormSchema } from "../Home/TimetableCompareButton";
 import { format } from "path";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { SemesterIcon } from "@/components/semester-icon";
 import { GitCompareArrows } from "lucide-react";
 
 export const CompareTimetables = () => {
-
   const [timetable1, setTimetable1] = useState<Timetable>();
   const [timetable2, setTimetable2] = useState<Timetable>();
   const [offeringIds1, setOfferingIds1] = useState<number[]>();
@@ -31,47 +46,47 @@ export const CompareTimetables = () => {
       timetable2: queryParams.has("id2") ? parseInt(queryParams.get("id2") ?? "0") : undefined
     }
   });
-  
+
   const onSubmit = (values: z.infer<typeof CompareFormSchema>) => {
     console.log("Compare Form submitted:", values);
     const timetableId1 = compareForm.getValues("timetable1");
     const timetableId2 = compareForm.getValues("timetable2");
-    setTimetable1(timetables.find(t => t.id === timetableId1))
-    refetchEvents1()
-    setTimetable2(timetables.find(t => t.id === timetableId2))
-    refetchEvents2()
+    setTimetable1(timetables.find((t) => t.id === timetableId1));
+    refetchEvents1();
+    setTimetable2(timetables.find((t) => t.id === timetableId2));
+    refetchEvents2();
   };
 
-  const { data: timetables, isLoading, refetch } = useGetTimetablesQuery() as {
-      data: Timetable[];
-      isLoading: boolean;
+  const {
+    data: timetables,
+    isLoading,
+    refetch,
+  } = useGetTimetablesQuery() as {
+    data: Timetable[];
+    isLoading: boolean;
+    refetch: () => void;
+  };
+
+  const { data: timetableEventsData1, refetch: refetchEvents1 } =
+    useGetEventsQuery(compareForm.getValues("timetable1") ?? undefined, {
+      skip: compareForm.getValues("timetable1") === undefined,
+    }) as {
+      data: TimetableEvents;
       refetch: () => void;
     };
-
-  const { data: timetableEventsData1, refetch: refetchEvents1 } = useGetEventsQuery(
-    compareForm.getValues("timetable1") ?? undefined, 
-    {
-      skip: compareForm.getValues("timetable1") === undefined
-    }
-  ) as {
-    data: TimetableEvents;
-    refetch: () => void;
-  };
-  const { data: timetableEventsData2, refetch: refetchEvents2 } = useGetEventsQuery(
-    compareForm.getValues("timetable2"),
-    {
-      skip: compareForm.getValues("timetable2") === undefined
-    }
-  ) as {
-    data: TimetableEvents;
-    refetch: () => void;
-  };
+  const { data: timetableEventsData2, refetch: refetchEvents2 } =
+    useGetEventsQuery(compareForm.getValues("timetable2"), {
+      skip: compareForm.getValues("timetable2") === undefined,
+    }) as {
+      data: TimetableEvents;
+      refetch: () => void;
+    };
 
   useEffect(() => {
     if (queryParams.has("id1") && timetables) {
       const id = parseInt(queryParams.get("id1") || "0");
       compareForm.setValue("timetable1", id);
-      setTimetable1(timetables.find(t => t.id === id));
+      setTimetable1(timetables.find((t) => t.id === id));
     }
   }, [timetables]);
 
@@ -79,7 +94,7 @@ export const CompareTimetables = () => {
     if (queryParams.has("id2") && timetables) {
       const id = parseInt(queryParams.get("id2") || "0");
       compareForm.setValue("timetable2", id);
-      setTimetable2(timetables.find(t => t.id === id));
+      setTimetable2(timetables.find((t) => t.id === id));
     }
   }, [timetables]);
 
@@ -136,20 +151,21 @@ export const CompareTimetables = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {timetables && timetables.map((timetable) => (
-                            <SelectItem
-                              key={timetable.id}
-                              value={timetable.id.toString()}
-                            >
-                              <div className="flex items-center gap-2">
-                                <SemesterIcon
-                                  semester={timetable.semester}
-                                  size={18}
-                                />
-                                <span>{timetable.timetable_title}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
+                          {timetables &&
+                            timetables.map((timetable) => (
+                              <SelectItem
+                                key={timetable.id}
+                                value={timetable.id.toString()}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <SemesterIcon
+                                    semester={timetable.semester}
+                                    size={18}
+                                  />
+                                  <span>{timetable.timetable_title}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -175,20 +191,21 @@ export const CompareTimetables = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {timetables && timetables.map((timetable) => (
-                            <SelectItem
-                              key={timetable.id}
-                              value={timetable.id.toString()}
-                            >
-                              <div className="flex items-center gap-2">
-                                <SemesterIcon
-                                  semester={timetable.semester}
-                                  size={18}
-                                />
-                                <span>{timetable.timetable_title}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
+                          {timetables &&
+                            timetables.map((timetable) => (
+                              <SelectItem
+                                key={timetable.id}
+                                value={timetable.id.toString()}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <SemesterIcon
+                                    semester={timetable.semester}
+                                    size={18}
+                                  />
+                                  <span>{timetable.timetable_title}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -210,7 +227,13 @@ export const CompareTimetables = () => {
             <div className="w-1/2">
               {!offeringIds1 ? (
                 <>
-                  {queryParams.has("id1") ? <Spinner /> : <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">Select a timetable to compare</div>}
+                  {queryParams.has("id1") ? (
+                    <Spinner />
+                  ) : (
+                    <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">
+                      Select a timetable to compare
+                    </div>
+                  )}
                 </>
               ) : (
                 <Calendar
@@ -227,7 +250,13 @@ export const CompareTimetables = () => {
             <div className="w-1/2">
               {!offeringIds2 ? (
                 <>
-                  {queryParams.has("id2") ? <Spinner /> : <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">Select a timetable to compare</div>}
+                  {queryParams.has("id2") ? (
+                    <Spinner />
+                  ) : (
+                    <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">
+                      Select a timetable to compare
+                    </div>
+                  )}
                 </>
               ) : (
                 <Calendar

@@ -65,7 +65,9 @@ const Dashboard = () => {
                           ) : location.pathname.startsWith(
                               "/dashboard/compare",
                             ) ? (
-                              <Link to="/dashboard/compare">Timetable Compare</Link>
+                            <Link to="/dashboard/compare">
+                              Timetable Compare
+                            </Link>
                           ) : (
                             <></>
                           )}

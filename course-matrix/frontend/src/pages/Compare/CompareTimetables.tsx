@@ -26,6 +26,10 @@ export const CompareTimetables = () => {
 
   const compareForm = useForm<z.infer<typeof CompareFormSchema>>({
     resolver: zodResolver(CompareFormSchema),
+    defaultValues: {
+      timetable1: queryParams.has("id1") ? parseInt(queryParams.get("id1") ?? "0") : undefined,
+      timetable2: queryParams.has("id2") ? parseInt(queryParams.get("id2") ?? "0") : undefined
+    }
   });
   
   const onSubmit = (values: z.infer<typeof CompareFormSchema>) => {
@@ -124,6 +128,7 @@ export const CompareTimetables = () => {
                     <FormItem>
                       <Select
                         onValueChange={(value) => field.onChange(Number(value))}
+                        defaultValue={queryParams.has("id1") ? (queryParams.get("id1") ?? "") : undefined}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -162,6 +167,7 @@ export const CompareTimetables = () => {
                     <FormItem>
                       <Select
                         onValueChange={(value) => field.onChange(Number(value))}
+                        defaultValue={queryParams.has("id1") ? (queryParams.get("id2") ?? "") : undefined}
                       >
                         <FormControl>
                           <SelectTrigger>

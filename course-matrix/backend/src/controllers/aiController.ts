@@ -257,7 +257,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Include course codes when referencing specific courses
             - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
             - For unrelated questions, politely explain that you're specialized in UTSC academic information
-            - Format long lists of timetables as a table
+            - Format long lists of timetables as a table 
 
             ## Tool call guidelines
             - Include the timetable ID in all getTimetables tool call responses
@@ -267,6 +267,12 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
             - If the user wants to create a timetable, first call getCourses to get course information on the requested courses, then call generateTimetable.
             - Do not make up fake courses or offerings. 
+            - For delete timetable requests, if the user asks to delete an ambiguous timetable name (i.e many with similar name exist) then ask them to clarify which one
+            - For delete timetable requests, first check that the timetable the user is refering to exists 
+            - For delete timetable requests, ask for user confirmation with command "/timetable confirm" before proceeding. If their next message is anything other than "/timetable confim" then cancel the deletion. 
+            - After a deletion has been cancelled, /timetable confirm will do nothing. If the user wants to delete again after cancelling, they must specify so.
+            - Do not create multiple timetables for a single user query. Each user query can create at most 1 timetable
+            - If you try to update or create a timetable but you get an error saying a timetable with the same name already exists, then ask the user to rename
             `,
         messages,
         tools: {
@@ -305,8 +311,6 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
               "Return a list of possible timetables based on provided courses and restrictions.",
             parameters: TimetableFormSchema,
             execute: async (args) => {
-              // console.log("Args for generate: ", args)
-              console.log("courses :", JSON.stringify(args.courses));
               console.log("restrictions :", JSON.stringify(args.restrictions));
               const data = await availableFunctions.generateTimetable(
                 args,

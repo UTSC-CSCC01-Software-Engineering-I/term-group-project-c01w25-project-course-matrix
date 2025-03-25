@@ -51,6 +51,7 @@ const TimetableCardKebabMenu = ({
           <EllipsisVertical />
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent>
         <DropdownMenuItem>
           <Link to={`/dashboard/timetable?edit=${timetableId}`}>

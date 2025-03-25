@@ -30,19 +30,23 @@ interface TimetableCardShareKebabMenu {
  * Component for the kebab menu in the shared timetable card, providing options to remove the shared timetable from the user's dashboard.
  * @returns {JSX.Element} The rendered component.
  */
-const TimetableCardShareKebabMenu = ({ sharedRefetch, owner_id, calendar_id }: TimetableCardShareKebabMenu) => {
+const TimetableCardShareKebabMenu = ({
+  sharedRefetch,
+  owner_id,
+  calendar_id,
+}: TimetableCardShareKebabMenu) => {
   const [deleteSharedTimetable] = useDeleteSharedTimetablesWithMeMutation();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleRemove = async () => {
     const { error } = await deleteSharedTimetable({ owner_id, calendar_id });
-    
+
     if (error) {
-        const errorData = (error as { data?: { error?: string } }).data;
-        setErrorMessage(errorData?.error ?? "Unknown error occurred");
-        return;
+      const errorData = (error as { data?: { error?: string } }).data;
+      setErrorMessage(errorData?.error ?? "Unknown error occurred");
+      return;
     } else {
-        sharedRefetch();
+      sharedRefetch();
     }
   };
 
@@ -56,11 +60,12 @@ const TimetableCardShareKebabMenu = ({ sharedRefetch, owner_id, calendar_id }: T
       <DropdownMenuContent>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <Dialog>
-            <TimetableErrorDialog errorMessage={errorMessage} setErrorMessage={setErrorMessage} />
+            <TimetableErrorDialog
+              errorMessage={errorMessage}
+              setErrorMessage={setErrorMessage}
+            />
             <DialogTrigger asChild>
-              <button className="w-full text-left text-red-600">
-                Remove
-              </button>
+              <button className="w-full text-left text-red-600">Remove</button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -68,8 +73,8 @@ const TimetableCardShareKebabMenu = ({ sharedRefetch, owner_id, calendar_id }: T
                   Remove Timetable Shared To You
                 </DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to remove this timetable shared with you? This action
-                  cannot be undone.
+                  Are you sure you want to remove this timetable shared with
+                  you? This action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>

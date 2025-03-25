@@ -353,7 +353,9 @@ const TimetableBuilder = () => {
                 <Button size="sm" variant="outline" onClick={handleReset}>
                   Reset
                 </Button>
-                {isEditingTimetable && <ShareButton calendar_id={timetableId} />}
+                {isEditingTimetable && (
+                  <ShareButton calendar_id={timetableId} />
+                )}
               </div>
             </div>
             <hr />

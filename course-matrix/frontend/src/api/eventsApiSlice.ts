@@ -30,7 +30,10 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 0,
     }),
-    getSharedEvents: builder.query<unknown, { user_id: string; calendar_id: number }>({
+    getSharedEvents: builder.query<
+      unknown,
+      { user_id: string; calendar_id: number }
+    >({
       query: (data) => ({
         url: `${EVENTS_URL}/shared/${data.user_id}/${data.calendar_id}`,
         method: "GET",

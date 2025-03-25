@@ -43,13 +43,21 @@ export interface TimetableShare {
  * @returns {JSX.Element} The rendered component.
  */
 const Home = () => {
-  const { data: myTimetablesData, isLoading: myTimetablesDataLoading, refetch } = useGetTimetablesQuery() as {
+  const {
+    data: myTimetablesData,
+    isLoading: myTimetablesDataLoading,
+    refetch,
+  } = useGetTimetablesQuery() as {
     data: Timetable[];
     isLoading: boolean;
     refetch: () => void;
   };
 
-  const { data: sharedWithMeData, isLoading: sharedWithmeDataLoading, refetch: sharedRefetch } = useGetTimetablesSharedWithMeQuery() as {
+  const {
+    data: sharedWithMeData,
+    isLoading: sharedWithmeDataLoading,
+    refetch: sharedRefetch,
+  } = useGetTimetablesSharedWithMeQuery() as {
     data: TimetableShare[];
     isLoading: boolean;
     refetch: () => void;
@@ -57,12 +65,18 @@ const Home = () => {
 
   const isLoading = myTimetablesDataLoading || sharedWithmeDataLoading;
 
-  const myOwningTimetables = [...(myTimetablesData ?? [])].sort((a, b) => b.updated_at.localeCompare(a.updated_at));
-  const sharedWithMeTimetables = [...(sharedWithMeData ?? [])].flatMap((share) => share.timetables).sort((a, b) => b.updated_at.localeCompare(a.updated_at));
-  const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables].map((timetable, index) => ({
-    ...timetable,
-    isShared: index >= myOwningTimetables.length
-  }))
+  const myOwningTimetables = [...(myTimetablesData ?? [])].sort((a, b) =>
+    b.updated_at.localeCompare(a.updated_at),
+  );
+  const sharedWithMeTimetables = [...(sharedWithMeData ?? [])]
+    .flatMap((share) => share.timetables)
+    .sort((a, b) => b.updated_at.localeCompare(a.updated_at));
+  const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables].map(
+    (timetable, index) => ({
+      ...timetable,
+      isShared: index >= myOwningTimetables.length,
+    }),
+  );
 
   console.log("My Owning Timetables", myOwningTimetables);
   console.log("Shared With Me Timetables", sharedWithMeTimetables);
@@ -71,26 +85,33 @@ const Home = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("All");
 
-
-  const [selectedSharedTimetable, setSelectedSharedTimetable] = useState<Timetable | null>(null);
+  const [selectedSharedTimetable, setSelectedSharedTimetable] =
+    useState<Timetable | null>(null);
   const selectedSharedTimetableId = selectedSharedTimetable?.id ?? -1;
-  const selectedSharedTimetableTitle = selectedSharedTimetable?.timetable_title ?? "";
+  const selectedSharedTimetableTitle =
+    selectedSharedTimetable?.timetable_title ?? "";
   const selectedSharedTimetableOwnerId = selectedSharedTimetable?.user_id ?? "";
   const selectSharedTimetableSemester = selectedSharedTimetable?.semester ?? "";
 
   // Get the selected shared timetable owner's username
-  const { data: usernameData } = useGetUsernameFromUserIdQuery(selectedSharedTimetableOwnerId, { skip: selectedSharedTimetableId === -1 });
+  const { data: usernameData } = useGetUsernameFromUserIdQuery(
+    selectedSharedTimetableOwnerId,
+    { skip: selectedSharedTimetableId === -1 },
+  );
   const ownerUsername = usernameData ?? "";
-  
+
   console.log("SELECTED SHARED TIMETABLE", selectedSharedTimetable);
 
   return (
     <div className="w-full">
       <div className="m-8">
-        <Dialog open={selectedSharedTimetable !== null} onOpenChange={() => setSelectedSharedTimetable(null)}>
+        <Dialog
+          open={selectedSharedTimetable !== null}
+          onOpenChange={() => setSelectedSharedTimetable(null)}
+        >
           <DialogTitle></DialogTitle>
           <DialogContent className="max-w-[80%] max-h-[100%]">
-            <SharedCalendar 
+            <SharedCalendar
               user_id={selectedSharedTimetableOwnerId}
               user_username={ownerUsername}
               calendar_id={selectedSharedTimetableId}
@@ -99,7 +120,9 @@ const Home = () => {
             />
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="secondary" size="sm">Close</Button>
+                <Button variant="secondary" size="sm">
+                  Close
+                </Button>
               </DialogClose>
             </DialogFooter>
           </DialogContent>
@@ -145,51 +168,52 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 justify-between mt-4">
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Loading...</p>
-          ) : activeTab === "All" ? 
+          ) : activeTab === "All" ? (
             allTimetables.map((timetable) => (
-                <TimetableCard
-                  refetch={refetch}
-                  sharedRefetch={sharedRefetch}
-                  setErrorMessage={setErrorMessage}
-                  key={timetable.id}
-                  ownerId={timetable.user_id}
-                  title={timetable.timetable_title}
-                  lastEditedDate={new Date(timetable.updated_at)}
-                  isShared={timetable.isShared}
-                  timetable={timetable}
-                  setSelectedSharedTimetable={setSelectedSharedTimetable}
-                />
-              ))
-            : activeTab === "Mine" ?
+              <TimetableCard
+                refetch={refetch}
+                sharedRefetch={sharedRefetch}
+                setErrorMessage={setErrorMessage}
+                key={timetable.id}
+                ownerId={timetable.user_id}
+                title={timetable.timetable_title}
+                lastEditedDate={new Date(timetable.updated_at)}
+                isShared={timetable.isShared}
+                timetable={timetable}
+                setSelectedSharedTimetable={setSelectedSharedTimetable}
+              />
+            ))
+          ) : activeTab === "Mine" ? (
             myOwningTimetables.map((timetable) => (
-                <TimetableCard
-                  refetch={refetch}
-                  sharedRefetch={sharedRefetch}
-                  setErrorMessage={setErrorMessage}
-                  key={timetable.id}
-                  ownerId={timetable.user_id}
-                  title={timetable.timetable_title}
-                  lastEditedDate={new Date(timetable.updated_at)}
-                  isShared={false}
-                  timetable={timetable}
-                  setSelectedSharedTimetable={setSelectedSharedTimetable}
-                />
-              ))
-            : sharedWithMeTimetables.map((timetable) => (
-                <TimetableCard
-                  refetch={refetch}
-                  sharedRefetch={sharedRefetch}
-                  setErrorMessage={setErrorMessage}
-                  key={timetable.id}
-                  ownerId={timetable.user_id}
-                  title={timetable.timetable_title}
-                  lastEditedDate={new Date(timetable.updated_at)}
-                  isShared={true}
-                  timetable={timetable}
-                  setSelectedSharedTimetable={setSelectedSharedTimetable}
-                />
-              ))
-          }
+              <TimetableCard
+                refetch={refetch}
+                sharedRefetch={sharedRefetch}
+                setErrorMessage={setErrorMessage}
+                key={timetable.id}
+                ownerId={timetable.user_id}
+                title={timetable.timetable_title}
+                lastEditedDate={new Date(timetable.updated_at)}
+                isShared={false}
+                timetable={timetable}
+                setSelectedSharedTimetable={setSelectedSharedTimetable}
+              />
+            ))
+          ) : (
+            sharedWithMeTimetables.map((timetable) => (
+              <TimetableCard
+                refetch={refetch}
+                sharedRefetch={sharedRefetch}
+                setErrorMessage={setErrorMessage}
+                key={timetable.id}
+                ownerId={timetable.user_id}
+                title={timetable.timetable_title}
+                lastEditedDate={new Date(timetable.updated_at)}
+                isShared={true}
+                timetable={timetable}
+                setSelectedSharedTimetable={setSelectedSharedTimetable}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>

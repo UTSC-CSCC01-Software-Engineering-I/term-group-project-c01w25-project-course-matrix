@@ -10,7 +10,7 @@ import {
   resetPassword,
   accountDelete,
   updateUsername,
-  usernameFromUserId
+  usernameFromUserId,
 } from "../controllers/userController";
 import { authHandler } from "../middleware/authHandler";
 

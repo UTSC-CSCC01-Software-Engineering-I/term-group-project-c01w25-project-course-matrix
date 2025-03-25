@@ -43,7 +43,10 @@ export const sharedApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 0,
     }),
-    getSharedRestrictions: builder.query<unknown, { user_id: string; calendar_id: number }>({
+    getSharedRestrictions: builder.query<
+      unknown,
+      { user_id: string; calendar_id: number }
+    >({
       query: (data) => ({
         url: `${SHARED_URL}/restrictions`,
         method: "GET",
@@ -71,17 +74,17 @@ export const sharedApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Timetable"],
     }),
     deleteSharedTimetablesWithOthers: builder.mutation({
-        query: (data) => ({
-            url: `${SHARED_URL}/owner/${data.id}`,
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json, text/plain, */*",
-            },
-            body: data,
-            credentials: "include",
-        }),
-        invalidatesTags: ["Timetable"],
+      query: (data) => ({
+        url: `${SHARED_URL}/owner/${data.id}`,
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+        },
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["Timetable"],
     }),
   }),
 });

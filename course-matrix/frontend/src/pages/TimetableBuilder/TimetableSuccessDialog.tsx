@@ -16,11 +16,11 @@ interface TimetableSuccessDialogProps {
 }
 
 const TimetableSuccessDialog: React.FC<TimetableSuccessDialogProps> = ({
-    successMessage,
-    setSuccessMessage,
+  successMessage,
+  setSuccessMessage,
 }) => {
   const dialogTitle =
-  successMessage !== null ? successMessage : "Unknown error occurred";
+    successMessage !== null ? successMessage : "Unknown error occurred";
   const dialogDescription = successMessage?.includes("title already exists")
     ? "Please choose another title for your timetable"
     : null;

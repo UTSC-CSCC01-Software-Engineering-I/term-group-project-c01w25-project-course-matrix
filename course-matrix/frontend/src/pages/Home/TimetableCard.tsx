@@ -25,7 +25,9 @@ interface TimetableCardProps {
   lastEditedDate: Date;
   isShared: boolean;
   timetable: Timetable;
-  setSelectedSharedTimetable: React.Dispatch<React.SetStateAction<Timetable | null>>;
+  setSelectedSharedTimetable: React.Dispatch<
+    React.SetStateAction<Timetable | null>
+  >;
 }
 
 /**
@@ -82,24 +84,37 @@ const TimetableCard = ({
     }
   };
 
-  return isShared ? 
-  (<Card className="w-full">
+  return isShared ? (
+    <Card className="w-full">
       <CardHeader>
-          <img
-            src="/img/default-timetable-card-image.png"
-            alt="Timetable default image"
-            className="cursor-pointer"
-            onClick={() => setSelectedSharedTimetable(timetable)}
-          />
+        <img
+          src="/img/default-timetable-card-image.png"
+          alt="Timetable default image"
+          className="cursor-pointer"
+          onClick={() => setSelectedSharedTimetable(timetable)}
+        />
         <div className="flex justify-between items-center">
           <CardTitle>
-            <Input disabled={true} value={timetableCardTitle}className="-ml-3 font-bold border-none text-ellipsis" />
+            <Input
+              disabled={true}
+              value={timetableCardTitle}
+              className="-ml-3 font-bold border-none text-ellipsis"
+            />
           </CardTitle>
           <div className="flex justify-between items-center">
-            <Button size="sm" variant="outline" className="p-2" onClick={() => setSelectedSharedTimetable(timetable)}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="p-2"
+              onClick={() => setSelectedSharedTimetable(timetable)}
+            >
               View
             </Button>
-            <TimetableCardShareKebabMenu sharedRefetch={sharedRefetch} owner_id={ownerId} calendar_id={timetableId} />
+            <TimetableCardShareKebabMenu
+              sharedRefetch={sharedRefetch}
+              owner_id={ownerId}
+              calendar_id={timetableId}
+            />
           </div>
         </div>
       </CardHeader>
@@ -143,7 +158,10 @@ const TimetableCard = ({
                 >
                   <Pencil />
                 </Button>
-                <TimetableCardKebabMenu refetch={refetch} timetableId={timetableId} />
+                <TimetableCardKebabMenu
+                  refetch={refetch}
+                  timetableId={timetableId}
+                />
               </>
             )}
             {isEditingTitle && (

@@ -1,7 +1,9 @@
-import asyncHandler from "../middleware/asyncHandler";
 import "openai/shims/node";
-import { Request, Response } from "express";
+
 import { createOpenAI } from "@ai-sdk/openai";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { PineconeStore } from "@langchain/pinecone";
+import { Index, Pinecone, RecordMetadata } from "@pinecone-database/pinecone";
 import {
   CoreMessage,
   generateObject,
@@ -11,37 +13,37 @@ import {
   tool,
   ToolExecutionError,
 } from "ai";
-import { Index, Pinecone, RecordMetadata } from "@pinecone-database/pinecone";
-import { PineconeStore } from "@langchain/pinecone";
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { Request, Response } from "express";
 import { Document } from "langchain/document";
-import {
-  NAMESPACE_KEYWORDS,
-  GENERAL_ACADEMIC_TERMS,
-  DEPARTMENT_CODES,
-  ASSISTANT_TERMS,
-  USEFUL_INFO,
-  BREADTH_REQUIREMENT_KEYWORDS,
-  YEAR_LEVEL_KEYWORDS,
-} from "../constants/promptKeywords";
-import {
-  CHATBOT_MEMORY_THRESHOLD,
-  CHATBOT_TIMETABLE_CMD,
-  CHATBOT_TOOL_CALL_MAX_STEPS,
-} from "../constants/constants";
-import { namespaceToMinResults } from "../constants/constants";
 import OpenAI from "openai";
-import { convertBreadthRequirement } from "../utils/convert-breadth-requirement";
-import { convertYearLevel } from "../utils/convert-year-level";
+import { z } from "zod";
+
 import {
   availableFunctions,
   FunctionNames,
 } from "../constants/availableFunctions";
-import { z } from "zod";
-import { analyzeQuery } from "../utils/analyzeQuery";
-import { includeFilters } from "../utils/includeFilters";
+import {
+  CHATBOT_MEMORY_THRESHOLD,
+  CHATBOT_TIMETABLE_CMD,
+  CHATBOT_TOOL_CALL_MAX_STEPS,
+  namespaceToMinResults,
+} from "../constants/constants";
+import {
+  ASSISTANT_TERMS,
+  BREADTH_REQUIREMENT_KEYWORDS,
+  DEPARTMENT_CODES,
+  GENERAL_ACADEMIC_TERMS,
+  NAMESPACE_KEYWORDS,
+  USEFUL_INFO,
+  YEAR_LEVEL_KEYWORDS,
+} from "../constants/promptKeywords";
+import asyncHandler from "../middleware/asyncHandler";
 import { TimetableFormSchema } from "../models/timetable-form";
 import { CreateTimetableArgs } from "../models/timetable-generate";
+import { analyzeQuery } from "../utils/analyzeQuery";
+import { convertBreadthRequirement } from "../utils/convert-breadth-requirement";
+import { convertYearLevel } from "../utils/convert-year-level";
+import { includeFilters } from "../utils/includeFilters";
 
 const openai = createOpenAI({
   baseURL: process.env.OPENAI_BASE_URL,
@@ -84,7 +86,8 @@ export async function searchSelectedNamespaces(
     });
 
     try {
-      // Search results count given by the min result count for a given namespace (or k if k is greater)
+      // Search results count given by the min result count for a given
+      // namespace (or k if k is greater)
       const results = await namespaceStore.similaritySearch(
         query,
         Math.max(k, namespaceToMinResults.get(namespace)),
@@ -106,7 +109,8 @@ export async function searchSelectedNamespaces(
   return allResults;
 }
 
-// Reformulate user query to make more concise query to database, taking into consideration context
+// Reformulate user query to make more concise query to database, taking into
+// consideration context
 export async function reformulateQuery(
   latestQuery: string,
   conversationHistory: any[],
@@ -197,15 +201,21 @@ export async function reformulateQuery(
 }
 
 /**
- * @description Handles user queries and generates responses using GPT-4o, with optional knowledge retrieval.
+ * @description Handles user queries and generates responses using GPT-4o, with
+ * optional knowledge retrieval.
  *
  * @param {Request} req - The Express request object, containing:
- *   @param {Object[]} req.body.messages - Array of message objects representing the conversation history.
- *   @param {string} req.body.messages[].role - The role of the message sender (e.g., "user", "assistant").
- *   @param {Object[]} req.body.messages[].content - An array containing message content objects.
- *   @param {string} req.body.messages[].content[].text - The actual text of the message.
+ *   @param {Object[]} req.body.messages - Array of message objects representing
+ * the conversation history.
+ *   @param {string} req.body.messages[].role - The role of the message sender
+ * (e.g., "user", "assistant").
+ *   @param {Object[]} req.body.messages[].content - An array containing message
+ * content objects.
+ *   @param {string} req.body.messages[].content[].text - The actual text of the
+ * message.
  *
- * @param {Response} res - The Express response object used to stream the generated response.
+ * @param {Response} res - The Express response object used to stream the
+ *     generated response.
  *
  * @returns {void} Responds with a streamed text response of the AI output
  *
@@ -251,7 +261,9 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
 
             ## Tool call guidelines
             - Include the timetable ID in all getTimetables tool call responses
-            - Link: For every tool call, for each timetable that it gets/deletes/modifies/creates, include a link with it displayed as "View Timetable" to ${process.env.CLIENT_APP_URL}/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
+            - Link: For every tool call, for each timetable that it gets/deletes/modifies/creates, include a link with it displayed as "View Timetable" to ${
+              process.env.CLIENT_APP_URL
+            }/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
             - If the user wants to create a timetable, first call getCourses to get course information on the requested courses, then call generateTimetable.
             - Do not make up fake courses or offerings. 
@@ -299,7 +311,6 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
               "Return a list of possible timetables based on provided courses and restrictions.",
             parameters: TimetableFormSchema,
             execute: async (args) => {
-              console.log("Args for generate: ", args);
               console.log("restrictions :", JSON.stringify(args.restrictions));
               const data = await availableFunctions.generateTimetable(
                 args,
@@ -319,7 +330,9 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             },
           }),
         },
-        maxSteps: CHATBOT_TOOL_CALL_MAX_STEPS, // Controls how many back and forths the model can take with user or calling multiple tools
+        maxSteps: CHATBOT_TOOL_CALL_MAX_STEPS, // Controls how many back and forths
+        // the model can take with user or
+        // calling multiple tools
         experimental_repairToolCall: async ({
           toolCall,
           tools,
@@ -379,7 +392,8 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
       console.log(">>>> Original query:", latestMessage);
       console.log(">>>> Reformulated query:", reformulatedQuery);
 
-      // Analyze the query to determine if search is needed and which namespaces to search
+      // Analyze the query to determine if search is needed and which namespaces
+      // to search
       const { requiresSearch, relevantNamespaces } =
         analyzeQuery(reformulatedQuery);
 
@@ -469,7 +483,8 @@ export const testSimilaritySearch = asyncHandler(
   async (req: Request, res: Response) => {
     const { message } = req.body;
 
-    // Analyze the query to determine if search is needed and which namespaces to search
+    // Analyze the query to determine if search is needed and which namespaces
+    // to search
     const { requiresSearch, relevantNamespaces } = analyzeQuery(message);
 
     let context = "[No context provided]";

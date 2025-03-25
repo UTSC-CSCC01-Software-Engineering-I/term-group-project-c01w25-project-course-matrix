@@ -58,4 +58,5 @@ export type Restriction = {
   disabled: boolean;
   num_days: number;
   calendar_id: number;
+  max_gap: number;
 };

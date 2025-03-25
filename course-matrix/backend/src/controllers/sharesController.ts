@@ -136,19 +136,11 @@ export default {
       const { data: shareData, error: sharedError } = await supabase
         .schema("timetable")
         .from("shared")
-        .select(
-          "id, calendar_id, owner_id, shared_id, timetables!inner(id, user_id, timetable_title, semester, favorite)",
-        )
+        .select("id, calendar_id, owner_id, shared_id, timetables!inner(*)")
         .eq("shared_id", user_id);
 
       if (sharedError) {
         return res.status(400).json({ error: sharedError.message });
-      }
-
-      if (!shareData || shareData.length === 0) {
-        return res
-          .status(404)
-          .json({ error: "No shared timetables found for this user" });
       }
 
       return res.status(200).json(shareData);
@@ -156,6 +148,56 @@ export default {
       return res.status(500).send({ error });
     }
   }),
+
+  /**
+   * Get all restrictions from a shared timetable id
+   * @route GET /api/shared/restrictions/:calendar_id
+   */
+  getSharedRestrictions: asyncHandler(
+    async (req: Request, res: Response) => {
+      try {
+        const { user_id, calendar_id } = req.query;
+
+        if (!user_id || !calendar_id) {
+          return res.status(400).json({
+            error: "User ID and Calendar ID are required",
+          });
+        }
+
+        //Retrieve users allowed to access the timetable
+        const { data: timetableData, error: timetableError } = await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("*")
+          .eq("id", calendar_id)
+          .eq("user_id", user_id)
+          .maybeSingle();
+
+        if (timetableError)
+          return res.status(400).json({ error: timetableError.message });
+
+        //Validate timetable validity:
+        if (!timetableData || timetableData.length === 0) {
+          return res.status(404).json({ error: "Calendar id not found" });
+        }
+
+        const { data: restrictionData, error: restrictionError } = await supabase
+          .schema("timetable")
+          .from("restriction")
+          .select()
+          .eq("user_id", user_id)
+          .eq("calendar_id", calendar_id);
+
+        if (restrictionError) {
+          return res.status(400).json({ error: restrictionError.message });
+        }
+
+        return res.status(200).json(restrictionData);
+      } catch (error) {
+        return res.status(500).send({ error });
+      }
+    }
+  ),
 
   /**
    * Delete all shared record for a timetable as the timetable's owner
@@ -387,15 +429,20 @@ export default {
   deleteShare: asyncHandler(async (req: Request, res: Response) => {
     try {
       const shared_id = (req as any).user.id;
-      const { id } = req.params;
-      const { calendar_id } = req.body;
+      const { calendar_id, owner_id } = req.body;
+
+      if (!calendar_id || !owner_id) {
+        return res.status(400).json({
+          error: "Calendar ID and Owner ID are required",
+        });
+      }
 
       const { data: existingTimetable, error: existingTimetableError } =
         await supabase
           .schema("timetable")
           .from("shared")
           .select("*")
-          .eq("id", id)
+          .eq("owner_id", owner_id)
           .eq("calendar_id", calendar_id)
           .eq("shared_id", shared_id);
 
@@ -412,7 +459,7 @@ export default {
         .schema("timetable")
         .from("shared")
         .delete()
-        .eq("id", id)
+        .eq("owner_id", owner_id)
         .eq("calendar_id", calendar_id)
         .eq("shared_id", shared_id);
       if (deleteError) {
@@ -420,7 +467,7 @@ export default {
       }
 
       return res.status(200).json({
-        message: `Sharing record: ${id} of calendar: ${calendar_id} deleted successfully`,
+        message: `Sharing record with owner_id of ${owner_id} and calendar_id of ${calendar_id} deleted successfully`,
       });
     } catch (error) {
       return res.status(500).send({ error });

@@ -10,6 +10,7 @@ import {
   resetPassword,
   accountDelete,
   updateUsername,
+  usernameFromUserId
 } from "../controllers/userController";
 import { authHandler } from "../middleware/authHandler";
 
@@ -68,3 +69,9 @@ authRouter.delete("/accountDelete", accountDelete);
  * @route POST /updateUsername
  */
 authRouter.post("/updateUsername", authHandler, updateUsername);
+
+/**
+ * Route to get the username from the user id
+ * @route GET /username-from-user-id
+ */
+authRouter.get("/username-from-user-id", authHandler, usernameFromUserId);

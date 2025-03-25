@@ -387,6 +387,46 @@ export default {
   }),
 
   /**
+   * Get all events given a user_id and calendar_id
+   */
+  getSharedEvents: asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const { user_id, calendar_id } = req.params;
+
+      if (!user_id) {
+        return res.status(400).json({ error: "user_id is required" });
+      }
+      if (!calendar_id) {
+        return res.status(400).json({ error: "calendar_id is required" });
+      }
+
+      const { data: courseEvents, error: courseError } = await supabase
+        .schema("timetable")
+        .from("course_events")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("calendar_id", calendar_id);
+
+      const { data: userEvents, error: userError } = await supabase
+        .schema("timetable")
+        .from("user_events")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("calendar_id", calendar_id);
+
+      if (courseError || userError) {
+        return res
+          .status(400)
+          .json({ error: courseError?.message || userError?.message });
+      }
+
+      return res.status(200).json({ courseEvents, userEvents });
+    } catch (error) {
+      return res.status(500).send({ error });
+    }
+  }),
+
+  /**
    * Update an event
    * The request should provide:
    * - id (as URL parameter)

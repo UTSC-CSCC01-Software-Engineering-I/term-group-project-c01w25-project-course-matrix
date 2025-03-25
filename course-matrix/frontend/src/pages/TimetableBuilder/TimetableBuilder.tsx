@@ -13,7 +13,7 @@ import {
   TimetableFormSchema,
   baseTimetableForm,
 } from "@/models/timetable-form";
-import { WandSparkles, X } from "lucide-react";
+import { Share, WandSparkles, X } from "lucide-react";
 import { createContext, useEffect, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,6 +54,8 @@ import LoadingPage from "@/pages/Loading/LoadingPage";
 import { GeneratedCalendars } from "./GeneratedCalendars";
 import { Spinner } from "@/components/ui/spinner";
 import { convertRestrictionTimes } from "@/utils/convert-restriction-times";
+import ShareButton from "./ShareButton";
+import SharedCalendar from "./SharedCalendar";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -351,9 +353,7 @@ const TimetableBuilder = () => {
                 <Button size="sm" variant="outline" onClick={handleReset}>
                   Reset
                 </Button>
-                <Button size="sm" variant="outline">
-                  Share
-                </Button>
+                {isEditingTimetable && <ShareButton calendar_id={timetableId} />}
               </div>
             </div>
             <hr />

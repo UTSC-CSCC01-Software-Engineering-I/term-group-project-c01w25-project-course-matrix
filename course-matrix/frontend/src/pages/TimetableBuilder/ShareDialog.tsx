@@ -48,13 +48,19 @@ const ShareDialog = ({ open, setOpen, calendar_id }: ShareDialogProps) => {
     setLoading(false);
   };
 
-  return (<Dialog open={open} onOpenChange={() => { setOpen(!open); setErrorMessage(null); } }>
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={() => {
+        setOpen(!open);
+        setErrorMessage(null);
+      }}
+    >
       <TimetableSuccessDialog
         successMessage={successMessage}
         setSuccessMessage={setSuccessMessage}
       />
-      <DialogTrigger asChild>
-      </DialogTrigger>
+      <DialogTrigger asChild></DialogTrigger>
       <DialogContent className="gap-5">
         <DialogHeader>
           <DialogTitle>Share Timetable</DialogTitle>
@@ -73,7 +79,9 @@ const ShareDialog = ({ open, setOpen, calendar_id }: ShareDialogProps) => {
           placeholder="Email"
           className="w-full"
         />
-        <DialogDescription className="text-red-500">{errorMessage}</DialogDescription>
+        <DialogDescription className="text-red-500">
+          {errorMessage}
+        </DialogDescription>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="secondary">Cancel</Button>

@@ -67,10 +67,18 @@ const TimetableCardKebabMenu = ({
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <EmailNotificationSettings timetableId={timetableId} />
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer" onClick={() => setOpenShareDialog(true)}>
-            Share Timetable
+        <DropdownMenuItem
+          onSelect={(e) => e.preventDefault()}
+          className="cursor-pointer"
+          onClick={() => setOpenShareDialog(true)}
+        >
+          Share Timetable
         </DropdownMenuItem>
-        <ShareDialog open={openShareDialog} setOpen={setOpenShareDialog} calendar_id={timetableId} />
+        <ShareDialog
+          open={openShareDialog}
+          setOpen={setOpenShareDialog}
+          calendar_id={timetableId}
+        />
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <Dialog>
             <DialogTrigger asChild>

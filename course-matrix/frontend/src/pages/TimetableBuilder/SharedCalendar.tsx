@@ -37,22 +37,24 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
     const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
       getSemesterStartAndEndDatesPlusOneWeek(semester);
 
-    const { data: sharedEventsData, isLoading: isSharedEventsLoading } = useGetSharedEventsQuery(
-      { user_id, calendar_id },
-      { skip: !user_id || !calendar_id },
-    ) as {
-      data: TimetableEvents;
-      isLoading: boolean;
-    };
+    const { data: sharedEventsData, isLoading: isSharedEventsLoading } =
+      useGetSharedEventsQuery(
+        { user_id, calendar_id },
+        { skip: !user_id || !calendar_id },
+      ) as {
+        data: TimetableEvents;
+        isLoading: boolean;
+      };
     const sharedEvents = sharedEventsData as TimetableEvents;
 
-    const { data: restrictionsData, isLoading: isRestrictionsLoading } = useGetSharedRestrictionsQuery(
-      { user_id, calendar_id },
-      { skip: !user_id || !calendar_id },
-    ) as {
-      data: Restriction[];
-      isLoading: boolean;
-    };
+    const { data: restrictionsData, isLoading: isRestrictionsLoading } =
+      useGetSharedRestrictionsQuery(
+        { user_id, calendar_id },
+        { skip: !user_id || !calendar_id },
+      ) as {
+        data: Restriction[];
+        isLoading: boolean;
+      };
     const restrictions = restrictionsData ?? [];
 
     const isLoading = isSharedEventsLoading || isRestrictionsLoading;

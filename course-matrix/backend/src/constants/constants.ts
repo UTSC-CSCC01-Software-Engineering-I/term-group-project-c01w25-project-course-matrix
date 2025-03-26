@@ -46,7 +46,7 @@ export const TEST_DATE_NOW = new Date(2025, 4, 14, 8, 45, 1);
 
 // Set minimum results wanted for a similarity search on the associated namespace.
 export const namespaceToMinResults = new Map();
-namespaceToMinResults.set("courses_v3", 10);
+namespaceToMinResults.set("courses_v3", 16);
 namespaceToMinResults.set("offerings", 16); // Typically, more offering info is wanted.
 namespaceToMinResults.set("prerequisites", 5);
 namespaceToMinResults.set("corequisites", 5);

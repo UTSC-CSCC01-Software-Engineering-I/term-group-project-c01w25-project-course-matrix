@@ -61,7 +61,9 @@ const TimetableCard = ({
     (user_metadata?.user?.user_metadata?.username as string) ??
     (user_metadata?.user?.email as string);
   const { data: usernameData } = useGetUsernameFromUserIdQuery(ownerId);
-  const ownerUsername = isShared ? (usernameData ?? "John Doe") : loggedInUsername;
+  const ownerUsername = isShared
+    ? (usernameData ?? "John Doe")
+    : loggedInUsername;
 
   const lastEditedDateArray = lastEditedDate
     .toISOString()

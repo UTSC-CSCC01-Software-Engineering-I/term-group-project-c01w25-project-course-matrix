@@ -108,7 +108,7 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
       },
       plugins: [createEventModalPlugin()],
       weekOptions: {
-        gridHeight: 500,
+        gridHeight: 600,
       },
       dayBoundaries: {
         start: "06:00",
@@ -151,14 +151,8 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
         {restrictions.length === 0 && (
           <span className="text-sm text-red-500">No restrictions applied</span>
         )}
-        <div className="grid grid-rows-3 text-sm justify-between mb-2">
-          {restrictions.map((restriction, index) => {
-            if (index >= 2)
-              return (
-                <div className="italic text-red-500" key={restriction.id}>
-                  {restrictions.length - index} more restriction(s)...
-                </div>
-              );
+        <div className="grid grid-rows-3 text-sm justify-between mb-4">
+          {restrictions.map((restriction) => {
             const restrictedDays = JSON.parse(restriction.days)
               .map((day: string) => {
                 if (day === "MO") return "Monday";

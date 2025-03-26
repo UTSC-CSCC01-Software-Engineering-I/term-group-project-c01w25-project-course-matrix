@@ -112,7 +112,7 @@ const Home = () => {
           onOpenChange={() => setSelectedSharedTimetable(null)}
         >
           <DialogTitle></DialogTitle>
-          <DialogContent className="max-w-[80%] max-h-[100%]">
+          <DialogContent className="max-w-[70%] max-h-[90%] overflow-y-scroll">
             <SharedCalendar
               user_id={selectedSharedTimetableOwnerId}
               user_username={ownerUsername}

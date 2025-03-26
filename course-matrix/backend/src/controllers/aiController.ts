@@ -334,14 +334,15 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             },
           }),
           getOfferings: tool({
-            description: "Return courses offered in the provided semester out of all course codes provided",
+            description:
+              "Return courses offered in the provided semester out of all course codes provided",
             parameters: z.object({
               courses: z.array(z.string()).describe("List of course codes"),
-              semester: z.string()
+              semester: z.string(),
             }),
             execute: async (args) => {
-              const res = await  availableFunctions.getOfferings(args, req);
-              console.log("Result of getOfferings: ", res)
+              const res = await availableFunctions.getOfferings(args, req);
+              console.log("Result of getOfferings: ", res);
               return res;
             },
           }),

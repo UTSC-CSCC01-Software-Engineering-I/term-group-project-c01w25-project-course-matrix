@@ -503,7 +503,7 @@ ${offeringData.meeting_section} `;
   },
 
   getOfferings: async (args: any, req: Request) => {
-    const { courses, semester } = args; 
+    const { courses, semester } = args;
     try {
       const filterConditions = courses.map((prefix: string) => {
         return `code.ilike.${prefix}%`;
@@ -514,7 +514,7 @@ ${offeringData.meeting_section} `;
         .schema("course")
         .from("offerings")
         .select("*")
-        .eq('offering', semester)
+        .eq("offering", semester)
         .or(filterConditions.join(","));
 
       if (offeringsError) {
@@ -522,10 +522,10 @@ ${offeringData.meeting_section} `;
       }
 
       // Return the courses that are offered in the semseter
-      const coursesOffered = new Set()
+      const coursesOffered = new Set();
       for (const offering of offeringsData) {
         if (!coursesOffered.has(offering.code)) {
-          coursesOffered.add(offering.code)
+          coursesOffered.add(offering.code);
         }
       }
 

@@ -38,6 +38,14 @@ export interface TimetableShare {
   timetables: Timetable[];
 }
 
+function sortingFunction(a: Timetable, b: Timetable) {
+  if (a.favorite == b.favorite)
+    return b?.updated_at.localeCompare(a?.updated_at);
+  if (a.favorite) return -1;
+  if (b.favorite) return 1;
+  return 0;
+}
+
 /**
  * Home component that displays the user's timetables and provides options to create or compare timetables.
  * @returns {JSX.Element} The rendered component.
@@ -65,18 +73,16 @@ const Home = () => {
 
   const isLoading = myTimetablesDataLoading || sharedWithmeDataLoading;
 
-  const myOwningTimetables = [...(myTimetablesData ?? [])].sort((a, b) =>
-    b.updated_at.localeCompare(a.updated_at),
-  );
+  const myOwningTimetables = [...(myTimetablesData ?? [])].sort(sortingFunction);
   const sharedWithMeTimetables = [...(sharedWithMeData ?? [])]
     .flatMap((share) => share.timetables)
-    .sort((a, b) => b.updated_at.localeCompare(a.updated_at));
+    .sort(sortingFunction);
   const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables].map(
     (timetable, index) => ({
       ...timetable,
       isShared: index >= myOwningTimetables.length,
     }),
-  );
+  ).sort(sortingFunction);
 
   console.log("My Owning Timetables", myOwningTimetables);
   console.log("Shared With Me Timetables", sharedWithMeTimetables);
@@ -181,6 +187,7 @@ const Home = () => {
                 isShared={timetable.isShared}
                 timetable={timetable}
                 setSelectedSharedTimetable={setSelectedSharedTimetable}
+                favorite={timetable.favorite}
               />
             ))
           ) : activeTab === "Mine" ? (
@@ -196,6 +203,7 @@ const Home = () => {
                 isShared={false}
                 timetable={timetable}
                 setSelectedSharedTimetable={setSelectedSharedTimetable}
+                favorite={timetable.favorite}
               />
             ))
           ) : (
@@ -211,6 +219,7 @@ const Home = () => {
                 isShared={true}
                 timetable={timetable}
                 setSelectedSharedTimetable={setSelectedSharedTimetable}
+                favorite={timetable.favorite}
               />
             ))
           )}

@@ -11,9 +11,7 @@ import { Star, Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
 import TimetableCardKebabMenu from "./TimetableCardKebabMenu";
 import TimetableCardShareKebabMenu from "./TimetableCardShareKebabMenu";
-import { useUpdateTimetableMutation } from "@/api/timetableApiSlice";
 import { useGetUsernameFromUserIdQuery } from "@/api/authApiSlice";
-import { Link } from "react-router-dom";
 import { Timetable } from "./Home";
 import {
   useUpdateTimetableMutation,
@@ -34,7 +32,6 @@ interface TimetableCardProps {
   setSelectedSharedTimetable: React.Dispatch<
     React.SetStateAction<Timetable | null>
   >;
-  owner: string;
   favorite: boolean;
 }
 
@@ -53,7 +50,6 @@ const TimetableCard = ({
   isShared,
   timetable,
   setSelectedSharedTimetable,
-  owner,
   favorite,
 }: TimetableCardProps) => {
   const [updateTimetable] = useUpdateTimetableMutation();

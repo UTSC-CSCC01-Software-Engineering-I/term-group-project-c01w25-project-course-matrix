@@ -265,7 +265,12 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
               process.env.CLIENT_APP_URL
             }/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
-            - If the user wants to create a timetable, first call getCourses to get course information on the requested courses, then call generateTimetable.
+            - If the user wants to create a timetable:
+              1. First call getCourses to get course information on the requested courses, 
+              2. If the user provided a semester, then call getOfferings with the provided courses and semester to ensure the courses are actually offered in the semester. 
+                a) If a course is NOT returned by getOFferings, then list it under "Excluded courses" with "reason: not offered in [provided semester]"
+                b) If no courses have offerings, then do not generate the timetable.
+              3. Lastly, call generateTimetable with the provided information.
             - Do not make up fake courses or offerings. 
             - If a user asks about a course that you do not know of, acknowledge this.
             - You can only edit title of the timetable, nothing else. If a user tries to edit something else, acknowledge this limitation.
@@ -326,6 +331,18 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             }),
             execute: async (args) => {
               return await availableFunctions.getCourses(args, req);
+            },
+          }),
+          getOfferings: tool({
+            description: "Return courses offered in the provided semester out of all course codes provided",
+            parameters: z.object({
+              courses: z.array(z.string()).describe("List of course codes"),
+              semester: z.string()
+            }),
+            execute: async (args) => {
+              const res = await  availableFunctions.getOfferings(args, req);
+              console.log("Result of getOfferings: ", res)
+              return res;
             },
           }),
         },
@@ -456,6 +473,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
           - If information is missing from the context but likely exists, try to use info from web to answer. If still not able to form a decent response, acknowledge the limitation
           - For unrelated questions, politely explain that you're specialized in UTSC academic information
           - If a user prompt appears like a task that requires timetable operations (like create, read, update, delete a user's timetable) BUT the user prompt doesn't start with prefix "/timetable" then remind user to use "/timetable" in front of their prompt to access these capabilities
+          - If the user prompt is a response to a task that requires timetable operations (eg "confirm", "proceed", "continue") then ask user to use "/timetable"
           - If a user asks about a course that you do not know of, acknowledge this.
 
           ## Available Knowledge

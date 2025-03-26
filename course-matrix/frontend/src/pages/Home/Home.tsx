@@ -86,10 +86,6 @@ const Home = () => {
     }))
     .sort(sortingFunction);
 
-  console.log("My Owning Timetables", myOwningTimetables);
-  console.log("Shared With Me Timetables", sharedWithMeTimetables);
-  console.log("All Timetables", allTimetables);
-
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("All");
 

@@ -73,16 +73,18 @@ const Home = () => {
 
   const isLoading = myTimetablesDataLoading || sharedWithmeDataLoading;
 
-  const myOwningTimetables = [...(myTimetablesData ?? [])].sort(sortingFunction);
+  const myOwningTimetables = [...(myTimetablesData ?? [])].sort(
+    sortingFunction,
+  );
   const sharedWithMeTimetables = [...(sharedWithMeData ?? [])]
     .flatMap((share) => share.timetables)
     .sort(sortingFunction);
-  const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables].map(
-    (timetable, index) => ({
+  const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables]
+    .map((timetable, index) => ({
       ...timetable,
       isShared: index >= myOwningTimetables.length,
-    }),
-  ).sort(sortingFunction);
+    }))
+    .sort(sortingFunction);
 
   console.log("My Owning Timetables", myOwningTimetables);
   console.log("Shared With Me Timetables", sharedWithMeTimetables);

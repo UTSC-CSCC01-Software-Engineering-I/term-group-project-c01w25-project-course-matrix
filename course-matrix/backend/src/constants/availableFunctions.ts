@@ -62,7 +62,11 @@ export const availableFunctions: AvailableFunctions = {
         };
       }
 
-      return { status: 200, timetableCount: timetableData.length, data: timetableData };
+      return {
+        status: 200,
+        timetableCount: timetableData.length,
+        data: timetableData,
+      };
     } catch (error) {
       console.log(error);
       return { status: 400, error: error };

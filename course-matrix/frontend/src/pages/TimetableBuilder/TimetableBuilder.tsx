@@ -517,7 +517,9 @@ const TimetableBuilder = () => {
                       <div className="flex flex-col gap-2">
                         <h2 className="text-lg">Custom Settings</h2>
                         <p className="text-sm text-gray-500">
-                          {!isEditingTimetable ? "Add additional restrictions to your timetable to personalize it to your needs." : "Restrictions enabled for this timetable:"}
+                          {!isEditingTimetable
+                            ? "Add additional restrictions to your timetable to personalize it to your needs."
+                            : "Restrictions enabled for this timetable:"}
                         </p>
                       </div>
                       <Button
@@ -557,7 +559,9 @@ const TimetableBuilder = () => {
                                   {restric.startTime
                                     ? formatTime(restric.startTime)
                                     : ""}{" "}
-                                  {restric.type === "Restrict Between" ? " - " : ""}{" "}
+                                  {restric.type === "Restrict Between"
+                                    ? " - "
+                                    : ""}{" "}
                                   {restric.endTime
                                     ? formatTime(restric.endTime)
                                     : ""}{" "}
@@ -570,8 +574,8 @@ const TimetableBuilder = () => {
                                 </p>
                               ) : (
                                 <p>
-                                  <strong>{restric.type}:</strong> {restric.maxGap}{" "}
-                                  hours
+                                  <strong>{restric.type}:</strong>{" "}
+                                  {restric.maxGap} hours
                                 </p>
                               )}
 

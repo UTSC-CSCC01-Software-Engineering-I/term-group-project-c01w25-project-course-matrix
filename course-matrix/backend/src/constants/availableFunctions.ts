@@ -40,7 +40,7 @@ export const availableFunctions: AvailableFunctions = {
     try {
       // Retrieve user_id
       const user_id = (req as any).user.id;
-
+      console.log("NO");
       // Retrieve user timetable item based on user_id
       let timeTableQuery = supabase
         .schema("timetable")
@@ -62,7 +62,7 @@ export const availableFunctions: AvailableFunctions = {
         };
       }
 
-      return { status: 200, data: timetableData };
+      return { status: 200, timetableCount: timetableData.length, data: timetableData };
     } catch (error) {
       console.log(error);
       return { status: 400, error: error };
@@ -199,7 +199,7 @@ export const availableFunctions: AvailableFunctions = {
       const { name, semester, courses, restrictions } = args;
       // Get user id from session authentication to insert in the user_id col
       const user_id = (req as any).user.id;
-      
+
       if (name.length > 50) {
         return {
           status: 400,

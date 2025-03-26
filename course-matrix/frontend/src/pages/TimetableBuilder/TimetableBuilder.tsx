@@ -255,6 +255,7 @@ const TimetableBuilder = () => {
               : undefined,
             type: restriction?.type,
             numDays: restriction?.num_days,
+            maxGap: restriction?.max_gap,
           }) as z.infer<typeof RestrictionSchema>,
       );
       form.setValue("restrictions", parsedRestrictions);
@@ -369,11 +370,13 @@ const TimetableBuilder = () => {
           <Form {...form}>
             <FormContext.Provider value={form}>
               <form
-                onSubmit={form.handleSubmit(handleGenerate)}
+                onSubmit={form.handleSubmit(handleGenerate, (errors) => {
+                  console.error("Form submission errors:", errors);
+                })}
                 className="space-y-8"
               >
                 <div className="flex gap-8 w-full">
-                  {/* <FormField
+                  <FormField
                     control={form.control}
                     name="semester"
                     render={({ field }) => (
@@ -382,11 +385,13 @@ const TimetableBuilder = () => {
                         <FormControl>
                           <Select
                             onValueChange={(value) => {
-                              form.reset({ offeringIds: [], courses: [] });
+                              form.setValue("offeringIds", []);
+                              form.setValue("courses", []);
                               form.setValue("semester", value);
                             }}
                             value={field.value}
                             defaultValue={field.value}
+                            disabled={isEditingTimetable}
                           >
                             <SelectTrigger className="w-[140px]">
                               <SelectValue placeholder="Select a semester" />
@@ -405,7 +410,7 @@ const TimetableBuilder = () => {
                         <FormMessage />
                       </FormItem>
                     )}
-                  /> */}
+                  />
 
                   <FormField
                     control={form.control}
@@ -436,7 +441,7 @@ const TimetableBuilder = () => {
                     <p className="text-sm">
                       Selected courses: {selectedCourses.length} (Max 8)
                     </p>
-                    {!isEditingTimetable && (
+                    {!isEditingTimetable && !isGeneratingTimetables && (
                       <div className="flex items-center gap-2">
                         <Checkbox
                           id="manual-selection"
@@ -557,10 +562,15 @@ const TimetableBuilder = () => {
                                 : ""}{" "}
                               {restric.days?.join(" ")}
                             </p>
-                          ) : (
+                          ) : restric.type.startsWith("Days") ? (
                             <p>
                               <strong>{restric.type}:</strong> At least{" "}
                               {restric.numDays} days off
+                            </p>
+                          ) : (
+                            <p>
+                              <strong>{restric.type}:</strong> {restric.maxGap}{" "}
+                              hours
                             </p>
                           )}
 

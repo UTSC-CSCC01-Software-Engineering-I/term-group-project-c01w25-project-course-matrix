@@ -28,6 +28,7 @@ import { TimetableFormSchema } from "@/models/timetable-form";
 import {
   useGetTimetablesQuery,
   useCreateTimetableMutation,
+  useUpdateTimetableMutation,
 } from "@/api/timetableApiSlice";
 import {
   useGetRestrictionsQuery,
@@ -41,6 +42,7 @@ import {
   useCreateEventMutation,
   useGetEventsQuery,
   useDeleteEventMutation,
+  useUpdateEventMutation,
 } from "@/api/eventsApiSlice";
 import { useGetOfferingsQuery } from "@/api/offeringsApiSlice";
 import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
@@ -108,6 +110,7 @@ const Calendar = React.memo<CalendarProps>(
     const editingTimetableId = parseInt(queryParams.get("edit") ?? "0");
 
     const [createTimetable] = useCreateTimetableMutation();
+    const [updateTimetable] = useUpdateTimetableMutation();
     const [createEvent] = useCreateEventMutation();
     const [deleteEvent] = useDeleteEventMutation();
     const [createRestriction] = useCreateRestrictionMutation();
@@ -277,7 +280,14 @@ const Calendar = React.memo<CalendarProps>(
     };
 
     const handleUpdate = async () => {
+      try{
+        await updateTimetable({id: editingTimetableId}).unwrap();
+      }catch(error){
+        console.log("cannot update rip");
+        return;
+      }
       setShowLoadingPage(true);
+      
       const offeringIdsToDelete = oldOfferingIds.filter(
         (offeringId) => !newOfferingIds.includes(offeringId),
       );
@@ -396,7 +406,7 @@ const Calendar = React.memo<CalendarProps>(
               </DialogContent>
             </Dialog>
           ) : (
-            <div className="flex gap-2">
+            <div><div className="flex gap-2">
               {isChoosingSectionsManually &&
                 !allOfferingSectionsHaveBeenSelected && (
                   <p className="text-sm text-red-500 pr-2">
@@ -419,6 +429,8 @@ const Calendar = React.memo<CalendarProps>(
               >
                 Update Timetable
               </Button>
+            </div>
+            <div className="text-red-500 font-bold"> Yes </div>
             </div>
           )}
         </h1>

@@ -62,7 +62,7 @@ const TimetableCard = ({
     try {
       await updateTimetable({
         id: timetableId,
-        timetable_title: timetableCardTitle,
+        timetable_title: timetableCardTitle
       }).unwrap();
       setIsEditingTitle(false);
     } catch (error) {
@@ -70,6 +70,7 @@ const TimetableCard = ({
       setErrorMessage(errorData?.error ?? "Unknown error occurred");
       return;
     }
+    refetch();
   };
 
   useEffect(() => {

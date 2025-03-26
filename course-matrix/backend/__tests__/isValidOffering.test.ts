@@ -1,11 +1,11 @@
 import { describe, expect, it, test } from "@jest/globals";
 
-import { createOffering, isValidOffering } from "../src/utils/generatorHelpers";
 import {
   Offering,
   Restriction,
   RestrictionType,
 } from "../src/types/generatorTypes";
+import { createOffering, isValidOffering } from "../src/utils/generatorHelpers";
 
 describe("isValidOffering", () => {
   const sampleOffering: Offering = createOffering({
@@ -29,6 +29,7 @@ describe("isValidOffering", () => {
         endTime: "09:00:00",
         disabled: true,
         numDays: 0,
+        maxGap: 24,
       },
     ];
     expect(isValidOffering(sampleOffering, restrictions)).toBe(true);
@@ -43,6 +44,7 @@ describe("isValidOffering", () => {
         endTime: "11:00:00",
         disabled: false,
         numDays: 0,
+        maxGap: 24,
       },
     ];
     expect(isValidOffering(sampleOffering, restrictions)).toBe(false);
@@ -57,6 +59,7 @@ describe("isValidOffering", () => {
         endTime: "",
         disabled: false,
         numDays: 0,
+        maxGap: 24,
       },
     ];
     expect(isValidOffering(sampleOffering, restrictions)).toBe(false);
@@ -71,6 +74,7 @@ describe("isValidOffering", () => {
         endTime: "12:00:00",
         disabled: false,
         numDays: 0,
+        maxGap: 24,
       },
     ];
     expect(isValidOffering(sampleOffering, restrictions)).toBe(false);
@@ -85,6 +89,7 @@ describe("isValidOffering", () => {
         endTime: "",
         disabled: false,
         numDays: 0,
+        maxGap: 24,
       },
     ];
     expect(isValidOffering(sampleOffering, restrictions)).toBe(false);
@@ -99,6 +104,7 @@ describe("isValidOffering", () => {
         endTime: "",
         disabled: false,
         numDays: 0,
+        maxGap: 24,
       },
     ];
     expect(isValidOffering(sampleOffering, restrictions)).toBe(true);

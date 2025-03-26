@@ -15,9 +15,11 @@ import {
   categorizeValidOfferings,
   getFreq,
   getMaxDays,
+  getMaxHour,
   getValidOfferings,
   groupOfferings,
   trim,
+  shuffle,
 } from "../utils/generatorHelpers";
 
 // Add all possible function names here
@@ -195,10 +197,17 @@ export const availableFunctions: AvailableFunctions = {
     try {
       // Extract event details and course information from the request
       const { name, semester, courses, restrictions } = args;
+      if (name.length > 50) {
+        return {
+          status: 400,
+          error: "timetable title is over 50 characters long",
+        };
+      }
 
       const courseOfferingsList: OfferingList[] = [];
       const validCourseOfferingsList: GroupedOfferingList[] = [];
       const maxdays = getMaxDays(restrictions);
+      const maxhours = getMaxHour(restrictions);
       const validSchedules: Offering[][] = [];
       // Fetch offerings for each course
       for (const course of courses) {
@@ -244,19 +253,22 @@ export const availableFunctions: AvailableFunctions = {
         validCourseOfferingsList.push(groupedOfferings);
       }
 
-      const categorizedOfferings = categorizeValidOfferings(
+      let categorizedOfferings = categorizeValidOfferings(
         validCourseOfferingsList,
       );
+      // console.log(JSON.stringify(categorizedOfferings));
       // Generate valid schedules for the given courses and restrictions
-      await getValidSchedules(
+      categorizedOfferings = shuffle(categorizedOfferings);
+      getValidSchedules(
         validSchedules,
         categorizedOfferings,
         [],
         0,
         categorizedOfferings.length,
         maxdays,
+        maxhours,
+        false,
       );
-
       // Return error if no valid schedules are found
       if (validSchedules.length === 0) {
         return { status: 404, error: "No valid schedules found." };
@@ -445,6 +457,7 @@ ${offeringData.meeting_section} `;
                 disabled: restriction?.disabled,
                 num_days: restriction?.numDays,
                 calendar_id: timetableData?.id,
+                max_gap: restriction?.maxGap,
               },
             ])
             .select();

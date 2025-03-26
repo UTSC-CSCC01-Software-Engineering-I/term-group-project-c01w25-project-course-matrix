@@ -21,7 +21,8 @@ import { useDeleteTimetableMutation } from "@/api/timetableApiSlice";
 import { EmailNotificationSettings } from "./EmailNotificationSettings";
 
 interface TimetableCardKebabMenuProps {
-  refetch: () => void;
+  refetchMyTimetables: () => void;
+  refetchSharedTimetables: () => void;
   timetableId: number;
 }
 
@@ -30,7 +31,8 @@ interface TimetableCardKebabMenuProps {
  * @returns {JSX.Element} The rendered component.
  */
 const TimetableCardKebabMenu = ({
-  refetch,
+  refetchMyTimetables,
+  refetchSharedTimetables,
   timetableId,
 }: TimetableCardKebabMenuProps) => {
   const [deleteTimetable] = useDeleteTimetableMutation();
@@ -38,7 +40,8 @@ const TimetableCardKebabMenu = ({
   const handleDelete = async () => {
     try {
       await deleteTimetable(timetableId);
-      refetch();
+      refetchMyTimetables();
+      refetchSharedTimetables();
     } catch (error) {
       console.error("Failed to delete timetable:", error);
     }

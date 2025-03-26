@@ -21,8 +21,8 @@ import { Link } from "react-router-dom";
 import { TimetableModel } from "@/models/models";
 
 interface TimetableCardProps {
-  refetch: () => void;
-  sharedRefetch: () => void;
+  refetchMyTimetables: () => void;
+  refetchSharedTimetables: () => void;
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
   ownerId: string;
   title: string;
@@ -41,8 +41,8 @@ interface TimetableCardProps {
  * @returns {JSX.Element} The rendered component.
  */
 const TimetableCard = ({
-  refetch,
-  sharedRefetch,
+  refetchMyTimetables,
+  refetchSharedTimetables,
   setErrorMessage,
   ownerId,
   title,
@@ -109,7 +109,8 @@ const TimetableCard = ({
         id: timetableId,
         favorite: !toggled,
       }).unwrap();
-      refetch();
+      refetchMyTimetables();
+      refetchSharedTimetables();
       console.log("Favourite success!");
       setToggled(!toggled);
       console.log(!toggled);
@@ -145,7 +146,8 @@ const TimetableCard = ({
               View
             </Button>
             <TimetableCardShareKebabMenu
-              sharedRefetch={sharedRefetch}
+              refetchMyTimetables={refetchMyTimetables}
+              refetchSharedTimetables={refetchSharedTimetables}
               owner_id={ownerId}
               calendar_id={timetableId}
             />
@@ -204,7 +206,8 @@ const TimetableCard = ({
                   <Pencil />
                 </Button>
                 <TimetableCardKebabMenu
-                  refetch={refetch}
+                  refetchMyTimetables={refetchMyTimetables}
+                  refetchSharedTimetables={refetchSharedTimetables}
                   timetableId={timetableId}
                 />
               </>

@@ -21,7 +21,8 @@ import { useState } from "react";
 import TimetableErrorDialog from "../TimetableBuilder/TimetableErrorDialog";
 
 interface TimetableCardShareKebabMenu {
-  sharedRefetch: () => void;
+  refetchMyTimetables: () => void;
+  refetchSharedTimetables: () => void;
   owner_id: string;
   calendar_id: number;
 }
@@ -31,7 +32,8 @@ interface TimetableCardShareKebabMenu {
  * @returns {JSX.Element} The rendered component.
  */
 const TimetableCardShareKebabMenu = ({
-  sharedRefetch,
+  refetchMyTimetables,
+  refetchSharedTimetables,
   owner_id,
   calendar_id,
 }: TimetableCardShareKebabMenu) => {
@@ -46,7 +48,8 @@ const TimetableCardShareKebabMenu = ({
       setErrorMessage(errorData?.error ?? "Unknown error occurred");
       return;
     } else {
-      sharedRefetch();
+      refetchMyTimetables();
+      refetchSharedTimetables();
     }
   };
 

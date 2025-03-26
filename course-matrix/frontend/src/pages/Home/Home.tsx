@@ -21,7 +21,6 @@ import SharedCalendar from "../TimetableBuilder/SharedCalendar";
 import { useGetUsernameFromUserIdQuery } from "@/api/authApiSlice";
 
 export interface Timetable {
-  index: number;
   id: number;
   created_at: string;
   updated_at: string;
@@ -55,7 +54,7 @@ const Home = () => {
   const {
     data: myTimetablesData,
     isLoading: myTimetablesDataLoading,
-    refetch,
+    refetch: refetchMyTimetables,
   } = useGetTimetablesQuery() as {
     data: Timetable[];
     isLoading: boolean;
@@ -65,7 +64,7 @@ const Home = () => {
   const {
     data: sharedWithMeData,
     isLoading: sharedWithmeDataLoading,
-    refetch: sharedRefetch,
+    refetch: refetchSharedTimetables,
   } = useGetTimetablesSharedWithMeQuery() as {
     data: TimetableShare[];
     isLoading: boolean;
@@ -83,7 +82,6 @@ const Home = () => {
   const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables]
     .map((timetable, index) => ({
       ...timetable,
-      index: index + 1,
       isShared: index >= myOwningTimetables.length,
     }))
     .sort(sortingFunction);
@@ -175,10 +173,10 @@ const Home = () => {
           ) : activeTab === "All" ? (
             allTimetables.map((timetable) => (
               <TimetableCard
-                refetch={refetch}
-                sharedRefetch={sharedRefetch}
+                refetchMyTimetables={refetchMyTimetables}
+                refetchSharedTimetables={refetchSharedTimetables}
                 setErrorMessage={setErrorMessage}
-                key={timetable.index}
+                key={`${timetable.id}-${timetable.user_id}`}
                 ownerId={timetable.user_id}
                 title={timetable.timetable_title}
                 lastEditedDate={new Date(timetable.updated_at)}
@@ -191,10 +189,10 @@ const Home = () => {
           ) : activeTab === "Mine" ? (
             myOwningTimetables.map((timetable) => (
               <TimetableCard
-                refetch={refetch}
-                sharedRefetch={sharedRefetch}
+                refetchMyTimetables={refetchMyTimetables}
+                refetchSharedTimetables={refetchSharedTimetables}
                 setErrorMessage={setErrorMessage}
-                key={timetable.index}
+                key={`${timetable.id}-${timetable.user_id}`}
                 ownerId={timetable.user_id}
                 title={timetable.timetable_title}
                 lastEditedDate={new Date(timetable.updated_at)}
@@ -207,10 +205,10 @@ const Home = () => {
           ) : (
             sharedWithMeTimetables.map((timetable) => (
               <TimetableCard
-                refetch={refetch}
-                sharedRefetch={sharedRefetch}
+                refetchMyTimetables={refetchMyTimetables}
+                refetchSharedTimetables={refetchSharedTimetables}
                 setErrorMessage={setErrorMessage}
-                key={timetable.index}
+                key={`${timetable.id}-${timetable.user_id}`}
                 ownerId={timetable.user_id}
                 title={timetable.timetable_title}
                 lastEditedDate={new Date(timetable.updated_at)}

@@ -16,4 +16,5 @@ export const apiSlice = createApi({
     "Shared",
   ],
   endpoints: () => ({}),
+  refetchOnMountOrArgChange: true,
 });

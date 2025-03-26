@@ -21,6 +21,7 @@ import { courseEventStyles } from "@/constants/calendarConstants";
 import { parseEvent } from "@/utils/calendar-utils";
 import { useGetSharedRestrictionsQuery } from "@/api/sharedApiSlice";
 import { formatTime } from "@/utils/format-date-time";
+import LoadingPage from "../Loading/LoadingPage";
 
 interface SharedCalendarProps {
   user_id: string;
@@ -36,21 +37,25 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
     const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
       getSemesterStartAndEndDatesPlusOneWeek(semester);
 
-    const { data: sharedEventsData } = useGetSharedEventsQuery(
+    const { data: sharedEventsData, isLoading: isSharedEventsLoading } = useGetSharedEventsQuery(
       { user_id, calendar_id },
       { skip: !user_id || !calendar_id },
     ) as {
       data: TimetableEvents;
+      isLoading: boolean;
     };
     const sharedEvents = sharedEventsData as TimetableEvents;
 
-    const { data: restrictionsData } = useGetSharedRestrictionsQuery(
+    const { data: restrictionsData, isLoading: isRestrictionsLoading } = useGetSharedRestrictionsQuery(
       { user_id, calendar_id },
       { skip: !user_id || !calendar_id },
     ) as {
       data: Restriction[];
+      isLoading: boolean;
     };
     const restrictions = restrictionsData ?? [];
+
+    const isLoading = isSharedEventsLoading || isRestrictionsLoading;
 
     const courseEvents: Event[] = sharedEvents?.courseEvents ?? [];
     const userEvents: Event[] = sharedEvents?.userEvents ?? [];
@@ -113,7 +118,9 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
     const username =
       user_username.trim().length > 0 ? user_username : "John Doe";
 
-    return (
+    return isLoading ? (
+      <LoadingPage />
+    ) : (
       <div>
         <h1 className="text-xl text-center justify-between font-medium tracking-tight mb-4">
           You are viewing{" "}

@@ -243,6 +243,7 @@ const Calendar = React.memo<CalendarProps>(
           end_time: restriction.endTime,
           disabled: restriction.disabled,
           num_days: restriction.numDays,
+          max_gap: restriction.maxGap,
         };
         const { error: restrictionError } =
           await createRestriction(restrictionObject);
@@ -307,6 +308,7 @@ const Calendar = React.memo<CalendarProps>(
           end_time: restriction.endTime,
           disabled: restriction.disabled,
           num_days: restriction.numDays,
+          max_gap: restriction.maxGap,
         };
         const { error: restrictionError } =
           await createRestriction(restrictionObject);

@@ -5,11 +5,7 @@ export type TimetableForm = {
   date: Date;
   semester: string;
   search: string;
-  courses: {
-    id: number;
-    code: string;
-    name: string;
-  }[];
+  courses: { id: number; code: string; name: string }[];
   restrictions: RestrictionForm[];
 };
 
@@ -17,6 +13,7 @@ export type RestrictionForm = {
   type: string;
   days?: string[];
   numDays?: number;
+  maxGap?: number;
   startTime?: string;
   endTime?: string;
   disabled?: boolean;
@@ -69,6 +66,7 @@ export const RestrictionSchema = z.object({
       "Restrict Between",
       "Restrict Day",
       "Days Off",
+      "Max Gap",
     ])
     .describe(
       "The type of restriction being applied. Restrict before restricts all times before 'endTime', Restrict Before restricts all times after 'startTime', Restrict Between restricts all times between 'startTime' and 'endTime', Restrict Day restricts the entirety of each day in field 'days', and Days Off enforces as least 'numDays' days off per week.",
@@ -84,6 +82,14 @@ export const RestrictionSchema = z.object({
     .optional()
     .describe(
       "If type is Days Off, then this field is used and describes min number of days off per week. For example, if set to 2, and 'type' is Days Off, then this means we want at least 2 days off per week.",
+    ),
+  maxGap: z
+    .number()
+    .positive()
+    .max(23, "Cannot have a gap of an entire day for between courses")
+    .optional()
+    .describe(
+      "If type is Max Gap, then this field is used to describe the maximum gap between courses, in hours. For example, if set to 3, then 2 entires must not be further than 3 hours apart. ",
     ),
   startTime: z
     .string()

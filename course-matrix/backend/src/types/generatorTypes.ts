@@ -24,6 +24,7 @@ export enum RestrictionType {
   RestrictBetween = "Restrict Between",
   RestrictDay = "Restrict Day",
   RestrictDaysOff = "Days Off",
+  RestrictMaxGap = "Max Gap",
 }
 
 // Interface for the restriction object
@@ -34,12 +35,16 @@ export interface Restriction {
   endTime: string;
   disabled: boolean;
   numDays: number;
+  maxGap: number;
 }
 
 // Interface for organizing offerings with the same meeting_section together
 export interface GroupedOfferingList {
   course_id: number;
   groups: Record<string, Offering[]>;
+  lectures: number;
+  tutorials: number;
+  practicals: number;
 }
 
 // Interface for organizing offerings by course ID

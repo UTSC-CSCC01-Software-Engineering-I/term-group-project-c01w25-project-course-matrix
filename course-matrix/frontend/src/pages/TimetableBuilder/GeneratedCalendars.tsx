@@ -157,6 +157,7 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
           calendar_id: newTimetableId,
           type: restriction.type,
           days: restriction.days,
+          max_gap: restriction.maxGap,
           start_time: restriction.startTime,
           end_time: restriction.endTime,
           disabled: restriction.disabled,

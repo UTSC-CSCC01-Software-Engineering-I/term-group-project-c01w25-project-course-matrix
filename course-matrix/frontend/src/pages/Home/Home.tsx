@@ -11,9 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { Pin } from "lucide-react";
 import TimetableCard from "./TimetableCard";
-import TimetableCompareButton from "./TimetableCompareButton";
 import TimetableCreateNewButton from "./TimetableCreateNewButton";
 import { useGetTimetablesQuery } from "../../api/timetableApiSlice";
+import { Timetable } from "@/utils/type-utils";
+import { TimetableCompareButton } from "./TimetableCompareButton";
 import { useState } from "react";
 import TimetableErrorDialog from "../TimetableBuilder/TimetableErrorDialog";
 import { useGetTimetablesSharedWithMeQuery } from "@/api/sharedApiSlice";
@@ -161,8 +162,8 @@ const Home = () => {
               Shared With Me
             </Button>
           </div>
-          <div className="flex gap-8">
-            <TimetableCompareButton />
+          <div className="flex gap-2">
+            <TimetableCompareButton timetables={data} />
             <TimetableCreateNewButton />
           </div>
         </div>

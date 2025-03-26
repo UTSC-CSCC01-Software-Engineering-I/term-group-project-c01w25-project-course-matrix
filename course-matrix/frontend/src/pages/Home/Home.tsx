@@ -1,19 +1,15 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
-  DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
 import { Pin } from "lucide-react";
 import TimetableCard from "./TimetableCard";
 import TimetableCreateNewButton from "./TimetableCreateNewButton";
 import { useGetTimetablesQuery } from "../../api/timetableApiSlice";
-import { Timetable } from "@/utils/type-utils";
 import { TimetableCompareButton } from "./TimetableCompareButton";
 import { useState } from "react";
 import TimetableErrorDialog from "../TimetableBuilder/TimetableErrorDialog";
@@ -163,7 +159,7 @@ const Home = () => {
             </Button>
           </div>
           <div className="flex gap-2">
-            <TimetableCompareButton timetables={data} />
+            <TimetableCompareButton timetables={myTimetablesData} />
             <TimetableCreateNewButton />
           </div>
         </div>

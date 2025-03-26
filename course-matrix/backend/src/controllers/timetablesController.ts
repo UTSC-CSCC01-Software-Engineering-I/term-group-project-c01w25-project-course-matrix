@@ -31,18 +31,20 @@ export default {
           .status(400)
           .json({ error: "Timetable Title cannot be over 50 characters long" });
       }
-      // Timetables cannot exceed the size of 25. 
-      const{count: timetable_count, error: timetableCountError} = 
+      // Timetables cannot exceed the size of 25.
+      const { count: timetable_count, error: timetableCountError } =
         await supabase
-        .schema("timetable")
-        .from("timetables")
-        .select('*', { count: 'exact', head: true })
-        .eq("user_id", user_id);
+          .schema("timetable")
+          .from("timetables")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user_id);
 
       console.log(timetable_count);
-      
-      if ((timetable_count ?? 0) >=25){
-        return res.status(400).json({ error: "You have exceeded the limit of 25 timetables" });
+
+      if ((timetable_count ?? 0) >= 25) {
+        return res
+          .status(400)
+          .json({ error: "You have exceeded the limit of 25 timetables" });
       }
 
       // Check if a timetable with the same title already exist for this user
@@ -65,7 +67,7 @@ export default {
           .json({ error: "A timetable with this title already exists" });
       }
       //Create query to insert the user_id and timetable_title into the db
-      
+
       let insertTimetable = supabase
         .schema("timetable")
         .from("timetables")

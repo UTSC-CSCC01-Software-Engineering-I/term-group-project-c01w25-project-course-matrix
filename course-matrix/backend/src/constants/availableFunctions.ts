@@ -145,7 +145,7 @@ export const availableFunctions: AvailableFunctions = {
   deleteTimetable: async (args: any, req: Request) => {
     try {
       const { id } = args;
-      
+
       // Retrieve the authenticated user
       const user_id = (req as any).user.id;
 
@@ -207,17 +207,17 @@ export const availableFunctions: AvailableFunctions = {
         };
       }
 
-      // Timetables cannot exceed the size of 25. 
-      const{count: timetable_count, error: timetableCountError} = 
+      // Timetables cannot exceed the size of 25.
+      const { count: timetable_count, error: timetableCountError } =
         await supabase
-        .schema("timetable")
-        .from("timetables")
-        .select('*', { count: 'exact', head: true })
-        .eq("user_id", user_id);
+          .schema("timetable")
+          .from("timetables")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user_id);
 
       console.log(timetable_count);
-      
-      if ((timetable_count ?? 0) >=25){
+
+      if ((timetable_count ?? 0) >= 25) {
         return {
           status: 400,
           error: "You have exceeded the limit of 25 timetables",
@@ -304,8 +304,6 @@ export const availableFunctions: AvailableFunctions = {
           error: "timetable title and semester are required",
         };
       }
-
-
 
       // Check if a timetable with the same title already exist for this user
       const { data: existingTimetable, error: existingTimetableError } =

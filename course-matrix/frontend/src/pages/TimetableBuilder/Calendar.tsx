@@ -132,6 +132,7 @@ const Calendar = React.memo<CalendarProps>(
         createViewMonthGrid(),
         createViewMonthAgenda(),
       ],
+      firstDayOfWeek: 0,
       selectedDate: semesterStartDatePlusOneWeek,
       minDate: semesterStartDate,
       maxDate: semesterEndDate,

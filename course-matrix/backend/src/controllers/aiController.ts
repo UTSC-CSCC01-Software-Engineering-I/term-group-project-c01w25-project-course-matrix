@@ -134,7 +134,7 @@ export async function reformulateQuery(
           - DO replace pronouns and references with specific names and identifiers
           - DO include course codes, names and specific details for academic entities
           - If the query is not about university courses & offerings, return exactly a copy of the user's query.
-          - Append "code: " before course codes For example: "CSCC01" -> "code: CSCC01"
+          - Append "code: " before each course code For example: "CSCC01, BIOA01" -> "code: CSCC01, code: BIOA01"
           - If a course year level is written as "first year", "second year", etc. Then replace "first" with "1st" and "second" with "2nd" etc.
 
           Examples:

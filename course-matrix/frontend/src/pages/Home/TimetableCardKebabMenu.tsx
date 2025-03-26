@@ -19,6 +19,8 @@ import {
 import { EllipsisVertical } from "lucide-react";
 import { useDeleteTimetableMutation } from "@/api/timetableApiSlice";
 import { EmailNotificationSettings } from "./EmailNotificationSettings";
+import ShareDialog from "../TimetableBuilder/ShareDialog";
+import { useState } from "react";
 
 interface TimetableCardKebabMenuProps {
   refetchMyTimetables: () => void;
@@ -35,6 +37,7 @@ const TimetableCardKebabMenu = ({
   refetchSharedTimetables,
   timetableId,
 }: TimetableCardKebabMenuProps) => {
+  const [openShareDialog, setOpenShareDialog] = useState(false);
   const [deleteTimetable] = useDeleteTimetableMutation();
 
   const handleDelete = async () => {
@@ -64,6 +67,10 @@ const TimetableCardKebabMenu = ({
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <EmailNotificationSettings timetableId={timetableId} />
         </DropdownMenuItem>
+        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer" onClick={() => setOpenShareDialog(true)}>
+            Share Timetable
+        </DropdownMenuItem>
+        <ShareDialog open={openShareDialog} setOpen={setOpenShareDialog} calendar_id={timetableId} />
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <Dialog>
             <DialogTrigger asChild>

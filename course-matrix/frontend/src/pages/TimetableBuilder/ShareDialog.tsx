@@ -13,22 +13,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRef, useState } from "react";
 import { useCreateShareMutation } from "@/api/sharedApiSlice";
-import TimetableErrorDialog from "./TimetableErrorDialog";
 import TimetableSuccessDialog from "./TimetableSuccessDialog";
+import { Spinner } from "@/components/ui/spinner";
 
-interface ShareButtonProps {
+interface ShareDialogProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
   calendar_id: number;
 }
 
-const ShareButton = ({ calendar_id }: ShareButtonProps) => {
+const ShareDialog = ({ open, setOpen, calendar_id }: ShareDialogProps) => {
   const emailRef = useRef<HTMLInputElement>(null);
   const [shareTimetable] = useCreateShareMutation();
+
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleShare = async () => {
+    setLoading(true);
     const email = emailRef.current?.value;
-
     const { error } = await shareTimetable({
       shared_email: email,
       calendar_id,
@@ -36,26 +40,20 @@ const ShareButton = ({ calendar_id }: ShareButtonProps) => {
     if (error) {
       const errorData = (error as { data?: { error?: string } }).data;
       setErrorMessage(errorData?.error ?? "Unknown error occurred");
-      return;
     } else {
       setSuccessMessage("Timetable shared successfully!");
+      setOpen(false);
+      setErrorMessage(null);
     }
+    setLoading(false);
   };
 
-  return (
-    <Dialog>
-      <TimetableErrorDialog
-        errorMessage={errorMessage}
-        setErrorMessage={setErrorMessage}
-      />
+  return (<Dialog open={open} onOpenChange={() => { setOpen(!open); setErrorMessage(null); } }>
       <TimetableSuccessDialog
         successMessage={successMessage}
         setSuccessMessage={setSuccessMessage}
       />
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
-          Share
-        </Button>
       </DialogTrigger>
       <DialogContent className="gap-5">
         <DialogHeader>
@@ -64,6 +62,7 @@ const ShareButton = ({ calendar_id }: ShareButtonProps) => {
             Who would you like to share your timetable with?
           </DialogDescription>
         </DialogHeader>
+        {loading && <Spinner />}
         <Label htmlFor="sharedEmail">
           Enter the email of the person you want to share your timetable with
         </Label>
@@ -74,17 +73,16 @@ const ShareButton = ({ calendar_id }: ShareButtonProps) => {
           placeholder="Email"
           className="w-full"
         />
+        <DialogDescription className="text-red-500">{errorMessage}</DialogDescription>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="secondary">Cancel</Button>
           </DialogClose>
-          <DialogClose asChild>
-            <Button onClick={handleShare}>Share</Button>
-          </DialogClose>
+          <Button onClick={handleShare}>Share</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ShareButton;
+export default ShareDialog;

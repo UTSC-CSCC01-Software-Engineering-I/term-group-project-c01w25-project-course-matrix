@@ -46,7 +46,7 @@ import {
   Timetable,
   Restriction,
 } from "@/utils/type-utils";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import OfferingInfo from "./OfferingInfo";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CourseModel, TimetableGenerateResponseModel } from "@/models/models";
@@ -54,8 +54,7 @@ import LoadingPage from "@/pages/Loading/LoadingPage";
 import { GeneratedCalendars } from "./GeneratedCalendars";
 import { Spinner } from "@/components/ui/spinner";
 import { convertRestrictionTimes } from "@/utils/convert-restriction-times";
-import ShareButton from "./ShareButton";
-import SharedCalendar from "./SharedCalendar";
+import ShareDialog from "./ShareDialog";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -135,6 +134,7 @@ const TimetableBuilder = () => {
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;
   };
+  const [openShareDialog, setOpenShareDialog] = useState(false);
 
   // limit search number if no search query or filters for performance purposes.
   // Otherwise, limit is 10k, which effectively gets all results.
@@ -301,7 +301,7 @@ const TimetableBuilder = () => {
       setIsGeneratingTimetables(true);
       setGeneratedTimetables(data);
       setErrorMsg("");
-    } catch (error) {
+    } catch {
       setIsGeneratingTimetables(false);
       setErrorMsg("No valid timetables found");
     }
@@ -362,8 +362,11 @@ const TimetableBuilder = () => {
                 <Button size="sm" variant="outline" onClick={handleReset}>
                   Reset
                 </Button>
+                <Button size="sm" variant="outline" onClick={() => setOpenShareDialog(true)}>
+                  Share
+                </Button>
                 {isEditingTimetable && (
-                  <ShareButton calendar_id={timetableId} />
+                  <ShareDialog open={openShareDialog} setOpen={setOpenShareDialog} calendar_id={timetableId} />
                 )}
               </div>
             </div>

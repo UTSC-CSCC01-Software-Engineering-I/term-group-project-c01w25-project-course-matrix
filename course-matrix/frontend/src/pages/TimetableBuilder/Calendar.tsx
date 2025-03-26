@@ -67,6 +67,7 @@ interface CalendarProps {
   selectedCourses: TimetableForm["courses"];
   newOfferingIds: number[];
   restrictions: TimetableForm["restrictions"];
+  header?: string;
 }
 
 function parseEvent(id: number, event: Event, calendarId: string) {
@@ -97,6 +98,7 @@ const Calendar = React.memo<CalendarProps>(
     newOfferingIds,
     restrictions,
     isChoosingSectionsManually,
+    header = "Your Timetable",
   }) => {
     const form = useForm<z.infer<typeof TimetableFormSchema>>();
 
@@ -341,7 +343,7 @@ const Calendar = React.memo<CalendarProps>(
     return (
       <div>
         <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-8">
-          <div>Your Timetable </div>
+          <div>{header}</div>
           <TimetableErrorDialog
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}

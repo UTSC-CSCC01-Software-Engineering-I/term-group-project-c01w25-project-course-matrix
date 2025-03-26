@@ -1,21 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Pin } from "lucide-react";
 import TimetableCard from "./TimetableCard";
-import TimetableCompareButton from "./TimetableCompareButton";
 import TimetableCreateNewButton from "./TimetableCreateNewButton";
 import { useGetTimetablesQuery } from "../../api/timetableApiSlice";
+import { Timetable } from "@/utils/type-utils";
+import { TimetableCompareButton } from "./TimetableCompareButton";
 import { useState } from "react";
 import TimetableErrorDialog from "../TimetableBuilder/TimetableErrorDialog";
-
-export interface Timetable {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  user_id: string;
-  semester: string;
-  timetable_title: string;
-  favorite: boolean;
-}
 
 /**
  * Home component that displays the user's timetables and provides options to create or compare timetables.
@@ -69,8 +60,8 @@ const Home = () => {
               Shared
             </Button>
           </div>
-          <div className="flex gap-8">
-            <TimetableCompareButton />
+          <div className="flex gap-2">
+            <TimetableCompareButton timetables={data} />
             <TimetableCreateNewButton />
           </div>
         </div>

@@ -280,14 +280,14 @@ const Calendar = React.memo<CalendarProps>(
     };
 
     const handleUpdate = async () => {
-      try{
-        await updateTimetable({id: editingTimetableId}).unwrap();
-      }catch(error){
+      try {
+        await updateTimetable({ id: editingTimetableId }).unwrap();
+      } catch (error) {
         console.log("cannot update rip");
         return;
       }
       setShowLoadingPage(true);
-      
+
       const offeringIdsToDelete = oldOfferingIds.filter(
         (offeringId) => !newOfferingIds.includes(offeringId),
       );
@@ -406,31 +406,32 @@ const Calendar = React.memo<CalendarProps>(
               </DialogContent>
             </Dialog>
           ) : (
-            <div><div className="flex gap-2">
-              {isChoosingSectionsManually &&
-                !allOfferingSectionsHaveBeenSelected && (
-                  <p className="text-sm text-red-500 pr-2">
-                    Please select all LEC/TUT/PRA sections for your courses in
-                    order to save your timetable.
-                  </p>
-                )}
+            <div>
+              <div className="flex gap-2">
+                {isChoosingSectionsManually &&
+                  !allOfferingSectionsHaveBeenSelected && (
+                    <p className="text-sm text-red-500 pr-2">
+                      Please select all LEC/TUT/PRA sections for your courses in
+                      order to save your timetable.
+                    </p>
+                  )}
 
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => navigate("/home")}
-              >
-                Cancel Editing
-              </Button>
-              <Button
-                size="sm"
-                disabled={!allOfferingSectionsHaveBeenSelected}
-                onClick={handleUpdate}
-              >
-                Update Timetable
-              </Button>
-            </div>
-            <div className="text-red-500 font-bold"> Yes </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => navigate("/home")}
+                >
+                  Cancel Editing
+                </Button>
+                <Button
+                  size="sm"
+                  disabled={!allOfferingSectionsHaveBeenSelected}
+                  onClick={handleUpdate}
+                >
+                  Update Timetable
+                </Button>
+              </div>
+              <div className="text-red-500 font-bold"> Yes </div>
             </div>
           )}
         </h1>

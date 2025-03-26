@@ -231,7 +231,7 @@ export default {
       if (favorite !== undefined) updateData.favorite = favorite;
       if (email_notifications_enabled !== undefined)
         updateData.email_notifications_enabled = email_notifications_enabled;
-      
+
       //Update timetable title, for authenticated user only
       let updateTimetableQuery = supabase
         .schema("timetable")

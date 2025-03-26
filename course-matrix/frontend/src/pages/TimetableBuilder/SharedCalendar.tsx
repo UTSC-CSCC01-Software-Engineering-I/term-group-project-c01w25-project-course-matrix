@@ -110,16 +110,21 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
       isResponsive: false,
     });
 
+    const username = user_username.trim().length > 0 ? user_username : "John Doe";
+
     return (
       <div>
         <h1 className="text-xl text-center justify-between font-medium tracking-tight mb-4">
           You are viewing{" "}
-          <span className="text-green-500">{user_username}'s</span> timetable
+          <span className="text-green-500">{username ?? "John Doe"}'s</span> timetable
           named <span className="text-green-500">{timetable_title}</span> for{" "}
           <span className="text-green-500">{semester}</span>
         </h1>
         <div className="text-sm justify-between tracking-tight mb-2">
           <b>Courses:</b>{" "}
+          {courses.length === 0 && (
+            <span className="text-sm text-red-500">This timetable has no courses</span>
+          )}
           {courses.map((course) => (
             <span className="text-blue-500 mr-2" key={course}>
               {course}{" "}

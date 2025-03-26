@@ -21,6 +21,7 @@ import SharedCalendar from "../TimetableBuilder/SharedCalendar";
 import { useGetUsernameFromUserIdQuery } from "@/api/authApiSlice";
 
 export interface Timetable {
+  index: number;
   id: number;
   created_at: string;
   updated_at: string;
@@ -82,6 +83,7 @@ const Home = () => {
   const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables]
     .map((timetable, index) => ({
       ...timetable,
+      index: index + 1,
       isShared: index >= myOwningTimetables.length,
     }))
     .sort(sortingFunction);
@@ -103,8 +105,6 @@ const Home = () => {
     { skip: selectedSharedTimetableId === -1 },
   );
   const ownerUsername = usernameData ?? "";
-
-  console.log("SELECTED SHARED TIMETABLE", selectedSharedTimetable);
 
   return (
     <div className="w-full">
@@ -178,7 +178,7 @@ const Home = () => {
                 refetch={refetch}
                 sharedRefetch={sharedRefetch}
                 setErrorMessage={setErrorMessage}
-                key={timetable.id}
+                key={timetable.index}
                 ownerId={timetable.user_id}
                 title={timetable.timetable_title}
                 lastEditedDate={new Date(timetable.updated_at)}
@@ -194,7 +194,7 @@ const Home = () => {
                 refetch={refetch}
                 sharedRefetch={sharedRefetch}
                 setErrorMessage={setErrorMessage}
-                key={timetable.id}
+                key={timetable.index}
                 ownerId={timetable.user_id}
                 title={timetable.timetable_title}
                 lastEditedDate={new Date(timetable.updated_at)}
@@ -210,7 +210,7 @@ const Home = () => {
                 refetch={refetch}
                 sharedRefetch={sharedRefetch}
                 setErrorMessage={setErrorMessage}
-                key={timetable.id}
+                key={timetable.index}
                 ownerId={timetable.user_id}
                 title={timetable.timetable_title}
                 lastEditedDate={new Date(timetable.updated_at)}

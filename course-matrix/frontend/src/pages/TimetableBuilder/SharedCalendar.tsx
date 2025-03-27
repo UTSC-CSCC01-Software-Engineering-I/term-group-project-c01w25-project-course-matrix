@@ -64,13 +64,13 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
 
     const courses = [
       ...new Set(
-        courseEvents.map((event) => event.event_name.split(" - ")[0].trim()),
+        courseEvents.map((event) => event.event_name.split("-")[0].trim()),
       ),
     ];
     const courseToMeetingSectionMap = new Map<string, string[]>();
     courseEvents.forEach((event) => {
-      const course = event.event_name.split(" - ")[0].trim();
-      const meetingSection = event.event_name.split(" - ")[1].trim();
+      const course = event.event_name.split("-")[0].trim();
+      const meetingSection = event.event_name.split("-")[1].trim();
       if (courseToMeetingSectionMap.has(course)) {
         const meetingSections = courseToMeetingSectionMap.get(course);
         if (meetingSections) {

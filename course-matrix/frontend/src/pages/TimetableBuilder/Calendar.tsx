@@ -117,7 +117,7 @@ const Calendar = React.memo<CalendarProps>(
     const [deleteRestriction] = useDeleteRestrictionMutation();
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+    const [updateErrorMessage, setUpdateErrorMessage] =  useState<string | null>(null);
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
     const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
       getSemesterStartAndEndDatesPlusOneWeek(semester);
@@ -280,12 +280,7 @@ const Calendar = React.memo<CalendarProps>(
     };
 
     const handleUpdate = async () => {
-      try {
-        await updateTimetable({ id: editingTimetableId }).unwrap();
-      } catch (error) {
-        console.log("cannot update rip");
-        return;
-      }
+      const timetableTitle = timetableTitleRef.current?.value ?? "";
       setShowLoadingPage(true);
 
       const offeringIdsToDelete = oldOfferingIds.filter(
@@ -294,6 +289,11 @@ const Calendar = React.memo<CalendarProps>(
       const offeringIdsToAdd = newOfferingIds.filter(
         (offeringId) => !oldOfferingIds.includes(offeringId),
       );
+      if(offeringIdsToAdd.length === 0 && offeringIdsToDelete.length === 0){
+        setUpdateErrorMessage("You have made no changes to the timetable!");
+        setShowLoadingPage(false);
+        return; 
+      } 
       // Delete course events
       for (const offeringId of offeringIdsToDelete) {
         const { error: deleteError } = await deleteEvent({
@@ -347,12 +347,20 @@ const Calendar = React.memo<CalendarProps>(
           console.error(restrictionError);
         }
       }
+
+      try {
+        await updateTimetable({ id: editingTimetableId, timetable_title: timetableTitle }).unwrap();
+      } catch (error) {
+        setUpdateErrorMessage("You have made no changes to the timetable");
+        setShowLoadingPage(false);
+        return;
+      }
       navigate("/home");
     };
 
     return (
       <div>
-        <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-8">
+        <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-4">
           <div>{header}</div>
           <TimetableErrorDialog
             errorMessage={errorMessage}
@@ -431,7 +439,7 @@ const Calendar = React.memo<CalendarProps>(
                   Update Timetable
                 </Button>
               </div>
-              <div className="text-red-500 font-bold"> Yes </div>
+              <div className="mt-1 text-sm text-red-500 font-bold"> {updateErrorMessage} </div>
             </div>
           )}
         </h1>

@@ -112,6 +112,7 @@ export const availableFunctions: AvailableFunctions = {
       }
 
       let updateData: any = {};
+      updateData.updated_at = new Date().toISOString();
       if (timetable_title) updateData.timetable_title = timetable_title;
       if (semester) updateData.semester = semester;
 

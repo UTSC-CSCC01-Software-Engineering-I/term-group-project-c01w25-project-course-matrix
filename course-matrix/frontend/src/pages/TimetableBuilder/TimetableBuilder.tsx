@@ -447,12 +447,11 @@ const TimetableBuilder = () => {
                           id="manual-selection"
                           checked={isChoosingSectionsManually}
                           onCheckedChange={(checked) => {
-                              setIsChoosingSectionsManually(checked === true)
-                              if (checked) {
-                                form.setValue("restrictions", [])
-                              }
+                            setIsChoosingSectionsManually(checked === true);
+                            if (checked) {
+                              form.setValue("restrictions", []);
                             }
-                          }
+                          }}
                         />
                         <label
                           htmlFor="manual-selection"

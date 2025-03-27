@@ -76,15 +76,9 @@ const Home = () => {
   const sharedWithMeTimetables = [...(sharedWithMeData ?? [])]
     .flatMap((share) => share.timetables)
     .sort(sortingFunction);
-  const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables]
-    .map((timetable, index) => ({
-      ...timetable,
-      isShared: index >= myOwningTimetables.length,
-    }))
-    .sort(sortingFunction);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("All");
+  const [activeTab, setActiveTab] = useState("Mine");
 
   const [selectedSharedTimetable, setSelectedSharedTimetable] =
     useState<Timetable | null>(null);
@@ -138,13 +132,6 @@ const Home = () => {
           <div className="flex gap-4">
             <Button
               size="xs"
-              className={`py-3 px-5 hover:bg-blue-300 text-black ${activeTab === "All" ? "bg-blue-300" : "bg-blue-100"}`}
-              onClick={() => setActiveTab("All")}
-            >
-              All
-            </Button>
-            <Button
-              size="xs"
               className={`py-3 px-5 hover:bg-blue-300 text-black ${activeTab === "Mine" ? "bg-blue-300" : "bg-blue-100"}`}
               onClick={() => setActiveTab("Mine")}
             >
@@ -167,22 +154,6 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 justify-between mt-4">
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Loading...</p>
-          ) : activeTab === "All" ? (
-            allTimetables.map((timetable) => (
-              <TimetableCard
-                refetchMyTimetables={refetchMyTimetables}
-                refetchSharedTimetables={refetchSharedTimetables}
-                setErrorMessage={setErrorMessage}
-                key={`${timetable.id}-${timetable.user_id}`}
-                ownerId={timetable.user_id}
-                title={timetable.timetable_title}
-                lastEditedDate={new Date(timetable.updated_at)}
-                isShared={timetable.isShared}
-                timetable={timetable}
-                setSelectedSharedTimetable={setSelectedSharedTimetable}
-                favorite={timetable.favorite}
-              />
-            ))
           ) : activeTab === "Mine" ? (
             myOwningTimetables.map((timetable) => (
               <TimetableCard

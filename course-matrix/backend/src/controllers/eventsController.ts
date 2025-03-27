@@ -3,6 +3,21 @@ import asyncHandler from "../middleware/asyncHandler";
 import { supabase } from "../db/setupDb";
 import { start } from "repl";
 
+function getReadingWeekStart(start_date: string) {
+  return start_date === "2025-05-02"
+    ? "2025-06-15"
+    : start_date === "2025-09-02"
+      ? "2025-10-26"
+      : "2026-02-16";
+}
+
+function getReadingWeekEnd(start_date: string) {
+  return start_date === "2025-05-02"
+    ? "2025-06-22"
+    : start_date === "2025-09-02"
+      ? "2025-11-01"
+      : "2026-02-22";
+}
 /**
  * Helper method to generate weekly course events.
  * @param courseEventName - The name of the course event (typically derived from the offering code and meeting section).
@@ -67,6 +82,13 @@ export function generateWeeklyCourseEvents(
     SA: 6,
   };
 
+  const rw_start = new Date(
+    getReadingWeekStart(semester_start_date) + "T00:00:00-05:00",
+  );
+  const rw_end = new Date(
+    getReadingWeekEnd(semester_start_date) + "T00:00:00-05:00",
+  );
+
   const targetWeekday = weekdayMap[courseDay];
   if (targetWeekday === undefined) {
     throw new Error("Invalid course day provided");
@@ -91,17 +113,19 @@ export function generateWeeklyCourseEvents(
   let eventsToInsert: any[] = [];
   //Loop through the semester, adding an event for each week on the targeted weekday
   while (currentDate <= semesterEndObj) {
-    eventsToInsert.push({
-      user_id,
-      calendar_id,
-      event_name: courseEventName,
-      //Convert the occurrence of date to YYYY-MM-DD format
-      event_date: currentDate.toISOString().split("T")[0],
-      event_start: courseStartTime,
-      event_end: courseEndTime,
-      event_description: null,
-      offering_id,
-    });
+    if (currentDate < rw_start || currentDate > rw_end) {
+      eventsToInsert.push({
+        user_id,
+        calendar_id,
+        event_name: courseEventName,
+        //Convert the occurrence of date to YYYY-MM-DD format
+        event_date: currentDate.toISOString().split("T")[0],
+        event_start: courseStartTime,
+        event_end: courseEndTime,
+        event_description: null,
+        offering_id,
+      });
+    }
     //Cycle to the next week
     currentDate.setDate(currentDate.getDate() + 7);
   }
@@ -373,6 +397,46 @@ export default {
         .select("*")
         .eq("calendar_id", calendar_id)
         .eq("user_id", user_id);
+
+      if (courseError || userError) {
+        return res
+          .status(400)
+          .json({ error: courseError?.message || userError?.message });
+      }
+
+      return res.status(200).json({ courseEvents, userEvents });
+    } catch (error) {
+      return res.status(500).send({ error });
+    }
+  }),
+
+  /**
+   * Get all events given a user_id and calendar_id
+   */
+  getSharedEvents: asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const { user_id, calendar_id } = req.params;
+
+      if (!user_id) {
+        return res.status(400).json({ error: "user_id is required" });
+      }
+      if (!calendar_id) {
+        return res.status(400).json({ error: "calendar_id is required" });
+      }
+
+      const { data: courseEvents, error: courseError } = await supabase
+        .schema("timetable")
+        .from("course_events")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("calendar_id", calendar_id);
+
+      const { data: userEvents, error: userError } = await supabase
+        .schema("timetable")
+        .from("user_events")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("calendar_id", calendar_id);
 
       if (courseError || userError) {
         return res

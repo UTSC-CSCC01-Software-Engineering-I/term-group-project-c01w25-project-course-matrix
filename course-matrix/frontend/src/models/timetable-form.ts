@@ -8,11 +8,7 @@ export type TimetableForm = {
   date: Date;
   semester: string;
   search: string;
-  courses: {
-    id: number;
-    code: string;
-    name: string;
-  }[];
+  courses: { id: number; code: string; name: string }[];
   offeringIds: number[];
   restrictions: RestrictionForm[];
 };
@@ -21,6 +17,7 @@ export type RestrictionForm = {
   type: string;
   days?: string[];
   numDays?: number;
+  maxGap?: number;
   startTime?: Date;
   endTime?: Date;
   disabled?: boolean;
@@ -99,8 +96,10 @@ export const RestrictionSchema = z
       .positive()
       .max(4, "Cannot block all days of the week")
       .optional(),
-    // startTime: z.string().regex(timeRegex, "Invalid time format (HH:MM)").optional(),
-    // endTime: z.string().regex(timeRegex, "Invalid time format (HH:MM)").optional(),
+    // startTime: z.string().regex(timeRegex, "Invalid time format
+    // (HH:MM)").optional(), endTime: z.string().regex(timeRegex, "Invalid
+    // time format (HH:MM)").optional(),
+    maxGap: z.number().positive().max(23, "Gap too big").optional(),
     startTime: z.date().optional(),
     endTime: z.date().optional(),
     disabled: z.boolean().optional(),

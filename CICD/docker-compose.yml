@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    image: course-matrix/backend:latest
+    build: 
+      context: ./backend
+    ports:
+      - "8081:8081"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: ["npm", "run", "prod"]
+    networks:
+      - course-matrix-net
+
+  frontend:
+    image: course-matrix/frontend:latest
+    build: 
+      context: ./frontend
+      args:
+        VITE_SERVER_URL: "http://34.130.253.243:8081"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: ["npm", "run", "prod"]
+    depends_on:
+      - backend
+    networks:
+      - course-matrix-net
+
+networks:
+  course-matrix-net:
+    driver: bridge

@@ -7,3 +7,4 @@ export const DEPARTMENT_URL = `${SERVER_URL}/api/departments`;
 export const OFFERINGS_URL = `${SERVER_URL}/api/offerings`;
 export const TIMETABLES_URL = `${SERVER_URL}/api/timetables`;
 export const EVENTS_URL = `${SERVER_URL}/api/timetables/events`;
+export const SHARED_URL = `${SERVER_URL}/api/timetables/shared`;

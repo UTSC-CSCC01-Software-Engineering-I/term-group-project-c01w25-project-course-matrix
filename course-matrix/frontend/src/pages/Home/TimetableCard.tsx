@@ -7,18 +7,32 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pencil } from "lucide-react";
-import { useState } from "react";
+import { Star, Pencil } from "lucide-react";
+import { useState, useEffect } from "react";
 import TimetableCardKebabMenu from "./TimetableCardKebabMenu";
-import { useUpdateTimetableMutation } from "@/api/timetableApiSlice";
+import TimetableCardShareKebabMenu from "./TimetableCardShareKebabMenu";
+import { useGetUsernameFromUserIdQuery } from "@/api/authApiSlice";
+import { Timetable } from "./Home";
+import {
+  useUpdateTimetableMutation,
+  useGetTimetableQuery,
+} from "@/api/timetableApiSlice";
 import { Link } from "react-router-dom";
+import { TimetableModel } from "@/models/models";
 
 interface TimetableCardProps {
-  refetch: () => void;
-  timetableId: number;
+  refetchMyTimetables: () => void;
+  refetchSharedTimetables: () => void;
+  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
+  ownerId: string;
   title: string;
   lastEditedDate: Date;
-  owner: string;
+  isShared: boolean;
+  timetable: Timetable;
+  setSelectedSharedTimetable: React.Dispatch<
+    React.SetStateAction<Timetable | null>
+  >;
+  favorite: boolean;
 }
 
 /**
@@ -27,13 +41,29 @@ interface TimetableCardProps {
  * @returns {JSX.Element} The rendered component.
  */
 const TimetableCard = ({
-  refetch,
-  timetableId,
+  refetchMyTimetables,
+  refetchSharedTimetables,
+  setErrorMessage,
+  ownerId,
   title,
   lastEditedDate,
-  owner,
+  isShared,
+  timetable,
+  setSelectedSharedTimetable,
+  favorite,
 }: TimetableCardProps) => {
   const [updateTimetable] = useUpdateTimetableMutation();
+
+  const timetableId = timetable.id;
+
+  const user_metadata = JSON.parse(localStorage.getItem("userInfo") ?? "{}");
+  const loggedInUsername =
+    (user_metadata?.user?.user_metadata?.username as string) ??
+    (user_metadata?.user?.email as string);
+  const { data: usernameData } = useGetUsernameFromUserIdQuery(ownerId);
+  const ownerUsername = isShared
+    ? (usernameData ?? "John Doe")
+    : loggedInUsername;
 
   const lastEditedDateArray = lastEditedDate
     .toISOString()
@@ -47,6 +77,8 @@ const TimetableCard = ({
 
   const [timetableCardTitle, setTimetableCardTitle] = useState(title);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const { data } = useGetTimetableQuery(timetableId);
+  const [toggled, setToggled] = useState(favorite);
 
   const handleSave = async () => {
     try {
@@ -56,11 +88,80 @@ const TimetableCard = ({
       }).unwrap();
       setIsEditingTitle(false);
     } catch (error) {
-      console.error("Failed to update timetable title:", error);
+      const errorData = (error as { data?: { error?: string } }).data;
+      setErrorMessage(errorData?.error ?? "Unknown error occurred");
+      return;
     }
   };
 
-  return (
+  useEffect(() => {
+    if (data) {
+      const val = (data as TimetableModel[])[0]?.favorite;
+      if (val !== undefined) {
+        setToggled(val);
+      }
+    }
+  }, [data]);
+
+  const handleFavourite = async () => {
+    try {
+      await updateTimetable({
+        id: timetableId,
+        favorite: !toggled,
+      }).unwrap();
+      refetchMyTimetables();
+      refetchSharedTimetables();
+      console.log("Favourite success!");
+      setToggled(!toggled);
+      console.log(!toggled);
+    } catch (error) {
+      console.error("Failed to favourite timetable:", error);
+    }
+  };
+
+  return isShared ? (
+    <Card className="w-full">
+      <CardHeader>
+        <img
+          src="/img/default-timetable-card-image.png"
+          alt="Timetable default image"
+          className="cursor-pointer"
+          onClick={() => setSelectedSharedTimetable(timetable)}
+        />
+        <div className="flex justify-between items-center">
+          <CardTitle>
+            <Input
+              disabled={true}
+              value={timetableCardTitle}
+              className="-ml-3 font-bold border-none text-ellipsis"
+            />
+          </CardTitle>
+          <div className="flex justify-between items-center">
+            <Button
+              size="sm"
+              variant="outline"
+              className="p-2"
+              onClick={() => setSelectedSharedTimetable(timetable)}
+            >
+              View
+            </Button>
+            <TimetableCardShareKebabMenu
+              refetchMyTimetables={refetchMyTimetables}
+              refetchSharedTimetables={refetchSharedTimetables}
+              owner_id={ownerId}
+              calendar_id={timetableId}
+            />
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="-mt-3">
+        <CardDescription className="flex justify-between text-xs">
+          <div>Last edited {lastEditedDateTimestamp}</div>
+          <div>Owned by: {ownerUsername}</div>
+        </CardDescription>
+      </CardContent>
+    </Card>
+  ) : (
     <Card className="w-full">
       <CardHeader>
         <Link to={`/dashboard/timetable?edit=${timetableId}`}>
@@ -82,7 +183,18 @@ const TimetableCard = ({
               onChange={(e) => setTimetableCardTitle(e.target.value)}
             />
           </CardTitle>
-          <div className="flex justify-between">
+          <div className="p-2">
+            <Star
+              className={`cursor-pointer h-5 w-5 transition-colors ${
+                toggled
+                  ? "fill-yellow-500 text-yellow-500"
+                  : "fill-none text-gray-500"
+              } `}
+              onClick={() => handleFavourite()}
+            />
+          </div>
+
+          <div className="flex justify-around">
             {!isEditingTitle && (
               <>
                 <Button
@@ -94,7 +206,8 @@ const TimetableCard = ({
                   <Pencil />
                 </Button>
                 <TimetableCardKebabMenu
-                  refetch={refetch}
+                  refetchMyTimetables={refetchMyTimetables}
+                  refetchSharedTimetables={refetchSharedTimetables}
                   timetableId={timetableId}
                 />
               </>
@@ -114,7 +227,7 @@ const TimetableCard = ({
       <CardContent className="-mt-3">
         <CardDescription className="flex justify-between text-xs">
           <div>Last edited {lastEditedDateTimestamp}</div>
-          <div>Owned by: {owner}</div>
+          <div>Owned by: {ownerUsername}</div>
         </CardDescription>
       </CardContent>
     </Card>

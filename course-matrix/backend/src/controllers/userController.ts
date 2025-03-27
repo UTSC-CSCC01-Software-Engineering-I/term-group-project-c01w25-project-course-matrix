@@ -294,3 +294,35 @@ export const updateUsername = asyncHandler(
     }
   },
 );
+
+/**
+ * @route GET
+ * @description Gets a user's username from their user ID
+ *
+ * This endpoint:
+ * - Takes 1 field, the user's id
+ * - Calls supabase's getUsers() function
+ * - Responds with the user's username if the user is found
+ * - Responds with an error message if the user is not found
+ */
+export const usernameFromUserId = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { user_id } = req.query;
+    if (!user_id) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const { data: userData, error } = await supabase.auth.admin.getUserById(
+      user_id as string,
+    );
+
+    if (error) {
+      return res
+        .status(400)
+        .json({ error: "Unable to get username from email" });
+    } else {
+      const username = userData?.user?.user_metadata?.username;
+      return res.status(200).json(username);
+    }
+  },
+);

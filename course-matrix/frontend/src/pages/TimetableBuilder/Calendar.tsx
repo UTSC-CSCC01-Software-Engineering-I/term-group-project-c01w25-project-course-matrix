@@ -35,7 +35,7 @@ import {
   useDeleteRestrictionMutation,
 } from "@/api/restrictionsApiSlice";
 import { z } from "zod";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGetNumberOfCourseSectionsQuery } from "@/api/coursesApiSlice";
 import {
   useCreateEventMutation,
@@ -58,6 +58,8 @@ import {
   getSemesterStartAndEndDatesPlusOneWeek,
 } from "@/utils/semester-utils";
 import { courseEventStyles } from "@/constants/calendarConstants";
+import TimetableErrorDialog from "./TimetableErrorDialog";
+import { parseEvent } from "@/utils/calendar-utils";
 
 interface CalendarProps {
   setShowLoadingPage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -66,26 +68,7 @@ interface CalendarProps {
   selectedCourses: TimetableForm["courses"];
   newOfferingIds: number[];
   restrictions: TimetableForm["restrictions"];
-}
-
-function parseEvent(id: number, event: Event, calendarId: string) {
-  return {
-    id: id,
-    title: event.event_name,
-    start:
-      event.event_date +
-      " " +
-      event.event_start.split(":")[0] +
-      ":" +
-      event.event_start.split(":")[1],
-    end:
-      event.event_date +
-      " " +
-      event.event_end.split(":")[0] +
-      ":" +
-      event.event_end.split(":")[1],
-    calendarId: calendarId,
-  };
+  header?: string;
 }
 
 const Calendar = React.memo<CalendarProps>(
@@ -96,6 +79,7 @@ const Calendar = React.memo<CalendarProps>(
     newOfferingIds,
     restrictions,
     isChoosingSectionsManually,
+    header = "Your Timetable",
   }) => {
     const form = useForm<z.infer<typeof TimetableFormSchema>>();
 
@@ -109,6 +93,8 @@ const Calendar = React.memo<CalendarProps>(
     const [deleteEvent] = useDeleteEventMutation();
     const [createRestriction] = useCreateRestrictionMutation();
     const [deleteRestriction] = useDeleteRestrictionMutation();
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
     const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
@@ -146,6 +132,7 @@ const Calendar = React.memo<CalendarProps>(
         createViewMonthGrid(),
         createViewMonthAgenda(),
       ],
+      firstDayOfWeek: 0,
       selectedDate: semesterStartDatePlusOneWeek,
       minDate: semesterStartDate,
       maxDate: semesterEndDate,
@@ -224,7 +211,6 @@ const Calendar = React.memo<CalendarProps>(
     }, [timetablesData, editingTimetableId, isEditingTimetable]);
 
     const handleCreate = async () => {
-      setShowLoadingPage(true);
       const timetableTitle = timetableTitleRef.current?.value ?? "";
       // Create timetable
       const { data, error } = await createTimetable({
@@ -232,9 +218,11 @@ const Calendar = React.memo<CalendarProps>(
         semester: semester,
       });
       if (error) {
-        console.error(error);
+        const errorData = (error as { data?: { error?: string } }).data;
+        setErrorMessage(errorData?.error ?? "Unknown error occurred");
         return;
       }
+      setShowLoadingPage(true);
       // Create course events for the newly created timetable
       const newTimetableId = data[0].id;
       for (const offeringId of newOfferingIds) {
@@ -258,6 +246,7 @@ const Calendar = React.memo<CalendarProps>(
           end_time: restriction.endTime,
           disabled: restriction.disabled,
           num_days: restriction.numDays,
+          max_gap: restriction.maxGap,
         };
         const { error: restrictionError } =
           await createRestriction(restrictionObject);
@@ -322,6 +311,7 @@ const Calendar = React.memo<CalendarProps>(
           end_time: restriction.endTime,
           disabled: restriction.disabled,
           num_days: restriction.numDays,
+          max_gap: restriction.maxGap,
         };
         const { error: restrictionError } =
           await createRestriction(restrictionObject);
@@ -335,7 +325,11 @@ const Calendar = React.memo<CalendarProps>(
     return (
       <div>
         <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-8">
-          <div>Your Timetable </div>
+          <div>{header}</div>
+          <TimetableErrorDialog
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
+          />
           {!isEditingTimetable ? (
             <Dialog>
               {isChoosingSectionsManually &&

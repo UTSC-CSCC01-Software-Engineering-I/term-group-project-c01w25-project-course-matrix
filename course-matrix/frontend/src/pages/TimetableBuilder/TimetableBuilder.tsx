@@ -13,7 +13,7 @@ import {
   TimetableFormSchema,
   baseTimetableForm,
 } from "@/models/timetable-form";
-import { WandSparkles, X } from "lucide-react";
+import { Share, WandSparkles, X } from "lucide-react";
 import { createContext, useEffect, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,13 +46,15 @@ import {
   Timetable,
   Restriction,
 } from "@/utils/type-utils";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import OfferingInfo from "./OfferingInfo";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CourseModel, TimetableGenerateResponseModel } from "@/models/models";
 import LoadingPage from "@/pages/Loading/LoadingPage";
 import { GeneratedCalendars } from "./GeneratedCalendars";
 import { Spinner } from "@/components/ui/spinner";
+import { convertRestrictionTimes } from "@/utils/convert-restriction-times";
+import ShareDialog from "./ShareDialog";
 
 type FormContextType = UseFormReturn<z.infer<typeof TimetableFormSchema>>;
 export const FormContext = createContext<FormContextType | null>(null);
@@ -128,10 +130,11 @@ const TimetableBuilder = () => {
   const [isGeneratingTimetables, setIsGeneratingTimetables] = useState(false);
   const [generatedTimetables, setGeneratedTimetables] =
     useState<TimetableGenerateResponseModel>();
-
+  const [errorMsg, setErrorMsg] = useState("");
   const noSearchAndFilter = () => {
     return !searchQuery && !filters;
   };
+  const [openShareDialog, setOpenShareDialog] = useState(false);
 
   // limit search number if no search query or filters for performance purposes.
   // Otherwise, limit is 10k, which effectively gets all results.
@@ -254,6 +257,7 @@ const TimetableBuilder = () => {
               : undefined,
             type: restriction?.type,
             numDays: restriction?.num_days,
+            maxGap: restriction?.max_gap,
           }) as z.infer<typeof RestrictionSchema>,
       );
       form.setValue("restrictions", parsedRestrictions);
@@ -283,14 +287,23 @@ const TimetableBuilder = () => {
   const handleGenerate = async (
     values: z.infer<typeof TimetableFormSchema>,
   ) => {
-    console.log(">> Timetable options:", values);
     try {
-      const res = await generateTimetable(values);
+      const newValues = convertRestrictionTimes(values);
+      console.log(">> Timetable options:", newValues);
+      const res = await generateTimetable(newValues);
       const data: TimetableGenerateResponseModel = res.data;
+
+      // RTK Query does NOT throw errors, so check for `error`
+      if ("error" in res) {
+        console.error("Mutation failed:", res.error);
+        throw new Error("not found");
+      }
       setIsGeneratingTimetables(true);
       setGeneratedTimetables(data);
-    } catch (error) {
-      console.error("Error generating timetables: ", error);
+      setErrorMsg("");
+    } catch {
+      setIsGeneratingTimetables(false);
+      setErrorMsg("No valid timetables found");
     }
   };
 
@@ -349,9 +362,20 @@ const TimetableBuilder = () => {
                 <Button size="sm" variant="outline" onClick={handleReset}>
                   Reset
                 </Button>
-                <Button size="sm" variant="outline">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setOpenShareDialog(true)}
+                >
                   Share
                 </Button>
+                {isEditingTimetable && (
+                  <ShareDialog
+                    open={openShareDialog}
+                    setOpen={setOpenShareDialog}
+                    calendar_id={timetableId}
+                  />
+                )}
               </div>
             </div>
             <hr />
@@ -359,11 +383,13 @@ const TimetableBuilder = () => {
           <Form {...form}>
             <FormContext.Provider value={form}>
               <form
-                onSubmit={form.handleSubmit(handleGenerate)}
+                onSubmit={form.handleSubmit(handleGenerate, (errors) => {
+                  console.error("Form submission errors:", errors);
+                })}
                 className="space-y-8"
               >
                 <div className="flex gap-8 w-full">
-                  {/* <FormField
+                  <FormField
                     control={form.control}
                     name="semester"
                     render={({ field }) => (
@@ -372,11 +398,13 @@ const TimetableBuilder = () => {
                         <FormControl>
                           <Select
                             onValueChange={(value) => {
-                              form.reset({ offeringIds: [], courses: [] });
+                              form.setValue("offeringIds", []);
+                              form.setValue("courses", []);
                               form.setValue("semester", value);
                             }}
                             value={field.value}
                             defaultValue={field.value}
+                            disabled={isEditingTimetable}
                           >
                             <SelectTrigger className="w-[140px]">
                               <SelectValue placeholder="Select a semester" />
@@ -395,7 +423,7 @@ const TimetableBuilder = () => {
                         <FormMessage />
                       </FormItem>
                     )}
-                  /> */}
+                  />
 
                   <FormField
                     control={form.control}
@@ -426,7 +454,7 @@ const TimetableBuilder = () => {
                     <p className="text-sm">
                       Selected courses: {selectedCourses.length} (Max 8)
                     </p>
-                    {!isEditingTimetable && (
+                    {!isEditingTimetable && !isGeneratingTimetables && (
                       <div className="flex items-center gap-2">
                         <Checkbox
                           id="manual-selection"
@@ -547,10 +575,15 @@ const TimetableBuilder = () => {
                                 : ""}{" "}
                               {restric.days?.join(" ")}
                             </p>
-                          ) : (
+                          ) : restric.type.startsWith("Days") ? (
                             <p>
                               <strong>{restric.type}:</strong> At least{" "}
                               {restric.numDays} days off
+                            </p>
+                          ) : (
+                            <p>
+                              <strong>{restric.type}:</strong> {restric.maxGap}{" "}
+                              hours
                             </p>
                           )}
 
@@ -577,7 +610,7 @@ const TimetableBuilder = () => {
                   </div>
                 )}
               </form>
-
+              <div className="text-red-500 font-bold mt-2">{errorMsg}</div>
               {isCustomSettingsOpen && (
                 <CreateCustomSetting
                   submitHandler={handleAddRestriction}

@@ -25,6 +25,12 @@ export default {
           .status(400)
           .json({ error: "timetable title and semester are required" });
       }
+      // Timetables cannot be longer than 50 characters.
+      if (timetable_title.length > 50) {
+        return res
+          .status(400)
+          .json({ error: "Timetable Title cannot be over 50 characters long" });
+      }
 
       // Check if a timetable with the same title already exist for this user
       const { data: existingTimetable, error: existingTimetableError } =
@@ -169,6 +175,13 @@ export default {
         });
       }
 
+      // Timetables cannot be longer than 50 characters.
+      if (timetable_title && timetable_title.length > 50) {
+        return res
+          .status(400)
+          .json({ error: "Timetable Title cannot be over 50 characters long" });
+      }
+
       //Retrieve the authenticated user
       const user_id = (req as any).user.id;
 
@@ -188,6 +201,27 @@ export default {
       //Validate timetable validity:
       if (!timetableUserData || timetableUserData.length === 0) {
         return res.status(404).json({ error: "Calendar id not found" });
+      }
+
+      // Check if another timetable with the same title already exist for this user
+      const { data: existingTimetable, error: existingTimetableError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("id")
+          .eq("user_id", user_id)
+          .eq("timetable_title", timetable_title)
+          .neq("id", id)
+          .maybeSingle();
+
+      if (existingTimetableError) {
+        return res.status(400).json({ error: existingTimetableError.message });
+      }
+
+      if (existingTimetable) {
+        return res
+          .status(400)
+          .json({ error: "Another timetable with this title already exists" });
       }
 
       let updateData: any = {};

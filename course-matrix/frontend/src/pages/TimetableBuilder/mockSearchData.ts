@@ -4,8 +4,8 @@ export const mockSearchData = {
   courses: [
     {
       id: 1,
-      createdAt: "2025-02-07 23:14:00.54424+00",
-      updatedAt: "2025-02-07 23:14:00.54424+00",
+      created_at: "2025-02-07 23:14:00.54424+00",
+      updated_at: "2025-02-07 23:14:00.54424+00",
       code: "ACMA01H3",
       breadthRequirement: "ART_LIT_LANG",
       description:
@@ -15,8 +15,8 @@ export const mockSearchData = {
     },
     {
       id: 2,
-      createdAt: "2025-02-07 23:14:00.54424+00",
-      updatedAt: "2025-02-07 23:14:00.54424+00",
+      created_at: "2025-02-07 23:14:00.54424+00",
+      updated_at: "2025-02-07 23:14:00.54424+00",
       code: "ACMB10H3",
       breadthRequirement: "SOCIAL_SCI",
       description:
@@ -28,8 +28,8 @@ export const mockSearchData = {
     },
     {
       id: 3,
-      createdAt: "2025-02-07 23:14:00.54424+00",
-      updatedAt: "2025-02-07 23:14:00.54424+00",
+      created_at: "2025-02-07 23:14:00.54424+00",
+      updated_at: "2025-02-07 23:14:00.54424+00",
       code: "ACMC01H3",
       breadthRequirement: "ART_LIT_LANG",
       courseExperience: "University-Based Experience",
@@ -49,8 +49,8 @@ export const mockSearchData = {
 export const mockOffering: OfferingModel[] = [
   {
     id: 1,
-    createdAt: "2025-02-07 23:14:00.54424+00",
-    updatedAt: "2025-02-07 23:14:00.54424+00",
+    created_at: "2025-02-07 23:14:00.54424+00",
+    updated_at: "2025-02-07 23:14:00.54424+00",
     course_id: 1,
     code: "ACMA01H3",
     meeting_section: "LEC01",
@@ -68,8 +68,8 @@ export const mockOffering: OfferingModel[] = [
   },
   {
     id: 2,
-    createdAt: "2025-02-07 23:14:00.54424+00",
-    updatedAt: "2025-02-07 23:14:00.54424+00",
+    created_at: "2025-02-07 23:14:00.54424+00",
+    updated_at: "2025-02-07 23:14:00.54424+00",
     course_id: 1,
     code: "ACMA01H3",
     meeting_section: "LEC01",
@@ -87,8 +87,8 @@ export const mockOffering: OfferingModel[] = [
   },
   {
     id: 3,
-    createdAt: "2025-02-07 23:14:00.54424+00",
-    updatedAt: "2025-02-07 23:14:00.54424+00",
+    created_at: "2025-02-07 23:14:00.54424+00",
+    updated_at: "2025-02-07 23:14:00.54424+00",
     course_id: 1,
     code: "ACMA01H3",
     meeting_section: "LEC01",
@@ -106,8 +106,8 @@ export const mockOffering: OfferingModel[] = [
   },
   {
     id: 1,
-    createdAt: "2025-02-07 23:14:00.54424+00",
-    updatedAt: "2025-02-07 23:14:00.54424+00",
+    created_at: "2025-02-07 23:14:00.54424+00",
+    updated_at: "2025-02-07 23:14:00.54424+00",
     course_id: 1,
     code: "ACMA01H3",
     meeting_section: "LEC01",
@@ -125,8 +125,8 @@ export const mockOffering: OfferingModel[] = [
   },
   {
     id: 2,
-    createdAt: "2025-02-07 23:14:00.54424+00",
-    updatedAt: "2025-02-07 23:14:00.54424+00",
+    created_at: "2025-02-07 23:14:00.54424+00",
+    updated_at: "2025-02-07 23:14:00.54424+00",
     course_id: 1,
     code: "ACMA01H3",
     meeting_section: "LEC01",
@@ -144,8 +144,8 @@ export const mockOffering: OfferingModel[] = [
   },
   {
     id: 3,
-    createdAt: "2025-02-07 23:14:00.54424+00",
-    updatedAt: "2025-02-07 23:14:00.54424+00",
+    created_at: "2025-02-07 23:14:00.54424+00",
+    updated_at: "2025-02-07 23:14:00.54424+00",
     course_id: 1,
     code: "ACMA01H3",
     meeting_section: "LEC01",
@@ -163,8 +163,8 @@ export const mockOffering: OfferingModel[] = [
   },
   {
     id: 1,
-    createdAt: "2025-02-07 23:14:00.54424+00",
-    updatedAt: "2025-02-07 23:14:00.54424+00",
+    created_at: "2025-02-07 23:14:00.54424+00",
+    updated_at: "2025-02-07 23:14:00.54424+00",
     course_id: 1,
     code: "ACMA01H3",
     meeting_section: "LEC01",
@@ -182,8 +182,8 @@ export const mockOffering: OfferingModel[] = [
   },
   {
     id: 2,
-    createdAt: "2025-02-07 23:14:00.54424+00",
-    updatedAt: "2025-02-07 23:14:00.54424+00",
+    created_at: "2025-02-07 23:14:00.54424+00",
+    updated_at: "2025-02-07 23:14:00.54424+00",
     course_id: 1,
     code: "ACMA01H3",
     meeting_section: "LEC01",
@@ -201,8 +201,8 @@ export const mockOffering: OfferingModel[] = [
   },
   {
     id: 3,
-    createdAt: "2025-02-07 23:14:00.54424+00",
-    updatedAt: "2025-02-07 23:14:00.54424+00",
+    created_at: "2025-02-07 23:14:00.54424+00",
+    updated_at: "2025-02-07 23:14:00.54424+00",
     course_id: 1,
     code: "ACMA01H3",
     meeting_section: "LEC01",

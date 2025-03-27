@@ -1,12 +1,12 @@
 import { apiSlice } from "./baseApiSlice";
-import { TIMETABLES_URL } from "./config";
+import { SHARED_URL } from "./config";
 
-// Endpoints for /api/timetables
-export const timetableApiSlice = apiSlice.injectEndpoints({
+// Endpoints for /api/timetables/shared
+export const sharedApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    createTimetable: builder.mutation({
+    createShare: builder.mutation({
       query: (data) => ({
-        url: `${TIMETABLES_URL}`,
+        url: `${SHARED_URL}`,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -15,62 +15,68 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
         body: data,
         credentials: "include",
       }),
-      invalidatesTags: ["Timetable"],
+      invalidatesTags: ["Shared"],
     }),
-    getTimetables: builder.query<unknown, void>({
+    getTimetablesSharedWithMe: builder.query<unknown, void>({
       query: () => ({
-        url: `${TIMETABLES_URL}`,
+        url: `${SHARED_URL}/me`,
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        providesTags: ["Timetable"],
+        providesTags: ["Shared"],
         credentials: "include",
       }),
       keepUnusedDataFor: 0,
     }),
-    getTimetable: builder.query<unknown, string | number>({
-      query: (id) => ({
-        url: `${TIMETABLES_URL}/${id}`,
+    getTimetablesSharedWithOthers: builder.query<unknown, string | number>({
+      query: () => ({
+        url: `${SHARED_URL}/owner`,
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
+        providesTags: ["Shared"],
         credentials: "include",
       }),
       keepUnusedDataFor: 0,
     }),
-    updateTimetable: builder.mutation({
+    getSharedRestrictions: builder.query<
+      unknown,
+      { user_id: string; calendar_id: number }
+    >({
       query: (data) => ({
-        url: `${TIMETABLES_URL}/${data.id}`,
-        method: "PUT",
+        url: `${SHARED_URL}/restrictions`,
+        method: "GET",
+        params: data,
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
-        body: data,
+        providesTags: ["Shared"],
         credentials: "include",
       }),
-      invalidatesTags: ["Timetable"],
+      keepUnusedDataFor: 0,
     }),
-    deleteTimetable: builder.mutation({
-      query: (id) => ({
-        url: `${TIMETABLES_URL}/${id}`,
+    deleteSharedTimetablesWithMe: builder.mutation({
+      query: (data) => ({
+        url: `${SHARED_URL}/me`,
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
         },
+        body: data,
         credentials: "include",
       }),
       invalidatesTags: ["Timetable"],
     }),
-    generateTimetable: builder.mutation({
+    deleteSharedTimetablesWithOthers: builder.mutation({
       query: (data) => ({
-        url: `${TIMETABLES_URL}/generate`,
-        method: "POST",
+        url: `${SHARED_URL}/owner/${data.id}`,
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json, text/plain, */*",
@@ -78,15 +84,16 @@ export const timetableApiSlice = apiSlice.injectEndpoints({
         body: data,
         credentials: "include",
       }),
+      invalidatesTags: ["Timetable"],
     }),
   }),
 });
 
 export const {
-  useGetTimetablesQuery,
-  useGetTimetableQuery,
-  useUpdateTimetableMutation,
-  useCreateTimetableMutation,
-  useDeleteTimetableMutation,
-  useGenerateTimetableMutation,
-} = timetableApiSlice;
+  useCreateShareMutation,
+  useGetTimetablesSharedWithMeQuery,
+  useGetTimetablesSharedWithOthersQuery,
+  useGetSharedRestrictionsQuery,
+  useDeleteSharedTimetablesWithMeMutation,
+  useDeleteSharedTimetablesWithOthersMutation,
+} = sharedApiSlice;

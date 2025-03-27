@@ -1,10 +1,10 @@
 import {
+  CategorizedOfferingList,
+  GroupedOfferingList,
   Offering,
   OfferingList,
-  GroupedOfferingList,
   Restriction,
   RestrictionType,
-  CategorizedOfferingList,
 } from "../types/generatorTypes";
 
 // Utility function to create an Offering object with optional overrides
@@ -28,13 +28,29 @@ export function createOffering(overrides: Partial<Offering> = {}): Offering {
   };
 }
 
+export function getFreq(groupedOfferings: GroupedOfferingList) {
+  for (const [groupKey, offerings] of Object.entries(groupedOfferings.groups)) {
+    if (groupKey && groupKey.startsWith("PRA")) {
+      groupedOfferings.practicals++;
+    } else if (groupKey && groupKey.startsWith("TUT")) {
+      groupedOfferings.tutorials++;
+    } else {
+      groupedOfferings.lectures++;
+    }
+  }
+  return groupedOfferings;
+}
+
 // Function to group offerings with the same meeting section together
-export async function groupOfferings(courseOfferingsList: OfferingList[]) {
+export function groupOfferings(courseOfferingsList: OfferingList[]) {
   const groupedOfferingsList: GroupedOfferingList[] = [];
   for (const offering of courseOfferingsList) {
-    const groupedOfferings: GroupedOfferingList = {
+    let groupedOfferings: GroupedOfferingList = {
       course_id: offering.course_id,
       groups: {},
+      lectures: 0,
+      tutorials: 0,
+      practicals: 0,
     };
     offering.offerings.forEach((offering) => {
       if (!groupedOfferings.groups[offering.meeting_section]) {
@@ -42,14 +58,14 @@ export async function groupOfferings(courseOfferingsList: OfferingList[]) {
       }
       groupedOfferings.groups[offering.meeting_section].push(offering);
     });
+    groupedOfferings = getFreq(groupedOfferings);
     groupedOfferingsList.push(groupedOfferings);
   }
-
   return groupedOfferingsList;
 }
 
 // Function to get the maximum number of days allowed based on restrictions
-export async function getMaxDays(restrictions: Restriction[]) {
+export function getMaxDays(restrictions: Restriction[]) {
   for (const restriction of restrictions) {
     if (restriction.disabled) continue;
     if (restriction.type == RestrictionType.RestrictDaysOff) {
@@ -57,6 +73,17 @@ export async function getMaxDays(restrictions: Restriction[]) {
     }
   }
   return 5; // Default to 5 days if no restrictions
+}
+
+// Function to get the hour for max gap
+export function getMaxHour(restrictions: Restriction[]) {
+  for (const restriction of restrictions) {
+    if (restriction.disabled) continue;
+    if (restriction.type == RestrictionType.RestrictMaxGap) {
+      return restriction.maxGap;
+    }
+  }
+  return 24; // Default to 5 days if no restrictions
 }
 
 // Function to check if an offering satisfies the restrictions
@@ -74,9 +101,6 @@ export function isValidOffering(
         break;
 
       case RestrictionType.RestrictAfter:
-        // console.log("====");
-        // console.log(offering.end);
-        // console.log(restriction.endTime);
         if (offering.end > restriction.startTime) return false;
         break;
 
@@ -97,12 +121,11 @@ export function isValidOffering(
     }
   }
 
-  // console.log(offering);
   return true;
 }
 
 // Function to get valid offerings by filtering them based on the restrictions
-export async function getValidOfferings(
+export function getValidOfferings(
   groups: Record<string, Offering[]>,
   restrictions: Restriction[],
 ) {
@@ -126,9 +149,7 @@ export async function getValidOfferings(
 }
 
 // Function to categorize offerings into lectures, tutorials, and practicals
-export async function categorizeValidOfferings(
-  offerings: GroupedOfferingList[],
-) {
+export function categorizeValidOfferings(offerings: GroupedOfferingList[]) {
   const lst: CategorizedOfferingList[] = [];
 
   for (const offering of offerings) {
@@ -169,12 +190,23 @@ export async function categorizeValidOfferings(
   return lst;
 }
 
+function maxString(a: string, b: string): string {
+  return a.localeCompare(b) >= 0 ? a : b;
+}
+
+function minString(a: string, b: string): string {
+  return a.localeCompare(b) <= 0 ? a : b;
+}
+
 // Function to check if an offering can be inserted into the current list of
 // offerings without conflicts
-export async function canInsert(toInsert: Offering, curList: Offering[]) {
+export function canInsert(toInsert: Offering, curList: Offering[]) {
   for (const offering of curList) {
     if (offering.day == toInsert.day) {
-      if (offering.start < toInsert.end && toInsert.start < offering.end) {
+      if (
+        maxString(offering.start, toInsert.start) <
+        minString(offering.end, toInsert.end)
+      ) {
         return false; // Check if the time overlaps
       }
     }
@@ -185,11 +217,7 @@ export async function canInsert(toInsert: Offering, curList: Offering[]) {
 
 // Function to check if an ever offerings in toInstList can be inserted into
 // the current list of offerings without conflicts
-export async function canInsertList(
-  toInsertList: Offering[],
-  curList: Offering[],
-) {
-  // console.log(toInsertList);
+export function canInsertList(toInsertList: Offering[], curList: Offering[]) {
   return toInsertList.every((x) => canInsert(x, curList));
 }
 
@@ -214,9 +242,44 @@ export function trim(schedules: Offering[][]) {
   while (uniqueNumbers.size < 10) {
     uniqueNumbers.add(Math.floor(Math.random() * num));
   }
-  // console.log(uniqueNumbers);
   const trim_schedule: Offering[][] = [];
   for (const value of uniqueNumbers) trim_schedule.push(schedules[value]);
 
   return trim_schedule;
+}
+
+export function getMinHourDay(schedule: Offering[], maxhours: number): boolean {
+  if (schedule.length <= 1) return true;
+  schedule.sort((a, b) => a.start.localeCompare(b.start));
+  for (let i = 1; i < schedule.length; i++) {
+    const cur = parseInt(schedule[i].start.split(":")[0]);
+    const prev = parseInt(schedule[i - 1].end.split(":")[0]);
+    if (cur - prev > maxhours) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function getMinHour(schedule: Offering[], maxhours: number): boolean {
+  if (maxhours == 24) return true;
+  const scheduleByDay: Record<string, Offering[]> = {};
+  schedule.forEach((offering) => {
+    if (!scheduleByDay[offering.day]) {
+      scheduleByDay[offering.day] = [];
+    }
+    scheduleByDay[offering.day].push(offering);
+  });
+  return Object.values(scheduleByDay).every((x) => getMinHourDay(x, maxhours));
+}
+
+export function shuffle(
+  array: CategorizedOfferingList[],
+): CategorizedOfferingList[] {
+  const shuffled = [...array]; // Create a copy to avoid mutating the original array
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
+  }
+  return shuffled;
 }

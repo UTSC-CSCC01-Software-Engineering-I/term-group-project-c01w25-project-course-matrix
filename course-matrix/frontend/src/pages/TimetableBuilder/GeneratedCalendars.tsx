@@ -45,6 +45,8 @@ import { useCreateTimetableMutation } from "@/api/timetableApiSlice";
 import { useCreateEventMutation } from "@/api/eventsApiSlice";
 import { useCreateRestrictionMutation } from "@/api/restrictionsApiSlice";
 import { TimetableForm } from "@/models/timetable-form";
+import { set } from "zod";
+import TimetableErrorDialog from "./TimetableErrorDialog";
 
 interface GeneratedCalendarsProps {
   setShowLoadingPage: (_: boolean) => void;
@@ -120,8 +122,9 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
         parseEvent(index + 1, event, "courseEvent"),
       ) ?? [];
 
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const handleCreate = async () => {
-      setShowLoadingPage(true);
       const timetableTitle = timetableTitleRef.current?.value ?? "";
       // Create timetable
       const { data, error } = await createTimetable({
@@ -129,9 +132,11 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
         semester: semester,
       });
       if (error) {
-        console.error(error);
+        const errorData = (error as { data?: { error?: string } }).data;
+        setErrorMessage(errorData?.error ?? "Unknown error occurred");
         return;
       }
+      setShowLoadingPage(true);
       // Create course events for the newly created timetable
       const newTimetableId = data[0].id;
       for (const offering of currentTimetableOfferings) {
@@ -152,6 +157,7 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
           calendar_id: newTimetableId,
           type: restriction.type,
           days: restriction.days,
+          max_gap: restriction.maxGap,
           start_time: restriction.startTime,
           end_time: restriction.endTime,
           disabled: restriction.disabled,
@@ -174,6 +180,7 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
         createViewMonthGrid(),
         createViewMonthAgenda(),
       ],
+      firstDayOfWeek: 0,
       selectedDate: semesterStartDatePlusOneWeek,
       minDate: semesterStartDate,
       maxDate: semesterEndDate,
@@ -210,6 +217,10 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
               >
                 Cancel Generating
               </Button>
+              <TimetableErrorDialog
+                errorMessage={errorMessage}
+                setErrorMessage={setErrorMessage}
+              />
               <Dialog>
                 <DialogTrigger asChild>
                   <Button size="sm" onClick={() => {}}>

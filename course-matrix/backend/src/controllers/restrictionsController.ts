@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import asyncHandler from "../middleware/asyncHandler";
-import { supabase } from "../db/setupDb";
 import { start } from "repl";
+
+import { supabase } from "../db/setupDb";
+import asyncHandler from "../middleware/asyncHandler";
 
 export default {
   /**
@@ -23,18 +24,19 @@ export default {
         disabled,
         num_days,
         calendar_id,
+        max_gap,
       } = req.body;
 
       const user_id = (req as any).user.id;
 
-      //Check for calendar_id
+      // Check for calendar_id
       if (!calendar_id) {
         return res.status(400).json({ error: "calendar id is required" });
       }
 
       // Function to construct date in local time
       if (
-        !["Restrict Day", "Days Off"].includes(type) &&
+        !["Restrict Day", "Days Off", "Max Gap"].includes(type) &&
         !start_time &&
         !end_time
       ) {
@@ -43,7 +45,7 @@ export default {
           .json({ error: "Start time or end time must be provided" });
       }
 
-      //Retrieve users allowed to access the timetable
+      // Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
         .schema("timetable")
         .from("timetables")
@@ -55,14 +57,14 @@ export default {
       if (timetableError)
         return res.status(400).json({ error: timetableError.message });
 
-      //Validate timetable validity:
+      // Validate timetable validity:
       if (!timetableData || timetableData.length === 0) {
         return res.status(404).json({ error: "Calendar id not found" });
       }
 
       const timetable_user_id = timetableData.user_id;
 
-      //Validate user access
+      // Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)
@@ -95,6 +97,7 @@ export default {
             disabled,
             num_days,
             calendar_id,
+            max_gap,
           },
         ])
         .select();
@@ -119,12 +122,12 @@ export default {
       const { calendar_id } = req.params;
       const user_id = (req as any).user.id;
 
-      //Check for calendar_id
+      // Check for calendar_id
       if (!calendar_id) {
         return res.status(400).json({ error: "calendar id is required" });
       }
 
-      //Retrieve users allowed to access the timetable
+      // Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
         .schema("timetable")
         .from("timetables")
@@ -136,14 +139,14 @@ export default {
       if (timetableError)
         return res.status(400).json({ error: timetableError.message });
 
-      //Validate timetable validity:
+      // Validate timetable validity:
       if (!timetableData || timetableData.length === 0) {
         return res.status(404).json({ error: "Calendar id not found" });
       }
 
       const timetable_user_id = timetableData.user_id;
 
-      //Validate user access
+      // Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)
@@ -179,12 +182,12 @@ export default {
       const updateData = req.body;
       const user_id = (req as any).user.id;
 
-      //Check for calendar_id
+      // Check for calendar_id
       if (!calendar_id) {
         return res.status(400).json({ error: "calendar id is required" });
       }
 
-      //Check restriction id
+      // Check restriction id
       const { data: restrictionCurrData, error: restrictionCurrError } =
         await supabase
           .schema("timetable")
@@ -202,7 +205,7 @@ export default {
         return res.status(404).json({ error: "Restriction id does not exist" });
       }
 
-      //Ensure start_time and end_time only contain time value
+      // Ensure start_time and end_time only contain time value
       if (updateData.start_time) {
         const restriction_start_time = new Date(updateData.start_time);
         updateData.start_time = restriction_start_time
@@ -215,7 +218,7 @@ export default {
         updateData.end_time = restriction_end_time.toISOString().split("T")[1];
       }
 
-      //Retrieve users allowed to access the timetable
+      // Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
         .schema("timetable")
         .from("timetables")
@@ -227,21 +230,21 @@ export default {
       if (timetableError)
         return res.status(400).json({ error: timetableError.message });
 
-      //Validate timetable validity:
+      // Validate timetable validity:
       if (!timetableData || timetableData.length === 0) {
         return res.status(404).json({ error: "Calendar id not found" });
       }
 
       const timetable_user_id = timetableData.user_id;
 
-      //Validate user access
+      // Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)
           .json({ error: "Unauthorized access to timetable restriction" });
       }
 
-      //Validate mapping restriction id to calendar id
+      // Validate mapping restriction id to calendar id
       if (restrictionCurrData.calendar_id !== timetableData.id) {
         return res.status(400).json({
           error: "Restriction id does not belong to the provided calendar id",
@@ -287,12 +290,12 @@ export default {
       const { calendar_id } = req.query;
       const user_id = (req as any).user.id;
 
-      //Check for calendar_id
+      // Check for calendar_id
       if (!calendar_id) {
         return res.status(400).json({ error: "calendar id is required" });
       }
 
-      //Check restriction id
+      // Check restriction id
       const { data: restrictionCurrData, error: restrictionCurrError } =
         await supabase
           .schema("timetable")
@@ -311,7 +314,7 @@ export default {
         return res.status(404).json({ error: "Restriction id does not exist" });
       }
 
-      //Retrieve users allowed to access the timetable
+      // Retrieve users allowed to access the timetable
       const { data: timetableData, error: timetableError } = await supabase
         .schema("timetable")
         .from("timetables")
@@ -324,12 +327,12 @@ export default {
         return res.status(400).json({ error: timetableError.message });
       }
 
-      //Validate timetable validity:
+      // Validate timetable validity:
       if (!timetableData || timetableData.length === 0) {
         return res.status(404).json({ error: "Calendar id not found" });
       }
 
-      //Validate mapping restriction id to calendar id
+      // Validate mapping restriction id to calendar id
       if (restrictionCurrData.calendar_id !== timetableData.id) {
         return res.status(400).json({
           error: "Restriction id does not belong to the provided calendar id",
@@ -338,7 +341,7 @@ export default {
 
       const timetable_user_id = timetableData.user_id;
 
-      //Validate user access
+      // Validate user access
       if (user_id !== timetable_user_id) {
         return res
           .status(401)

@@ -1,3 +1,4 @@
+import { get } from "http";
 import { apiSlice } from "./baseApiSlice";
 import { AUTH_URL } from "./config";
 
@@ -70,6 +71,18 @@ export const authApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+    getUsernameFromUserId: builder.query<any, string | number>({
+      query: (user_id) => ({
+        url: `${AUTH_URL}/username-from-user-id`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+        },
+        params: { user_id },
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -80,4 +93,5 @@ export const {
   useGetSessionQuery,
   useAccountDeleteMutation,
   useUpdateUsernameMutation,
+  useGetUsernameFromUserIdQuery,
 } = authApiSlice;

@@ -10,7 +10,10 @@ interface TimetableCompareItemProps {
   timetableNumber: number;
 }
 
-const TimetableCompareItem = ({ timetable, timetableNumber }: TimetableCompareItemProps) => {
+const TimetableCompareItem = ({
+  timetable,
+  timetableNumber,
+}: TimetableCompareItemProps) => {
   const { data: usernameData } = useGetUsernameFromUserIdQuery(
     timetable.user_id,
   );
@@ -25,7 +28,9 @@ const TimetableCompareItem = ({ timetable, timetableNumber }: TimetableCompareIt
   }, [loadedUsername, usernameData]);
 
   return (
-    <SelectItem value={`timetable${timetableNumber}/${timetable.id}/${timetable.user_id}`}>
+    <SelectItem
+      value={`timetable${timetableNumber}/${timetable.id}/${timetable.user_id}`}
+    >
       <div className="flex flex-row justify-between gap-2">
         <span className="flex items-center gap-2">
           <SemesterIcon semester={timetable.semester} size={18} />

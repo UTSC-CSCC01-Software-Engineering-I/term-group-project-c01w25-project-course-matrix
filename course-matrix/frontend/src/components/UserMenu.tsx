@@ -163,17 +163,6 @@ export function UserMenu() {
                   }
                 }}
               />
-              <Label htmlFor="email">New Email</Label>
-              {/* Disable this email input box for now until we have the backend for accounts set up */}
-              <Input
-                id="email"
-                type="email"
-                placeholder="john.doe@gmail.com"
-                disabled
-              />
-              <Label htmlFor="email">New Password</Label>
-              {/* Disable this password input box for now until we have the backend for accounts set up */}
-              <Input id="password" disabled={true} />
               <DialogFooter>
                 <DialogClose asChild>
                   <Button variant="secondary">Cancel</Button>

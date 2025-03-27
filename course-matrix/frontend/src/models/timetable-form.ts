@@ -1,5 +1,4 @@
 import { z, ZodType } from "zod";
-
 import { OfferingModel } from "./models";
 
 const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;

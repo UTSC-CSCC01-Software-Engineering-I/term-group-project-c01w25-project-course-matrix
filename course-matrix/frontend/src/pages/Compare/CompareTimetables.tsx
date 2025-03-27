@@ -172,7 +172,13 @@ export const CompareTimetables = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {allTimetables && allTimetables.map((timetable) => <TimetableCompareItem key={`timetable1/${timetable.id}/${timetable.user_id}`} timetable={timetable} />)}
+                          {allTimetables &&
+                            allTimetables.map((timetable) => (
+                              <TimetableCompareItem
+                                key={`timetable1/${timetable.id}/${timetable.user_id}`}
+                                timetable={timetable}
+                              />
+                            ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -202,7 +208,13 @@ export const CompareTimetables = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {allTimetables && allTimetables.map((timetable) => <TimetableCompareItem key={`timetable2/${timetable.id}/${timetable.user_id}`} timetable={timetable} />)}
+                          {allTimetables &&
+                            allTimetables.map((timetable) => (
+                              <TimetableCompareItem
+                                key={`timetable2/${timetable.id}/${timetable.user_id}`}
+                                timetable={timetable}
+                              />
+                            ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />

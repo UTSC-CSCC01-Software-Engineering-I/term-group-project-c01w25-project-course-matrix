@@ -115,7 +115,12 @@ export const TimetableCompareButton = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {timetables.map((timetable) => <TimetableCompareItem key={`timetable1/${timetable.id}/${timetable.user_id}`} timetable={timetable} />)}
+                      {timetables.map((timetable) => (
+                        <TimetableCompareItem
+                          key={`timetable1/${timetable.id}/${timetable.user_id}`}
+                          timetable={timetable}
+                        />
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -136,7 +141,12 @@ export const TimetableCompareButton = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {timetables.map((timetable) => <TimetableCompareItem key={`timetable2/${timetable.id}/${timetable.user_id}`} timetable={timetable} /> )}
+                      {timetables.map((timetable) => (
+                        <TimetableCompareItem
+                          key={`timetable2/${timetable.id}/${timetable.user_id}`}
+                          timetable={timetable}
+                        />
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />

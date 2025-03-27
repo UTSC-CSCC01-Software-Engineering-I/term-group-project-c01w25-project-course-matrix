@@ -37,7 +37,11 @@ export const CompareTimetables = () => {
   const preselectedTimetableId2 = queryParams.get("id2");
   const preselectedUserId1 = queryParams.get("userId1");
   const preselectedUserId2 = queryParams.get("userId2");
-  const needsToLoadTimetable = preselectedTimetableId1 !== null && preselectedTimetableId2 !== null && preselectedUserId1 !== null && preselectedUserId2 !== null;
+  const needsToLoadTimetable =
+    preselectedTimetableId1 !== null &&
+    preselectedTimetableId2 !== null &&
+    preselectedUserId1 !== null &&
+    preselectedUserId2 !== null;
 
   const compareForm = useForm<z.infer<typeof CompareFormSchema>>({
     resolver: zodResolver(CompareFormSchema),
@@ -70,7 +74,8 @@ export const CompareTimetables = () => {
     }))
     .sort(sortTimetablesComparator);
 
-  const [loadedPreselectedTimetables, setLoadedPreselectedTimetables] = useState(!needsToLoadTimetable);
+  const [loadedPreselectedTimetables, setLoadedPreselectedTimetables] =
+    useState(!needsToLoadTimetable);
 
   useEffect(() => {
     if (
@@ -98,7 +103,16 @@ export const CompareTimetables = () => {
       );
       setLoadedPreselectedTimetables(true);
     }
-  }, [preselectedTimetableId1, preselectedUserId1, preselectedTimetableId2, preselectedUserId2, allTimetables, loadedPreselectedTimetables, myTimetablesData, sharedWithMeTimetablesData]);
+  }, [
+    preselectedTimetableId1,
+    preselectedUserId1,
+    preselectedTimetableId2,
+    preselectedUserId2,
+    allTimetables,
+    loadedPreselectedTimetables,
+    myTimetablesData,
+    sharedWithMeTimetablesData,
+  ]);
 
   const onSubmit = useCallback(
     (values: z.infer<typeof CompareFormSchema>) => {

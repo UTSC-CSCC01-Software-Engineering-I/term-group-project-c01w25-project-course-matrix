@@ -176,7 +176,7 @@ export default {
       }
 
       // Timetables cannot be longer than 50 characters.
-      if (timetable_title.length > 50) {
+      if (timetable_title && timetable_title.length > 50) {
         return res
           .status(400)
           .json({ error: "Timetable Title cannot be over 50 characters long" });

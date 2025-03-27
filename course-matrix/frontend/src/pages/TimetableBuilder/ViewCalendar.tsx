@@ -12,16 +12,14 @@ import { createEventModalPlugin } from "@schedule-x/event-modal";
 import "@schedule-x/theme-default/dist/index.css";
 import React from "react";
 import { useGetSharedEventsQuery } from "@/api/eventsApiSlice";
-import { Event, TimetableEvents, Restriction } from "@/utils/type-utils";
+import { Event, TimetableEvents } from "@/utils/type-utils";
 import {
   getSemesterStartAndEndDates,
   getSemesterStartAndEndDatesPlusOneWeek,
 } from "@/utils/semester-utils";
 import { courseEventStyles } from "@/constants/calendarConstants";
 import { parseEvent } from "@/utils/calendar-utils";
-import { useGetSharedRestrictionsQuery } from "@/api/sharedApiSlice";
 import { useGetUsernameFromUserIdQuery } from "@/api/authApiSlice";
-import { formatTime } from "@/utils/format-date-time";
 import { Spinner } from "@/components/ui/spinner";
 import { SemesterIcon } from "@/components/semester-icon";
 
@@ -58,17 +56,7 @@ const ViewCalendar = React.memo<ViewCalendarProps>(
       };
     const sharedEvents = sharedEventsData as TimetableEvents;
 
-    const { data: restrictionsData, isLoading: isRestrictionsLoading } =
-      useGetSharedRestrictionsQuery(
-        { user_id, calendar_id },
-        { skip: !user_id || !calendar_id },
-      ) as {
-        data: Restriction[];
-        isLoading: boolean;
-      };
-    const restrictions = restrictionsData ?? [];
-
-    const isLoading = isSharedEventsLoading || isRestrictionsLoading;
+    const isLoading = isSharedEventsLoading;
 
     const courseEvents: Event[] = sharedEvents?.courseEvents ?? [];
     const userEvents: Event[] = sharedEvents?.userEvents ?? [];
@@ -150,7 +138,7 @@ const ViewCalendar = React.memo<ViewCalendarProps>(
               <span className="text-green-500">{timetable_title}</span> for{" "}
               <span className="text-green-500">{semester}</span>
             </h1>
-            <div className="text-sm justify-between tracking-tight mb-2">
+            <div className="text-sm justify-between tracking-tight mb-4">
               <b>Courses:</b>{" "}
               {courses.length === 0 && (
                 <span className="text-sm text-red-500">
@@ -165,48 +153,6 @@ const ViewCalendar = React.memo<ViewCalendarProps>(
                   </span>
                 </span>
               ))}
-            </div>
-            <b className="text-sm">Restrictions: </b>
-            {restrictions.length === 0 && (
-              <span className="text-sm text-red-500">
-                No restrictions applied
-              </span>
-            )}
-            <div className="grid grid-rows-3 text-sm justify-between mb-4">
-              {restrictions.map((restriction) => {
-                const restrictedDays = JSON.parse(restriction.days)
-                  .map((day: string) => {
-                    if (day === "MO") return "Monday";
-                    if (day === "TU") return "Tuesday";
-                    if (day === "WE") return "Wednesday";
-                    if (day === "TH") return "Thursday";
-                    if (day === "FR") return "Friday";
-                    if (day === "SA") return "Saturday";
-                    if (day === "SU") return "Sunday";
-                    return "Unknown Day";
-                  })
-                  .join(", ");
-                const restrictionText =
-                  restriction.type === "Max Gap"
-                    ? `${restriction.type} of ${restriction.max_gap} hours between courses`
-                    : restriction.type === "Restrict Before"
-                      ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.end_time}.00Z`))} on ${restrictedDays}`
-                      : restriction.type === "Restrict After"
-                        ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.start_time}.00Z`))} on ${restrictedDays}`
-                        : restriction.type === "Restrict Between"
-                          ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.start_time}.00Z`))} and ${formatTime(new Date(`2025-01-01T${restriction.end_time}.00Z`))} on ${restrictedDays}`
-                          : restriction.type === "Restrict Day"
-                            ? `Restrict the days of ${restrictedDays}`
-                            : restriction.type === "Days Off"
-                              ? `Minimum of ${restriction.num_days} days off`
-                              : "Unknown Restriction Applied";
-
-                return (
-                  <div className="text-red-500" key={restriction.id}>
-                    {restrictionText}
-                  </div>
-                );
-              })}
             </div>
           </>
         )}

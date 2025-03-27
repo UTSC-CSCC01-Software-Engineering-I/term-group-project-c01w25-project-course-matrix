@@ -20,7 +20,6 @@ import {
 import {
   Select,
   SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -119,6 +118,7 @@ export const TimetableCompareButton = ({
                         <TimetableCompareItem
                           key={`timetable1/${timetable.id}/${timetable.user_id}`}
                           timetable={timetable}
+                          timetableNumber={1}
                         />
                       ))}
                     </SelectContent>
@@ -145,6 +145,7 @@ export const TimetableCompareButton = ({
                         <TimetableCompareItem
                           key={`timetable2/${timetable.id}/${timetable.user_id}`}
                           timetable={timetable}
+                          timetableNumber={2}
                         />
                       ))}
                     </SelectContent>

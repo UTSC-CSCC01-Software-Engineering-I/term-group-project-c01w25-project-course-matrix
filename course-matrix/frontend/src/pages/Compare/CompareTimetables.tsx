@@ -17,11 +17,9 @@ import {
 import {
   Select,
   SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SemesterIcon } from "@/components/semester-icon";
 import { GitCompareArrows } from "lucide-react";
 import { useGetTimetablesSharedWithMeQuery } from "@/api/sharedApiSlice";
 import { TimetableShare } from "../Home/Home";
@@ -177,6 +175,7 @@ export const CompareTimetables = () => {
                               <TimetableCompareItem
                                 key={`timetable1/${timetable.id}/${timetable.user_id}`}
                                 timetable={timetable}
+                                timetableNumber={1}
                               />
                             ))}
                         </SelectContent>
@@ -213,6 +212,7 @@ export const CompareTimetables = () => {
                               <TimetableCompareItem
                                 key={`timetable2/${timetable.id}/${timetable.user_id}`}
                                 timetable={timetable}
+                                timetableNumber={2}
                               />
                             ))}
                         </SelectContent>

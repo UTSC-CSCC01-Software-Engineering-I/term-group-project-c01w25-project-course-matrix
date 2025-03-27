@@ -117,7 +117,9 @@ const Calendar = React.memo<CalendarProps>(
     const [deleteRestriction] = useDeleteRestrictionMutation();
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [updateErrorMessage, setUpdateErrorMessage] =  useState<string | null>(null);
+    const [updateErrorMessage, setUpdateErrorMessage] = useState<string | null>(
+      null,
+    );
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
     const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
       getSemesterStartAndEndDatesPlusOneWeek(semester);
@@ -289,11 +291,11 @@ const Calendar = React.memo<CalendarProps>(
       const offeringIdsToAdd = newOfferingIds.filter(
         (offeringId) => !oldOfferingIds.includes(offeringId),
       );
-      if(offeringIdsToAdd.length === 0 && offeringIdsToDelete.length === 0){
+      if (offeringIdsToAdd.length === 0 && offeringIdsToDelete.length === 0) {
         setUpdateErrorMessage("You have made no changes to the timetable!");
         setShowLoadingPage(false);
-        return; 
-      } 
+        return;
+      }
       // Delete course events
       for (const offeringId of offeringIdsToDelete) {
         const { error: deleteError } = await deleteEvent({
@@ -349,7 +351,10 @@ const Calendar = React.memo<CalendarProps>(
       }
 
       try {
-        await updateTimetable({ id: editingTimetableId, timetable_title: timetableTitle }).unwrap();
+        await updateTimetable({
+          id: editingTimetableId,
+          timetable_title: timetableTitle,
+        }).unwrap();
       } catch (error) {
         setUpdateErrorMessage("You have made no changes to the timetable");
         setShowLoadingPage(false);
@@ -439,7 +444,10 @@ const Calendar = React.memo<CalendarProps>(
                   Update Timetable
                 </Button>
               </div>
-              <div className="mt-1 text-sm text-red-500 font-bold"> {updateErrorMessage} </div>
+              <div className="mt-1 text-sm text-red-500 font-bold">
+                {" "}
+                {updateErrorMessage}{" "}
+              </div>
             </div>
           )}
         </h1>

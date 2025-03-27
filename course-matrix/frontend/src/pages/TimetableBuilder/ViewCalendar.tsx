@@ -130,7 +130,7 @@ const ViewCalendar = React.memo<ViewCalendarProps>(
     });
 
     return isLoading ? (
-      <LoadingPage />
+      <Spinner />
     ) : (
       <div>
         {!show_fancy_header && (

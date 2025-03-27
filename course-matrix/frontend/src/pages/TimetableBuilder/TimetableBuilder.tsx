@@ -519,7 +519,7 @@ const TimetableBuilder = () => {
                         <p className="text-sm text-gray-500">
                           {!isEditingTimetable
                             ? "Add additional restrictions to your timetable to personalize it to your needs."
-                            : "Restrictions enabled for this timetable:"}
+                            : "This timetable was created with the following restrictions:"}
                         </p>
                       </div>
                       <Button

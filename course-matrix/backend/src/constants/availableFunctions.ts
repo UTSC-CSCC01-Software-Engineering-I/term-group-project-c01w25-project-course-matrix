@@ -28,7 +28,8 @@ export type FunctionNames =
   | "updateTimetable"
   | "deleteTimetable"
   | "generateTimetable"
-  | "getCourses";
+  | "getCourses"
+  | "getOfferings";
 
 type AvailableFunctions = {
   [K in FunctionNames]: (args: any, req: Request) => Promise<any>;
@@ -503,7 +504,7 @@ ${offeringData.meeting_section} `;
       });
 
       // Get all courses that have any of the provided courses as its prefix
-      const { data, error } = await supabase
+      const { data: courseData, error } = await supabase
         .schema("course")
         .from("courses")
         .select("*")
@@ -513,7 +514,42 @@ ${offeringData.meeting_section} `;
         return { status: 400, error: error.message };
       }
 
-      return { status: 200, data };
+      return { status: 200, data: courseData };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      return { status: 500, error: errorMessage };
+    }
+  },
+
+  getOfferings: async (args: any, req: Request) => {
+    const { courses, semester } = args;
+    try {
+      const filterConditions = courses.map((prefix: string) => {
+        return `code.ilike.${prefix}%`;
+      });
+
+      // Get all offerings for any of the provided courses
+      const { data: offeringsData, error: offeringsError } = await supabase
+        .schema("course")
+        .from("offerings")
+        .select("*")
+        .eq("offering", semester)
+        .or(filterConditions.join(","));
+
+      if (offeringsError) {
+        return { status: 400, error: offeringsError.message };
+      }
+
+      // Return the courses that are offered in the semseter
+      const coursesOffered = new Set();
+      for (const offering of offeringsData) {
+        if (!coursesOffered.has(offering.code)) {
+          coursesOffered.add(offering.code);
+        }
+      }
+
+      return { status: 200, data: Array.from(coursesOffered) };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";

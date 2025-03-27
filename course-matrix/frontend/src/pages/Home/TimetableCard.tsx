@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Star, Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
 import TimetableCardKebabMenu from "./TimetableCardKebabMenu";
+import TimetableCardShareKebabMenu from "./TimetableCardShareKebabMenu";
+import { useGetUsernameFromUserIdQuery } from "@/api/authApiSlice";
+import { Timetable } from "./Home";
 import {
   useUpdateTimetableMutation,
   useGetTimetableQuery,
@@ -18,12 +21,17 @@ import { Link } from "react-router-dom";
 import { TimetableModel } from "@/models/models";
 
 interface TimetableCardProps {
-  refetch: () => void;
+  refetchMyTimetables: () => void;
+  refetchSharedTimetables: () => void;
   setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
-  timetableId: number;
+  ownerId: string;
   title: string;
   lastEditedDate: Date;
-  owner: string;
+  isShared: boolean;
+  timetable: Timetable;
+  setSelectedSharedTimetable: React.Dispatch<
+    React.SetStateAction<Timetable | null>
+  >;
   favorite: boolean;
 }
 
@@ -33,15 +41,29 @@ interface TimetableCardProps {
  * @returns {JSX.Element} The rendered component.
  */
 const TimetableCard = ({
-  refetch,
+  refetchMyTimetables,
+  refetchSharedTimetables,
   setErrorMessage,
-  timetableId,
+  ownerId,
   title,
   lastEditedDate,
-  owner,
+  isShared,
+  timetable,
+  setSelectedSharedTimetable,
   favorite,
 }: TimetableCardProps) => {
   const [updateTimetable] = useUpdateTimetableMutation();
+
+  const timetableId = timetable.id;
+
+  const user_metadata = JSON.parse(localStorage.getItem("userInfo") ?? "{}");
+  const loggedInUsername =
+    (user_metadata?.user?.user_metadata?.username as string) ??
+    (user_metadata?.user?.email as string);
+  const { data: usernameData } = useGetUsernameFromUserIdQuery(ownerId);
+  const ownerUsername = isShared
+    ? (usernameData ?? "John Doe")
+    : loggedInUsername;
 
   const lastEditedDateArray = lastEditedDate
     .toISOString()
@@ -87,7 +109,8 @@ const TimetableCard = ({
         id: timetableId,
         favorite: !toggled,
       }).unwrap();
-      refetch();
+      refetchMyTimetables();
+      refetchSharedTimetables();
       console.log("Favourite success!");
       setToggled(!toggled);
       console.log(!toggled);
@@ -96,7 +119,49 @@ const TimetableCard = ({
     }
   };
 
-  return (
+  return isShared ? (
+    <Card className="w-full">
+      <CardHeader>
+        <img
+          src="/img/default-timetable-card-image.png"
+          alt="Timetable default image"
+          className="cursor-pointer"
+          onClick={() => setSelectedSharedTimetable(timetable)}
+        />
+        <div className="flex justify-between items-center">
+          <CardTitle>
+            <Input
+              disabled={true}
+              value={timetableCardTitle}
+              className="-ml-3 font-bold border-none text-ellipsis"
+            />
+          </CardTitle>
+          <div className="flex justify-between items-center">
+            <Button
+              size="sm"
+              variant="outline"
+              className="p-2"
+              onClick={() => setSelectedSharedTimetable(timetable)}
+            >
+              View
+            </Button>
+            <TimetableCardShareKebabMenu
+              refetchMyTimetables={refetchMyTimetables}
+              refetchSharedTimetables={refetchSharedTimetables}
+              owner_id={ownerId}
+              calendar_id={timetableId}
+            />
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="-mt-3">
+        <CardDescription className="flex justify-between text-xs">
+          <div>Last edited {lastEditedDateTimestamp}</div>
+          <div>Owned by: {ownerUsername}</div>
+        </CardDescription>
+      </CardContent>
+    </Card>
+  ) : (
     <Card className="w-full">
       <CardHeader>
         <Link to={`/dashboard/timetable?edit=${timetableId}`}>
@@ -141,7 +206,8 @@ const TimetableCard = ({
                   <Pencil />
                 </Button>
                 <TimetableCardKebabMenu
-                  refetch={refetch}
+                  refetchMyTimetables={refetchMyTimetables}
+                  refetchSharedTimetables={refetchSharedTimetables}
                   timetableId={timetableId}
                 />
               </>
@@ -161,7 +227,7 @@ const TimetableCard = ({
       <CardContent className="-mt-3">
         <CardDescription className="flex justify-between text-xs">
           <div>Last edited {lastEditedDateTimestamp}</div>
-          <div>Owned by: {owner}</div>
+          <div>Owned by: {ownerUsername}</div>
         </CardDescription>
       </CardContent>
     </Card>

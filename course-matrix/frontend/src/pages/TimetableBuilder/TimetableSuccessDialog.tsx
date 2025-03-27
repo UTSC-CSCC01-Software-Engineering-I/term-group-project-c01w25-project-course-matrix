@@ -10,33 +10,33 @@ import {
 } from "@/components/ui/dialog";
 import React from "react";
 
-interface TimetableErrorDialogProps {
-  errorMessage: string | null;
-  setErrorMessage: React.Dispatch<React.SetStateAction<string | null>>;
+interface TimetableSuccessDialogProps {
+  successMessage: string | null;
+  setSuccessMessage: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const TimetableErrorDialog: React.FC<TimetableErrorDialogProps> = ({
-  errorMessage,
-  setErrorMessage,
+const TimetableSuccessDialog: React.FC<TimetableSuccessDialogProps> = ({
+  successMessage,
+  setSuccessMessage,
 }) => {
-  const dialogTitle = errorMessage;
-  const dialogDescription = errorMessage?.includes("title already exists")
+  const dialogTitle = successMessage;
+  const dialogDescription = successMessage?.includes("title already exists")
     ? "Please choose another title for your timetable"
     : null;
 
   return (
     <Dialog
-      open={errorMessage !== null}
-      onOpenChange={() => setErrorMessage(null)}
+      open={successMessage !== null}
+      onOpenChange={() => setSuccessMessage(null)}
     >
       <DialogContent className="gap-5">
         <DialogHeader>
-          <DialogTitle className="text-red-500">{dialogTitle}</DialogTitle>
+          <DialogTitle className="text-green-500">{dialogTitle}</DialogTitle>
           <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="secondary" onClick={() => setErrorMessage(null)}>
+            <Button variant="secondary" onClick={() => setSuccessMessage(null)}>
               Close
             </Button>
           </DialogClose>
@@ -46,4 +46,4 @@ const TimetableErrorDialog: React.FC<TimetableErrorDialogProps> = ({
   );
 };
 
-export default TimetableErrorDialog;
+export default TimetableSuccessDialog;

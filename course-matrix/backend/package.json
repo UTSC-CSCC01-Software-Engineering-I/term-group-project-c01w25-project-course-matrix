@@ -7,7 +7,8 @@
     "dev": "ts-node -r dotenv/config src/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",
-    "build": "vite build"
+    "build": "vite build",
+    "prod": "ts-node -r dotenv/config src/index.ts"
   },
   "keywords": [],
   "author": "",

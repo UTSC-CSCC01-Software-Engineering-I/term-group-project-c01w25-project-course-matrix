@@ -30,6 +30,22 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 0,
     }),
+    getSharedEvents: builder.query<
+      unknown,
+      { user_id: string; calendar_id: number }
+    >({
+      query: (data) => ({
+        url: `${EVENTS_URL}/shared/${data.user_id}/${data.calendar_id}`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+        },
+        providesTags: ["Event"],
+        credentials: "include",
+      }),
+      keepUnusedDataFor: 0,
+    }),
     updateEvent: builder.mutation({
       query: (data) => ({
         url: `${EVENTS_URL}/${data.id}`,
@@ -62,6 +78,7 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
 export const {
   useCreateEventMutation,
   useGetEventsQuery,
+  useGetSharedEventsQuery,
   useUpdateEventMutation,
   useDeleteEventMutation,
 } = eventsApiSlice;

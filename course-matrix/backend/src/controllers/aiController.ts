@@ -266,11 +266,12 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             }/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
             - If the user wants to create a timetable:
-              1. First call getCourses to get course information on the requested courses, 
-              2. If the user provided a semester, then call getOfferings with the provided courses and semester to ensure the courses are actually offered in the semester. 
+              1. First call getTimetables to refetch most recent info on timetable names + timetableCount. DO NOT assume timetable names and # of timetables is same since last query.
+              2. Then call getCourses to get course information on the requested courses, 
+              3. If the user provided a semester, then call getOfferings with the provided courses and semester to ensure the courses are actually offered in the semester. 
                 a) If a course is NOT returned by getOFferings, then list it under "Excluded courses" with "reason: not offered in [provided semester]"
                 b) If no courses have offerings, then do not generate the timetable.
-              3. Lastly, call generateTimetable with the provided information.
+              4. Lastly, call generateTimetable with the provided information.
             - Do not make up fake courses or offerings. 
             - If a user asks about a course that you do not know of, acknowledge this.
             - You can only edit title of the timetable, nothing else. If a user tries to edit something else, acknowledge this limitation.

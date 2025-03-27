@@ -135,7 +135,7 @@ const Home = () => {
             }`}
           >
             {" "}
-            (Created timetables: {count}/25)
+            (No. Timetables: {count}/25)
           </h1>
         </div>
         <TimetableErrorDialog

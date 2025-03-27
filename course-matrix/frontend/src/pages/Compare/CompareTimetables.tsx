@@ -32,7 +32,8 @@ export const CompareTimetables = () => {
   const [timetable1, setTimetable1] = useState<Timetable>();
   const [timetable2, setTimetable2] = useState<Timetable>();
   const [queryParams] = useSearchParams();
-  const [loadedPreselectedTimetables, setLoadedPreselectedTimetables] = useState(false);
+  const [loadedPreselectedTimetables, setLoadedPreselectedTimetables] =
+    useState(false);
 
   const preselectedTimetableId1 = queryParams.get("id1");
   const preselectedTimetableId2 = queryParams.get("id2");
@@ -51,10 +52,15 @@ export const CompareTimetables = () => {
     },
   });
 
-  const { data: myTimetablesData } = useGetTimetablesQuery() as { data: Timetable[] };
-  const { data: sharedWithMeTimetablesData } = useGetTimetablesSharedWithMeQuery() as { data: TimetableShare[] };
+  const { data: myTimetablesData } = useGetTimetablesQuery() as {
+    data: Timetable[];
+  };
+  const { data: sharedWithMeTimetablesData } =
+    useGetTimetablesSharedWithMeQuery() as { data: TimetableShare[] };
 
-  const myOwningTimetables = [...(myTimetablesData ?? [])].sort(sortTimetablesComparator);
+  const myOwningTimetables = [...(myTimetablesData ?? [])].sort(
+    sortTimetablesComparator,
+  );
   const sharedWithMeTimetables = [...(sharedWithMeTimetablesData ?? [])]
     .flatMap((share) => share.timetables)
     .sort(sortTimetablesComparator);
@@ -73,23 +79,53 @@ export const CompareTimetables = () => {
       preselectedUserId2 &&
       !loadedPreselectedTimetables
     ) {
-      setTimetable1(allTimetables.find((t) => t.id === parseInt(preselectedTimetableId1) && t.user_id === preselectedUserId1));
-      setTimetable2(allTimetables.find((t) => t.id === parseInt(preselectedTimetableId2) && t.user_id === preselectedUserId2));
+      setTimetable1(
+        allTimetables.find(
+          (t) =>
+            t.id === parseInt(preselectedTimetableId1) &&
+            t.user_id === preselectedUserId1,
+        ),
+      );
+      setTimetable2(
+        allTimetables.find(
+          (t) =>
+            t.id === parseInt(preselectedTimetableId2) &&
+            t.user_id === preselectedUserId2,
+        ),
+      );
       setLoadedPreselectedTimetables(true);
     }
-  }, [preselectedTimetableId1, preselectedUserId1, preselectedTimetableId2, preselectedUserId2, allTimetables, loadedPreselectedTimetables]);
+  }, [
+    preselectedTimetableId1,
+    preselectedUserId1,
+    preselectedTimetableId2,
+    preselectedUserId2,
+    allTimetables,
+    loadedPreselectedTimetables,
+  ]);
 
-  const onSubmit = useCallback((values: z.infer<typeof CompareFormSchema>) => {
-    console.log("Compare Form submitted:", values);
+  const onSubmit = useCallback(
+    (values: z.infer<typeof CompareFormSchema>) => {
+      console.log("Compare Form submitted:", values);
 
-    const timetableId1 = parseInt(values.timetable1.split("/")[1]);
-    const timetableId2 = parseInt(values.timetable2.split("/")[1]);
-    const timetableUserId1 = values.timetable1.split("/")[2];
-    const timetableUserId2 = values.timetable2.split("/")[2];
+      const timetableId1 = parseInt(values.timetable1.split("/")[1]);
+      const timetableId2 = parseInt(values.timetable2.split("/")[1]);
+      const timetableUserId1 = values.timetable1.split("/")[2];
+      const timetableUserId2 = values.timetable2.split("/")[2];
 
-    setTimetable1(allTimetables.find((t) => t.id === timetableId1 && t.user_id === timetableUserId1));
-    setTimetable2(allTimetables.find((t) => t.id === timetableId2 && t.user_id === timetableUserId2));
-  }, [allTimetables]);
+      setTimetable1(
+        allTimetables.find(
+          (t) => t.id === timetableId1 && t.user_id === timetableUserId1,
+        ),
+      );
+      setTimetable2(
+        allTimetables.find(
+          (t) => t.id === timetableId2 && t.user_id === timetableUserId2,
+        ),
+      );
+    },
+    [allTimetables],
+  );
 
   return (
     <>
@@ -223,7 +259,7 @@ export const CompareTimetables = () => {
                   Select a timetable to compare
                 </div>
               ) : (
-                <ViewCalendar 
+                <ViewCalendar
                   user_id={timetable2.user_id}
                   calendar_id={timetable2.id}
                   timetable_title={timetable2?.timetable_title ?? ""}

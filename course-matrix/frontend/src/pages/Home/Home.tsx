@@ -102,7 +102,9 @@ const Home = () => {
               semester={selectSharedTimetableSemester}
               show_fancy_header={true}
             />
-            <DialogFooter><DialogClose></DialogClose></DialogFooter>
+            <DialogFooter>
+              <DialogClose></DialogClose>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
         <div className="mb-4 flex items-center gap-2 relative group">

@@ -63,7 +63,7 @@ export const TimetableCompareButton = ({
     const userId2 = values.timetable2.split("/")[2];
     setOpen(false);
     navigate(
-      `/dashboard/compare?id1=${timetableId1}&id2=${timetableId2}&userId1=${userId1}&userId2=${userId2}`
+      `/dashboard/compare?id1=${timetableId1}&id2=${timetableId2}&userId1=${userId1}&userId2=${userId2}`,
     );
   };
 
@@ -108,9 +108,7 @@ export const TimetableCompareButton = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Timetable 1</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value)}
-                  >
+                  <Select onValueChange={(value) => field.onChange(value)}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a timetable" />
@@ -144,9 +142,7 @@ export const TimetableCompareButton = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Timetable 2</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value)}
-                  >
+                  <Select onValueChange={(value) => field.onChange(value)}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a timetable" />

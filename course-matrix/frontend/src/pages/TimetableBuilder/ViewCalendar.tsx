@@ -35,11 +35,14 @@ interface ViewCalendarProps {
 
 const ViewCalendar = React.memo<ViewCalendarProps>(
   ({ user_id, calendar_id, timetable_title, semester, show_fancy_header }) => {
-    const { data: usernameData } = useGetUsernameFromUserIdQuery(
-      user_id,
-      { skip: calendar_id === -1 },
-    );
-    const username = usernameData ? (usernameData.trim().length > 0 ? usernameData : "John Doe") : "John Doe";
+    const { data: usernameData } = useGetUsernameFromUserIdQuery(user_id, {
+      skip: calendar_id === -1,
+    });
+    const username = usernameData
+      ? usernameData.trim().length > 0
+        ? usernameData
+        : "John Doe"
+      : "John Doe";
 
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
     const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
@@ -131,78 +134,82 @@ const ViewCalendar = React.memo<ViewCalendarProps>(
     ) : (
       <div>
         {!show_fancy_header && (
-        <h1 className="text-2xl flex justify-evenly font-medium tracking-tight mb-4">
-          <div className="flex items-center gap-2">
-            <SemesterIcon semester={semester} size={18} />
-            {timetable_title}
-          </div>
-        </h1>)}
+          <h1 className="text-2xl flex justify-evenly font-medium tracking-tight mb-4">
+            <div className="flex items-center gap-2">
+              <SemesterIcon semester={semester} size={18} />
+              {timetable_title}
+            </div>
+          </h1>
+        )}
         {show_fancy_header && (
           <>
-        <h1 className="text-xl text-center justify-between font-medium tracking-tight mb-4">
-          You are viewing{" "}
-          <span className="text-green-500">{username ?? "John Doe"}'s</span>{" "}
-          timetable named{" "}
-          <span className="text-green-500">{timetable_title}</span> for{" "}
-          <span className="text-green-500">{semester}</span>
-        </h1>
-        <div className="text-sm justify-between tracking-tight mb-2">
-          <b>Courses:</b>{" "}
-          {courses.length === 0 && (
-            <span className="text-sm text-red-500">
-              This timetable has no courses
-            </span>
-          )}
-          {courses.map((course) => (
-            <span className="text-blue-500 mr-2" key={course}>
-              {course}{" "}
-              <span className="text-yellow-500">
-                ({(courseToMeetingSectionMap.get(course) ?? []).join(", ")})
+            <h1 className="text-xl text-center justify-between font-medium tracking-tight mb-4">
+              You are viewing{" "}
+              <span className="text-green-500">{username ?? "John Doe"}'s</span>{" "}
+              timetable named{" "}
+              <span className="text-green-500">{timetable_title}</span> for{" "}
+              <span className="text-green-500">{semester}</span>
+            </h1>
+            <div className="text-sm justify-between tracking-tight mb-2">
+              <b>Courses:</b>{" "}
+              {courses.length === 0 && (
+                <span className="text-sm text-red-500">
+                  This timetable has no courses
+                </span>
+              )}
+              {courses.map((course) => (
+                <span className="text-blue-500 mr-2" key={course}>
+                  {course}{" "}
+                  <span className="text-yellow-500">
+                    ({(courseToMeetingSectionMap.get(course) ?? []).join(", ")})
+                  </span>
+                </span>
+              ))}
+            </div>
+            <b className="text-sm">Restrictions: </b>
+            {restrictions.length === 0 && (
+              <span className="text-sm text-red-500">
+                No restrictions applied
               </span>
-            </span>
-          ))}
-        </div>
-        <b className="text-sm">Restrictions: </b>
-        {restrictions.length === 0 && (
-          <span className="text-sm text-red-500">No restrictions applied</span>
-        )}
-        <div className="grid grid-rows-3 text-sm justify-between mb-4">
-          {restrictions.map((restriction) => {
-            const restrictedDays = JSON.parse(restriction.days)
-              .map((day: string) => {
-                if (day === "MO") return "Monday";
-                if (day === "TU") return "Tuesday";
-                if (day === "WE") return "Wednesday";
-                if (day === "TH") return "Thursday";
-                if (day === "FR") return "Friday";
-                if (day === "SA") return "Saturday";
-                if (day === "SU") return "Sunday";
-                return "Unknown Day";
-              })
-              .join(", ");
-            const restrictionText =
-              restriction.type === "Max Gap"
-                ? `${restriction.type} of ${restriction.max_gap} hours between courses`
-                : restriction.type === "Restrict Before"
-                  ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.end_time}.00Z`))} on ${restrictedDays}`
-                  : restriction.type === "Restrict After"
-                    ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.start_time}.00Z`))} on ${restrictedDays}`
-                    : restriction.type === "Restrict Between"
-                      ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.start_time}.00Z`))} and ${formatTime(new Date(`2025-01-01T${restriction.end_time}.00Z`))} on ${restrictedDays}`
-                      : restriction.type === "Restrict Day"
-                        ? `Restrict the days of ${restrictedDays}`
-                        : restriction.type === "Days Off"
-                          ? `Minimum of ${restriction.num_days} days off`
-                          : "Unknown Restriction Applied";
+            )}
+            <div className="grid grid-rows-3 text-sm justify-between mb-4">
+              {restrictions.map((restriction) => {
+                const restrictedDays = JSON.parse(restriction.days)
+                  .map((day: string) => {
+                    if (day === "MO") return "Monday";
+                    if (day === "TU") return "Tuesday";
+                    if (day === "WE") return "Wednesday";
+                    if (day === "TH") return "Thursday";
+                    if (day === "FR") return "Friday";
+                    if (day === "SA") return "Saturday";
+                    if (day === "SU") return "Sunday";
+                    return "Unknown Day";
+                  })
+                  .join(", ");
+                const restrictionText =
+                  restriction.type === "Max Gap"
+                    ? `${restriction.type} of ${restriction.max_gap} hours between courses`
+                    : restriction.type === "Restrict Before"
+                      ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.end_time}.00Z`))} on ${restrictedDays}`
+                      : restriction.type === "Restrict After"
+                        ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.start_time}.00Z`))} on ${restrictedDays}`
+                        : restriction.type === "Restrict Between"
+                          ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.start_time}.00Z`))} and ${formatTime(new Date(`2025-01-01T${restriction.end_time}.00Z`))} on ${restrictedDays}`
+                          : restriction.type === "Restrict Day"
+                            ? `Restrict the days of ${restrictedDays}`
+                            : restriction.type === "Days Off"
+                              ? `Minimum of ${restriction.num_days} days off`
+                              : "Unknown Restriction Applied";
 
-            return (
-              <div className="text-red-500" key={restriction.id}>
-                {restrictionText}
-              </div>
-            );
-          })}
-        </div>
-        </>)}
+                return (
+                  <div className="text-red-500" key={restriction.id}>
+                    {restrictionText}
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
         <ScheduleXCalendar calendarApp={calendar} />
       </div>
     );

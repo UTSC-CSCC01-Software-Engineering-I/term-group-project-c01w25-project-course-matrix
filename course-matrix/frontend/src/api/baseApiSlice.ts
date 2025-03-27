@@ -13,6 +13,8 @@ export const apiSlice = createApi({
     "Timetable",
     "Event",
     "Restrictions",
+    "Shared",
   ],
   endpoints: () => ({}),
+  refetchOnMountOrArgChange: true,
 });

@@ -59,6 +59,7 @@ import {
 } from "@/utils/semester-utils";
 import { courseEventStyles } from "@/constants/calendarConstants";
 import TimetableErrorDialog from "./TimetableErrorDialog";
+import { parseEvent } from "@/utils/calendar-utils";
 
 interface CalendarProps {
   setShowLoadingPage: React.Dispatch<React.SetStateAction<boolean>>;
@@ -68,26 +69,6 @@ interface CalendarProps {
   newOfferingIds: number[];
   restrictions: TimetableForm["restrictions"];
   header?: string;
-}
-
-function parseEvent(id: number, event: Event, calendarId: string) {
-  return {
-    id: id,
-    title: event.event_name,
-    start:
-      event.event_date +
-      " " +
-      event.event_start.split(":")[0] +
-      ":" +
-      event.event_start.split(":")[1],
-    end:
-      event.event_date +
-      " " +
-      event.event_end.split(":")[0] +
-      ":" +
-      event.event_end.split(":")[1],
-    calendarId: calendarId,
-  };
 }
 
 const Calendar = React.memo<CalendarProps>(
@@ -151,6 +132,7 @@ const Calendar = React.memo<CalendarProps>(
         createViewMonthGrid(),
         createViewMonthAgenda(),
       ],
+      firstDayOfWeek: 0,
       selectedDate: semesterStartDatePlusOneWeek,
       minDate: semesterStartDate,
       maxDate: semesterEndDate,

@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,36 +16,40 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { EllipsisVertical } from "lucide-react";
-import { useDeleteTimetableMutation } from "@/api/timetableApiSlice";
-import { EmailNotificationSettings } from "./EmailNotificationSettings";
-import ShareDialog from "../TimetableBuilder/ShareDialog";
+import { useDeleteSharedTimetablesWithMeMutation } from "@/api/sharedApiSlice";
 import { useState } from "react";
+import TimetableErrorDialog from "../TimetableBuilder/TimetableErrorDialog";
 
-interface TimetableCardKebabMenuProps {
+interface TimetableCardShareKebabMenu {
   refetchMyTimetables: () => void;
   refetchSharedTimetables: () => void;
-  timetableId: number;
+  owner_id: string;
+  calendar_id: number;
 }
 
 /**
- * Component for the kebab menu in the timetable card, providing options to edit or delete the timetable.
+ * Component for the kebab menu in the shared timetable card, providing options to remove the shared timetable from the user's dashboard.
  * @returns {JSX.Element} The rendered component.
  */
-const TimetableCardKebabMenu = ({
+const TimetableCardShareKebabMenu = ({
   refetchMyTimetables,
   refetchSharedTimetables,
-  timetableId,
-}: TimetableCardKebabMenuProps) => {
-  const [openShareDialog, setOpenShareDialog] = useState(false);
-  const [deleteTimetable] = useDeleteTimetableMutation();
+  owner_id,
+  calendar_id,
+}: TimetableCardShareKebabMenu) => {
+  const [deleteSharedTimetable] = useDeleteSharedTimetablesWithMeMutation();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleDelete = async () => {
-    try {
-      await deleteTimetable(timetableId);
+  const handleRemove = async () => {
+    const { error } = await deleteSharedTimetable({ owner_id, calendar_id });
+
+    if (error) {
+      const errorData = (error as { data?: { error?: string } }).data;
+      setErrorMessage(errorData?.error ?? "Unknown error occurred");
+      return;
+    } else {
       refetchMyTimetables();
       refetchSharedTimetables();
-    } catch (error) {
-      console.error("Failed to delete timetable:", error);
     }
   };
 
@@ -57,43 +60,24 @@ const TimetableCardKebabMenu = ({
           <EllipsisVertical />
         </Button>
       </DropdownMenuTrigger>
-
       <DropdownMenuContent>
-        <DropdownMenuItem>
-          <Link to={`/dashboard/timetable?edit=${timetableId}`}>
-            Edit Timetable
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <EmailNotificationSettings timetableId={timetableId} />
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onSelect={(e) => e.preventDefault()}
-          className="cursor-pointer"
-          onClick={() => setOpenShareDialog(true)}
-        >
-          Share Timetable
-        </DropdownMenuItem>
-        <ShareDialog
-          open={openShareDialog}
-          setOpen={setOpenShareDialog}
-          calendar_id={timetableId}
-        />
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <Dialog>
+            <TimetableErrorDialog
+              errorMessage={errorMessage}
+              setErrorMessage={setErrorMessage}
+            />
             <DialogTrigger asChild>
-              <button className="w-full text-left text-red-600">
-                Delete Timetable
-              </button>
+              <button className="w-full text-left text-red-600">Remove</button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle className="text-red-600">
-                  Delete Timetable
+                  Remove Timetable Shared To You
                 </DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete your timetable? This action
-                  cannot be undone.
+                  Are you sure you want to remove this timetable shared with
+                  you? This action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -104,9 +88,9 @@ const TimetableCardKebabMenu = ({
                   <Button
                     variant="destructive"
                     className="bg-red-600 text-white"
-                    onClick={handleDelete}
+                    onClick={handleRemove}
                   >
-                    Delete
+                    Remove
                   </Button>
                 </DialogClose>
               </DialogFooter>
@@ -118,4 +102,4 @@ const TimetableCardKebabMenu = ({
   );
 };
 
-export default TimetableCardKebabMenu;
+export default TimetableCardShareKebabMenu;

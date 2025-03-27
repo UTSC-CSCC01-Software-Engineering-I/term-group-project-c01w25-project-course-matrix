@@ -66,6 +66,17 @@ timetableRouter.get(
 );
 
 /**
+ * Route to get all events in a calendar shared with the authenticated user
+ * @route GET /api/timetables/events/shared
+ * @middleware authHandler - Middleware to check if the user is authenticated.
+ */
+timetableRouter.get(
+  "/events/shared/:user_id/:calendar_id",
+  authHandler,
+  eventController.getSharedEvents,
+);
+
+/**
  * Route to update an event
  * @route PUT /api/timetables/events/:id
  * @middleware authHandler - Middleware to check if the user is authenticated.
@@ -149,10 +160,21 @@ timetableRouter.get(
 
 /**
  * Route to get all shared entry with authenticated user
- * @route GET /api/timetables/shared
+ * @route GET /api/timetables/shared/me
  * @middleware authHandler - Middleware to check if the user is authenticated
  */
-timetableRouter.get("/shared", authHandler, sharesController.getShare);
+timetableRouter.get("/shared/me", authHandler, sharesController.getShare);
+
+/**
+ * Route to get all the restrictions of a timetable
+ * @route GET /api/timetables/shared/restrictions
+ * @middleware authHandler - Middleware to check if the user is authenticated
+ */
+timetableRouter.get(
+  "/shared/restrictions",
+  authHandler,
+  sharesController.getSharedRestrictions,
+);
 
 /**
  * Route to delete all shared entries for a timetable as timetable's owner
@@ -167,11 +189,7 @@ timetableRouter.delete(
 
 /**
  * Route to delete a single entry for the authneticate user
- * @route DELETE /api/timetables/shared/:calendar_id
+ * @route DELETE /api/timetables/shared/me/:calendar_id
  * @middleware authHandler - Middleware to check if the user is authenticated
  */
-timetableRouter.delete(
-  "/shared/:id",
-  authHandler,
-  sharesController.deleteShare,
-);
+timetableRouter.delete("/shared/me", authHandler, sharesController.deleteShare);

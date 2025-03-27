@@ -22,7 +22,7 @@ import { parseEvent } from "@/utils/calendar-utils";
 import { useGetSharedRestrictionsQuery } from "@/api/sharedApiSlice";
 import { useGetUsernameFromUserIdQuery } from "@/api/authApiSlice";
 import { formatTime } from "@/utils/format-date-time";
-import LoadingPage from "../Loading/LoadingPage";
+import { Spinner } from "@/components/ui/spinner";
 import { SemesterIcon } from "@/components/semester-icon";
 
 interface ViewCalendarProps {

@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -32,6 +31,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
+import TimetableCompareItem from "./TimetableCompareItem";
 
 export const CompareFormSchema = z.object({
   timetable1: z.string().nonempty(),
@@ -115,20 +115,7 @@ export const TimetableCompareButton = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {timetables.map((timetable) => (
-                        <SelectItem
-                          key={`timetable1/${timetable.id}/${timetable.user_id}`}
-                          value={`timetable1/${timetable.id}/${timetable.user_id}`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <SemesterIcon
-                              semester={timetable.semester}
-                              size={18}
-                            />
-                            <span>{timetable.timetable_title}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
+                      {timetables.map((timetable) => <TimetableCompareItem key={`timetable1/${timetable.id}/${timetable.user_id}`} timetable={timetable} />)}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -149,20 +136,7 @@ export const TimetableCompareButton = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {timetables.map((timetable) => (
-                        <SelectItem
-                          key={`timetable2/${timetable.id}/${timetable.user_id}`}
-                          value={`timetable2/${timetable.id}/${timetable.user_id}`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <SemesterIcon
-                              semester={timetable.semester}
-                              size={18}
-                            />
-                            <span>{timetable.timetable_title}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
+                      {timetables.map((timetable) => <TimetableCompareItem key={`timetable2/${timetable.id}/${timetable.user_id}`} timetable={timetable} /> )}
                     </SelectContent>
                   </Select>
                   <FormMessage />

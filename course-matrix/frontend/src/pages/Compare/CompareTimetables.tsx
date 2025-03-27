@@ -27,6 +27,7 @@ import { useGetTimetablesSharedWithMeQuery } from "@/api/sharedApiSlice";
 import { TimetableShare } from "../Home/Home";
 import ViewCalendar from "../TimetableBuilder/ViewCalendar";
 import { sortTimetablesComparator } from "@/utils/calendar-utils";
+import TimetableCompareItem from "../Home/TimetableCompareItem";
 
 export const CompareTimetables = () => {
   const [timetable1, setTimetable1] = useState<Timetable>();
@@ -171,21 +172,7 @@ export const CompareTimetables = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {allTimetables &&
-                            allTimetables.map((timetable) => (
-                              <SelectItem
-                                key={`timetable1/${timetable.id}/${timetable.user_id}`}
-                                value={`timetable1/${timetable.id}/${timetable.user_id}`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <SemesterIcon
-                                    semester={timetable.semester}
-                                    size={18}
-                                  />
-                                  <span>{timetable.timetable_title}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
+                          {allTimetables && allTimetables.map((timetable) => <TimetableCompareItem key={`timetable1/${timetable.id}/${timetable.user_id}`} timetable={timetable} />)}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -215,21 +202,7 @@ export const CompareTimetables = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {allTimetables &&
-                            allTimetables.map((timetable) => (
-                              <SelectItem
-                                key={`timetable2/${timetable.id}/${timetable.user_id}`}
-                                value={`timetable2/${timetable.id}/${timetable.user_id}`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <SemesterIcon
-                                    semester={timetable.semester}
-                                    size={18}
-                                  />
-                                  <span>{timetable.timetable_title}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
+                          {allTimetables && allTimetables.map((timetable) => <TimetableCompareItem key={`timetable2/${timetable.id}/${timetable.user_id}`} timetable={timetable} />)}
                         </SelectContent>
                       </Select>
                       <FormMessage />

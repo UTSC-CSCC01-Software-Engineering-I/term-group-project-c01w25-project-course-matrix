@@ -18,8 +18,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -36,8 +34,8 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 export const CompareFormSchema = z.object({
-  timetable1: z.number().positive(),
-  timetable2: z.number().positive(),
+  timetable1: z.string().nonempty(),
+  timetable2: z.string().nonempty(),
 });
 
 interface TimetableCompareDialogProps {
@@ -58,10 +56,14 @@ export const TimetableCompareButton = ({
   });
 
   const onSubmit = (values: z.infer<typeof CompareFormSchema>) => {
-    console.log("Comapare Form submitted:", values);
+    console.log("Compare Form submitted:", values);
+    const timetableId1 = values.timetable1.split("/")[1];
+    const timetableId2 = values.timetable2.split("/")[1];
+    const userId1 = values.timetable1.split("/")[2];
+    const userId2 = values.timetable2.split("/")[2];
     setOpen(false);
     navigate(
-      `/dashboard/compare?id1=${values.timetable1}&id2=${values.timetable2}`,
+      `/dashboard/compare?id1=${timetableId1}&id2=${timetableId2}&userId1=${userId1}&userId2=${userId2}`
     );
   };
 
@@ -107,7 +109,7 @@ export const TimetableCompareButton = ({
                 <FormItem>
                   <FormLabel>Timetable 1</FormLabel>
                   <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
+                    onValueChange={(value) => field.onChange(value)}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -117,8 +119,8 @@ export const TimetableCompareButton = ({
                     <SelectContent>
                       {timetables.map((timetable) => (
                         <SelectItem
-                          key={timetable.id}
-                          value={timetable.id.toString()}
+                          key={`timetable1/${timetable.id}/${timetable.user_id}`}
+                          value={`timetable1/${timetable.id}/${timetable.user_id}`}
                         >
                           <div className="flex items-center gap-2">
                             <SemesterIcon
@@ -143,7 +145,7 @@ export const TimetableCompareButton = ({
                 <FormItem>
                   <FormLabel>Timetable 2</FormLabel>
                   <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
+                    onValueChange={(value) => field.onChange(value)}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -153,8 +155,8 @@ export const TimetableCompareButton = ({
                     <SelectContent>
                       {timetables.map((timetable) => (
                         <SelectItem
-                          key={timetable.id}
-                          value={timetable.id.toString()}
+                          key={`timetable2/${timetable.id}/${timetable.user_id}`}
+                          value={`timetable2/${timetable.id}/${timetable.user_id}`}
                         >
                           <div className="flex items-center gap-2">
                             <SemesterIcon

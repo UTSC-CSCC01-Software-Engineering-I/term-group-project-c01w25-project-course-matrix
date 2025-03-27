@@ -20,19 +20,27 @@ import {
 import { courseEventStyles } from "@/constants/calendarConstants";
 import { parseEvent } from "@/utils/calendar-utils";
 import { useGetSharedRestrictionsQuery } from "@/api/sharedApiSlice";
+import { useGetUsernameFromUserIdQuery } from "@/api/authApiSlice";
 import { formatTime } from "@/utils/format-date-time";
 import LoadingPage from "../Loading/LoadingPage";
+import { SemesterIcon } from "@/components/semester-icon";
 
-interface SharedCalendarProps {
+interface ViewCalendarProps {
   user_id: string;
-  user_username: string;
   calendar_id: number;
   timetable_title: string;
   semester: string;
+  show_fancy_header: boolean;
 }
 
-const SharedCalendar = React.memo<SharedCalendarProps>(
-  ({ user_id, user_username, calendar_id, timetable_title, semester }) => {
+const ViewCalendar = React.memo<ViewCalendarProps>(
+  ({ user_id, calendar_id, timetable_title, semester, show_fancy_header }) => {
+    const { data: usernameData } = useGetUsernameFromUserIdQuery(
+      user_id,
+      { skip: calendar_id === -1 },
+    );
+    const username = usernameData ? (usernameData.trim().length > 0 ? usernameData : "John Doe") : "John Doe";
+
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
     const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
       getSemesterStartAndEndDatesPlusOneWeek(semester);
@@ -118,13 +126,19 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
       isResponsive: false,
     });
 
-    const username =
-      user_username.trim().length > 0 ? user_username : "John Doe";
-
     return isLoading ? (
       <LoadingPage />
     ) : (
       <div>
+        {!show_fancy_header && (
+        <h1 className="text-2xl flex justify-evenly font-medium tracking-tight mb-4">
+          <div className="flex items-center gap-2">
+            <SemesterIcon semester={semester} size={18} />
+            {timetable_title}
+          </div>
+        </h1>)}
+        {show_fancy_header && (
+          <>
         <h1 className="text-xl text-center justify-between font-medium tracking-tight mb-4">
           You are viewing{" "}
           <span className="text-green-500">{username ?? "John Doe"}'s</span>{" "}
@@ -168,7 +182,7 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
               .join(", ");
             const restrictionText =
               restriction.type === "Max Gap"
-                ? `${restriction.type} of ${restriction.max_gap} Hours on ${restriction.days}`
+                ? `${restriction.type} of ${restriction.max_gap} hours between courses`
                 : restriction.type === "Restrict Before"
                   ? `${restriction.type} ${formatTime(new Date(`2025-01-01T${restriction.end_time}.00Z`))} on ${restrictedDays}`
                   : restriction.type === "Restrict After"
@@ -188,10 +202,11 @@ const SharedCalendar = React.memo<SharedCalendarProps>(
             );
           })}
         </div>
+        </>)}
         <ScheduleXCalendar calendarApp={calendar} />
       </div>
     );
   },
 );
 
-export default SharedCalendar;
+export default ViewCalendar;

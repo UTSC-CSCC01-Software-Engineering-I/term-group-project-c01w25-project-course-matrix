@@ -1,25 +1,17 @@
-import {
-  useGetTimetableQuery,
-  useGetTimetablesQuery,
-} from "@/api/timetableApiSlice";
+import { useGetTimetablesQuery } from "@/api/timetableApiSlice";
 import { Button } from "@/components/ui/button";
-import { Timetable, TimetableEvents } from "@/utils/type-utils";
-import { useEffect, useState } from "react";
+import { Timetable } from "@/utils/type-utils";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import Calendar from "../TimetableBuilder/Calendar";
-import { useGetEventsQuery } from "@/api/eventsApiSlice";
-import { Spinner } from "@/components/ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CompareFormSchema } from "../Home/TimetableCompareButton";
-import { format } from "path";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -31,99 +23,73 @@ import {
 } from "@/components/ui/select";
 import { SemesterIcon } from "@/components/semester-icon";
 import { GitCompareArrows } from "lucide-react";
+import { useGetTimetablesSharedWithMeQuery } from "@/api/sharedApiSlice";
+import { TimetableShare } from "../Home/Home";
+import ViewCalendar from "../TimetableBuilder/ViewCalendar";
+import { sortTimetablesComparator } from "@/utils/calendar-utils";
 
 export const CompareTimetables = () => {
   const [timetable1, setTimetable1] = useState<Timetable>();
   const [timetable2, setTimetable2] = useState<Timetable>();
-  const [offeringIds1, setOfferingIds1] = useState<number[]>();
-  const [offeringIds2, setOfferingIds2] = useState<number[]>();
   const [queryParams] = useSearchParams();
+  const [loadedPreselectedTimetables, setLoadedPreselectedTimetables] = useState(false);
+
+  const preselectedTimetableId1 = queryParams.get("id1");
+  const preselectedTimetableId2 = queryParams.get("id2");
+  const preselectedUserId1 = queryParams.get("userId1");
+  const preselectedUserId2 = queryParams.get("userId2");
 
   const compareForm = useForm<z.infer<typeof CompareFormSchema>>({
     resolver: zodResolver(CompareFormSchema),
     defaultValues: {
       timetable1: queryParams.has("id1")
-        ? parseInt(queryParams.get("id1") ?? "0")
+        ? `timetable1/${preselectedTimetableId1}/${preselectedUserId1}`
         : undefined,
       timetable2: queryParams.has("id2")
-        ? parseInt(queryParams.get("id2") ?? "0")
+        ? `timetable2/${preselectedTimetableId2}/${preselectedUserId2}`
         : undefined,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof CompareFormSchema>) => {
+  const { data: myTimetablesData } = useGetTimetablesQuery() as { data: Timetable[] };
+  const { data: sharedWithMeTimetablesData } = useGetTimetablesSharedWithMeQuery() as { data: TimetableShare[] };
+
+  const myOwningTimetables = [...(myTimetablesData ?? [])].sort(sortTimetablesComparator);
+  const sharedWithMeTimetables = [...(sharedWithMeTimetablesData ?? [])]
+    .flatMap((share) => share.timetables)
+    .sort(sortTimetablesComparator);
+  const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables]
+    .map((timetable, index) => ({
+      ...timetable,
+      isShared: index >= myOwningTimetables.length,
+    }))
+    .sort(sortTimetablesComparator);
+
+  useEffect(() => {
+    if (
+      preselectedTimetableId1 &&
+      preselectedUserId1 &&
+      preselectedTimetableId2 &&
+      preselectedUserId2 &&
+      !loadedPreselectedTimetables
+    ) {
+      setTimetable1(allTimetables.find((t) => t.id === parseInt(preselectedTimetableId1) && t.user_id === preselectedUserId1));
+      setTimetable2(allTimetables.find((t) => t.id === parseInt(preselectedTimetableId2) && t.user_id === preselectedUserId2));
+      setLoadedPreselectedTimetables(true);
+    }
+  }, [preselectedTimetableId1, preselectedUserId1, preselectedTimetableId2, preselectedUserId2, allTimetables, loadedPreselectedTimetables]);
+
+  const onSubmit = useCallback((values: z.infer<typeof CompareFormSchema>) => {
     console.log("Compare Form submitted:", values);
-    const timetableId1 = compareForm.getValues("timetable1");
-    const timetableId2 = compareForm.getValues("timetable2");
-    setTimetable1(timetables.find((t) => t.id === timetableId1));
-    refetchEvents1();
-    setTimetable2(timetables.find((t) => t.id === timetableId2));
-    refetchEvents2();
-  };
 
-  const {
-    data: timetables,
-    isLoading,
-    refetch,
-  } = useGetTimetablesQuery() as {
-    data: Timetable[];
-    isLoading: boolean;
-    refetch: () => void;
-  };
+    const timetableId1 = parseInt(values.timetable1.split("/")[1]);
+    const timetableId2 = parseInt(values.timetable2.split("/")[1]);
+    const timetableUserId1 = values.timetable1.split("/")[2];
+    const timetableUserId2 = values.timetable2.split("/")[2];
 
-  const { data: timetableEventsData1, refetch: refetchEvents1 } =
-    useGetEventsQuery(compareForm.getValues("timetable1") ?? undefined, {
-      skip: compareForm.getValues("timetable1") === undefined,
-    }) as {
-      data: TimetableEvents;
-      refetch: () => void;
-    };
-  const { data: timetableEventsData2, refetch: refetchEvents2 } =
-    useGetEventsQuery(compareForm.getValues("timetable2"), {
-      skip: compareForm.getValues("timetable2") === undefined,
-    }) as {
-      data: TimetableEvents;
-      refetch: () => void;
-    };
-
-  useEffect(() => {
-    if (queryParams.has("id1") && timetables) {
-      const id = parseInt(queryParams.get("id1") || "0");
-      compareForm.setValue("timetable1", id);
-      setTimetable1(timetables.find((t) => t.id === id));
-    }
-  }, [timetables]);
-
-  useEffect(() => {
-    if (queryParams.has("id2") && timetables) {
-      const id = parseInt(queryParams.get("id2") || "0");
-      compareForm.setValue("timetable2", id);
-      setTimetable2(timetables.find((t) => t.id === id));
-    }
-  }, [timetables]);
-
-  // get unique offeringIds for calendar
-  useEffect(() => {
-    if (timetableEventsData1) {
-      const uniqueOfferingIds = new Set<number>();
-      for (const event of timetableEventsData1.courseEvents) {
-        if (!uniqueOfferingIds.has(event.offering_id))
-          uniqueOfferingIds.add(event.offering_id);
-      }
-      setOfferingIds1(Array.from(uniqueOfferingIds));
-    }
-  }, [timetableEventsData1]);
-
-  useEffect(() => {
-    if (timetableEventsData2) {
-      const uniqueOfferingIds = new Set<number>();
-      for (const event of timetableEventsData2.courseEvents) {
-        if (!uniqueOfferingIds.has(event.offering_id))
-          uniqueOfferingIds.add(event.offering_id);
-      }
-      setOfferingIds2(Array.from(uniqueOfferingIds));
-    }
-  }, [timetableEventsData2]);
+    setTimetable1(allTimetables.find((t) => t.id === timetableId1 && t.user_id === timetableUserId1));
+    setTimetable2(allTimetables.find((t) => t.id === timetableId2 && t.user_id === timetableUserId2));
+  }, [allTimetables]);
 
   return (
     <>
@@ -146,10 +112,10 @@ export const CompareTimetables = () => {
                   render={({ field }) => (
                     <FormItem>
                       <Select
-                        onValueChange={(value) => field.onChange(Number(value))}
+                        onValueChange={(value) => field.onChange(value)}
                         defaultValue={
                           queryParams.has("id1")
-                            ? (queryParams.get("id1") ?? "")
+                            ? `timetable1/${preselectedTimetableId1}/${preselectedUserId1}`
                             : undefined
                         }
                       >
@@ -159,11 +125,11 @@ export const CompareTimetables = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {timetables &&
-                            timetables.map((timetable) => (
+                          {allTimetables &&
+                            allTimetables.map((timetable) => (
                               <SelectItem
-                                key={timetable.id}
-                                value={timetable.id.toString()}
+                                key={`timetable1/${timetable.id}/${timetable.user_id}`}
+                                value={`timetable1/${timetable.id}/${timetable.user_id}`}
                               >
                                 <div className="flex items-center gap-2">
                                   <SemesterIcon
@@ -190,10 +156,10 @@ export const CompareTimetables = () => {
                   render={({ field }) => (
                     <FormItem>
                       <Select
-                        onValueChange={(value) => field.onChange(Number(value))}
+                        onValueChange={(value) => field.onChange(value)}
                         defaultValue={
                           queryParams.has("id1")
-                            ? (queryParams.get("id2") ?? "")
+                            ? `timetable2/${preselectedTimetableId2}/${preselectedUserId2}`
                             : undefined
                         }
                       >
@@ -203,11 +169,11 @@ export const CompareTimetables = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {timetables &&
-                            timetables.map((timetable) => (
+                          {allTimetables &&
+                            allTimetables.map((timetable) => (
                               <SelectItem
-                                key={timetable.id}
-                                value={timetable.id.toString()}
+                                key={`timetable2/${timetable.id}/${timetable.user_id}`}
+                                value={`timetable2/${timetable.id}/${timetable.user_id}`}
                               >
                                 <div className="flex items-center gap-2">
                                   <SemesterIcon
@@ -237,48 +203,32 @@ export const CompareTimetables = () => {
           <hr className="mb-4" />
           <div className="flex gap-4">
             <div className="w-1/2">
-              {!offeringIds1 ? (
-                <>
-                  {queryParams.has("id1") ? (
-                    <Spinner />
-                  ) : (
-                    <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">
-                      Select a timetable to compare
-                    </div>
-                  )}
-                </>
+              {!timetable1 ? (
+                <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">
+                  Select a timetable to compare
+                </div>
               ) : (
-                <Calendar
-                  setShowLoadingPage={() => {}}
-                  isChoosingSectionsManually={false}
+                <ViewCalendar
+                  user_id={timetable1.user_id}
+                  calendar_id={timetable1.id}
+                  timetable_title={timetable1?.timetable_title ?? ""}
                   semester={timetable1?.semester ?? "Fall 2025"}
-                  selectedCourses={[]}
-                  newOfferingIds={offeringIds1}
-                  restrictions={[]}
-                  header={timetable1?.timetable_title}
+                  show_fancy_header={false}
                 />
               )}
             </div>
             <div className="w-1/2">
-              {!offeringIds2 ? (
-                <>
-                  {queryParams.has("id2") ? (
-                    <Spinner />
-                  ) : (
-                    <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">
-                      Select a timetable to compare
-                    </div>
-                  )}
-                </>
+              {!timetable2 ? (
+                <div className="w-full text-center py-[8rem] text-sm bg-gray-100/50 rounded">
+                  Select a timetable to compare
+                </div>
               ) : (
-                <Calendar
-                  setShowLoadingPage={() => {}}
-                  isChoosingSectionsManually={false}
+                <ViewCalendar 
+                  user_id={timetable2.user_id}
+                  calendar_id={timetable2.id}
+                  timetable_title={timetable2?.timetable_title ?? ""}
                   semester={timetable2?.semester ?? "Fall 2025"}
-                  selectedCourses={[]}
-                  newOfferingIds={offeringIds2}
-                  restrictions={[]}
-                  header={timetable2?.timetable_title}
+                  show_fancy_header={false}
                 />
               )}
             </div>

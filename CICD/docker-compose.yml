@@ -12,7 +12,7 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-    command: ["npm", "run", "dev"]
+    command: ["npm", "run", "prod"]
     networks:
       - course-matrix-net
 
@@ -27,7 +27,7 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    command: ["npm", "run", "dev"]
+    command: ["npm", "run", "prod"]
     depends_on:
       - backend
     networks:

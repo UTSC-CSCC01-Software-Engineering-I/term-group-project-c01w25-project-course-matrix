@@ -49,11 +49,11 @@ const Home = () => {
 
           <h1
             className={`${
-              count >= 25 ? "font-bold text-red-500" : "font-normal text-black"
+              count >= 25 ? "text-sm font-bold text-red-500" : "text-sm font-normal text-black"
             }`}
           >
             {" "}
-            (Timetable limit: {count}/25)
+            (Created timetables: {count}/25)
           </h1>
         </div>
         <TimetableErrorDialog

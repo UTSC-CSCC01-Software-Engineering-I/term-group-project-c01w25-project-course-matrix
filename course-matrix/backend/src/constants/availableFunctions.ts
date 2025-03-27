@@ -40,7 +40,6 @@ export const availableFunctions: AvailableFunctions = {
     try {
       // Retrieve user_id
       const user_id = (req as any).user.id;
-      console.log("NO");
       // Retrieve user timetable item based on user_id
       let timeTableQuery = supabase
         .schema("timetable")

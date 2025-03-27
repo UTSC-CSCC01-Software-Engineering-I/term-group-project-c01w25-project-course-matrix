@@ -249,8 +249,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Create new timetables based on provided courses and restrictions
             - Update timetable names and semesters
             - Delete a user's timetables
-            - Retrieve timetables that the user owns,  THIS INFORMATION MUST BE REFRESHED OFTEN!!! 
-            - Retrieve the number of timetables that the user owns. THIS SHOULD NOT EXCEED 25!
+            - Retrieve timetables that the user owns
         
             ## Response Guidelines
             - Be concise and direct when answering course-related questions
@@ -261,7 +260,6 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Format long lists of timetables as a table 
 
             ## Tool call guidelines
-            - call getTimetables no matter what, to obtain the most of to date # of timetables for the user.  
             - Include the timetable ID in all getTimetables tool call responses
             - Link: For every tool call, for each timetable that it gets/deletes/modifies/creates, include a link with it displayed as "View Timetable" to ${
               process.env.CLIENT_APP_URL
@@ -276,6 +274,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - After a deletion has been cancelled, /timetable confirm will do nothing. If the user wants to delete again after cancelling, they must specify so.
             - Do not create multiple timetables for a single user query. Each user query can create at most 1 timetable
             - If you try to update or create a timetable but you get an error saying a timetable with the same name already exists, then ask the user to rename
+            - It is possible for users to delete timetables / update them manually. For this reason, always refetch getTimtables before creation, to get the latest names and timetable count. Do not assume the timetables are the same since the last query.
             `,
         messages,
         tools: {

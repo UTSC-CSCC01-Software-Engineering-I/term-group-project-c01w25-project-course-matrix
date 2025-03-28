@@ -17,7 +17,7 @@ describe("convertTimestampToLocaleTime", () => {
   });
 
   test("convert to locale time date is different", () => {
-    const timestamp = "2025-03-28 02:33:02.589+00"; 
+    const timestamp = "2025-03-28 02:33:02.589+00";
     const result = convertTimestampToLocaleTime(timestamp);
     expect(result).toBe("3/27/2025, 10:33:02 PM");
     expect(result.length).toBeGreaterThan(0);

@@ -202,7 +202,7 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
 
     useEffect(() => {
       setCurrentTimetableIndex(0);
-    }, [generatedTimetables])
+    }, [generatedTimetables]);
 
     return (
       <>

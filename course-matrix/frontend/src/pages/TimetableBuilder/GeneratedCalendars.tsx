@@ -16,7 +16,7 @@ import {
 } from "@/utils/semester-utils";
 import { courseEventStyles } from "@/constants/calendarConstants";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
 import { Button } from "@/components/ui/button";
 import {
@@ -107,7 +107,7 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
 
     const { data: courseEventsData, isLoading } = useGetOfferingEventsQuery({
       offering_ids: currentTimetableOfferings
-        .map((offering) => offering.id)
+        ?.map((offering) => offering.id)
         .join(","),
       semester_start_date: semesterStartDate,
       semester_end_date: semesterEndDate,
@@ -199,6 +199,10 @@ export const GeneratedCalendars = React.memo<GeneratedCalendarsProps>(
       },
       isResponsive: false,
     });
+
+    useEffect(() => {
+      setCurrentTimetableIndex(0);
+    }, [generatedTimetables])
 
     return (
       <>

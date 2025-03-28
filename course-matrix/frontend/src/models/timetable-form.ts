@@ -106,7 +106,7 @@ export const RestrictionSchema = z
   })
   .refine(
     (data) => {
-      if (data.startTime && data.endTime) {
+      if (data.type === "Restrict Between" && data.startTime && data.endTime) {
         return data.startTime < data.endTime;
       }
       return true; // Allow if either undefined

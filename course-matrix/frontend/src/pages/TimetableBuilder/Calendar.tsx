@@ -201,7 +201,11 @@ const Calendar = React.memo<CalendarProps>(
           ),
       ),
     ].length;
-    const allOfferingSectionsHaveBeenSelected = isEditingTimetable ? !numberOfSectionsData || !offeringsData || totalNumberOfSelectedSections === totalNumberOfRequiredSections : totalNumberOfSelectedSections === totalNumberOfRequiredSections;
+    const allOfferingSectionsHaveBeenSelected = isEditingTimetable
+      ? !numberOfSectionsData ||
+        !offeringsData ||
+        totalNumberOfSelectedSections === totalNumberOfRequiredSections
+      : totalNumberOfSelectedSections === totalNumberOfRequiredSections;
 
     useEffect(() => {
       if (!isEditingTimetable) {

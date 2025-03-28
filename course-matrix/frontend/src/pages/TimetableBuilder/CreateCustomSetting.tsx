@@ -256,30 +256,35 @@ const CreateCustomSetting = ({
                               />
                             ))}
                             <FormField
-                                control={restrictionForm.control}
-                                name="days"
-                                render={({ field }) => {
-                                  return (
-                                    <FormItem
-                                      className="flex flex-row items-start space-x-3 space-y-0"
-                                    >
-                                      <FormControl>
-                                        <Checkbox
-                                          checked={field.value?.length === daysOfWeek.length}
-                                          onCheckedChange={(checked) => {
-                                            return checked
-                                              ? field.onChange(daysOfWeek.map(item => item.id))
-                                              : field.onChange([]);
-                                          }}
-                                        />
-                                      </FormControl>
-                                      <FormLabel className="font-normal">
-                                        All Days
-                                      </FormLabel>
-                                    </FormItem>
-                                  );
-                                }}
-                              />
+                              control={restrictionForm.control}
+                              name="days"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={
+                                          field.value?.length ===
+                                          daysOfWeek.length
+                                        }
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange(
+                                                daysOfWeek.map(
+                                                  (item) => item.id,
+                                                ),
+                                              )
+                                            : field.onChange([]);
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      All Days
+                                    </FormLabel>
+                                  </FormItem>
+                                );
+                              }}
+                            />
                           </div>
                           <FormMessage />
                         </FormItem>

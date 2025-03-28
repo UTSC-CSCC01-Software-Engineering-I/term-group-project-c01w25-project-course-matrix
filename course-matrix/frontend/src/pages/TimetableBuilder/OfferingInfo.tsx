@@ -245,7 +245,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                           <SelectItem
                             value={lectureOfferingIds.join(",")}
                             className={
-                              "font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"
+                              "font-bold bg-green-100/50 focus:bg-green-200 cursor-pointer"
                             }
                           >
                             {section}
@@ -257,7 +257,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                             return (
                               <SelectLabel
                                 key={id}
-                                className={"bg-yellow-100 font-light"}
+                                className={"font-light"}
                               >{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
                             );
                           })}
@@ -309,7 +309,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                           <SelectItem
                             value={tutorialOfferingIds.join(",")}
                             className={
-                              "font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"
+                              "font-bold bg-green-100/50 focus:bg-green-200 cursor-pointer"
                             }
                           >
                             {section}
@@ -321,7 +321,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                             return (
                               <SelectLabel
                                 key={id}
-                                className={"bg-yellow-100 font-light"}
+                                className={"font-light"}
                               >{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
                             );
                           })}
@@ -375,7 +375,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                           <SelectItem
                             value={practicalOfferingIds.join(",")}
                             className={
-                              "font-bold bg-yellow-300 focus:bg-yellow-500 cursor-pointer"
+                              "font-bold bg-green-100/50 focus:bg-green-200 cursor-pointer"
                             }
                           >
                             {section}
@@ -387,7 +387,7 @@ const OfferingInfo = ({ course, semester, form }: OfferingInfoProps) => {
                             return (
                               <SelectLabel
                                 key={id}
-                                className={"bg-yellow-100 font-light"}
+                                className={"font-light"}
                               >{`${offering?.day}, ${offering?.start} - ${offering?.end}`}</SelectLabel>
                             );
                           })}

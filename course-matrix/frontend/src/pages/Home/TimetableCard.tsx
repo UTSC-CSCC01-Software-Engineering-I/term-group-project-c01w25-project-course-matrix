@@ -16,6 +16,7 @@ import {
 } from "@/api/timetableApiSlice";
 import { Link } from "react-router-dom";
 import { TimetableModel } from "@/models/models";
+import {convertTimestampToLocaleTime} from "../../utils/convert-timestamp-to-locale-time";
 
 interface TimetableCardProps {
   refetch: () => void;
@@ -43,20 +44,13 @@ const TimetableCard = ({
 }: TimetableCardProps) => {
   const [updateTimetable] = useUpdateTimetableMutation();
 
-  const lastEditedDateArray = lastEditedDate
-    .toISOString()
-    .split("T")[0]
-    .split("-");
-  const lastEditedYear = lastEditedDateArray[0];
-  const lastEditedMonth = lastEditedDateArray[1];
-  const lastEditedDay = lastEditedDateArray[2];
-  const lastEditedDateTimestamp =
-    lastEditedMonth + "/" + lastEditedDay + "/" + lastEditedYear;
 
   const [timetableCardTitle, setTimetableCardTitle] = useState(title);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const { data } = useGetTimetableQuery(timetableId);
   const [toggled, setToggled] = useState(favorite);
+
+  
 
   const handleSave = async () => {
     try {
@@ -161,7 +155,7 @@ const TimetableCard = ({
       </CardHeader>
       <CardContent className="-mt-3">
         <CardDescription className="flex justify-between text-xs">
-          <div>Last edited {lastEditedDateTimestamp}</div>
+          <div>Last edited {convertTimestampToLocaleTime(lastEditedDate.toISOString()).split(",")[0]}</div>
           <div>Owned by: {owner}</div>
         </CardDescription>
       </CardContent>

@@ -362,13 +362,13 @@ const TimetableBuilder = () => {
                 <Button size="sm" variant="outline" onClick={handleReset}>
                   Reset
                 </Button>
-                <Button
+                {isEditingTimetable && <Button
                   size="sm"
                   variant="outline"
                   onClick={() => setOpenShareDialog(true)}
                 >
                   Share
-                </Button>
+                </Button>}
                 {isEditingTimetable && (
                   <ShareDialog
                     open={openShareDialog}

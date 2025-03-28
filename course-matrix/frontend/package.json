@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "prod": "vite build && vite preview --port 5173",
     "test": "jest",
     "test:watch": "jest --watch"
   },

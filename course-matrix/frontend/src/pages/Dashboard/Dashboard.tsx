@@ -20,6 +20,8 @@ import AssistantPage from "../Assistant/AssistantPage";
 import { RuntimeProvider } from "../Assistant/runtime-provider";
 import Home from "../Home/Home";
 import { CompareTimetables } from "../Compare/CompareTimetables";
+import EditAccountDialog from "./EditAccountDialog";
+import { useState } from "react";
 
 /**
  * Dashboard Component
@@ -38,6 +40,7 @@ import { CompareTimetables } from "../Compare/CompareTimetables";
  */
 const Dashboard = () => {
   const location = useLocation();
+  const [openEditAccountDialog, setOpenEditAccountDialog] = useState(false);
 
   return (
     <>
@@ -79,7 +82,12 @@ const Dashboard = () => {
                       </BreadcrumbList>
                     </Breadcrumb>
                   </div>
-                  <UserMenu />
+                  <div>
+                    <UserMenu setOpen={setOpenEditAccountDialog} />
+                    <EditAccountDialog
+                      open={openEditAccountDialog}
+                      setOpen={setOpenEditAccountDialog}/>
+                  </div>
                 </header>
                 <div>
                   <Routes>

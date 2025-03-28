@@ -86,7 +86,8 @@ const Dashboard = () => {
                     <UserMenu setOpen={setOpenEditAccountDialog} />
                     <EditAccountDialog
                       open={openEditAccountDialog}
-                      setOpen={setOpenEditAccountDialog}/>
+                      setOpen={setOpenEditAccountDialog}
+                    />
                   </div>
                 </header>
                 <div>

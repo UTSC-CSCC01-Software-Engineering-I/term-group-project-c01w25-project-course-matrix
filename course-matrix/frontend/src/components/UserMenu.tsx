@@ -125,9 +125,9 @@ export function UserMenu({ setOpen }: UserMenuProps) {
           </p>
         </div>
         <DropdownMenuItem>
-            <button className="w-full text-left" onClick={() => setOpen(true)}>
-              Edit Account
-            </button>
+          <button className="w-full text-left" onClick={() => setOpen(true)}>
+            Edit Account
+          </button>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <button className="w-full text-left" onClick={handleLogout}>

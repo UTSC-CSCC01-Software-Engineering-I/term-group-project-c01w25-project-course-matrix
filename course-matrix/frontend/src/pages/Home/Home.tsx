@@ -14,8 +14,8 @@ import { TimetableCompareButton } from "./TimetableCompareButton";
 import { useState } from "react";
 import TimetableErrorDialog from "../TimetableBuilder/TimetableErrorDialog";
 import { useGetTimetablesSharedWithMeQuery } from "@/api/sharedApiSlice";
-import SharedCalendar from "../TimetableBuilder/SharedCalendar";
-import { useGetUsernameFromUserIdQuery } from "@/api/authApiSlice";
+import ViewCalendar from "../TimetableBuilder/ViewCalendar";
+import { sortTimetablesComparator } from "@/utils/calendar-utils";
 
 export interface Timetable {
   id: number;
@@ -33,14 +33,6 @@ export interface TimetableShare {
   owner_id: string;
   shared_id: string;
   timetables: Timetable[];
-}
-
-function sortingFunction(a: Timetable, b: Timetable) {
-  if (a.favorite == b.favorite)
-    return b?.updated_at.localeCompare(a?.updated_at);
-  if (a.favorite) return -1;
-  if (b.favorite) return 1;
-  return 0;
 }
 
 /**
@@ -71,11 +63,17 @@ const Home = () => {
   const isLoading = myTimetablesDataLoading || sharedWithmeDataLoading;
 
   const myOwningTimetables = [...(myTimetablesData ?? [])].sort(
-    sortingFunction,
+    sortTimetablesComparator,
   );
   const sharedWithMeTimetables = [...(sharedWithMeData ?? [])]
     .flatMap((share) => share.timetables)
-    .sort(sortingFunction);
+    .sort(sortTimetablesComparator);
+  const allTimetables = [...myOwningTimetables, ...sharedWithMeTimetables]
+    .map((timetable, index) => ({
+      ...timetable,
+      isShared: index >= myOwningTimetables.length,
+    }))
+    .sort(sortTimetablesComparator);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("Mine");
@@ -88,13 +86,6 @@ const Home = () => {
   const selectedSharedTimetableOwnerId = selectedSharedTimetable?.user_id ?? "";
   const selectSharedTimetableSemester = selectedSharedTimetable?.semester ?? "";
 
-  // Get the selected shared timetable owner's username
-  const { data: usernameData } = useGetUsernameFromUserIdQuery(
-    selectedSharedTimetableOwnerId,
-    { skip: selectedSharedTimetableId === -1 },
-  );
-  const ownerUsername = usernameData ?? "";
-
   return (
     <div className="w-full">
       <div className="m-8">
@@ -103,20 +94,16 @@ const Home = () => {
           onOpenChange={() => setSelectedSharedTimetable(null)}
         >
           <DialogTitle></DialogTitle>
-          <DialogContent className="max-w-[70%] max-h-[90%] overflow-y-scroll">
-            <SharedCalendar
+          <DialogContent className="max-w-[80%] max-h-[90%] overflow-y-scroll">
+            <ViewCalendar
               user_id={selectedSharedTimetableOwnerId}
-              user_username={ownerUsername}
               calendar_id={selectedSharedTimetableId}
               timetable_title={selectedSharedTimetableTitle}
               semester={selectSharedTimetableSemester}
+              show_fancy_header={true}
             />
             <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="secondary" size="sm">
-                  Close
-                </Button>
-              </DialogClose>
+              <DialogClose></DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -146,7 +133,7 @@ const Home = () => {
             </Button>
           </div>
           <div className="flex gap-2">
-            <TimetableCompareButton timetables={myTimetablesData} />
+            <TimetableCompareButton timetables={allTimetables} />
             <TimetableCreateNewButton />
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { Event } from "@/utils/type-utils";
+import { Event, Timetable } from "@/utils/type-utils";
 
 export function parseEvent(id: number, event: Event, calendarId: string) {
   return {
@@ -18,4 +18,12 @@ export function parseEvent(id: number, event: Event, calendarId: string) {
       event.event_end.split(":")[1],
     calendarId: calendarId,
   };
+}
+
+export function sortTimetablesComparator(a: Timetable, b: Timetable) {
+  if (a.favorite == b.favorite)
+    return b?.updated_at.localeCompare(a?.updated_at);
+  if (a.favorite) return -1;
+  if (b.favorite) return 1;
+  return 0;
 }

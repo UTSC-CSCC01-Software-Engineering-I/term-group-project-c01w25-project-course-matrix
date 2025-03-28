@@ -282,6 +282,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Do not create multiple timetables for a single user query. Each user query can create at most 1 timetable
             - If you try to update or create a timetable but you get an error saying a timetable with the same name already exists, then ask the user to rename
             - It is possible for users to delete timetables / update them manually. For this reason, always refetch getTimtables before creation, to get the latest names and timetable count. Do not assume the timetables are the same since the last query.
+            - If a user asks for the timetable count, always refetch getTimetables. Assume this count could have changed between user queries.
             `,
         messages,
         tools: {

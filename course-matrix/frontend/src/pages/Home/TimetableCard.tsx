@@ -54,7 +54,6 @@ const TimetableCard = ({
   favorite,
 }: TimetableCardProps) => {
   const [updateTimetable] = useUpdateTimetableMutation();
-
   const timetableId = timetable.id;
 
   const user_metadata = JSON.parse(localStorage.getItem("userInfo") ?? "{}");
@@ -68,7 +67,7 @@ const TimetableCard = ({
 
   const [timetableCardTitle, setTimetableCardTitle] = useState(title);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const { data } = useGetTimetableQuery(timetableId);
+  const { data, refetch} = useGetTimetableQuery(timetableId);
   const [toggled, setToggled] = useState(favorite);
 
   const handleSave = async () => {
@@ -148,7 +147,7 @@ const TimetableCard = ({
       </CardHeader>
       <CardContent className="-mt-3">
         <CardDescription className="flex justify-between text-xs">
-          <div>Last edited {lastEditedDateTimestamp}</div>
+          <div>Last edited {<div>Last edited {convertTimestampToLocaleTime(lastEditedDate.toISOString()).split(",")[0]}</div>}</div>
           <div>Owned by: {ownerUsername}</div>
         </CardDescription>
       </CardContent>

@@ -141,7 +141,7 @@ const TimetableCard = ({
           <div
             className={`w-full h-full p-20 flex justify-center rounded-lg ${semesterToBgColor(
               timetable.semester
-            )} cursor-pointer transition-opacity duration-500`}
+            )} cursor-pointer animate-fade-in`}
           >
             <SemesterIcon semester={timetable.semester} />
           </div>
@@ -188,7 +188,7 @@ const TimetableCard = ({
             <div
               className={`w-full h-full p-20 flex justify-center rounded-lg ${semesterToBgColor(
                 timetable.semester
-              )} cursor-pointer transition-opacity duration-500`}
+              )} cursor-pointer animate-fade-in`}
             >
               <SemesterIcon semester={timetable.semester} />
             </div>

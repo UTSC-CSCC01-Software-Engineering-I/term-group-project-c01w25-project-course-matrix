@@ -63,7 +63,7 @@ const Home = () => {
   const isLoading = myTimetablesDataLoading || sharedWithmeDataLoading;
 
   const myOwningTimetables = [...(myTimetablesData ?? [])].sort(
-    sortTimetablesComparator
+    sortTimetablesComparator,
   );
   const sharedWithMeTimetables = [...(sharedWithMeData ?? [])]
     .flatMap((share) => share.timetables)

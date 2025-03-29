@@ -76,7 +76,7 @@ const TimetableCard = ({
     (user_metadata?.user?.email as string);
   const { data: usernameData } = useGetUsernameFromUserIdQuery(ownerId);
   const ownerUsername = isShared
-    ? usernameData ?? "John Doe"
+    ? (usernameData ?? "John Doe")
     : loggedInUsername;
 
   const lastEditedDateArray = lastEditedDate
@@ -140,7 +140,7 @@ const TimetableCard = ({
         <div className="relative w-full h-full">
           <div
             className={`w-full h-full p-20 flex justify-center rounded-lg ${semesterToBgColor(
-              timetable.semester
+              timetable.semester,
             )} cursor-pointer transition-opacity duration-500`}
           >
             <SemesterIcon semester={timetable.semester} />
@@ -187,7 +187,7 @@ const TimetableCard = ({
           <div className="relative w-full h-full">
             <div
               className={`w-full h-full p-20 flex justify-center rounded-lg ${semesterToBgColor(
-                timetable.semester
+                timetable.semester,
               )} cursor-pointer transition-opacity duration-500`}
             >
               <SemesterIcon semester={timetable.semester} />

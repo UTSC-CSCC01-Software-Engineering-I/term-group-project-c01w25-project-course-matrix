@@ -11,7 +11,7 @@ import TimetableCard from "./TimetableCard";
 import TimetableCreateNewButton from "./TimetableCreateNewButton";
 import { useGetTimetablesQuery } from "../../api/timetableApiSlice";
 import { TimetableCompareButton } from "./TimetableCompareButton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TimetableErrorDialog from "../TimetableBuilder/TimetableErrorDialog";
 import { useGetTimetablesSharedWithMeQuery } from "@/api/sharedApiSlice";
 import ViewCalendar from "../TimetableBuilder/ViewCalendar";
@@ -76,6 +76,11 @@ const Home = () => {
     .sort(sortTimetablesComparator);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [count, setCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (myTimetablesData !== undefined) setCount(myTimetablesData.length);
+  }, [myTimetablesData]);
   const [activeTab, setActiveTab] = useState("Mine");
 
   const [selectedSharedTimetable, setSelectedSharedTimetable] =
@@ -110,6 +115,17 @@ const Home = () => {
         <div className="mb-4 flex items-center gap-2 relative group">
           <h1 className="text-2xl font-medium tracking-tight">My Timetables</h1>
           <Pin size={24} className="text-blue-500" />
+
+          <h1
+            className={`${
+              count >= 25
+                ? "text-sm font-bold text-red-500"
+                : "text-sm font-normal text-black"
+            }`}
+          >
+            {" "}
+            (No. Timetables: {count}/25)
+          </h1>
         </div>
         <TimetableErrorDialog
           errorMessage={errorMessage}

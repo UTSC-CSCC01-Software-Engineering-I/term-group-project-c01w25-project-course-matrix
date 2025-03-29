@@ -244,7 +244,7 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Allowing natural language queries about courses, offerings, and academic programs
             - Providing personalized recommendations based on degree requirements and course availability
             - Creating, reading, updating, and deleting user timetables based on natural language
-        
+
             ## Your Capabilities
             - Create new timetables based on provided courses and restrictions
             - Update timetable names and semesters
@@ -266,11 +266,12 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             }/dashboard/timetable?edit=[[TIMETABLE_ID]] , where TIMETABLE_ID is the id of the respective timetable.
             - If the user provides a course code of length 6 like CSCA08, then assume they mean CSCA08H3 (H3 appended)
             - If the user wants to create a timetable:
-              1. First call getCourses to get course information on the requested courses, 
-              2. If the user provided a semester, then call getOfferings with the provided courses and semester to ensure the courses are actually offered in the semester. 
+              1. First call getTimetables to refetch most recent info on timetable names + timetableCount. DO NOT assume timetable names and # of timetables is same since last query.
+              2. Then call getCourses to get course information on the requested courses, 
+              3. If the user provided a semester, then call getOfferings with the provided courses and semester to ensure the courses are actually offered in the semester. 
                 a) If a course is NOT returned by getOFferings, then list it under "Excluded courses" with "reason: not offered in [provided semester]"
                 b) If no courses have offerings, then do not generate the timetable.
-              3. Lastly, call generateTimetable with the provided information.
+              4. Lastly, call generateTimetable with the provided information.
             - Do not make up fake courses or offerings. 
             - If a user asks about a course that you do not know of, acknowledge this.
             - You can only edit title of the timetable, nothing else. If a user tries to edit something else, acknowledge this limitation.
@@ -280,12 +281,14 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - After a deletion has been cancelled, /timetable confirm will do nothing. If the user wants to delete again after cancelling, they must specify so.
             - Do not create multiple timetables for a single user query. Each user query can create at most 1 timetable
             - If you try to update or create a timetable but you get an error saying a timetable with the same name already exists, then ask the user to rename
+            - It is possible for users to delete timetables / update them manually. For this reason, always refetch getTimtables before creation, to get the latest names and timetable count. Do not assume the timetables are the same since the last query.
+            - If a user asks for the timetable count, always refetch getTimetables. Assume this count could have changed between user queries.
             `,
         messages,
         tools: {
           getTimetables: tool({
             description:
-              "Get all the timetables of the currently logged in user.",
+              "Get all the timetables of the currently logged in user AND the number of timetables of the currently logged in user",
             parameters: z.object({}),
             execute: async (args) => {
               return await availableFunctions.getTimetables(args, req);

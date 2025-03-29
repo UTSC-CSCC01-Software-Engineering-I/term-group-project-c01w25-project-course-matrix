@@ -148,7 +148,7 @@ const ViewCalendar = React.memo<ViewCalendarProps>(
               {courses.map((course) => (
                 <span className="text-blue-500 mr-2" key={course}>
                   {course}{" "}
-                  <span className="text-yellow-500">
+                  <span className="text-gray-500">
                     ({(courseToMeetingSectionMap.get(course) ?? []).join(", ")})
                   </span>
                 </span>

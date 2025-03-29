@@ -27,7 +27,7 @@ export const EmailNotificationSettings = ({
 }: EmailNotificationSettingsProps) => {
   const { data, isLoading, refetch } = useGetTimetableQuery(timetableId);
   const [updateTimetable] = useUpdateTimetableMutation();
-  const { toast } = useToast()
+  const { toast } = useToast();
   const [toggled, setToggled] = useState<boolean>(false);
 
   const handleCancel = () => {
@@ -51,7 +51,7 @@ export const EmailNotificationSettings = ({
       }).unwrap();
       toast({
         description: `Email notifications have been ${toggled ? "enabled" : "disabled"}.`,
-      })
+      });
       refetch();
     } catch (error) {
       console.error("Failed to update timetable:", error);

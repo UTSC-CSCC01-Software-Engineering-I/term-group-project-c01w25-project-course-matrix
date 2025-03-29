@@ -69,7 +69,9 @@ const TimetableCard = ({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const { data, refetch } = useGetTimetableQuery(timetableId);
   const [toggled, setToggled] = useState(favorite);
-  const [lastEdited, setLastEdited] = useState(convertTimestampToLocaleTime(lastEditedDate.toISOString()).split(",")[0]);
+  const [lastEdited, setLastEdited] = useState(
+    convertTimestampToLocaleTime(lastEditedDate.toISOString()).split(",")[0],
+  );
 
   const handleSave = async () => {
     try {
@@ -84,8 +86,6 @@ const TimetableCard = ({
       return;
     }
     refetch();
-    
-    
   };
 
   useEffect(() => {
@@ -94,7 +94,11 @@ const TimetableCard = ({
       if (val !== undefined) {
         setToggled(val);
       }
-      setLastEdited(convertTimestampToLocaleTime((data as TimetableModel[])[0]?.updated_at).split(",")[0]);
+      setLastEdited(
+        convertTimestampToLocaleTime(
+          (data as TimetableModel[])[0]?.updated_at,
+        ).split(",")[0],
+      );
     }
   }, [data]);
 
@@ -151,16 +155,15 @@ const TimetableCard = ({
       </CardHeader>
       <CardContent className="-mt-3">
         <CardDescription className="flex justify-between text-xs">
-          
-              <div>
-                Last edited{" "}
-                {
-                  convertTimestampToLocaleTime(
-                    lastEditedDate.toISOString(),
-                  ).split(",")[0]
-                }
-              </div>
-            
+          <div>
+            Last edited{" "}
+            {
+              convertTimestampToLocaleTime(lastEditedDate.toISOString()).split(
+                ",",
+              )[0]
+            }
+          </div>
+
           <div>Owned by: {ownerUsername}</div>
         </CardDescription>
       </CardContent>
@@ -230,12 +233,7 @@ const TimetableCard = ({
       </CardHeader>
       <CardContent className="-mt-3">
         <CardDescription className="flex justify-between text-xs">
-          <div>
-            Last edited{" "}
-            {
-              lastEdited
-            }
-          </div>
+          <div>Last edited {lastEdited}</div>
           <div>Owned by: {ownerUsername}</div>
         </CardDescription>
       </CardContent>

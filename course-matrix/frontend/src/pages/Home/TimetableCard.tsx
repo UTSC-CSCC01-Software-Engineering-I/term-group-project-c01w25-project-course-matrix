@@ -69,6 +69,7 @@ const TimetableCard = ({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const { data, refetch } = useGetTimetableQuery(timetableId);
   const [toggled, setToggled] = useState(favorite);
+  const [lastEdited, setLastEdited] = useState(convertTimestampToLocaleTime(lastEditedDate.toISOString()).split(",")[0]);
 
   const handleSave = async () => {
     try {
@@ -83,6 +84,8 @@ const TimetableCard = ({
       return;
     }
     refetch();
+    
+    
   };
 
   useEffect(() => {
@@ -91,6 +94,7 @@ const TimetableCard = ({
       if (val !== undefined) {
         setToggled(val);
       }
+      setLastEdited(convertTimestampToLocaleTime((data as TimetableModel[])[0]?.updated_at).split(",")[0]);
     }
   }, [data]);
 
@@ -147,9 +151,7 @@ const TimetableCard = ({
       </CardHeader>
       <CardContent className="-mt-3">
         <CardDescription className="flex justify-between text-xs">
-          <div>
-            Last edited{" "}
-            {
+          
               <div>
                 Last edited{" "}
                 {
@@ -158,8 +160,7 @@ const TimetableCard = ({
                   ).split(",")[0]
                 }
               </div>
-            }
-          </div>
+            
           <div>Owned by: {ownerUsername}</div>
         </CardDescription>
       </CardContent>
@@ -232,9 +233,7 @@ const TimetableCard = ({
           <div>
             Last edited{" "}
             {
-              convertTimestampToLocaleTime(lastEditedDate.toISOString()).split(
-                ",",
-              )[0]
+              lastEdited
             }
           </div>
           <div>Owned by: {ownerUsername}</div>

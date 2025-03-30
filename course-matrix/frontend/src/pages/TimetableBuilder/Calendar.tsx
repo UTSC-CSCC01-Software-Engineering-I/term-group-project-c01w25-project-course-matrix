@@ -28,6 +28,7 @@ import { TimetableFormSchema } from "@/models/timetable-form";
 import {
   useGetTimetablesQuery,
   useCreateTimetableMutation,
+  useUpdateTimetableMutation,
 } from "@/api/timetableApiSlice";
 import {
   useGetRestrictionsQuery,
@@ -41,6 +42,7 @@ import {
   useCreateEventMutation,
   useGetEventsQuery,
   useDeleteEventMutation,
+  useUpdateEventMutation,
 } from "@/api/eventsApiSlice";
 import { useGetOfferingsQuery } from "@/api/offeringsApiSlice";
 import { useGetOfferingEventsQuery } from "@/api/offeringsApiSlice";
@@ -89,13 +91,16 @@ const Calendar = React.memo<CalendarProps>(
     const editingTimetableId = parseInt(queryParams.get("edit") ?? "0");
 
     const [createTimetable] = useCreateTimetableMutation();
+    const [updateTimetable] = useUpdateTimetableMutation();
     const [createEvent] = useCreateEventMutation();
     const [deleteEvent] = useDeleteEventMutation();
     const [createRestriction] = useCreateRestrictionMutation();
     const [deleteRestriction] = useDeleteRestrictionMutation();
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+    const [updateErrorMessage, setUpdateErrorMessage] = useState<string | null>(
+      null,
+    );
     const semesterStartDate = getSemesterStartAndEndDates(semester).start;
     const { start: semesterStartDatePlusOneWeek, end: semesterEndDate } =
       getSemesterStartAndEndDatesPlusOneWeek(semester);
@@ -201,8 +206,11 @@ const Calendar = React.memo<CalendarProps>(
           ),
       ),
     ].length;
-    const allOfferingSectionsHaveBeenSelected =
-      totalNumberOfSelectedSections === totalNumberOfRequiredSections;
+    const allOfferingSectionsHaveBeenSelected = isEditingTimetable
+      ? !numberOfSectionsData ||
+        !offeringsData ||
+        totalNumberOfSelectedSections === totalNumberOfRequiredSections
+      : totalNumberOfSelectedSections === totalNumberOfRequiredSections;
 
     useEffect(() => {
       if (!isEditingTimetable) {
@@ -259,13 +267,20 @@ const Calendar = React.memo<CalendarProps>(
     };
 
     const handleUpdate = async () => {
+      const timetableTitle = timetableTitleRef.current?.value ?? "";
       setShowLoadingPage(true);
+
       const offeringIdsToDelete = oldOfferingIds.filter(
         (offeringId) => !newOfferingIds.includes(offeringId),
       );
       const offeringIdsToAdd = newOfferingIds.filter(
         (offeringId) => !oldOfferingIds.includes(offeringId),
       );
+      if (offeringIdsToAdd.length === 0 && offeringIdsToDelete.length === 0) {
+        setUpdateErrorMessage("You have made no changes to the timetable!");
+        setShowLoadingPage(false);
+        return;
+      }
       // Delete course events
       for (const offeringId of offeringIdsToDelete) {
         const { error: deleteError } = await deleteEvent({
@@ -319,12 +334,23 @@ const Calendar = React.memo<CalendarProps>(
           console.error(restrictionError);
         }
       }
+
+      try {
+        await updateTimetable({
+          id: editingTimetableId,
+          timetable_title: timetableTitle,
+        }).unwrap();
+      } catch (error) {
+        setUpdateErrorMessage("You have made no changes to the timetable");
+        setShowLoadingPage(false);
+        return;
+      }
       navigate("/home");
     };
 
     return (
       <div>
-        <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-8">
+        <h1 className="text-2xl flex flex-row justify-between font-medium tracking-tight mb-4">
           <div>{header}</div>
           <TimetableErrorDialog
             errorMessage={errorMessage}
@@ -378,29 +404,35 @@ const Calendar = React.memo<CalendarProps>(
               </DialogContent>
             </Dialog>
           ) : (
-            <div className="flex gap-2">
-              {isChoosingSectionsManually &&
-                !allOfferingSectionsHaveBeenSelected && (
-                  <p className="text-sm text-red-500 pr-2">
-                    Please select all LEC/TUT/PRA sections for your courses in
-                    order to save your timetable.
-                  </p>
-                )}
+            <div>
+              <div className="flex gap-2">
+                {isChoosingSectionsManually &&
+                  !allOfferingSectionsHaveBeenSelected && (
+                    <p className="text-sm text-red-500 pr-2">
+                      Please select all LEC/TUT/PRA sections for your courses in
+                      order to save your timetable.
+                    </p>
+                  )}
 
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => navigate("/home")}
-              >
-                Cancel Editing
-              </Button>
-              <Button
-                size="sm"
-                disabled={!allOfferingSectionsHaveBeenSelected}
-                onClick={handleUpdate}
-              >
-                Update Timetable
-              </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => navigate("/home")}
+                >
+                  Cancel Editing
+                </Button>
+                <Button
+                  size="sm"
+                  disabled={!allOfferingSectionsHaveBeenSelected}
+                  onClick={handleUpdate}
+                >
+                  Update Timetable
+                </Button>
+              </div>
+              <div className="mt-1 text-sm text-red-500 font-bold">
+                {" "}
+                {updateErrorMessage}{" "}
+              </div>
             </div>
           )}
         </h1>

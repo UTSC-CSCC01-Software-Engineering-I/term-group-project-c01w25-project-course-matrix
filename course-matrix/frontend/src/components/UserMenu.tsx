@@ -59,7 +59,11 @@ import { useEffect, useState, useRef } from "react";
  * @returns {JSX.Element} The rendered user menu dropdown with account options.
  */
 
-export function UserMenu() {
+interface UserMenuProps {
+  setOpen: (open: boolean) => void;
+}
+
+export function UserMenu({ setOpen }: UserMenuProps) {
   const dispatch = useDispatch();
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
@@ -100,24 +104,6 @@ export function UserMenu() {
     }
   };
 
-  const handleUsernameUpdate = async () => {
-    try {
-      const username = usernameRef?.current?.value;
-      if (!username || !username.trim()) {
-        return;
-      }
-      user_metadata.user.user_metadata.username =
-        usernameRef.current?.value.trimEnd();
-      localStorage.setItem("userInfo", JSON.stringify(user_metadata));
-      await usernameUpdate({
-        userId: userId,
-        username: user_metadata.user.user_metadata.username,
-      });
-    } catch (err) {
-      console.error("Update username failed: ", err);
-    }
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -125,7 +111,7 @@ export function UserMenu() {
           {username}
           <Avatar>
             {/* Avatar Image is the profile picture of the user. The default avatar is used as a placeholder for now. */}
-            <AvatarImage src="/img/default-avatar.png" />
+            <AvatarImage src="/img/grey-avatar.png" className="h-18 w-18" />
             {/* Avatar Fallback is the initials of the user. Avatar Fallback will be used if Avatar Image fails to load */}
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
@@ -138,52 +124,10 @@ export function UserMenu() {
             {user_metadata?.user?.user_metadata?.email}
           </p>
         </div>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className="w-full text-left">Edit Account</button>
-            </DialogTrigger>
-            <DialogContent className="gap-5">
-              <DialogHeader>
-                <DialogTitle>Edit Account</DialogTitle>
-                <DialogDescription>
-                  Edit your account details.
-                </DialogDescription>
-              </DialogHeader>
-              <Label htmlFor="username">New User Name</Label>
-              {/* Disable this email input box for now until we have the backend for accounts set up */}
-              <Input
-                id="username"
-                type="text"
-                placeholder={user_metadata.user.user_metadata.username}
-                ref={usernameRef}
-                onKeyDown={(e) => {
-                  if (e.key === " ") {
-                    e.stopPropagation(); // Allows space input
-                  }
-                }}
-              />
-              <Label htmlFor="email">New Email</Label>
-              {/* Disable this email input box for now until we have the backend for accounts set up */}
-              <Input
-                id="email"
-                type="email"
-                placeholder="john.doe@gmail.com"
-                disabled
-              />
-              <Label htmlFor="email">New Password</Label>
-              {/* Disable this password input box for now until we have the backend for accounts set up */}
-              <Input id="password" disabled={true} />
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="secondary">Cancel</Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button onClick={handleUsernameUpdate}>Save</Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+        <DropdownMenuItem>
+          <button className="w-full text-left" onClick={() => setOpen(true)}>
+            Edit Account
+          </button>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <button className="w-full text-left" onClick={handleLogout}>

@@ -320,27 +320,6 @@ describe("PUT /api/timetables/:id", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  test("should return error code 400 and message 'New timetable title or semester or updated favorite status is required when updating a timetable' if request body is empty", async () => {
-    // Make sure the test user is authenticated
-    const user_id = "testuser04-f84fd0da-d775-4424-ad88-d9675282453c";
-    const timetableData = {};
-
-    // Mock authHandler to simulate the user being logged in
-    (
-      authHandler as jest.MockedFunction<typeof authHandler>
-    ).mockImplementationOnce(mockAuthHandler(user_id));
-
-    const response = await request(app)
-      .put("/api/timetables/1")
-      .send(timetableData);
-
-    // Check that the `update` method was called
-    expect(response.statusCode).toBe(400);
-    expect(response.body).toEqual({
-      error:
-        "New timetable title or semester or updated favorite status or email notifications enabled is required when updating a timetable",
-    });
-  });
 
   test("should update the timetable successfully", async () => {
     // Make sure the test user is authenticated
@@ -361,7 +340,7 @@ describe("PUT /api/timetables/:id", () => {
 
     // Check that the `update` method was called
     expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({
+    expect(response.body).toMatchObject({
       timetable_title: "Updated Title",
       semester: "Spring 2025",
     });

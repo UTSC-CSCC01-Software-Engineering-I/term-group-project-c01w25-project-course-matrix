@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -18,12 +17,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -34,10 +30,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
+import TimetableCompareItem from "./TimetableCompareItem";
 
 export const CompareFormSchema = z.object({
-  timetable1: z.number().positive(),
-  timetable2: z.number().positive(),
+  timetable1: z.string().nonempty(),
+  timetable2: z.string().nonempty(),
 });
 
 interface TimetableCompareDialogProps {
@@ -58,10 +55,14 @@ export const TimetableCompareButton = ({
   });
 
   const onSubmit = (values: z.infer<typeof CompareFormSchema>) => {
-    console.log("Comapare Form submitted:", values);
+    console.log("Compare Form submitted:", values);
+    const timetableId1 = values.timetable1.split("/")[1];
+    const timetableId2 = values.timetable2.split("/")[1];
+    const userId1 = values.timetable1.split("/")[2];
+    const userId2 = values.timetable2.split("/")[2];
     setOpen(false);
     navigate(
-      `/dashboard/compare?id1=${values.timetable1}&id2=${values.timetable2}`,
+      `/dashboard/compare?id1=${timetableId1}&id2=${timetableId2}&userId1=${userId1}&userId2=${userId2}`,
     );
   };
 
@@ -106,9 +107,7 @@ export const TimetableCompareButton = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Timetable 1</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
-                  >
+                  <Select onValueChange={(value) => field.onChange(value)}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a timetable" />
@@ -116,18 +115,11 @@ export const TimetableCompareButton = ({
                     </FormControl>
                     <SelectContent>
                       {timetables.map((timetable) => (
-                        <SelectItem
-                          key={timetable.id}
-                          value={timetable.id.toString()}
-                        >
-                          <div className="flex items-center gap-2">
-                            <SemesterIcon
-                              semester={timetable.semester}
-                              size={18}
-                            />
-                            <span>{timetable.timetable_title}</span>
-                          </div>
-                        </SelectItem>
+                        <TimetableCompareItem
+                          key={`timetable1/${timetable.id}/${timetable.user_id}`}
+                          timetable={timetable}
+                          timetableNumber={1}
+                        />
                       ))}
                     </SelectContent>
                   </Select>
@@ -142,9 +134,7 @@ export const TimetableCompareButton = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Timetable 2</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
-                  >
+                  <Select onValueChange={(value) => field.onChange(value)}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a timetable" />
@@ -152,18 +142,11 @@ export const TimetableCompareButton = ({
                     </FormControl>
                     <SelectContent>
                       {timetables.map((timetable) => (
-                        <SelectItem
-                          key={timetable.id}
-                          value={timetable.id.toString()}
-                        >
-                          <div className="flex items-center gap-2">
-                            <SemesterIcon
-                              semester={timetable.semester}
-                              size={18}
-                            />
-                            <span>{timetable.timetable_title}</span>
-                          </div>
-                        </SelectItem>
+                        <TimetableCompareItem
+                          key={`timetable2/${timetable.id}/${timetable.user_id}`}
+                          timetable={timetable}
+                          timetableNumber={2}
+                        />
                       ))}
                     </SelectContent>
                   </Select>

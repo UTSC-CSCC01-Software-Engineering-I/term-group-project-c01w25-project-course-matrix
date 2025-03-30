@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
 import { TimetableModel } from "@/models/models";
 import { useEffect, useState } from "react";
 
@@ -26,6 +27,7 @@ export const EmailNotificationSettings = ({
 }: EmailNotificationSettingsProps) => {
   const { data, isLoading, refetch } = useGetTimetableQuery(timetableId);
   const [updateTimetable] = useUpdateTimetableMutation();
+  const { toast } = useToast();
   const [toggled, setToggled] = useState<boolean>(false);
 
   const handleCancel = () => {
@@ -47,6 +49,9 @@ export const EmailNotificationSettings = ({
         id: timetableId,
         email_notifications_enabled: toggled,
       }).unwrap();
+      toast({
+        description: `Email notifications have been ${toggled ? "enabled" : "disabled"}.`,
+      });
       refetch();
     } catch (error) {
       console.error("Failed to update timetable:", error);

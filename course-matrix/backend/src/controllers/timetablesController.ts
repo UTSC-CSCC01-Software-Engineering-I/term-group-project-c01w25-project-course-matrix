@@ -31,6 +31,21 @@ export default {
           .status(400)
           .json({ error: "Timetable Title cannot be over 50 characters long" });
       }
+      // Timetables cannot exceed the size of 25.
+      const { count: timetable_count, error: timetableCountError } =
+        await supabase
+          .schema("timetable")
+          .from("timetables")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user_id);
+
+      console.log(timetable_count);
+
+      if ((timetable_count ?? 0) >= 25) {
+        return res
+          .status(400)
+          .json({ error: "You have exceeded the limit of 25 timetables" });
+      }
 
       // Check if a timetable with the same title already exist for this user
       const { data: existingTimetable, error: existingTimetableError } =
@@ -163,17 +178,6 @@ export default {
         favorite,
         email_notifications_enabled,
       } = req.body;
-      if (
-        !timetable_title &&
-        !semester &&
-        favorite === undefined &&
-        email_notifications_enabled === undefined
-      ) {
-        return res.status(400).json({
-          error:
-            "New timetable title or semester or updated favorite status or email notifications enabled is required when updating a timetable",
-        });
-      }
 
       // Timetables cannot be longer than 50 characters.
       if (timetable_title && timetable_title.length > 50) {
@@ -184,7 +188,6 @@ export default {
 
       //Retrieve the authenticated user
       const user_id = (req as any).user.id;
-
       //Retrieve users allowed to access the timetable
       const { data: timetableUserData, error: timetableUserError } =
         await supabase
@@ -194,7 +197,6 @@ export default {
           .eq("user_id", user_id)
           .eq("id", id)
           .maybeSingle();
-
       if (timetableUserError)
         return res.status(400).json({ error: timetableUserError.message });
 
@@ -202,7 +204,6 @@ export default {
       if (!timetableUserData || timetableUserData.length === 0) {
         return res.status(404).json({ error: "Calendar id not found" });
       }
-
       // Check if another timetable with the same title already exist for this user
       const { data: existingTimetable, error: existingTimetableError } =
         await supabase
@@ -213,7 +214,6 @@ export default {
           .eq("timetable_title", timetable_title)
           .neq("id", id)
           .maybeSingle();
-
       if (existingTimetableError) {
         return res.status(400).json({ error: existingTimetableError.message });
       }
@@ -223,8 +223,8 @@ export default {
           .status(400)
           .json({ error: "Another timetable with this title already exists" });
       }
-
       let updateData: any = {};
+      updateData.updated_at = new Date().toISOString();
       if (timetable_title) updateData.timetable_title = timetable_title;
       if (semester) updateData.semester = semester;
       if (favorite !== undefined) updateData.favorite = favorite;
@@ -240,13 +240,11 @@ export default {
         .eq("id", id)
         .select()
         .single();
-
       const { data: timetableData, error: timetableError } =
         await updateTimetableQuery;
 
       if (timetableError)
         return res.status(400).json({ error: timetableError.message });
-
       // If no records were updated due to non-existence timetable or it doesn't belong to the user.
       if (!timetableData || timetableData.length === 0) {
         return res.status(404).json({
@@ -255,6 +253,7 @@ export default {
       }
       return res.status(200).json(timetableData);
     } catch (error) {
+      console.error(error);
       return res.status(500).send({ error });
     }
   }),

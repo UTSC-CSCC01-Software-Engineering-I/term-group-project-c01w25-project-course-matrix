@@ -362,13 +362,15 @@ const TimetableBuilder = () => {
                 <Button size="sm" variant="outline" onClick={handleReset}>
                   Reset
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setOpenShareDialog(true)}
-                >
-                  Share
-                </Button>
+                {isEditingTimetable && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setOpenShareDialog(true)}
+                  >
+                    Share
+                  </Button>
+                )}
                 {isEditingTimetable && (
                   <ShareDialog
                     open={openShareDialog}
@@ -459,9 +461,12 @@ const TimetableBuilder = () => {
                         <Checkbox
                           id="manual-selection"
                           checked={isChoosingSectionsManually}
-                          onCheckedChange={(checked) =>
-                            setIsChoosingSectionsManually(checked === true)
-                          }
+                          onCheckedChange={(checked) => {
+                            setIsChoosingSectionsManually(checked === true);
+                            if (checked) {
+                              form.setValue("restrictions", []);
+                            }
+                          }}
                         />
                         <label
                           htmlFor="manual-selection"
@@ -524,78 +529,85 @@ const TimetableBuilder = () => {
                     )}
                   </div>
                 </div>
-
-                <div className="flex gap-12 items-end">
-                  <div className="flex flex-col gap-2">
-                    <h2 className="text-lg">Custom Settings</h2>
-                    <p className="text-sm text-gray-500">
-                      Add additional restrictions to your timetable to
-                      personalize it to your needs.
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    type="button"
-                    onClick={() => setIsCustomSettingsOpen(true)}
-                  >
-                    + Add new
-                  </Button>
-                </div>
-
-                <div className="flex flex-col">
-                  <FormField
-                    control={form.control}
-                    name="restrictions"
-                    render={() => (
-                      <FormItem className="pb-2">
-                        <p className="text-sm">
-                          Enabled Restrictions: {enabledRestrictions.length}
+                {(!isChoosingSectionsManually || isEditingTimetable) && (
+                  <>
+                    <div className="flex gap-12 items-end">
+                      <div className="flex flex-col gap-2">
+                        <h2 className="text-lg">Custom Settings</h2>
+                        <p className="text-sm text-gray-500">
+                          {!isEditingTimetable
+                            ? "Add additional restrictions to your timetable to personalize it to your needs."
+                            : "This timetable was created with the following restrictions:"}
                         </p>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="flex gap-2 flex-col">
-                    {enabledRestrictions &&
-                      enabledRestrictions.map((restric, index) => (
-                        <div
-                          key={index}
-                          className="flex p-2 justify-between bg-red-100/50 text-xs rounded-md w-[64%]"
-                        >
-                          {restric.type.startsWith("Restrict") ? (
-                            <p>
-                              <strong>{restric.type}:</strong>{" "}
-                              {restric.startTime
-                                ? formatTime(restric.startTime)
-                                : ""}{" "}
-                              {restric.type === "Restrict Between" ? " - " : ""}{" "}
-                              {restric.endTime
-                                ? formatTime(restric.endTime)
-                                : ""}{" "}
-                              {restric.days?.join(" ")}
-                            </p>
-                          ) : restric.type.startsWith("Days") ? (
-                            <p>
-                              <strong>{restric.type}:</strong> At least{" "}
-                              {restric.numDays} days off
-                            </p>
-                          ) : (
-                            <p>
-                              <strong>{restric.type}:</strong> {restric.maxGap}{" "}
-                              hours
-                            </p>
-                          )}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        type="button"
+                        onClick={() => setIsCustomSettingsOpen(true)}
+                        className={isEditingTimetable ? "hidden" : ""}
+                      >
+                        + Add new
+                      </Button>
+                    </div>
 
-                          <X
-                            size={16}
-                            className="hover:text-red-500 cursor-pointer"
-                            onClick={() => handleRemoveRestriction(index)}
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </div>
+                    <div className="flex flex-col">
+                      <FormField
+                        control={form.control}
+                        name="restrictions"
+                        render={() => (
+                          <FormItem className="pb-2">
+                            <p className="text-sm">
+                              Enabled Restrictions: {enabledRestrictions.length}
+                            </p>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex gap-2 flex-col">
+                        {enabledRestrictions &&
+                          enabledRestrictions.map((restric, index) => (
+                            <div
+                              key={index}
+                              className="flex p-2 justify-between bg-red-100/50 text-xs rounded-md w-[64%]"
+                            >
+                              {restric.type.startsWith("Restrict") ? (
+                                <p>
+                                  <strong>{restric.type}:</strong>{" "}
+                                  {restric.startTime
+                                    ? formatTime(restric.startTime)
+                                    : ""}{" "}
+                                  {restric.type === "Restrict Between"
+                                    ? " - "
+                                    : ""}{" "}
+                                  {restric.endTime
+                                    ? formatTime(restric.endTime)
+                                    : ""}{" "}
+                                  {restric.days?.join(" ")}
+                                </p>
+                              ) : restric.type.startsWith("Days") ? (
+                                <p>
+                                  <strong>{restric.type}:</strong> At least{" "}
+                                  {restric.numDays} days off
+                                </p>
+                              ) : (
+                                <p>
+                                  <strong>{restric.type}:</strong>{" "}
+                                  {restric.maxGap} hours
+                                </p>
+                              )}
+
+                              <X
+                                size={16}
+                                className={`hover:text-red-500 cursor-pointer ${isEditingTimetable ? "hidden" : ""}`}
+                                onClick={() => handleRemoveRestriction(index)}
+                              />
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {!isChoosingSectionsManually && (
                   <div className="w-[100px]">

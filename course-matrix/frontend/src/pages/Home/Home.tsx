@@ -114,7 +114,7 @@ const Home = () => {
         </Dialog>
         <div className="mb-4 flex items-center gap-2 relative group">
           <h1 className="text-2xl font-medium tracking-tight">My Timetables</h1>
-          <Pin size={24} className="text-blue-500" />
+          <Pin size={24} className="text-green-500" />
 
           <h1
             className={`${
@@ -135,14 +135,18 @@ const Home = () => {
           <div className="flex gap-4">
             <Button
               size="xs"
-              className={`py-3 px-5 hover:bg-blue-300 text-black ${activeTab === "Mine" ? "bg-blue-300" : "bg-blue-100"}`}
+              className={`py-3 px-5 hover:bg-green-300 text-black ${
+                activeTab === "Mine" ? "bg-green-300" : "bg-green-100"
+              }`}
               onClick={() => setActiveTab("Mine")}
             >
               Mine
             </Button>
             <Button
               size="xs"
-              className={`py-3 px-5 hover:bg-blue-300 text-black ${activeTab === "Shared" ? "bg-blue-300" : "bg-blue-100"}`}
+              className={`py-3 px-5 hover:bg-green-300 text-black ${
+                activeTab === "Shared" ? "bg-green-300" : "bg-green-100"
+              }`}
               onClick={() => setActiveTab("Shared")}
             >
               Shared With Me
@@ -154,7 +158,7 @@ const Home = () => {
           </div>
         </div>
         <hr />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 justify-between mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 justify-between mt-4">
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Loading...</p>
           ) : activeTab === "Mine" ? (

@@ -6,6 +6,7 @@ import SignupPage from "./pages/Signup/SignUpPage";
 import AuthRoute from "./components/auth-route";
 import SignupSuccessfulPage from "./pages/Signup/SignupSuccessfulPage";
 import LoginRoute from "./components/login-route";
+import { Toaster } from "./components/ui/toaster";
 
 /**
  * App Component
@@ -44,6 +45,7 @@ function App() {
           element={<AuthRoute component={Dashboard} />}
         />
       </Routes>
+      <Toaster />
     </div>
   );
 }

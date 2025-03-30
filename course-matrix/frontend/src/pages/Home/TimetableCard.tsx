@@ -19,7 +19,18 @@ import {
 } from "@/api/timetableApiSlice";
 import { Link } from "react-router-dom";
 import { TimetableModel } from "@/models/models";
+import { SemesterIcon } from "@/components/semester-icon";
 import { convertTimestampToLocaleTime } from "../../utils/convert-timestamp-to-locale-time";
+
+const semesterToBgColor = (semester: string) => {
+  if (semester.startsWith("Fall")) {
+    return "bg-red-100";
+  } else if (semester.startsWith("Winter")) {
+    return "bg-blue-100";
+  } else {
+    return "bg-yellow-100";
+  }
+};
 
 interface TimetableCardProps {
   refetchMyTimetables: () => void;
@@ -53,6 +64,8 @@ const TimetableCard = ({
   setSelectedSharedTimetable,
   favorite,
 }: TimetableCardProps) => {
+  /// small blurred version
+
   const [updateTimetable] = useUpdateTimetableMutation();
   const timetableId = timetable.id;
 
@@ -119,14 +132,18 @@ const TimetableCard = ({
   };
 
   return isShared ? (
-    <Card className="w-full">
+    <Card className="w-full transition duration-200 hover:bg-gray-100/50 hover:border-green-300">
       <CardHeader>
-        <img
-          src="/img/default-timetable-card-image.png"
-          alt="Timetable default image"
-          className="cursor-pointer"
-          onClick={() => setSelectedSharedTimetable(timetable)}
-        />
+        <div className="relative w-full h-full">
+          <div
+            className={`w-full h-full p-20 flex justify-center rounded-lg ${semesterToBgColor(
+              timetable.semester,
+            )} cursor-pointer animate-fade-in`}
+          >
+            <SemesterIcon semester={timetable.semester} />
+          </div>
+        </div>
+
         <div className="flex justify-between items-center">
           <CardTitle>
             <Input
@@ -169,13 +186,18 @@ const TimetableCard = ({
       </CardContent>
     </Card>
   ) : (
-    <Card className="w-full">
+    <Card className="w-full transition duration-200 hover:bg-gray-100/50 hover:border-green-300">
       <CardHeader>
         <Link to={`/dashboard/timetable?edit=${timetableId}`}>
-          <img
-            src="/img/default-timetable-card-image.png"
-            alt="Timetable default image"
-          />
+          <div className="relative w-full h-full">
+            <div
+              className={`w-full h-full p-20 flex justify-center rounded-lg ${semesterToBgColor(
+                timetable.semester,
+              )} cursor-pointer animate-fade-in`}
+            >
+              <SemesterIcon semester={timetable.semester} />
+            </div>
+          </div>
         </Link>
         <div className="flex justify-between items-center">
           <CardTitle>
@@ -190,20 +212,19 @@ const TimetableCard = ({
               onChange={(e) => setTimetableCardTitle(e.target.value)}
             />
           </CardTitle>
-          <div className="p-2">
-            <Star
-              className={`cursor-pointer h-5 w-5 transition-colors ${
-                toggled
-                  ? "fill-yellow-500 text-yellow-500"
-                  : "fill-none text-gray-500"
-              } `}
-              onClick={() => handleFavourite()}
-            />
-          </div>
 
           <div className="flex justify-around">
             {!isEditingTitle && (
               <>
+                <Star
+                  size={18}
+                  className={`cursor-pointer transition-colors mt-2 mr-2 ${
+                    toggled
+                      ? "fill-yellow-500 text-yellow-500"
+                      : "fill-none text-gray-500"
+                  } `}
+                  onClick={() => handleFavourite()}
+                />
                 <Button
                   size="sm"
                   variant="ghost"

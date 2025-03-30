@@ -111,7 +111,7 @@ export function UserMenu({ setOpen }: UserMenuProps) {
           {username}
           <Avatar>
             {/* Avatar Image is the profile picture of the user. The default avatar is used as a placeholder for now. */}
-            <AvatarImage src="/img/default-avatar.png" />
+            <AvatarImage src="/img/grey-avatar.png" className="h-18 w-18" />
             {/* Avatar Fallback is the initials of the user. Avatar Fallback will be used if Avatar Image fails to load */}
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>

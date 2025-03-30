@@ -244,7 +244,6 @@ export const chat = asyncHandler(async (req: Request, res: Response) => {
             - Allowing natural language queries about courses, offerings, and academic programs
             - Providing personalized recommendations based on degree requirements and course availability
             - Creating, reading, updating, and deleting user timetables based on natural language
-
             ## Your Capabilities
             - Create new timetables based on provided courses and restrictions
             - Update timetable names and semesters

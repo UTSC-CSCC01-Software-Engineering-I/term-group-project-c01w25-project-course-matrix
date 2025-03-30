@@ -67,7 +67,6 @@ export default {
           .json({ error: "A timetable with this title already exists" });
       }
       //Create query to insert the user_id and timetable_title into the db
-
       let insertTimetable = supabase
         .schema("timetable")
         .from("timetables")

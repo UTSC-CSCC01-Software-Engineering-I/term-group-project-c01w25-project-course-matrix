@@ -19,7 +19,6 @@ import {
 } from "@/api/timetableApiSlice";
 import { Link } from "react-router-dom";
 import { TimetableModel } from "@/models/models";
-import { ImagePlaceholder } from "@/components/imagePlaceholder";
 import { SemesterIcon } from "@/components/semester-icon";
 
 const semesterToBgColor = (semester: string) => {
@@ -93,7 +92,6 @@ const TimetableCard = ({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const { data } = useGetTimetableQuery(timetableId);
   const [toggled, setToggled] = useState(favorite);
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleSave = async () => {
     try {

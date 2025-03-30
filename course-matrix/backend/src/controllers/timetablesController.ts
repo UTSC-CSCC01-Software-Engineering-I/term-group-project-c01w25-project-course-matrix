@@ -179,17 +179,6 @@ export default {
         favorite,
         email_notifications_enabled,
       } = req.body;
-      if (
-        !timetable_title &&
-        !semester &&
-        favorite === undefined &&
-        email_notifications_enabled === undefined
-      ) {
-        return res.status(400).json({
-          error:
-            "New timetable title or semester or updated favorite status or email notifications enabled is required when updating a timetable",
-        });
-      }
 
       // Timetables cannot be longer than 50 characters.
       if (timetable_title && timetable_title.length > 50) {
@@ -236,6 +225,7 @@ export default {
           .json({ error: "Another timetable with this title already exists" });
       }
       let updateData: any = {};
+      updateData.updated_at = new Date().toISOString();
       if (timetable_title) updateData.timetable_title = timetable_title;
       if (semester) updateData.semester = semester;
       if (favorite !== undefined) updateData.favorite = favorite;

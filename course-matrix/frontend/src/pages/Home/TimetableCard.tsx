@@ -20,6 +20,7 @@ import {
 import { Link } from "react-router-dom";
 import { TimetableModel } from "@/models/models";
 import { SemesterIcon } from "@/components/semester-icon";
+import { convertTimestampToLocaleTime } from "../../utils/convert-timestamp-to-locale-time";
 
 const semesterToBgColor = (semester: string) => {
   if (semester.startsWith("Fall")) {
@@ -66,7 +67,6 @@ const TimetableCard = ({
   /// small blurred version
 
   const [updateTimetable] = useUpdateTimetableMutation();
-
   const timetableId = timetable.id;
 
   const user_metadata = JSON.parse(localStorage.getItem("userInfo") ?? "{}");
@@ -78,20 +78,13 @@ const TimetableCard = ({
     ? (usernameData ?? "John Doe")
     : loggedInUsername;
 
-  const lastEditedDateArray = lastEditedDate
-    .toISOString()
-    .split("T")[0]
-    .split("-");
-  const lastEditedYear = lastEditedDateArray[0];
-  const lastEditedMonth = lastEditedDateArray[1];
-  const lastEditedDay = lastEditedDateArray[2];
-  const lastEditedDateTimestamp =
-    lastEditedMonth + "/" + lastEditedDay + "/" + lastEditedYear;
-
   const [timetableCardTitle, setTimetableCardTitle] = useState(title);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const { data } = useGetTimetableQuery(timetableId);
+  const { data, refetch } = useGetTimetableQuery(timetableId);
   const [toggled, setToggled] = useState(favorite);
+  const [lastEdited, setLastEdited] = useState(
+    convertTimestampToLocaleTime(lastEditedDate.toISOString()).split(",")[0],
+  );
 
   const handleSave = async () => {
     try {
@@ -105,6 +98,7 @@ const TimetableCard = ({
       setErrorMessage(errorData?.error ?? "Unknown error occurred");
       return;
     }
+    refetch();
   };
 
   useEffect(() => {
@@ -113,6 +107,11 @@ const TimetableCard = ({
       if (val !== undefined) {
         setToggled(val);
       }
+      setLastEdited(
+        convertTimestampToLocaleTime(
+          (data as TimetableModel[])[0]?.updated_at,
+        ).split(",")[0],
+      );
     }
   }, [data]);
 
@@ -173,7 +172,15 @@ const TimetableCard = ({
       </CardHeader>
       <CardContent className="-mt-3">
         <CardDescription className="flex justify-between text-xs">
-          <div>Last edited {lastEditedDateTimestamp}</div>
+          <div>
+            Last edited{" "}
+            {
+              convertTimestampToLocaleTime(lastEditedDate.toISOString()).split(
+                ",",
+              )[0]
+            }
+          </div>
+
           <div>Owned by: {ownerUsername}</div>
         </CardDescription>
       </CardContent>
@@ -247,7 +254,7 @@ const TimetableCard = ({
       </CardHeader>
       <CardContent className="-mt-3">
         <CardDescription className="flex justify-between text-xs">
-          <div>Last edited {lastEditedDateTimestamp}</div>
+          <div>Last edited {lastEdited}</div>
           <div>Owned by: {ownerUsername}</div>
         </CardDescription>
       </CardContent>

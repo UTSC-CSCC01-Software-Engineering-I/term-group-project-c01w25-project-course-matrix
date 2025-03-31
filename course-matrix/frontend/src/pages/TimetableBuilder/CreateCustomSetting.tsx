@@ -166,7 +166,15 @@ const CreateCustomSetting = ({
                       <FormLabel>Restriction Type</FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            // Reset values when toggle type
+                            restrictionForm.setValue("days", []);
+                            restrictionForm.setValue("startTime", undefined);
+                            restrictionForm.setValue("endTime", undefined);
+                            restrictionForm.setValue("maxGap", undefined);
+                            restrictionForm.setValue("numDays", undefined);
+                          }}
                           value={field.value}
                           defaultValue={""}
                         >

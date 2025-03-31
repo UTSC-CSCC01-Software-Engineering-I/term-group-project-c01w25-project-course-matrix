@@ -175,6 +175,7 @@ const CreateCustomSetting = ({
                             restrictionForm.setValue("maxGap", undefined);
                             restrictionForm.setValue("numDays", undefined);
                           }}
+                          value={field.value}
                           defaultValue={""}
                         >
                           <SelectTrigger className="w-[320px]">

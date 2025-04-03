@@ -63,11 +63,14 @@ jest.mock("../../src/middleware/authHandler", () => ({
   authHandler: jest.fn() as jest.MockedFunction<typeof authHandler>,
 }));
 
+const USER1 = "testuser04-f84fd0da-d775-4424-ad88-d9675282453c";
+const USER2 = "testuser05-f84fd0da-d775-4424-ad88-d9675282453c";
+
 // Mock timetables dataset
 const mockRestriction = {
   id: 1,
   restriction_type: "Restrict Between",
-  user_id: "testuser04-f84fd0da-d775-4424-ad88-d9675282453c",
+  user_id: USER1,
   start_time: "13:30:00",
   end_time: "14:30:00",
   days: ["MO", "TUE"],
@@ -78,7 +81,7 @@ const mockRestriction2 = {
   id: 1,
   calendar_id: 1,
   restriction_type: "Restrict Between",
-  user_id: "testuser05-f84fd0da-d775-4424-ad88-d9675282453c",
+  user_id: USER2,
   start_time: "13:30:00",
   end_time: "14:30:00",
   days: ["MO", "TUE"],
@@ -87,12 +90,12 @@ const mockRestriction2 = {
 
 const mockTimetables1 = {
   id: 1,
-  user_id: "testuser04-f84fd0da-d775-4424-ad88-d9675282453c",
+  user_id: USER1,
 };
 
 const mockTimetables2 = {
   id: 1,
-  user_id: "testuser05-f84fd0da-d775-4424-ad88-d9675282453c",
+  user_id: USER2,
 };
 
 // Spy on the createRestriction method
@@ -141,7 +144,7 @@ jest.mock("../../src/db/setupDb", () => ({
             //DB response 4: Combine .eq and .maybeSingle to signify that the return value could be single: Return null value
             if (
               key === "user_id" &&
-              value === "testuser04-f84fd0da-d775-4424-ad88-d9675282453c"
+              value === USER1
             ) {
               return {
                 eq: jest.fn().mockReturnThis(), // Allow further chaining of eq if required
@@ -153,7 +156,7 @@ jest.mock("../../src/db/setupDb", () => ({
 
             if (
               key === "user_id" &&
-              value === "testuser05-f84fd0da-d775-4424-ad88-d9675282453c"
+              value === USER2
             ) {
               return {
                 eq: jest.fn().mockReturnThis(), // Allow further chaining of eq if required
@@ -190,7 +193,7 @@ jest.mock("../../src/db/setupDb", () => ({
           }
           if (
             key === "user_id" &&
-            value === "testuser04-f84fd0da-d775-4424-ad88-d9675282453c"
+            value === USER1
           ) {
             return {
               eq: jest.fn().mockImplementation((key, value) => {
@@ -202,7 +205,7 @@ jest.mock("../../src/db/setupDb", () => ({
           }
           if (
             key === "user_id" &&
-            value === "testuser05-f84fd0da-d775-4424-ad88-d9675282453c"
+            value === USER2
           ) {
             return {
               eq: jest.fn().mockImplementation((key, value) => {
@@ -224,7 +227,7 @@ jest.mock("../../src/db/setupDb", () => ({
           if (
             data &&
             data[0].user_id ===
-              "testuser04-f84fd0da-d775-4424-ad88-d9675282453c"
+              USER1
           ) {
             return {
               select: jest.fn().mockImplementation(() => {
@@ -262,7 +265,7 @@ jest.mock("../../src/db/setupDb", () => ({
             eq: jest.fn().mockImplementation((key, value) => {
               if (
                 key === "user_id" &&
-                value === "testuser05-f84fd0da-d775-4424-ad88-d9675282453c"
+                value === USER2
               ) {
                 return {
                   eq: jest.fn().mockReturnThis(),
@@ -303,7 +306,7 @@ describe("GET /api/timetables/restrictions/:id", () => {
     (
       authHandler as jest.MockedFunction<typeof authHandler>
     ).mockImplementationOnce(
-      mockAuthHandler("testuser04-f84fd0da-d775-4424-ad88-d9675282453c"),
+      mockAuthHandler(USER1),
     );
 
     const response = await request(app).get("/api/timetables/restrictions/1");
@@ -377,7 +380,7 @@ describe("POST /api/timetables/restrictions", () => {
   });
 
   test("should create a new timetable given calendar_id, start_time and end_time", async () => {
-    const user_id = "testuser04-f84fd0da-d775-4424-ad88-d9675282453c";
+    const user_id = USER1;
     const newRestriction = {
       calendar_id: "1",
       start_time: "2025-03-04T09:00:00.000Z",
@@ -435,7 +438,7 @@ describe("PUT /api/timetables/restrictions/:id", () => {
   });
   test("should return error code 400 and message: calendar id is required ", async () => {
     // Make sure the test user is authenticated
-    const user_id = "testuser05-f84fd0da-d775-4424-ad88-d9675282453c";
+    const user_id = USER2;
     const timetableData = {
       start_time: "2025-03-04T09:00:00.000Z",
     };
@@ -458,7 +461,7 @@ describe("PUT /api/timetables/restrictions/:id", () => {
 
   test("should update the timetable successfully", async () => {
     // Make sure the test user is authenticated
-    const user_id = "testuser05-f84fd0da-d775-4424-ad88-d9675282453c";
+    const user_id = USER2;
     const timetableData = {
       start_time: "2025-03-04T09:00:00.000Z",
     };
@@ -511,7 +514,7 @@ describe("DELETE /api/timetables/:id", () => {
 
   test("should delete the timetable successfully", async () => {
     // Make sure the test user is authenticated
-    const user_id = "testuser05-f84fd0da-d775-4424-ad88-d9675282453c";
+    const user_id = USER2;
 
     // Mock authHandler to simulate the user being logged in
     (

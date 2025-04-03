@@ -8,14 +8,14 @@ jest.mock("node-cron", () => ({
 }));
 
 jest.mock("../src/db/setupDb", () => ({
-    supabase: {
-        from: jest.fn(() => ({
-        select: jest.fn(),
-        insert: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-        })),
-    },
+  supabase: {
+    from: jest.fn(() => ({
+      select: jest.fn(),
+      insert: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    })),
+  },
 }));
 
 jest.mock("../src/controllers/userController", () => ({
@@ -29,12 +29,10 @@ jest.mock("../src/controllers/userController", () => ({
     if (email === "existingUser@example.com") {
       return res.status(400).json({ error: "Email is already taken" });
     }
-    res
-      .status(201)
-      .json({
-        message: "User registered successfully",
-        user: { email, username },
-      });
+    res.status(201).json({
+      message: "User registered successfully",
+      user: { email, username },
+    });
   }),
   login: jest.fn((req: Request, res: Response) => {
     const { email, password } = req.body;

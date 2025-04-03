@@ -7,6 +7,17 @@ jest.mock("node-cron", () => ({
   schedule: jest.fn(), // Mock the `schedule` function
 }));
 
+jest.mock("../src/db/setupDb", () => ({
+    supabase: {
+        from: jest.fn(() => ({
+        select: jest.fn(),
+        insert: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+        })),
+    },
+}));
+
 jest.mock("../src/controllers/userController", () => ({
   signUp: jest.fn((req: Request, res: Response) => {
     const { email, password, username } = req.body;

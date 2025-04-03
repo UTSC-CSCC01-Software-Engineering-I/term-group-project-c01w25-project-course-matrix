@@ -5,7 +5,10 @@ import {
   Restriction,
   RestrictionType,
 } from "../../src/types/generatorTypes";
-import { createOffering, isValidOffering } from "../../src/utils/generatorHelpers";
+import {
+  createOffering,
+  isValidOffering,
+} from "../../src/utils/generatorHelpers";
 
 describe("isValidOffering", () => {
   const sampleOffering: Offering = createOffering({

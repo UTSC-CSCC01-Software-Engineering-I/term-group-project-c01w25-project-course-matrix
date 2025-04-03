@@ -4,30 +4,30 @@ import { jest, describe, it, expect, afterAll } from "@jest/globals";
 import app, { server } from "../src/index";
 
 jest.mock("@ai-sdk/openai", () => ({
-    createOpenAI: jest.fn(() => ({
-      chat: jest.fn(),
+  createOpenAI: jest.fn(() => ({
+    chat: jest.fn(),
+  })),
+}));
+
+jest.mock("ai", () => ({
+  streamText: jest.fn(() =>
+    Promise.resolve({ pipeDataStreamToResponse: jest.fn() }),
+  ),
+}));
+
+jest.mock("@pinecone-database/pinecone", () => ({
+  Pinecone: jest.fn(() => ({
+    Index: jest.fn(() => ({
+      query: jest.fn(),
+      upsert: jest.fn(),
+      delete: jest.fn(),
     })),
-  }));
-  
-  jest.mock("ai", () => ({
-    streamText: jest.fn(() =>
-      Promise.resolve({ pipeDataStreamToResponse: jest.fn() }),
-    ),
-  }));
-  
-  jest.mock("@pinecone-database/pinecone", () => ({
-    Pinecone: jest.fn(() => ({
-      Index: jest.fn(() => ({
-        query: jest.fn(),
-        upsert: jest.fn(),
-        delete: jest.fn(),
-      })),
-    })),
-  }));
-  
-  jest.mock("node-cron", () => ({
-    schedule: jest.fn(), // Mock the `schedule` function
-  }));
+  })),
+}));
+
+jest.mock("node-cron", () => ({
+  schedule: jest.fn(), // Mock the `schedule` function
+}));
 
 jest.mock("../src/db/setupDb", () => ({
   supabase: {

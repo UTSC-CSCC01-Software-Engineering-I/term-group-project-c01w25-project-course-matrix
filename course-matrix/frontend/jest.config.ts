@@ -20,7 +20,6 @@ const config: Config = {
     "<rootDir>/dist/",
     "<rootDir>/node_modules/",
     "<rootDir>/__tests__/integration-tests/",
-    "<rootDir>/__tests__/unit-tests/",
   ],
 };
 

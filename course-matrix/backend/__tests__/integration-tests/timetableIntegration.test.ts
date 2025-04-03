@@ -19,8 +19,7 @@ import { server } from "../../src/index";
 const USER1 = "testuser01-ab9e6877-f603-4c6a-9832-864e520e4d01";
 const USER2 = "testuser02-1d3f02df-f926-4c1f-9f41-58ca50816a33";
 const USER3 = "testuser03-f84fd0da-d775-4424-ad88-d9675282453c";
-const USER4 = "testuser04-f84fd0da-d775-4424-ad88-d9675282453c"; 
-
+const USER4 = "testuser04-f84fd0da-d775-4424-ad88-d9675282453c";
 
 //Handle AI import from index.ts
 jest.mock("@ai-sdk/openai", () => ({
@@ -111,27 +110,18 @@ jest.mock("../../src/db/setupDb", () => ({
     eq: jest.fn().mockImplementation((key, value) => {
       //Each test case is codded by the user_id in session
       //DB response 1: Query user timetable return non null value
-      if (
-        key === "user_id" &&
-        value === USER1
-      ) {
+      if (key === "user_id" && value === USER1) {
         // Return mock data when user_id matches
         return { data: mockTimetables1, error: null };
       }
       //DB response 2: Query user timetable return null value
-      if (
-        key === "user_id" &&
-        value === USER2
-      ) {
+      if (key === "user_id" && value === USER2) {
         // Return null for this user_id
         return { data: null, error: null };
       }
 
       //DB response 3: Combine .eq and .maybeSingle to signify that the return value could be single: Return non null value
-      if (
-        key === "user_id" &&
-        value === USER3
-      ) {
+      if (key === "user_id" && value === USER3) {
         return {
           eq: jest.fn().mockReturnThis(), // Allow further chaining of eq if required
           maybeSingle: jest.fn().mockImplementation(() => {
@@ -140,10 +130,7 @@ jest.mock("../../src/db/setupDb", () => ({
         };
       }
       //DB response 4: Combine .eq and .maybeSingle to signify that the return value could be single: Return null value
-      if (
-        key === "user_id" &&
-        value === USER4
-      ) {
+      if (key === "user_id" && value === USER4) {
         return {
           eq: jest.fn().mockReturnThis(), // Allow further chaining of eq if required
           neq: jest.fn().mockImplementation(() => ({
@@ -160,10 +147,7 @@ jest.mock("../../src/db/setupDb", () => ({
     // Mock db response to .insert query command
     insert: jest.fn().mockImplementation((data: Json) => {
       //DB response 5: Create timetable successfully, new timetable data is responded
-      if (
-        data &&
-        data[0].user_id === USER3
-      ) {
+      if (data && data[0].user_id === USER3) {
         return {
           select: jest.fn().mockImplementation(() => {
             // Return the input data when select is called
@@ -206,4 +190,3 @@ jest.mock("../../src/db/setupDb", () => ({
     }),
   },
 }));
-

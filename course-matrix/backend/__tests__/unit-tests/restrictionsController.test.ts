@@ -142,10 +142,7 @@ jest.mock("../../src/db/setupDb", () => ({
               };
             }
             //DB response 4: Combine .eq and .maybeSingle to signify that the return value could be single: Return null value
-            if (
-              key === "user_id" &&
-              value === USER1
-            ) {
+            if (key === "user_id" && value === USER1) {
               return {
                 eq: jest.fn().mockReturnThis(), // Allow further chaining of eq if required
                 maybeSingle: jest.fn().mockImplementation(() => {
@@ -154,10 +151,7 @@ jest.mock("../../src/db/setupDb", () => ({
               };
             }
 
-            if (
-              key === "user_id" &&
-              value === USER2
-            ) {
+            if (key === "user_id" && value === USER2) {
               return {
                 eq: jest.fn().mockReturnThis(), // Allow further chaining of eq if required
                 maybeSingle: jest.fn().mockImplementation(() => {
@@ -191,10 +185,7 @@ jest.mock("../../src/db/setupDb", () => ({
               }),
             };
           }
-          if (
-            key === "user_id" &&
-            value === USER1
-          ) {
+          if (key === "user_id" && value === USER1) {
             return {
               eq: jest.fn().mockImplementation((key, value) => {
                 if (key === "calendar_id" && value === "1") {
@@ -203,10 +194,7 @@ jest.mock("../../src/db/setupDb", () => ({
               }),
             };
           }
-          if (
-            key === "user_id" &&
-            value === USER2
-          ) {
+          if (key === "user_id" && value === USER2) {
             return {
               eq: jest.fn().mockImplementation((key, value) => {
                 if (key === "calendar_id" && value === "1") {
@@ -224,11 +212,7 @@ jest.mock("../../src/db/setupDb", () => ({
         }),
         insert: jest.fn().mockImplementation((data: Json) => {
           //DB response 5: Create timetable successfully, new timetable data is responded
-          if (
-            data &&
-            data[0].user_id ===
-              USER1
-          ) {
+          if (data && data[0].user_id === USER1) {
             return {
               select: jest.fn().mockImplementation(() => {
                 // Return the input data when select is called
@@ -263,10 +247,7 @@ jest.mock("../../src/db/setupDb", () => ({
           //DB response 9: Delete timetable successfully
           return {
             eq: jest.fn().mockImplementation((key, value) => {
-              if (
-                key === "user_id" &&
-                value === USER2
-              ) {
+              if (key === "user_id" && value === USER2) {
                 return {
                   eq: jest.fn().mockReturnThis(),
                   data: null,
@@ -305,9 +286,7 @@ describe("GET /api/timetables/restrictions/:id", () => {
     // Initialize the authenticated session
     (
       authHandler as jest.MockedFunction<typeof authHandler>
-    ).mockImplementationOnce(
-      mockAuthHandler(USER1),
-    );
+    ).mockImplementationOnce(mockAuthHandler(USER1));
 
     const response = await request(app).get("/api/timetables/restrictions/1");
 

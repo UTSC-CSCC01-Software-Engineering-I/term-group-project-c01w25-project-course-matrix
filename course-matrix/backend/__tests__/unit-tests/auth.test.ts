@@ -1,6 +1,6 @@
 import request from "supertest";
 import { describe, expect, it, test } from "@jest/globals";
-import app from "../src/index";
+import app from "../../src/index";
 
 describe("Authentication API", () => {
   // The unit tests below are currently commented out because they require a database connection.

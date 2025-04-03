@@ -1,8 +1,15 @@
-import '@testing-library/jest-dom/jest-globals';
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom/jest-globals";
+import "@testing-library/jest-dom";
 
 import configureStore from "redux-mock-store";
-import { afterEach, beforeEach, describe, expect, test, jest } from "@jest/globals";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  jest,
+} from "@jest/globals";
 import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 
@@ -42,8 +49,9 @@ jest.mock("../../../frontend/src/components/UserMenu", () => ({
     const refreshRuntime = useRuntimeRefresh();
     const [deleteAccount] = useAccountDeleteMutation();
 
-    const [openEditAccountDialog, setOpenEditAccountDialog] = React.useState(false); // State for the Edit Account Dialog
-    
+    const [openEditAccountDialog, setOpenEditAccountDialog] =
+      React.useState(false); // State for the Edit Account Dialog
+
     const user_metadata = JSON.parse(localStorage.getItem("userInfo") ?? "{}"); //User Data
     const username =
       (user_metadata?.user?.user_metadata?.username as string) ?? "John Doe";
@@ -95,7 +103,11 @@ jest.mock("../../../frontend/src/components/UserMenu", () => ({
             </p>
           </div>
           <DropdownMenuItem>
-            <button className="w-full text-left" onClick={() => setOpenEditAccountDialog(true)} data-testid="edit-account-button">
+            <button
+              className="w-full text-left"
+              onClick={() => setOpenEditAccountDialog(true)}
+              data-testid="edit-account-button"
+            >
               Edit Account
             </button>
           </DropdownMenuItem>
@@ -141,7 +153,10 @@ jest.mock("../../../frontend/src/components/UserMenu", () => ({
           </DropdownMenuItem>
         </DropdownMenuContent>
         {openEditAccountDialog && (
-          <Dialog open={openEditAccountDialog} onOpenChange={setOpenEditAccountDialog}>
+          <Dialog
+            open={openEditAccountDialog}
+            onOpenChange={setOpenEditAccountDialog}
+          >
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Edit Account</DialogTitle>
@@ -160,7 +175,10 @@ jest.mock("../../../frontend/src/components/UserMenu", () => ({
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setOpenEditAccountDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setOpenEditAccountDialog(false)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit">Save</Button>
@@ -219,12 +237,12 @@ describe("UserMenu Component", () => {
     expect(localStorage.getItem("userInfo")).not.toBeNull();
   });
 
-  test('renders user name and email', () => {
+  test("renders user name and email", () => {
     render(<UserMenu setOpen={() => {}} />);
     expect(screen.getByText("John Doe")).toBeInTheDocument();
   });
 
-  test('renders user avatar with initials', () => {
+  test("renders user avatar with initials", () => {
     render(<UserMenu setOpen={() => {}} />);
     expect(screen.getByText("JD")).toBeInTheDocument();
   });

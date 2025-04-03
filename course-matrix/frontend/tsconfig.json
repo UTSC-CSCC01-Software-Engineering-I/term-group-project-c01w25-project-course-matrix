@@ -7,7 +7,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["src/*"]
     },
     "jsx": "react-jsx",
     "types": ["@testing-library/jest-dom"]

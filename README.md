@@ -53,9 +53,13 @@ DATABASE_KEY=[Insert Supabase Project API key]
 OPENAI_API_KEY=[Insert OpenAI API Key]
 PINECONE_API_KEY=[Insert Pinecone API Key]
 PINECONE_INDEX_NAME="course-matrix"
+
+BREVO_API_KEY=[Insert Brevo API Key]
+SENDER_EMAIL="kevinlan416@gmail.com"
+SENDER_NAME="Course Matrix Notifications"
 ```
 
-The `DATABASE_URL` variable should contain your Supabase project url and the `DATABASE_KEY` should contain your Supabase project’s API key. To learn how to create a new Supabase project: see [here](https://medium.com/@heshramsis/building-a-crud-app-with-supabase-and-express-a-step-by-step-guide-for-junior-developers-81456b850910). Likewise, the `OPENAI_API_KEY` variable should contain your OpenAI Project API Key and the `PINECONE_API_KEY` should contain your Pinecone Project API Key. Note that for the purposes of this project, **we will provide the grader with all necessary API keys and URLs**.
+The `DATABASE_URL` variable should contain your Supabase project url and the `DATABASE_KEY` should contain your Supabase project’s API key. To learn how to create a new Supabase project: see [here](https://medium.com/@heshramsis/building-a-crud-app-with-supabase-and-express-a-step-by-step-guide-for-junior-developers-81456b850910). Likewise, the `OPENAI_API_KEY` variable should contain your OpenAI Project API Key, the `PINECONE_API_KEY` should contain your Pinecone Project API Key, and the `BREVO_API_KEY` should contain your Brevo API Key. Note that for the purposes of this project, **we will provide the grader with all necessary API keys and URLs**.
 
 4. Configure environment variables for frontend. Create a `.env` file in `/frontend` and populate it with the following:
 

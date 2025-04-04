@@ -1,26 +1,26 @@
-import type { Config } from "jest";
+import type {Config} from 'jest';
 
 const config: Config = {
-  preset: "ts-jest",
-  moduleNameMapper: { "@/(.*)$": "<rootDir>/src/$1" },
+  preset: 'ts-jest',
+  moduleNameMapper: {'@/(.*)$': '<rootDir>/src/$1'},
   // to obtain access to the matchers.
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  modulePaths: ["<rootDir>"],
-  testEnvironment: "jsdom",
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  modulePaths: ['<rootDir>'],
+  testEnvironment: 'jsdom',
   transform: {
-    "^.+\\.(ts|tsx)$": [
-      "ts-jest",
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
       {
-        tsconfig: "tsconfig.test.json",
+        tsconfig: 'tsconfig.test.json',
       },
     ],
-    "^.+\\.(js|jsx)$": "babel-jest",
+    '^.+\\.(js|jsx)$': 'babel-jest',
   },
   modulePathIgnorePatterns: [
-    "<rootDir>/dist/",
-    "<rootDir>/node_modules/",
-    "<rootDir>/__tests__/integration-tests/",
-    "<rootDir>/__tests__/unit-tests/",
+    '<rootDir>/dist/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/__tests__/integration-tests/',
+    '<rootDir>/__tests__/unit-tests/',
   ],
 };
 

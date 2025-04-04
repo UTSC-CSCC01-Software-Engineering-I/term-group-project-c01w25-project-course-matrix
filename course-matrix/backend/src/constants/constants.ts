@@ -1,40 +1,32 @@
+const codeToYearMap = new Map<string, number>([
+  ["A", 1],
+  ["B", 2],
+  ["C", 3],
+  ["D", 4],
+]);
+
+const yearToCodeMap = new Map<number, string>([
+  [1, "A"],
+  [2, "B"],
+  [3, "C"],
+  [4, "D"],
+]);
+
 export const codeToYear = (courseCode: string) => {
   const letter = courseCode.slice(3, 4);
-  switch (letter) {
-    case "A":
-      return 1;
-      break;
-    case "B":
-      return 2;
-      break;
-    case "C":
-      return 3;
-      break;
-    case "D":
-      return 4;
-      break;
-    default:
-      break;
+  const year = codeToYearMap.get(letter);
+  if (year === undefined) {
+    throw new Error(`Invalid course code: ${courseCode}`);
   }
+  return year;
 };
 
 export const yearToCode = (year: number) => {
-  switch (year) {
-    case 1:
-      return "A";
-      break;
-    case 2:
-      return "B";
-      break;
-    case 3:
-      return "C";
-      break;
-    case 4:
-      return "D";
-      break;
-    default:
-      break;
+  const letter = yearToCodeMap.get(year);
+  if (letter === undefined) {
+    throw new Error(`Invalid year: ${year}`);
   }
+  return letter;
 };
 
 // true - notifications will be tested by mocking current Date

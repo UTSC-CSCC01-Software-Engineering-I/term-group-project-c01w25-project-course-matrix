@@ -15,11 +15,14 @@ import { supabase } from "../../src/db/setupDb";
 import { Json } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch/db_control";
 import app from "../../src/index";
 import { server } from "../../src/index";
+import getOfferings from "../../src/services/getOfferings";
 
 const USER1 = "testuser01-ab9e6877-f603-4c6a-9832-864e520e4d01";
 const USER2 = "testuser02-1d3f02df-f926-4c1f-9f41-58ca50816a33";
 const USER3 = "testuser03-f84fd0da-d775-4424-ad88-d9675282453c";
 const USER4 = "testuser04-f84fd0da-d775-4424-ad88-d9675282453c";
+//USER5 is saved for courseOffering query do not use for anyother test
+const USER5 = "testuser04-f84fd0da-d775-4424-ad88-d9675282453c";
 
 //Handle AI import from index.ts
 jest.mock("@ai-sdk/openai", () => ({
@@ -78,6 +81,58 @@ const mockTimetables1 = [
     user_id: USER1,
   },
 ];
+
+//Mock list of offering 
+const offering1 = [
+  {
+    id:1,
+    course_id:101,
+    day:"MO",
+    start:"10:00:00",
+    end:"11:00:00",
+  },
+  {
+    id:2,
+    course_id:101,
+    day:"WE",
+    start:"10:00:00",
+    end:"11:00:00",
+  },
+  {
+    id:3,
+    course_id:101,
+    day:"FR",
+    start:"10:00:00",
+    end:"11:00:00",
+  }
+]
+
+const offering2 = [
+  {
+    id:1,
+    course_id:102,
+    day:"MO",
+    start:"10:00:00",
+    end:"12:00:00",
+  }
+]
+
+const offering3 = [
+  {
+    id:1,
+    course_id:103,
+    day:"TU",
+    start:"15:00:00",
+    end:"17:00:00",
+  },
+  {
+    id:2,
+    course_id:103,
+    day:"WE",
+    start:"15:00:00",
+    end:"17:00:00",
+  },
+]
 
 // Spy on the getTimetables method
 jest
@@ -143,6 +198,30 @@ jest.mock("../../src/db/setupDb", () => ({
           }),
         };
       }
+      //DB response with offering1 if courseID = 101 in request
+      if(key === "course_id" && value === 101){
+        return{
+          eq:jest.fn().mockImplementation(() => {
+              return{data: offering1, error: null}
+            })
+        }
+      }
+      //DB response with offering1 if courseID = 102 in request
+      if(key === "course_id" && value === 102){
+        return{
+          eq:jest.fn().mockImplementation(() => {
+              return{data: offering2, error: null}
+            })
+        }
+      }
+      //DB response with offering1 if courseID = 103 in request
+      if(key === "course_id" && value === 103){
+        return{
+          eq:jest.fn().mockImplementation(() => {
+              return{data: offering1, error: null}
+            })
+        }
+      }
     }),
     // Mock db response to .insert query command
     insert: jest.fn().mockImplementation((data: Json) => {
@@ -190,3 +269,15 @@ jest.mock("../../src/db/setupDb", () => ({
     }),
   },
 }));
+
+//Test block
+describe("Simple test case for offering", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("should return offering1", async() => {
+    const response = await getOfferings(101, "Spring")
+    expect(response).toEqual(offering1)
+  })
+})

@@ -1,13 +1,13 @@
-import { analyzeQuery } from "../src/utils/analyzeQuery";
+import { analyzeQuery } from "../../src/utils/analyzeQuery";
 import { describe, test, expect, jest } from "@jest/globals";
 import {
   NAMESPACE_KEYWORDS,
   ASSISTANT_TERMS,
   DEPARTMENT_CODES,
-} from "../src/constants/promptKeywords";
+} from "../../src/constants/promptKeywords";
 
 // Mock the constants if needed
-jest.mock("../src/constants/promptKeywords", () => ({
+jest.mock("../../src/constants/promptKeywords", () => ({
   NAMESPACE_KEYWORDS: {
     courses_v3: ["course", "class", "description"],
     offerings: ["offering", "schedule", "timetable"],

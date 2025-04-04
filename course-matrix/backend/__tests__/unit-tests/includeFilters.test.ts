@@ -1,11 +1,11 @@
 import {
   BREADTH_REQUIREMENT_KEYWORDS,
   YEAR_LEVEL_KEYWORDS,
-} from "../src/constants/promptKeywords";
-import { includeFilters } from "../src/utils/includeFilters";
+} from "../../src/constants/promptKeywords";
+import { includeFilters } from "../../src/utils/includeFilters";
 import { describe, test, expect, jest, beforeEach } from "@jest/globals";
-import * as ModuleType from "../src/utils/convert-breadth-requirement";
-import * as ModuleType0 from "../src/utils/convert-year-level";
+import * as ModuleType from "../../src/utils/convert-breadth-requirement";
+import * as ModuleType0 from "../../src/utils/convert-year-level";
 
 // Create mock functions
 const mockConvertBreadthRequirement = jest.fn(
@@ -14,12 +14,12 @@ const mockConvertBreadthRequirement = jest.fn(
 const mockConvertYearLevel = jest.fn((namespace) => `converted_${namespace}`);
 
 // Mock the modules
-jest.mock("../src/utils/convert-breadth-requirement", () => ({
+jest.mock("../../src/utils/convert-breadth-requirement", () => ({
   convertBreadthRequirement: (namespace: string) =>
     mockConvertBreadthRequirement(namespace),
 }));
 
-jest.mock("../src/utils/convert-year-level", () => ({
+jest.mock("../../src/utils/convert-year-level", () => ({
   convertYearLevel: (namespace: string) => mockConvertYearLevel(namespace),
 }));
 

@@ -182,7 +182,7 @@ jest.mock(
           if (key === 'user_id' && value === USER3) {
             return {
               eq: jest.fn().mockReturnThis(),  // Allow further chaining of eq
-                                               // if required
+              // if required
               maybeSingle: jest.fn().mockImplementation(() => {
                 return {data: null, error: null};
               }),
@@ -193,7 +193,7 @@ jest.mock(
           if (key === 'user_id' && value === USER4) {
             return {
               eq: jest.fn().mockReturnThis(),  // Allow further chaining of eq
-                                               // if required
+              // if required
               neq: jest.fn().mockImplementation(
                   () => ({
                     maybeSingle: jest.fn().mockImplementation(
@@ -239,7 +239,7 @@ jest.mock(
                 // Return the input data when select is called
                 return {
                   data: data,
-                  error: null
+                  error: null,
                 };  // Return the data passed to insert
               }),
             };

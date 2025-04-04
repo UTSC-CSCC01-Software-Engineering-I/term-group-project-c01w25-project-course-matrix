@@ -1,4 +1,4 @@
-import {afterAll, beforeEach, describe, expect, jest, test,} from '@jest/globals';
+import {afterAll, beforeEach, describe, expect, it, jest, test} from '@jest/globals';
 import {Json} from '@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch/db_control';
 import {NextFunction, Request, Response} from 'express';
 import request from 'supertest';
@@ -87,6 +87,7 @@ const offering1 = [
   {
     id: 1,
     course_id: 101,
+    meeting_section: 'LEC01',
     day: 'MO',
     start: '10:00:00',
     end: '11:00:00',
@@ -94,6 +95,7 @@ const offering1 = [
   {
     id: 2,
     course_id: 101,
+    meeting_section: 'LEC02',
     day: 'WE',
     start: '10:00:00',
     end: '11:00:00',
@@ -101,6 +103,7 @@ const offering1 = [
   {
     id: 3,
     course_id: 101,
+    meeting_section: 'LEC03',
     day: 'FR',
     start: '10:00:00',
     end: '11:00:00',
@@ -288,4 +291,105 @@ describe('Simple test case for offering', () => {
     const response = await getOfferings(101, 'Spring');
     expect(response).toEqual(offering1);
   });
+});
+
+// Test block
+describe('Testing timetable generation', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+
+  test('Generate for 1 course', async () => {
+    // Mock authHandler to simulate the user being logged in
+    (authHandler as jest.MockedFunction<typeof authHandler>)
+        .mockImplementationOnce(mockAuthHandler(USER5));
+    const response =
+        await request(app)
+            .post('/api/timetables/generate')
+            .send({courses: [{id: 101}], semester: 'Spring', restrictions: []})
+            .expect(200);
+    expect(JSON.parse(response.text).amount)
+        .toEqual(3);  // 3 timetables should be generated.
+  });
+
+  test('Generate for 2 courses, no conflict', async () => {
+    // Mock authHandler to simulate the user being logged in
+    (authHandler as jest.MockedFunction<typeof authHandler>)
+        .mockImplementationOnce(mockAuthHandler(USER5));
+    const response = await request(app)
+                         .post('/api/timetables/generate')
+                         .send({
+                           courses: [{id: 101}, {id: 103}],
+                           semester: 'Spring',
+                           restrictions: []
+                         })
+                         .expect(200);
+    expect(JSON.parse(response.text).amount)
+        .toEqual(6);  // 6 timetables should be generated.
+  });
+
+  test('Generate for 2 courses, conflict', async () => {
+    // Mock authHandler to simulate the user being logged in
+    (authHandler as jest.MockedFunction<typeof authHandler>)
+        .mockImplementationOnce(mockAuthHandler(USER5));
+    const response = await request(app)
+                         .post('/api/timetables/generate')
+                         .send({
+                           courses: [{id: 101}, {id: 102}],
+                           semester: 'Spring',
+                           restrictions: []
+                         })
+                         .expect(200);
+    expect(JSON.parse(response.text).amount).toEqual(2);
+  });
+
+  test('Generate for 1 course, bad restriction', async () => {
+    // Mock authHandler to simulate the user being logged in
+    (authHandler as jest.MockedFunction<typeof authHandler>)
+        .mockImplementationOnce(mockAuthHandler(USER5));
+    const response = await request(app)
+                         .post('/api/timetables/generate')
+                         .send({
+                           courses: [{id: 101}],
+                           semester: 'Spring',
+                           restrictions: [{
+                             type: 'Restrict Before',
+                             days: ['MO', 'TU', 'WE', 'TH', 'FR'],
+                             endTime: '21:00:00',
+                             disabled: false
+                           }]
+                         })
+                         .expect(404);
+  });
+
+  test(
+      'Generate for 1 course w/ restrictions, only wednesday should be allowed',
+      async () => {
+        // Mock authHandler to simulate the user being logged in
+        (authHandler as jest.MockedFunction<typeof authHandler>)
+            .mockImplementationOnce(mockAuthHandler(USER5));
+        const response = await request(app)
+                             .post('/api/timetables/generate')
+                             .send({
+                               courses: [{id: 101}],
+                               semester: 'Spring',
+                               restrictions: [{
+                                 type: 'Restrict Before',
+                                 days: ['MO', 'TU', 'TH', 'FR'],
+                                 endTime: '21:00:00',
+                                 disabled: false
+                               }]
+                             })
+                             .expect(200);
+        expect(JSON.parse(response.text).amount).toEqual(1);
+        expect(JSON.parse(response.text).schedules).toEqual([[{
+          id: 2,
+          course_id: 101,
+          meeting_section: 'LEC02',
+          day: 'WE',
+          start: '10:00:00',
+          end: '11:00:00',
+        }]]);
+      });
 });

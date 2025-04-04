@@ -1,11 +1,11 @@
 import { describe, expect, it, test } from "@jest/globals";
 
-import { Offering } from "../src/types/generatorTypes";
+import { Offering } from "../../src/types/generatorTypes";
 import {
   createOffering,
   getMinHour,
   getMinHourDay,
-} from "../src/utils/generatorHelpers";
+} from "../../src/utils/generatorHelpers";
 
 describe("getMinHourDay function", () => {
   it("Back to back to back courses", async () => {

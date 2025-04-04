@@ -1,7 +1,7 @@
 import request from "supertest";
 import { Request, Response } from "express";
 import { jest, describe, it, expect, afterAll } from "@jest/globals";
-import app, { server } from "../src/index";
+import app, { server } from "../../src/index";
 
 jest.mock("@ai-sdk/openai", () => ({
   createOpenAI: jest.fn(() => ({
@@ -29,7 +29,7 @@ jest.mock("node-cron", () => ({
   schedule: jest.fn(), // Mock the `schedule` function
 }));
 
-jest.mock("../src/db/setupDb", () => ({
+jest.mock("../../src/db/setupDb", () => ({
   supabase: {
     from: jest.fn(() => ({
       select: jest.fn(),
@@ -40,7 +40,7 @@ jest.mock("../src/db/setupDb", () => ({
   },
 }));
 
-jest.mock("../src/controllers/userController", () => ({
+jest.mock("../../src/controllers/userController", () => ({
   signUp: jest.fn((req: Request, res: Response) => {
     const { email, password, username } = req.body;
     if (!email || !password || !username) {

@@ -3,8 +3,8 @@ import { describe, expect, it, test } from "@jest/globals";
 import {
   createOffering,
   getFrequencyTable,
-} from "../src/utils/generatorHelpers";
-import { Offering } from "../src/types/generatorTypes";
+} from "../../src/utils/generatorHelpers";
+import { Offering } from "../../src/types/generatorTypes";
 
 describe("getFrequencyTable", () => {
   test("should return a frequency map of days", () => {

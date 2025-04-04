@@ -1,11 +1,11 @@
 import { describe, expect, it, test } from "@jest/globals";
 
-import { Offering } from "../src/types/generatorTypes";
+import { Offering } from "../../src/types/generatorTypes";
 import {
   canInsert,
   canInsertList,
   createOffering,
-} from "../src/utils/generatorHelpers";
+} from "../../src/utils/generatorHelpers";
 
 describe("canInsert function", () => {
   const offering1: Offering = createOffering({

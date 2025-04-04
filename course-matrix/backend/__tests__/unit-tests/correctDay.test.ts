@@ -1,5 +1,5 @@
 import { describe, expect, jest, test } from "@jest/globals";
-import { isDateBetween } from "../src/utils/compareDates";
+import { isDateBetween } from "../../src/utils/compareDates";
 
 // For testing purposes, we need to modify the function to accept a custom "now" date
 // This allows us to test all scenarios regardless of the current date

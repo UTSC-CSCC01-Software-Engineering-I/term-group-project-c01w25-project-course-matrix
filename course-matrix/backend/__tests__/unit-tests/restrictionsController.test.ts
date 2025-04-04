@@ -1,5 +1,5 @@
 import request from "supertest";
-import restrictionsController from "../src/controllers/restrictionsController";
+import restrictionsController from "../../src/controllers/restrictionsController";
 import { Request, Response, NextFunction } from "express";
 import {
   jest,
@@ -9,15 +9,15 @@ import {
   beforeEach,
   afterAll,
 } from "@jest/globals";
-import { authHandler } from "../src/middleware/authHandler";
-import { supabase } from "../src/db/setupDb";
+import { authHandler } from "../../src/middleware/authHandler";
+import { supabase } from "../../src/db/setupDb";
 import {
   instanceOfErrorResponse,
   Json,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch/db_control";
-import app from "../src/index";
-import { server } from "../src/index";
-import { errorConverter } from "../src/middleware/errorHandler";
+import app from "../../src/index";
+import { server } from "../../src/index";
+import { errorConverter } from "../../src/middleware/errorHandler";
 
 //Handle AI import from index.ts
 jest.mock("@ai-sdk/openai", () => ({
@@ -59,7 +59,7 @@ const mockAuthHandler = (user_id: string) => {
 };
 
 // Mock authHandler globally
-jest.mock("../src/middleware/authHandler", () => ({
+jest.mock("../../src/middleware/authHandler", () => ({
   authHandler: jest.fn() as jest.MockedFunction<typeof authHandler>,
 }));
 
@@ -116,7 +116,7 @@ jest
   .mockImplementation(restrictionsController.deleteRestriction);
 
 // Mock data set response to qeury
-jest.mock("../src/db/setupDb", () => ({
+jest.mock("../../src/db/setupDb", () => ({
   supabase: {
     //Mock return from schema, from and select to chain the next query command
     schema: jest.fn().mockReturnThis(),

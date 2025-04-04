@@ -28,7 +28,7 @@ const TestComponent = ({
     ref,
     onClickOutside,
     isActive,
-    useExcludeRef ? excludeRef : undefined
+    useExcludeRef ? excludeRef : undefined,
   );
 
   return (
@@ -66,18 +66,18 @@ describe("useClickOutside", () => {
 
   test("should add event listener when isActive is true", () => {
     render(
-      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />
+      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />,
     );
 
     expect(document.addEventListener).toHaveBeenCalledWith(
       "mousedown",
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
   test("should not add event listener when isActive is false", () => {
     render(
-      <TestComponent isActive={false} onClickOutside={mockOnClickOutside} />
+      <TestComponent isActive={false} onClickOutside={mockOnClickOutside} />,
     );
 
     expect(document.addEventListener).not.toHaveBeenCalled();
@@ -98,12 +98,12 @@ describe("useClickOutside", () => {
     );
 
     rerender(
-      <TestComponent isActive={false} onClickOutside={mockOnClickOutside} />
+      <TestComponent isActive={false} onClickOutside={mockOnClickOutside} />,
     );
 
     expect(document.removeEventListener).toHaveBeenCalledWith(
       "mousedown",
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
@@ -135,7 +135,7 @@ describe("useClickOutside", () => {
         isActive={true}
         onClickOutside={mockOnClickOutside}
         useExcludeRef={true}
-      />
+      />,
     );
 
     // Simulate clicking on the excluded element
@@ -168,7 +168,7 @@ describe("useClickOutside", () => {
 
     // Change callback
     rerender(
-      <TestComponent isActive={true} onClickOutside={newMockCallback} />
+      <TestComponent isActive={true} onClickOutside={newMockCallback} />,
     );
 
     // Should remove old listener and add new one

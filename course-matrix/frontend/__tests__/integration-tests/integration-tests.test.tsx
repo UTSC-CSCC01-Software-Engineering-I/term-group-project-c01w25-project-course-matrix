@@ -160,7 +160,8 @@ test("typical flow for generating a timetable via the Generate Button and then f
   expect(screen.getByText("Generated Timetable")).toBeInTheDocument();
 
   // Favoriting the timetable
-  const favoriteButton = screen.getByText("Generated Timetable").childNodes[5][2];
+  const favoriteButton = screen.getByText("Generated Timetable")
+    .childNodes[5][2];
   fireEvent.click(favoriteButton);
   expect(favoriteButton).toBeChecked();
 });
@@ -174,15 +175,32 @@ test("typical flow for sharing and comparing timetables", () => {
   render(<TimetableBuilder />, { wrapper: MemoryRouter });
   render(<TimetableCompareButton timetables={[]} />, { wrapper: MemoryRouter });
   render(<CompareTimetables />, { wrapper: MemoryRouter });
-  render(<TimetableCompareItem timetable={undefined} timetableNumber={0} />, { wrapper: MemoryRouter });
-  render(<TimetableCardShareKebabMenu refetchMyTimetables={function (): void {
-    throw new Error("Function not implemented.");
-  } } refetchSharedTimetables={function (): void {
-    throw new Error("Function not implemented.");
-  } } owner_id={""} calendar_id={0} />, { wrapper: MemoryRouter });
-  render(<ShareDialog open={false} setOpen={function (): void {
-    throw new Error("Function not implemented.");
-  } } calendar_id={0} />, { wrapper: MemoryRouter });
+  render(<TimetableCompareItem timetable={undefined} timetableNumber={0} />, {
+    wrapper: MemoryRouter,
+  });
+  render(
+    <TimetableCardShareKebabMenu
+      refetchMyTimetables={function (): void {
+        throw new Error("Function not implemented.");
+      }}
+      refetchSharedTimetables={function (): void {
+        throw new Error("Function not implemented.");
+      }}
+      owner_id={""}
+      calendar_id={0}
+    />,
+    { wrapper: MemoryRouter },
+  );
+  render(
+    <ShareDialog
+      open={false}
+      setOpen={function (): void {
+        throw new Error("Function not implemented.");
+      }}
+      calendar_id={0}
+    />,
+    { wrapper: MemoryRouter },
+  );
 
   // Creating a new timetable
   fireEvent.click(screen.getByText("Create New"));
@@ -205,10 +223,12 @@ test("typical flow for sharing and comparing timetables", () => {
   expect(screen.getByText("Share Timetable")).toBeInTheDocument();
   fireEvent.click(screen.getByText("Share Timetable"));
   fireEvent.change(screen.getByLabelText("Email"), {
-    target: { value: "mockemail123@gmail.com"}
+    target: { value: "mockemail123@gmail.com" },
   });
   fireEvent.click(screen.getByText("Share"));
-  expect(screen.getByText("Timetable shared successfully!")).toBeInTheDocument();
+  expect(
+    screen.getByText("Timetable shared successfully!"),
+  ).toBeInTheDocument();
   fireEvent.click(screen.getByText("Close"));
 
   // Comparing the user's timetable with a shared timetable

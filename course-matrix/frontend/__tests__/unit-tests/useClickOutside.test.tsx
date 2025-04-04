@@ -85,7 +85,16 @@ describe("useClickOutside", () => {
 
   test("should remove event listener when isActive changes from true to false", () => {
     const { rerender } = render(
-      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />
+      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />,
+    );
+
+    rerender(
+      <TestComponent isActive={false} onClickOutside={mockOnClickOutside} />,
+    );
+
+    expect(document.removeEventListener).toHaveBeenCalledWith(
+      "mousedown",
+      expect.any(Function),
     );
 
     rerender(
@@ -100,7 +109,7 @@ describe("useClickOutside", () => {
 
   test("should call onClickOutside when clicking outside the ref element", () => {
     const { getByTestId } = render(
-      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />
+      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />,
     );
 
     // Simulate clicking outside
@@ -111,7 +120,7 @@ describe("useClickOutside", () => {
 
   test("should not call onClickOutside when clicking inside the ref element", () => {
     const { getByTestId } = render(
-      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />
+      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />,
     );
 
     // Simulate clicking inside
@@ -137,7 +146,7 @@ describe("useClickOutside", () => {
 
   test("should clean up event listener when unmounting", () => {
     const { unmount } = render(
-      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />
+      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />,
     );
 
     unmount();
@@ -148,7 +157,7 @@ describe("useClickOutside", () => {
   test("should re-attach event listener when dependencies change", () => {
     const newMockCallback = jest.fn();
     const { rerender } = render(
-      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />
+      <TestComponent isActive={true} onClickOutside={mockOnClickOutside} />,
     );
 
     // First, verify initial setup

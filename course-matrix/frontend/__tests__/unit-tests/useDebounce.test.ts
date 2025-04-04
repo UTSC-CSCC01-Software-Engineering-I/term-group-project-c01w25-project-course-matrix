@@ -29,7 +29,7 @@ describe("useDebounceValue", () => {
     const initialValue = "initial";
     const { result, rerender } = renderHook(
       ({ value, interval }) => useDebounceValue(value, interval),
-      { initialProps: { value: initialValue, interval: 500 } }
+      { initialProps: { value: initialValue, interval: 500 } },
     );
 
     expect(result.current).toBe(initialValue);
@@ -62,7 +62,7 @@ describe("useDebounceValue", () => {
     const initialValue = "initial";
     const { result, rerender } = renderHook(
       ({ value, interval }) => useDebounceValue(value, interval),
-      { initialProps: { value: initialValue, interval: 500 } }
+      { initialProps: { value: initialValue, interval: 500 } },
     );
 
     // Change the value once
@@ -100,7 +100,7 @@ describe("useDebounceValue", () => {
     const initialValue = "initial";
     const { result, rerender } = renderHook(
       ({ value, interval }) => useDebounceValue(value, interval),
-      { initialProps: { value: initialValue, interval: 500 } }
+      { initialProps: { value: initialValue, interval: 500 } },
     );
 
     // Change value and interval
@@ -128,7 +128,7 @@ describe("useDebounceValue", () => {
     const initialObject = { name: "John" };
     const { result: objectResult, rerender: objectRerender } = renderHook(
       ({ value, interval }) => useDebounceValue(value, interval),
-      { initialProps: { value: initialObject, interval: 200 } }
+      { initialProps: { value: initialObject, interval: 200 } },
     );
 
     const newObject = { name: "Jane" };
@@ -143,7 +143,7 @@ describe("useDebounceValue", () => {
     // Test with number
     const { result: numberResult, rerender: numberRerender } = renderHook(
       ({ value, interval }) => useDebounceValue(value, interval),
-      { initialProps: { value: 1, interval: 200 } }
+      { initialProps: { value: 1, interval: 200 } },
     );
 
     numberRerender({ value: 2, interval: 200 });

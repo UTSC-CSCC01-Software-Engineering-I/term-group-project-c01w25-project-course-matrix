@@ -82,57 +82,57 @@ const mockTimetables1 = [
   },
 ];
 
-//Mock list of offering 
+//Mock list of offering
 const offering1 = [
   {
-    id:1,
-    course_id:101,
-    day:"MO",
-    start:"10:00:00",
-    end:"11:00:00",
+    id: 1,
+    course_id: 101,
+    day: "MO",
+    start: "10:00:00",
+    end: "11:00:00",
   },
   {
-    id:2,
-    course_id:101,
-    day:"WE",
-    start:"10:00:00",
-    end:"11:00:00",
+    id: 2,
+    course_id: 101,
+    day: "WE",
+    start: "10:00:00",
+    end: "11:00:00",
   },
   {
-    id:3,
-    course_id:101,
-    day:"FR",
-    start:"10:00:00",
-    end:"11:00:00",
-  }
-]
+    id: 3,
+    course_id: 101,
+    day: "FR",
+    start: "10:00:00",
+    end: "11:00:00",
+  },
+];
 
 const offering2 = [
   {
-    id:1,
-    course_id:102,
-    day:"MO",
-    start:"10:00:00",
-    end:"12:00:00",
-  }
-]
+    id: 1,
+    course_id: 102,
+    day: "MO",
+    start: "10:00:00",
+    end: "12:00:00",
+  },
+];
 
 const offering3 = [
   {
-    id:1,
-    course_id:103,
-    day:"TU",
-    start:"15:00:00",
-    end:"17:00:00",
+    id: 1,
+    course_id: 103,
+    day: "TU",
+    start: "15:00:00",
+    end: "17:00:00",
   },
   {
-    id:2,
-    course_id:103,
-    day:"WE",
-    start:"15:00:00",
-    end:"17:00:00",
+    id: 2,
+    course_id: 103,
+    day: "WE",
+    start: "15:00:00",
+    end: "17:00:00",
   },
-]
+];
 
 // Spy on the getTimetables method
 jest
@@ -199,28 +199,28 @@ jest.mock("../../src/db/setupDb", () => ({
         };
       }
       //DB response with offering1 if courseID = 101 in request
-      if(key === "course_id" && value === 101){
-        return{
-          eq:jest.fn().mockImplementation(() => {
-              return{data: offering1, error: null}
-            })
-        }
+      if (key === "course_id" && value === 101) {
+        return {
+          eq: jest.fn().mockImplementation(() => {
+            return { data: offering1, error: null };
+          }),
+        };
       }
       //DB response with offering1 if courseID = 102 in request
-      if(key === "course_id" && value === 102){
-        return{
-          eq:jest.fn().mockImplementation(() => {
-              return{data: offering2, error: null}
-            })
-        }
+      if (key === "course_id" && value === 102) {
+        return {
+          eq: jest.fn().mockImplementation(() => {
+            return { data: offering2, error: null };
+          }),
+        };
       }
       //DB response with offering1 if courseID = 103 in request
-      if(key === "course_id" && value === 103){
-        return{
-          eq:jest.fn().mockImplementation(() => {
-              return{data: offering1, error: null}
-            })
-        }
+      if (key === "course_id" && value === 103) {
+        return {
+          eq: jest.fn().mockImplementation(() => {
+            return { data: offering1, error: null };
+          }),
+        };
       }
     }),
     // Mock db response to .insert query command
@@ -276,8 +276,8 @@ describe("Simple test case for offering", () => {
     jest.clearAllMocks();
   });
 
-  test("should return offering1", async() => {
-    const response = await getOfferings(101, "Spring")
-    expect(response).toEqual(offering1)
-  })
-})
+  test("should return offering1", async () => {
+    const response = await getOfferings(101, "Spring");
+    expect(response).toEqual(offering1);
+  });
+});

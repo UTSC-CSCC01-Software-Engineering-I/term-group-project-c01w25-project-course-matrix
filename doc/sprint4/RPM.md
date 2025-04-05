@@ -51,11 +51,9 @@
   - Project when deployed is accessible online on a virtual Machine
   - Project when updated is automatically unit tested
   - Project when updated and passing unit tests is auto-redeployed
-
-– **Unit Testing**
-
-- Project functions are unit/integration tested so that their behaviour is clear and potential bugs are caught
-- Project functions passes unit/integration tests so bug free functionality is ensured
+-  **Unit Testing**
+  - Project functions are unit/integration tested so that their behaviour is clear and potential bugs are caught
+  - Project functions passes unit/integration tests so bug free functionality is ensured
 
 ## 2. Release Scope
 
@@ -76,9 +74,8 @@
   - Project on update is automatically tested
   - Project auto redeploys on update that passes tests
 
-– **Unit Testing**
-
-- Project functions (frontend and backend) are unit/integration tested
+- **Unit Testing**
+  - Project functions (frontend and backend) are unit/integration tested
 
 ### 2.2 Excluded Features
 

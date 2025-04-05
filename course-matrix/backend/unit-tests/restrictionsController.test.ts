@@ -1,26 +1,25 @@
+import request from "supertest";
+import restrictionsController from "../src/controllers/restrictionsController";
+import { Request, Response, NextFunction } from "express";
 import {
-  afterAll,
-  beforeEach,
-  describe,
-  expect,
   jest,
+  describe,
   test,
+  expect,
+  beforeEach,
+  afterAll,
 } from "@jest/globals";
+import { authHandler } from "../src/middleware/authHandler";
+import { supabase } from "../src/db/setupDb";
 import {
   instanceOfErrorResponse,
   Json,
 } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch/db_control";
-import { NextFunction, Request, Response } from "express";
-import request from "supertest";
+import app from "../src/index";
+import { server } from "../src/index";
+import { errorConverter } from "../src/middleware/errorHandler";
 
-import restrictionsController from "../../src/controllers/restrictionsController";
-import { supabase } from "../../src/db/setupDb";
-import app from "../../src/index";
-import { server } from "../../src/index";
-import { authHandler } from "../../src/middleware/authHandler";
-import { errorConverter } from "../../src/middleware/errorHandler";
-
-// Handle AI import from index.ts
+//Handle AI import from index.ts
 jest.mock("@ai-sdk/openai", () => ({
   createOpenAI: jest.fn(() => ({
     chat: jest.fn(),
@@ -51,8 +50,7 @@ afterAll(async () => {
   server.close();
 });
 
-// Function to create authenticated session dynamically based as provided
-// user_id
+// Function to create authenticated session dynamically based as provided user_id
 const mockAuthHandler = (user_id: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
     (req as any).user = { id: user_id }; // Inject user_id dynamically
@@ -61,18 +59,15 @@ const mockAuthHandler = (user_id: string) => {
 };
 
 // Mock authHandler globally
-jest.mock("../../src/middleware/authHandler", () => ({
+jest.mock("../src/middleware/authHandler", () => ({
   authHandler: jest.fn() as jest.MockedFunction<typeof authHandler>,
 }));
-
-const USER1 = "testuser04-f84fd0da-d775-4424-ad88-d9675282453c";
-const USER2 = "testuser05-f84fd0da-d775-4424-ad88-d9675282453c";
 
 // Mock timetables dataset
 const mockRestriction = {
   id: 1,
   restriction_type: "Restrict Between",
-  user_id: USER1,
+  user_id: "testuser04-f84fd0da-d775-4424-ad88-d9675282453c",
   start_time: "13:30:00",
   end_time: "14:30:00",
   days: ["MO", "TUE"],
@@ -83,7 +78,7 @@ const mockRestriction2 = {
   id: 1,
   calendar_id: 1,
   restriction_type: "Restrict Between",
-  user_id: USER2,
+  user_id: "testuser05-f84fd0da-d775-4424-ad88-d9675282453c",
   start_time: "13:30:00",
   end_time: "14:30:00",
   days: ["MO", "TUE"],
@@ -92,12 +87,12 @@ const mockRestriction2 = {
 
 const mockTimetables1 = {
   id: 1,
-  user_id: USER1,
+  user_id: "testuser04-f84fd0da-d775-4424-ad88-d9675282453c",
 };
 
 const mockTimetables2 = {
   id: 1,
-  user_id: USER2,
+  user_id: "testuser05-f84fd0da-d775-4424-ad88-d9675282453c",
 };
 
 // Spy on the createRestriction method
@@ -121,19 +116,17 @@ jest
   .mockImplementation(restrictionsController.deleteRestriction);
 
 // Mock data set response to qeury
-jest.mock("../../src/db/setupDb", () => ({
+jest.mock("../src/db/setupDb", () => ({
   supabase: {
-    // Mock return from schema, from and select to chain the next query
-    // command
+    //Mock return from schema, from and select to chain the next query command
     schema: jest.fn().mockReturnThis(),
     from: jest.fn().mockImplementation((key, value) => {
       if (key === "timetables") {
         return {
           select: jest.fn().mockReturnThis(),
           eq: jest.fn().mockImplementation((key, value) => {
-            // Each test case is codded by the user_id in session
-            // DB response 3: Combine .eq and .maybeSingle to signify that
-            // the return value could be single: Return non null value
+            //Each test case is codded by the user_id in session
+            //DB response 3: Combine .eq and .maybeSingle to signify that the return value could be single: Return non null value
             if (
               key === "user_id" &&
               value === "testuser03-f84fd0da-d775-4424-ad88-d9675282453c"
@@ -145,22 +138,25 @@ jest.mock("../../src/db/setupDb", () => ({
                 }),
               };
             }
-            // DB response 4: Combine .eq and .maybeSingle to signify that
-            // the return value could be single: Return null value
-            if (key === "user_id" && value === USER1) {
+            //DB response 4: Combine .eq and .maybeSingle to signify that the return value could be single: Return null value
+            if (
+              key === "user_id" &&
+              value === "testuser04-f84fd0da-d775-4424-ad88-d9675282453c"
+            ) {
               return {
-                eq: jest.fn().mockReturnThis(), // Allow further chaining
-                // of eq if required
+                eq: jest.fn().mockReturnThis(), // Allow further chaining of eq if required
                 maybeSingle: jest.fn().mockImplementation(() => {
                   return { data: mockTimetables1, error: null };
                 }),
               };
             }
 
-            if (key === "user_id" && value === USER2) {
+            if (
+              key === "user_id" &&
+              value === "testuser05-f84fd0da-d775-4424-ad88-d9675282453c"
+            ) {
               return {
-                eq: jest.fn().mockReturnThis(), // Allow further chaining
-                // of eq if required
+                eq: jest.fn().mockReturnThis(), // Allow further chaining of eq if required
                 maybeSingle: jest.fn().mockImplementation(() => {
                   return { data: mockTimetables2, error: null };
                 }),
@@ -192,7 +188,10 @@ jest.mock("../../src/db/setupDb", () => ({
               }),
             };
           }
-          if (key === "user_id" && value === USER1) {
+          if (
+            key === "user_id" &&
+            value === "testuser04-f84fd0da-d775-4424-ad88-d9675282453c"
+          ) {
             return {
               eq: jest.fn().mockImplementation((key, value) => {
                 if (key === "calendar_id" && value === "1") {
@@ -201,7 +200,10 @@ jest.mock("../../src/db/setupDb", () => ({
               }),
             };
           }
-          if (key === "user_id" && value === USER2) {
+          if (
+            key === "user_id" &&
+            value === "testuser05-f84fd0da-d775-4424-ad88-d9675282453c"
+          ) {
             return {
               eq: jest.fn().mockImplementation((key, value) => {
                 if (key === "calendar_id" && value === "1") {
@@ -218,21 +220,20 @@ jest.mock("../../src/db/setupDb", () => ({
           return { data: null, error: null };
         }),
         insert: jest.fn().mockImplementation((data: Json) => {
-          // DB response 5: Create timetable successfully, new timetable
-          // data is responded
-          if (data && data[0].user_id === USER1) {
+          //DB response 5: Create timetable successfully, new timetable data is responded
+          if (
+            data &&
+            data[0].user_id ===
+              "testuser04-f84fd0da-d775-4424-ad88-d9675282453c"
+          ) {
             return {
               select: jest.fn().mockImplementation(() => {
                 // Return the input data when select is called
-                return {
-                  data: data,
-                  error: null,
-                }; // Return the data passed to insert
+                return { data: data, error: null }; // Return the data passed to insert
               }),
             };
           }
-          // DB response 6: Create timetable uncessfully, return
-          // error.message
+          //DB response 6: Create timetable uncessfully, return error.message
           return {
             select: jest.fn().mockImplementation(() => {
               return {
@@ -243,8 +244,7 @@ jest.mock("../../src/db/setupDb", () => ({
           };
         }),
         update: jest.fn().mockImplementation((updatedata: Json) => {
-          // DB response 7: Timetable updated successfully, db return
-          // updated data in response
+          //DB response 7: Timetable updated successfully, db return updated data in response
           if (updatedata && updatedata.start_time === "09:00:00.000Z") {
             return {
               eq: jest.fn().mockReturnThis(),
@@ -253,15 +253,17 @@ jest.mock("../../src/db/setupDb", () => ({
               }),
             };
           }
-          // DB response 8: Update timetable uncessfully, return
-          // error.message
+          //DB response 8: Update timetable uncessfully, return error.message
           return { data: null, error: { message: "Fail to update timetable" } };
         }),
         delete: jest.fn().mockImplementation(() => {
-          // DB response 9: Delete timetable successfully
+          //DB response 9: Delete timetable successfully
           return {
             eq: jest.fn().mockImplementation((key, value) => {
-              if (key === "user_id" && value === USER2) {
+              if (
+                key === "user_id" &&
+                value === "testuser05-f84fd0da-d775-4424-ad88-d9675282453c"
+              ) {
                 return {
                   eq: jest.fn().mockReturnThis(),
                   data: null,
@@ -290,7 +292,7 @@ jest.mock("../../src/db/setupDb", () => ({
   },
 }));
 
-// Test block 1: Get endpoint
+//Test block 1: Get endpoint
 describe("GET /api/timetables/restrictions/:id", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -300,7 +302,9 @@ describe("GET /api/timetables/restrictions/:id", () => {
     // Initialize the authenticated session
     (
       authHandler as jest.MockedFunction<typeof authHandler>
-    ).mockImplementationOnce(mockAuthHandler(USER1));
+    ).mockImplementationOnce(
+      mockAuthHandler("testuser04-f84fd0da-d775-4424-ad88-d9675282453c"),
+    );
 
     const response = await request(app).get("/api/timetables/restrictions/1");
 
@@ -326,7 +330,7 @@ describe("GET /api/timetables/restrictions/:id", () => {
   });
 });
 
-// Test block 2: POST endpoint
+//Test block 2: POST endpoint
 describe("POST /api/timetables/restrictions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -373,7 +377,7 @@ describe("POST /api/timetables/restrictions", () => {
   });
 
   test("should create a new timetable given calendar_id, start_time and end_time", async () => {
-    const user_id = USER1;
+    const user_id = "testuser04-f84fd0da-d775-4424-ad88-d9675282453c";
     const newRestriction = {
       calendar_id: "1",
       start_time: "2025-03-04T09:00:00.000Z",
@@ -424,14 +428,14 @@ describe("POST /api/timetables/restrictions", () => {
   });
 });
 
-// Test block 3: Put endpoint
+//Test block 3: Put endpoint
 describe("PUT /api/timetables/restrictions/:id", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
   test("should return error code 400 and message: calendar id is required ", async () => {
     // Make sure the test user is authenticated
-    const user_id = USER2;
+    const user_id = "testuser05-f84fd0da-d775-4424-ad88-d9675282453c";
     const timetableData = {
       start_time: "2025-03-04T09:00:00.000Z",
     };
@@ -454,7 +458,7 @@ describe("PUT /api/timetables/restrictions/:id", () => {
 
   test("should update the timetable successfully", async () => {
     // Make sure the test user is authenticated
-    const user_id = USER2;
+    const user_id = "testuser05-f84fd0da-d775-4424-ad88-d9675282453c";
     const timetableData = {
       start_time: "2025-03-04T09:00:00.000Z",
     };
@@ -499,7 +503,7 @@ describe("PUT /api/timetables/restrictions/:id", () => {
   });
 });
 
-// Test block 4: Delete endpoint
+//Test block 4: Delete endpoint
 describe("DELETE /api/timetables/:id", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -507,7 +511,7 @@ describe("DELETE /api/timetables/:id", () => {
 
   test("should delete the timetable successfully", async () => {
     // Make sure the test user is authenticated
-    const user_id = USER2;
+    const user_id = "testuser05-f84fd0da-d775-4424-ad88-d9675282453c";
 
     // Mock authHandler to simulate the user being logged in
     (

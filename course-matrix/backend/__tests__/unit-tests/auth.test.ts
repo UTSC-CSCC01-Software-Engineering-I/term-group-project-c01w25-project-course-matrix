@@ -1,6 +1,7 @@
-import request from "supertest";
+import { afterAll, describe, expect, it, jest } from "@jest/globals";
 import { Request, Response } from "express";
-import { jest, describe, it, expect, afterAll } from "@jest/globals";
+import request from "supertest";
+
 import app, { server } from "../../src/index";
 
 jest.mock("@ai-sdk/openai", () => ({
@@ -167,16 +168,18 @@ describe("Authentication API", () => {
 
   describe("POST /auth/login", () => {
     it("should return 200 and a token for valid credentials", async () => {
-      const response = await request(app)
-        .post("/auth/login")
-        .send({ email: "validUser", password: "validPassword" });
+      const response = await request(app).post("/auth/login").send({
+        email: "validUser",
+        password: "validPassword",
+      });
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("token");
     });
     it("should return 401 for invalid credentials", async () => {
-      const response = await request(app)
-        .post("/auth/login")
-        .send({ email: "invalidUser", password: "wrongPassword" });
+      const response = await request(app).post("/auth/login").send({
+        email: "invalidUser",
+        password: "wrongPassword",
+      });
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty("error", "Invalid credentials");
     });
@@ -237,7 +240,9 @@ describe("Authentication API", () => {
     it("should return 200 and a success message when email is provided", async () => {
       const response = await request(app)
         .post("/auth/request-password-reset")
-        .send({ email: "user@example.com" });
+        .send({
+          email: "user@example.com",
+        });
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty(
         "message",
@@ -256,9 +261,10 @@ describe("Authentication API", () => {
 
   describe("POST /auth/reset-password", () => {
     it("should return 200 and a success message when password and token are provided", async () => {
-      const response = await request(app)
-        .post("/auth/reset-password")
-        .send({ password: "newPassword123", token: "validToken" });
+      const response = await request(app).post("/auth/reset-password").send({
+        password: "newPassword123",
+        token: "validToken",
+      });
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty(
         "message",
@@ -267,9 +273,9 @@ describe("Authentication API", () => {
     });
 
     it("should return 400 if password or token is missing", async () => {
-      const response = await request(app)
-        .post("/auth/reset-password")
-        .send({ password: "newPassword123" });
+      const response = await request(app).post("/auth/reset-password").send({
+        password: "newPassword123",
+      });
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty(
         "error",
@@ -280,9 +286,9 @@ describe("Authentication API", () => {
 
   describe("DELETE /auth/accountDelete", () => {
     it("should return 200 and a success message when userId is provided", async () => {
-      const response = await request(app)
-        .delete("/auth/accountDelete")
-        .send({ userId: "12345" });
+      const response = await request(app).delete("/auth/accountDelete").send({
+        userId: "12345",
+      });
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty(
         "message",

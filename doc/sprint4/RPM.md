@@ -27,7 +27,6 @@
   - Project is running on a VM instance
   - Project on update is automatically tested
   - Project auto redeploys on update
-    
 - Unit Testing:
   - Project functions (frontend and backend) will have and pass unit/integration tests written for them
 

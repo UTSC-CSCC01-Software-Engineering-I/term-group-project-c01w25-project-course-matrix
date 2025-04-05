@@ -51,9 +51,9 @@
   - Project when deployed is accessible online on a virtual Machine
   - Project when updated is automatically unit tested
   - Project when updated and passing unit tests is auto-redeployed
--  **Unit Testing**
-  - Project functions are unit/integration tested so that their behaviour is clear and potential bugs are caught
-  - Project functions passes unit/integration tests so bug free functionality is ensured
+- **Unit Testing**
+- Project functions are unit/integration tested so that their behaviour is clear and potential bugs are caught
+- Project functions passes unit/integration tests so bug free functionality is ensured
 
 ## 2. Release Scope
 
@@ -69,6 +69,7 @@
   - AI-Powered timetable generation, deletion, and queries
 
 - **Deployment**
+
   - Project runs on a docker image
   - Project is accessible on the web while running on a VM instance
   - Project on update is automatically tested

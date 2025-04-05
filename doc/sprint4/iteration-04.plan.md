@@ -13,9 +13,9 @@
 
 **Team Members:** Austin, Minh, and Thomas
 
-- Develop a calendar interface that allows users to favourite their calendars. 
-- Develop an interface that allows users to share their calendars with one another. 
-- Develop an algorithm that allows users to compare two different timetables together. 
+- Develop a calendar interface that allows users to favourite their calendars.
+- Develop an interface that allows users to share their calendars with one another.
+- Develop an algorithm that allows users to compare two different timetables together.
 
 #### Epic 2: AI Assistant
 
@@ -33,7 +33,7 @@ In addition to their specific roles, all team members have a collective responsi
 
 #### Epic 3: Deployment
 
-**Team Members:** Masahisa 
+**Team Members:** Masahisa
 
 - Create a dockerfile such that our application can be run on a docker image with application setup being done automatically.
 - Ensure that our application’s docker image runs on a VM instance accessible on the web.
@@ -57,6 +57,7 @@ In addition to their specific roles, all team members have a collective responsi
     - Define tasks and responsibilities for each team member
 
 - **Stand up meeting**:
+
   - Location: Online or in-person depending on members availability
   - Time: Every Tuesday from 12 pm to 1 pm, Thursday and Sunday from 9 pm to 10 pm
   - Purposes
@@ -105,11 +106,10 @@ In addition to their specific roles, all team members have a collective responsi
 
   ![Ticket Workflow](./images/Ticket_Workflow.png)
 
- - Furthermore, we will implement a Burndown Chart, which will be included as `burndown.pdf` by the end of the sprint. This chart will also feature comments on the sprint's progress and a velocity comparison.
- - Below is an example Burndown Chart from Sprint 0:
+- Furthermore, we will implement a Burndown Chart, which will be included as `burndown.pdf` by the end of the sprint. This chart will also feature comments on the sprint's progress and a velocity comparison.
+- Below is an example Burndown Chart from Sprint 0:
 
-  ![Burndown Chart](./images/Burndown.png)
-
+![Burndown Chart](./images/Burndown.png)
 
 ## 2. Product
 
@@ -120,34 +120,37 @@ In addition to their specific roles, all team members have a collective responsi
 - _Epic 1: Scheduler_
 
   - Timetable Compare: [SCRUM-62](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-62)
-   - Timetable Favourite: [SCRUM-57](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-57)
+  - Timetable Favourite: [SCRUM-57](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-57)
   - Timetable Export/Share:
-[SCRUM-58](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-58)
+    [SCRUM-58](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-58)
 
 - _Epic 2: AI Assistant_
+
   - Delete confirmation for chatbot:
-[SCRUM-148](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-148)   
+    [SCRUM-148](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-148)
   - Prevent Chatbot from creating more than 1 timetable at once:
-[SCRUM-149](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-149)  
+    [SCRUM-149](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-149)
 
 - _Epic 3: CI/CD Pipeline_
   - Project Deployment:
-[SCRUM-130](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130) 
-  - Assignment 2 Completion: [SCRUM-163](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-163) 
+    [SCRUM-130](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-130)
+  - Assignment 2 Completion: [SCRUM-163](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-163)
 
-**3. Create sprint 4 documentation:** 
-[SCRUM-176](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-176) 
+**3. Create sprint 4 documentation:**
+[SCRUM-176](https://cscc01-course-matrix.atlassian.net/browse/SCRUM-176)
 
 #### 2.2 Artifacts
 
 ### Pages/Features
 
 #### Scheduler
+
 - Option to favourite timetables for quick access.
 - Option to share/export timetable to other users
 - Option to compare two separate timetables
 - Enhance frontend UI to be more usable
 
 #### AI Assistant
+
 - Ability to generate, delete, create, view timetables and more using AI chatbot
--  Deleting anything with chatbot must only be done after another user confirmation 
+- Deleting anything with chatbot must only be done after another user confirmation

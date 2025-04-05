@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from "@jest/globals";
 
-import { convertTimestampToLocaleTime } from "../src/utils/convert-timestamp-to-locale-time";
+import { convertTimestampToLocaleTime } from "../../src/utils/convert-timestamp-to-locale-time";
 
 describe("convertTimestampToLocaleTime", () => {
   test("should convert a valid timestamp string to a locale time string", () => {
